@@ -1,0 +1,29 @@
+{
+  "name": "hymnal-server",
+  "version": "1.0.0",
+  "description": "Serving those diss tracks like we're the Paul brothers",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.16.2",
+    "mongoose": "^4.13.9",
+    "node": "^9.4.0",
+    "npm": "^5.6.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-native": "^0.52.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chattahooligans/hymnal-server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Chattahooligans/hymnal-server/issues"
+  },
+  "homepage": "https://github.com/Chattahooligans/hymnal-server#readme"
+}
