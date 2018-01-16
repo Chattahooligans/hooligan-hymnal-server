@@ -1,4 +1,4 @@
-var Todos = require('../models/todoModel');
+var Hymns = require('../models/hymnModel');
 var bodyParser = require('body-parser');
 
 module.exports = function (app) {
@@ -6,53 +6,51 @@ module.exports = function (app) {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended: true}));
 
-  app.get('/api/todos/:uname', function (req, res) {
+  app.get('/api/Hymns', function (req, res) {
 
-    Todos
-      .find({
+    Hymns.find({
         username: req.params.uname
-      }, function (err, todos) {
+      }, function (err, hymn) {
         if (err) 
           throw err;
-        console.log('uname get');
-        res.send(todos);
+        console.log('all Hymns get');
+        res.send(hymn);
       });
 
   });
 
-  app.get('/api/todo/:id', function (req, res) {
+  app.get('/api/hymn/:title', function (req, res) {
 
-    Todos
-      .findById({
-        _id: req.params.id
-      }, function (err, todo) {
+    Hymns.findById({
+        _title: req.params.title
+      }, function (err, hymn) {
         if (err) 
           throw err;
-        console.log('id get');
-        res.send(todo);
+        console.log('title get');
+        res.send(hymn);
       });
 
   });
 
-  app.post('/api/todo', function (req, res) {
+  app.post('/api/hymn', function (req, res) {
 
     if (req.body.id) {
-      Todos
+      Hymns
         .findByIdAndUpdate(req.body.id, {
-          todo: req.body.todo,
+          hymn: req.body.hymn,
           isDone: req.body.isDone,
           hasAttachment: req.body.hasAttachment
-        }, function (err, todo) {
+        }, function (err, hymn) {
           if (err) 
             throw err;
-          console.log('todo post');
+          console.log('hymn post');
 
           res.send('Success');
         });
     } else {
 
-      var newTodo = Todos({username: 'test', todo: req.body.todo, isDone: req.body.isDone, hasAttachment: req.body.hasAttachment});
-      newTodo.save(function (err) {
+      var newHymn = Hymns({title: 'test', lyrics: req.body.hymn.lyrics});
+      newHymn.save(function (err) {
         if (err) 
           throw err;
         res.send('Success');
@@ -62,9 +60,9 @@ module.exports = function (app) {
 
   });
 
-  app.delete('/api/todo', function (req, res) {
+  app.delete('/api/hymn/delete/:title', function (req, res) {
 
-    Todos
+    Hymns
       .findByIdAndRemove(req.body.id, function (err) {
         if (err) 
           throw err;
