@@ -4,6 +4,7 @@ var Schema = mongoose.Schema;
 
 var hymnSchema = new Schema({
   title: String,
+  id: String,
   lyrics: String
 });
 
