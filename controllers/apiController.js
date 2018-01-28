@@ -20,10 +20,10 @@ module.exports = function (app) {
   });
 
   // returns single hymn by id
-  app.get('/api/hymn/:id', function (req, res) {
+  app.get('/api/hymn', function (req, res) {
 
     Hymns.findById({
-      _id: req.params.id
+      id: req.params.id
     }, function (err, hymn) {
       if (err) throw err;
       console.log('id get');
@@ -36,11 +36,7 @@ module.exports = function (app) {
   app.post('/api/hymn', function (req, res) {
 
     if (req.params.id) {
-      Hymns.findByIdAndUpdate(req.params.id, {
-        title: req.params.title,
-        id: req.params.id,
-        lyrics: req.params.lyrics
-      }, function (err, hymn) {
+      Hymns.findByIdAndUpdate(req.params.id, req.body, function (err, hymn) {
         if (err) throw err;
         console.log('hymn post');
 
@@ -48,11 +44,7 @@ module.exports = function (app) {
       });
     } else {
 
-      var newHymn = Hymns({
-        title: req.params.title,
-        id: req.params.id,
-        lyrics: req.params.lyrics
-      });
+      var newHymn = Hymns(req.body);
       newHymn.save(function (err) {
         if (err) throw err;
         res.send('Successful update');
