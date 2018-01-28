@@ -4,6 +4,8 @@
   "description": "Serving those diss tracks like we're the Paul brothers",
   "main": "index.js",
   "dependencies": {
+    "body-parser": "^1.18.2",
+    "ejs": "^2.5.7",
     "express": "^4.16.2",
     "mongoose": "^4.13.9",
     "node": "^9.4.0",

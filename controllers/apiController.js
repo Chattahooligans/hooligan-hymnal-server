@@ -1,76 +1,74 @@
 var Hymns = require('../models/hymnModel');
 var bodyParser = require('body-parser');
 
-var idGenerator = function () {
-  //genereated ID for hymn
-}
-
 module.exports = function (app) {
 
   app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({extended: true}));
+  app.use(bodyParser.urlencoded({
+    extended: true
+  }));
 
-  /* Returns all hymns*/
-  app.get('/hymns', function (req, res) {
+  // returns all hymns
+  app.get('/api/hymns', function (req, res) {
 
     Hymns.find(function (err, hymns) {
-        if (err) 
-          throw err;
-        console.log('all hymns get');
-        res.json(hymns);
-      });
+      if (err) throw err;
+      console.log('all hymns get');
+      res.send(hymns);
+    });
 
   });
 
-  /* Returns single hymn by ID*/
-  app.get('/hymn/:id', function (req, res) {
+  // returns single hymn by id
+  app.get('/api/hymn/:id', function (req, res) {
 
     Hymns.findById({
-        _id: req.params.id
-      }, function (err, hymn) {
-        if (err) 
-          throw err;
-        console.log('id get');
-        res.json(hymn);
-      });
+      _id: req.params.id
+    }, function (err, hymn) {
+      if (err) throw err;
+      console.log('id get');
+      res.send(hymn);
+    });
 
   });
 
-  /* Creates or updates hymn */
-  app.post('/hymn', function (req, res) {
+  // updates or creates hymn
+  app.post('/api/hymn', function (req, res) {
 
-    /* Updates existing hymn*/
-    if (req.body.id) {
-      Hymns
-        .findByIdAndUpdate(req.body.id, {
-          title: req.body.title,
-          lyrics: req.body.lyrics,
-          id: req.body.id
-        }, function (err, hymn) {
-          if (err) 
-            throw err;
-          console.log('hymn updated');
-          res.json(hymn);
-        });
+    if (req.params.id) {
+      Hymns.findByIdAndUpdate(req.params.id, {
+        title: req.params.title,
+        id: req.params.id,
+        lyrics: req.params.lyrics
+      }, function (err, hymn) {
+        if (err) throw err;
+        console.log('hymn post');
+
+        res.send('Successful create');
+      });
     } else {
 
-      /* Creates new hymn*/
-      var newHymn = Hymns({title: req.body.title, id: idGenerator, lyrics: req.body.lyrics});
-      newHymn.save(function (err) {
-        if (err) 
-          throw err;
-        res.send('new hymn created');
+      var newHymn = Hymns({
+        title: req.params.title,
+        id: req.params.id,
+        lyrics: req.params.lyrics
       });
+      newHymn.save(function (err) {
+        if (err) throw err;
+        res.send('Successful update');
+      });
+
     }
+
   });
 
-  /* Deletes hymn*/
-  app.delete('/hymn/delete', function (req, res) {
-    Hymns
-      .findByIdAndRemove(req.body.id, function (err, hymn) {
-        if (err) 
-          throw err;
-        res.json(hymn);
-      });
+  app.delete('/api/hymn', function (req, res) {
+
+    Hymns.findByIdAndRemove(req.params.id, function (err) {
+      if (err) throw err;
+      res.send('Successful delete');
+    });
+
   });
-}; //end export
+
+};
