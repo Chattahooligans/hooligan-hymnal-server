@@ -1,4 +1,4 @@
-var Songs = require('../models/hymnModel');
+var Songs = require('../models/songModel');
 var bodyParser = require('body-parser');
 
 module.exports = function(app) {
