@@ -1,4 +1,5 @@
-var Songs = require('../models/songModel');
+var Songs = require('../models/songs');
+var Notifications = require('../models/notifications');
 var bodyParser = require('body-parser');
 
 module.exports = app => {
