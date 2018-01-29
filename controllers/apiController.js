@@ -23,38 +23,39 @@ module.exports = function(app) {
   });
 
   // returns single song by id
-  app.get('/api/song', function(req, res) {
+  app.get('/api/song/:id', function(req, res) {
+    console.log('id get', req.params.id);
     Songs.findById(
       {
         id: req.params.id
       },
       function(err, song) {
         if (err) throw err;
-        console.log('id get');
         res.send(song);
       }
     );
   });
 
-  // updates or creates song
-  app.post('/api/song', function(req, res) {
-    if (req.params.id) {
-      Songs.findByIdAndUpdate(req.params.id, req.body, function(err, song) {
-        if (err) throw err;
-        console.log('song post');
-
-        res.send('Successful create');
-      });
-    } else {
-      var newSong = Songs(req.body);
-      newSong.save(function(err) {
-        if (err) throw err;
-        res.send('Successful update');
-      });
-    }
+  // creates song
+  app.post('/api/song/:id', function(req, res) {
+    var newSong = Songs(req.body);
+    newSong.save(function(err) {
+      if (err) throw err;
+      res.send('Successful create');
+    });
   });
 
-  app.delete('/api/song', function(req, res) {
+  // updates song
+  app.put('/api/song/:id', function(req, res) {
+    Songs.findByIdAndUpdate(req.params.id, req.body, function(err, song) {
+      if (err) throw err;
+      console.log('song post');
+
+      res.send('Successful update');
+    });
+  });
+
+  app.delete('/api/song/:id', function(req, res) {
     Songs.findByIdAndRemove(req.params.id, function(err) {
       if (err) throw err;
       res.send('Successful delete');
