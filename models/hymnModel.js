@@ -1,13 +1,9 @@
 var mongoose = require('mongoose');
 
-var Schema = mongoose.Schema;
-
-var hymnSchema = new Schema({
+var hymnSchema = new mongoose.Schema({
   title: String,
   id: String,
   lyrics: String
 });
 
-var Hymns = mongoose.model('Hymns', hymnSchema);
-
-module.exports = Hymns;
+module.exports = mongoose.model('song', hymnSchema);

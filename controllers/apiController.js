@@ -1,66 +1,63 @@
-var Hymns = require('../models/hymnModel');
+var Songs = require('../models/hymnModel');
 var bodyParser = require('body-parser');
 
-module.exports = function (app) {
-
+module.exports = function(app) {
   app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({
-    extended: true
-  }));
+  app.use(
+    bodyParser.urlencoded({
+      extended: true
+    })
+  );
 
-  // returns all hymns
-  app.get('/api/hymns', function (req, res) {
-
-    Hymns.find(function (err, hymns) {
-      if (err) throw err;
-      console.log('all hymns get');
-      res.send(hymns);
-    });
-
+  app.get('/', function(req, res) {
+    res.send('Chattahooligans API');
   });
 
-  // returns single hymn by id
-  app.get('/api/hymn', function (req, res) {
-
-    Hymns.findById({
-      id: req.params.id
-    }, function (err, hymn) {
+  // returns all songs
+  app.get('/api/songs', function(req, res) {
+    Songs.find(function(err, songs) {
       if (err) throw err;
-      console.log('id get');
-      res.send(hymn);
+      console.log('all songs get');
+      res.send(songs);
     });
-
   });
 
-  // updates or creates hymn
-  app.post('/api/hymn', function (req, res) {
-
-    if (req.params.id) {
-      Hymns.findByIdAndUpdate(req.params.id, req.body, function (err, hymn) {
+  // returns single song by id
+  app.get('/api/song', function(req, res) {
+    Songs.findById(
+      {
+        id: req.params.id
+      },
+      function(err, song) {
         if (err) throw err;
-        console.log('hymn post');
+        console.log('id get');
+        res.send(song);
+      }
+    );
+  });
+
+  // updates or creates song
+  app.post('/api/song', function(req, res) {
+    if (req.params.id) {
+      Songs.findByIdAndUpdate(req.params.id, req.body, function(err, song) {
+        if (err) throw err;
+        console.log('song post');
 
         res.send('Successful create');
       });
     } else {
-
-      var newHymn = Hymns(req.body);
-      newHymn.save(function (err) {
+      var newSong = Songs(req.body);
+      newSong.save(function(err) {
         if (err) throw err;
         res.send('Successful update');
       });
-
     }
-
   });
 
-  app.delete('/api/hymn', function (req, res) {
-
-    Hymns.findByIdAndRemove(req.params.id, function (err) {
+  app.delete('/api/song', function(req, res) {
+    Songs.findByIdAndRemove(req.params.id, function(err) {
       if (err) throw err;
       res.send('Successful delete');
     });
-
   });
-
 };
