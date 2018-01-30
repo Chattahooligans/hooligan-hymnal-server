@@ -18,12 +18,12 @@ module.exports = app => {
   // creates new push token
   app.post('/api/pushToken', (req, res) => {
     var newToken = PushTokens(req.body);
-    newToken.save((error, token) => {
+    newToken.save((error, pushToken) => {
       error
         ? res
           .status(501)
           .send({error})
-        : res.send(token);
+        : res.send(pushToken);
     });
   });
 };
