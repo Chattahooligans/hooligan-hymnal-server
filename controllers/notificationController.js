@@ -15,6 +15,20 @@ module.exports = app => {
   });
 
   // returns all notifications
+  app.get('/api/notifications/last', (req, res) => {
+    Notifications.find()
+      .sort({ send_time: -1 })
+      .limit(1)
+      .then(notifications => {
+        if (notifications.length) {
+          res.send(notifications[0]);
+        } else {
+          res.status(204).send();
+        }
+      });
+  });
+
+  // returns all notifications
   app.get('/api/notifications', (req, res) => {
     Notifications.find((error, notifications) => {
       if (error) {
