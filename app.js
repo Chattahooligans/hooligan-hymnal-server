@@ -5,6 +5,7 @@ var config = require('./config');
 
 var songController = require('./controllers/songController');
 var notificationController = require('./controllers/notificationController');
+var pushTokenController = require('./controllers/pushTokenController');
 
 var port = process.env.PORT || 3000;
 
@@ -16,6 +17,7 @@ mongoose.connect(config.getDbConnectionString(), { useMongoClient: true });
 
 songController(app);
 notificationController(app);
+pushTokenController(app);
 
 app.listen(port);
 console.log('app listening on ' + port);
