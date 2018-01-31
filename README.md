@@ -25,4 +25,5 @@ To run, enter `npm start` into the terminal at project root. This command will r
 ## Notes
 
 Want to deploy a server like this easily? You don't even have to change any code as long as you can set up your own MongoDB instance. You can deploy to [Heroku](https://heroku.com) using the button below, and your server will be up and running in minutes. 
+
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
