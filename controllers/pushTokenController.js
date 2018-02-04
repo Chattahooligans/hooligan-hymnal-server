@@ -21,6 +21,7 @@ module.exports = app => {
     
     validate(newToken, function (err, validator) {
       if (!err) {
+        console.log('token is new');
         newToken.save((error, pushToken) => {
           error
             ? res
@@ -28,6 +29,8 @@ module.exports = app => {
               .send({error})
             : res.send(pushToken);
         });
+      } else {
+        console.log('token isnt new');
       }
     })
   });
@@ -37,6 +40,7 @@ module.exports = app => {
     mongoose.model('PushToken', PushTokens).count(data, function(err, count){
       callback(err, !! count);
     });
+    console.log('leaving check()')
   };
 
   //validates push token
@@ -54,6 +58,7 @@ module.exports = app => {
 
       v.check(exists, { pushToken: 'pushToken already exists' }).equals(false);
       callback(null, v);
-    })
+    });
+    console.log('leaving validate');
   }
 };
