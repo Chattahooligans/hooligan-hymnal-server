@@ -1,5 +1,6 @@
 var PushTokens = require('../models/pushTokens');
 var bodyParser = require('body-parser');
+var Validator = require('express-validator');
 
 module.exports = app => {
   app.use(bodyParser.json());
@@ -45,7 +46,7 @@ module.exports = app => {
 
   //validates push token
   function validate(newPushToken, callback) {
-    var v = new ValidationError(), errors = new Array();
+    var v = new Validator(), errors = new Array();
 
     v.error = function (msg) {
       errors.push(msg);
