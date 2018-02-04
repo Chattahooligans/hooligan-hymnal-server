@@ -18,12 +18,42 @@ module.exports = app => {
   // creates new push token
   app.post('/api/pushToken', (req, res) => {
     var newToken = PushTokens(req.body);
-    newToken.save((error, pushToken) => {
-      error
-        ? res
-          .status(501)
-          .send({error})
-        : res.send(pushToken);
-    });
+    
+    validate(newToken, function (err, validator) {
+      if (!err) {
+        newToken.save((error, pushToken) => {
+          error
+            ? res
+              .status(501)
+              .send({error})
+            : res.send(pushToken);
+        });
+      }
+    })
   });
+
+  //checks for push token
+  function check(data, callback) {
+    mongoose.model('PushToken', PushTokens).count(data, function(err, count){
+      callback(err, !! count);
+    });
+  };
+
+  //validates push token
+  function validate(newPushToken, callback) {
+    var v = new ValidationError(), errors = new Array();
+
+    v.error = function (msg) {
+      errors.push(msg);
+    };
+
+    check({ pushToken: newPushToken }, function (err, exists) {
+      if (err) {
+        return callback(err);
+      }
+
+      v.check(exists, { pushToken: 'pushToken already exists' }).equals(false);
+      callback(null, v);
+    })
+  }
 };
