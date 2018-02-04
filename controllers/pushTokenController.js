@@ -22,6 +22,7 @@ module.exports = app => {
   app.post('/api/pushToken', (req, res) => {
     var newToken = PushTokens(req.body);
     console.log('newToken: ' + newToken);
+    console.log('newToken.pushToken: ' + newToken.pushToken + ' ' + newToken.get('pushToken'));
     validatePushTokenExists(newToken.get('pushToken')).then(function (valid) {
       if (!valid) {
         console.log('token is new');
@@ -37,6 +38,7 @@ module.exports = app => {
   });
 
   function validatePushTokenExists(pushToken) {
+    console.log('pushToken in method: ' + pushToken);
     return PushTokens.findOne({ "pushToken": pushToken }).then(function (result) {
       return result !== null;
     })
