@@ -7,13 +7,13 @@ var notificationController = require('./controllers/notificationController');
 var pushTokenController = require('./controllers/pushTokenController');
 
 var port = process.env.PORT || 3000;
-var MONGO_URI = process.env.MONGO_URI;
+let MONGO_URI_STRING = process.env.MONGO_URI;
 
 app.use('/assets', express.static(__dirname + '/public'));
 
 app.set('view engine', 'ejs');
 
-mongoose.connect(MONGO_URI, { useMongoClient: true });
+mongoose.connect(MONGO_URI_STRING, { useMongoClient: true });
 
 songController(app);
 notificationController(app);
