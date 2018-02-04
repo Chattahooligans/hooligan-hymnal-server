@@ -21,9 +21,9 @@ module.exports = app => {
   // creates new push token
   app.post('/api/pushToken', (req, res) => {
     var newToken = PushTokens(req.body);
-    
-    validate(newToken, function (err, Validator) {
-      if (!err) {
+    console.log('newToken: ' + newToken);
+    validatePushTokenExists(newToken.get('pushToken')).then(function (valid) {
+      if (!valid) {
         console.log('token is new');
         newToken.save((error, pushToken) => {
           error
@@ -32,11 +32,15 @@ module.exports = app => {
               .send({error})
             : res.send(pushToken);
         });
-      } else {
-        console.log('token isnt new');
       }
     })
   });
+
+  function validatePushTokenExists(pushToken) {
+    return PushTokens.findOne({ "pushToken": pushToken }).then(function (result) {
+      return result !== null;
+    })
+  }
 
   //checks for push token
   function check(data, callback) {
