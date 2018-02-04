@@ -22,7 +22,7 @@ module.exports = app => {
   app.post('/api/pushToken', (req, res) => {
     var newToken = PushTokens(req.body);
     
-    validate(newToken, function (err, validator) {
+    validate(newToken, function (err, Validator) {
       if (!err) {
         console.log('token is new');
         newToken.save((error, pushToken) => {
