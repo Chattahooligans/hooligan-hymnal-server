@@ -22,7 +22,7 @@ module.exports = app => {
   app.post('/api/pushToken', (req, res) => {
     var newToken = PushTokens(req.body);
     console.log('newToken: ' + newToken);
-    console.log('newToken.pushToken: ' + newToken.pushToken + ' ' + newToken.get('pushToken'));
+    console.log('newToken.pushToken: ' + newToken.pushToken + ' ' + newToken.getValue('pushToken'));
     validatePushTokenExists(newToken.get('pushToken')).then(function (valid) {
       if (!valid) {
         console.log('token is new');
