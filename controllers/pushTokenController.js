@@ -40,7 +40,7 @@ module.exports = app => {
 
   //checks for push token
   function check(data, callback) {
-    mongoose.model('PushToken', PushTokens).count(data, function(err, count){
+    mongoose.model('pushtokens', PushTokenSchema).count(data, function(err, count){
       callback(err, !! count);
     });
     console.log('leaving check()')
