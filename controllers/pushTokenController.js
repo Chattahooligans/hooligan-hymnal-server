@@ -21,9 +21,7 @@ module.exports = app => {
   // creates new push token
   app.post('/api/pushToken', (req, res) => {
     var newToken = PushTokens(req.body);
-    console.log('newToken: ' + newToken);
-    console.log('newToken.pushToken: ' + newToken.pushToken + ' ' + newToken.getValue('pushToken'));
-    validatePushTokenExists(newToken.get('pushToken')).then(function (valid) {
+    validatePushTokenExists(newToken).then(function (valid) {
       if (!valid) {
         console.log('token is new');
         newToken.save((error, pushToken) => {
@@ -37,37 +35,11 @@ module.exports = app => {
     })
   });
 
-  function validatePushTokenExists(pushToken) {
-    console.log('pushToken in method: ' + pushToken);
-    return PushTokens.findOne({ "pushToken": pushToken }).then(function (result) {
+  //validates that a push token doesn't already exist in database
+  function validatePushTokenExists(newPushToken) {
+    console.log('pushToken in method: ' + newPushToken);
+    return PushTokens.findOne({ pushToken: newPushToken }).then(function (result) {
       return result !== null;
     })
-  }
-
-  //checks for push token
-  function check(data, callback) {
-    mongoose.model('pushtokens', PushTokenSchema).count(data, function(err, count){
-      callback(err, !! count);
-    });
-    console.log('leaving check()')
-  };
-
-  //validates push token
-  function validate(newPushToken, callback) {
-    var v = new Validator(), errors = new Array();
-
-    v.error = function (msg) {
-      errors.push(msg);
-    };
-
-    check({ pushToken: newPushToken }, function (err, exists) {
-      if (err) {
-        return callback(err);
-      }
-
-      v.check(exists, { pushToken: 'pushToken already exists' }).equals(false);
-      callback(null, v);
-    });
-    console.log('leaving validate');
   }
 };
