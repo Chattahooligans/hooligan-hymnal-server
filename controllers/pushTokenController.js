@@ -1,4 +1,5 @@
 var PushTokens = require('../models/pushTokens');
+var PushTokenSchema = require('../models/schemas/pushTokenSchema');
 var bodyParser = require('body-parser');
 var Validator = require('express-validator');
 var mongoose = require('mongoose');
