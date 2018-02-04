@@ -1,6 +1,7 @@
 var PushTokens = require('../models/pushTokens');
 var bodyParser = require('body-parser');
 var Validator = require('express-validator');
+var mongoose = require('mongoose');
 
 module.exports = app => {
   app.use(bodyParser.json());
