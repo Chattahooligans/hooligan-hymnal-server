@@ -7,7 +7,9 @@ var notificationController = require('./controllers/notificationController');
 var pushTokenController = require('./controllers/pushTokenController');
 
 var port = process.env.PORT || 3000;
-let MONGO_URI_STRING = process.env.MONGO_URI;
+let MONGO_URI = process.env.MONGO_URI;
+let MONGO_URI_STRING = 'mongodb://hymnadmin:hooligans@ds151207.mlab.com:51207/chattahooliganhymnal'
+console.log(MONGU_URI);
 
 app.use('/assets', express.static(__dirname + '/public'));
 
