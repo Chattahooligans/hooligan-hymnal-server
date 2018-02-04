@@ -33,6 +33,8 @@ module.exports = app => {
               .send({error})
             : res.send(pushToken);
         });
+      } else {
+        console.log('token exists already');
       }
     })
   });
