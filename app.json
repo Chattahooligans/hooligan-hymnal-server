@@ -1,0 +1,16 @@
+{
+  "name": "Supporter Song Server",
+  "description": "A Node.js app built to manage CRUD ops for your supporter section songs",
+  "repository": "https://github.com/Chattahooligans/hymnal-server",
+  "logo": "https://pbs.twimg.com/profile_images/730194454431203328/MpkhDrSW.jpg",
+  "keywords": [
+    "node",
+    "express"
+  ],
+  "env": {
+    "MONGO_URI": {
+      "description": "A URI for your MongoDB instance",
+      "value": "[insert mongoURI here]"
+    }
+  }
+}
