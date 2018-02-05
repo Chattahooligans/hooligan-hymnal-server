@@ -6,13 +6,13 @@ var mongoose = require('mongoose');
 
 module.exports = app => {
   app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({extended: true}));
+  app.use(bodyParser.urlencoded({ extended: true }));
 
   // returns all push tokens
   app.get('/api/pushToken', (req, res) => {
-  PushTokens.find((error, pushTokens) => {
+    PushTokens.find((error, pushTokens) => {
       if (error) {
-        res.status(501).send({error});
+        res.status(501).send({ error });
       }
       res.send(pushTokens);
     });
@@ -23,27 +23,22 @@ module.exports = app => {
     var newToken = PushTokens(req.body);
     var tokenString = req.body.pushToken;
     console.log('tokenString: ' + tokenString);
-    validatePushTokenExists(tokenString).then(function (valid) {
-      if (!valid) {
+    getToken(tokenString).then(function(token) {
+      if (token === null) {
         console.log('token is new');
         newToken.save((error, pushToken) => {
-          error
-            ? res
-              .status(501)
-              .send({error})
-            : res.send(pushToken);
+          error ? res.status(501).send({ error }) : res.send(pushToken);
         });
       } else {
         console.log('token exists already');
+        res.send(token);
       }
-    })
+    });
   });
 
   //validates that a push token doesn't already exist in database
-  function validatePushTokenExists(newPushToken) {
+  function getToken(newPushToken) {
     console.log('pushToken in method: ' + newPushToken);
-    return PushTokens.findOne({ pushToken: newPushToken }).then(function (result) {
-      return result !== null;
-    })
+    return PushTokens.findOne({ pushToken: newPushToken });
   }
 };

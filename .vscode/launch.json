@@ -5,7 +5,11 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}/app.js"
+      "program": "${workspaceFolder}/app.js",
+      "env": {
+        "MONGO_URI":
+          "mongodb://hymnadmin:hooligans@ds151207.mlab.com:51207/chattahooliganhymnal"
+      }
     }
   ]
 }
