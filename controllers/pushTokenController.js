@@ -22,15 +22,14 @@ module.exports = app => {
   app.post('/api/pushToken', (req, res) => {
     var newToken = PushTokens(req.body);
     var tokenString = req.body.pushToken;
-    console.log('tokenString: ' + tokenString);
     getToken(tokenString).then(function(token) {
       if (token === null) {
-        console.log('token is new');
+        //token is new
         newToken.save((error, pushToken) => {
           error ? res.status(501).send({ error }) : res.send(pushToken);
         });
       } else {
-        console.log('token exists already');
+        //token already exists
         res.send(token);
       }
     });
@@ -38,7 +37,6 @@ module.exports = app => {
 
   //validates that a push token doesn't already exist in database
   function getToken(newPushToken) {
-    console.log('pushToken in method: ' + newPushToken);
     return PushTokens.findOne({ pushToken: newPushToken });
   }
 };
