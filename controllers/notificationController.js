@@ -1,5 +1,8 @@
+import Expo from 'expo-server-sdk';
+
 var Notifications = require('../models/notifications');
 var bodyParser = require('body-parser');
+let expo = new Expo();
 
 module.exports = app => {
   app.use(bodyParser.json());
@@ -53,7 +56,24 @@ module.exports = app => {
   app.post('/api/notification', (req, res) => {
     var newNotification = Notifications(req.body);
     newNotification.save((error, notification) => {
-      error ? res.status(501).send({ error }) : res.send(notification);
+      if (error) {
+        res.status(501).send({ error });
+      } else {
+      res.send(notification);
+        try {
+          let receipts = await expo.sendPushNotificationsAsync([
+            {
+              to: tokenDevice, //get pushToken from DB
+              sound: 'default',
+              body: newNotification.song.title,
+              data: newNotification.song._id
+            }
+          ]);
+          res.json({receipts})
+        } catch (error) {
+          console.error(error);
+        }
+      }
     });
   });
 
