@@ -17,7 +17,7 @@ module.exports = app => {
     res.send('Chattahooligans API is running');
   });
 
-  // returns all notifications
+  // returns most recent notification
   app.get('/api/notifications/last', (req, res) => {
     Notifications.find()
       .sort({ send_time: -1 })
@@ -59,20 +59,22 @@ module.exports = app => {
       if (error) {
         res.status(501).send({ error });
       } else {
-      res.send(notification);
-        try {
-          let receipts = await expo.sendPushNotificationsAsync([
-            {
-              to: tokenDevice, //get pushToken from DB
-              sound: 'default',
-              body: newNotification.song.title,
-              data: newNotification.song._id
-            }
-          ]);
-          res.json({receipts})
-        } catch (error) {
-          console.error(error);
-        }
+        res.send(notification);
+        for (var token in getTokens) {
+          try {
+            let receipts = await expo.sendPushNotificationsAsync([
+              {
+                to: token, 
+                sound: 'default',
+                body: newNotification.song.title,
+                data: newNotification.song._id
+              }
+            ]);
+            res.json({ receipts })
+          } catch (error) {
+            console.error(error);
+          }
+        }  
       }
     });
   });
@@ -96,3 +98,13 @@ module.exports = app => {
     });
   });
 };
+
+// returns all tokens for sending notifications
+function getTokens() {
+  return PushTokens.find((error, tokens) => {
+    if (error)
+      return error;
+    else
+      return tokens;  
+  });
+}
