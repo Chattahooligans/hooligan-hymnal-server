@@ -71,6 +71,7 @@ module.exports = app => {
               }
             ]);
             res.json({ receipts })
+            console.log('notification sent? idk');
           } catch (error) {
             console.error(error);
           }
