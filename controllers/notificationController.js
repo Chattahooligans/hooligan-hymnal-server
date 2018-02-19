@@ -1,4 +1,4 @@
-import Expo from 'expo-server-sdk';
+var Expo = require('expo-server-sdk');
 
 var Notifications = require('../models/notifications');
 var bodyParser = require('body-parser');
@@ -62,14 +62,16 @@ module.exports = app => {
         res.send(notification);
         for (var token in getTokens) {
           try {
-            let receipts = await expo.sendPushNotificationsAsync([
-              {
-                to: token, 
-                sound: 'default',
-                body: newNotification.song.title,
-                data: newNotification.song._id
-              }
-            ]);
+            async () => {
+              let receipts = await expo.sendPushNotificationsAsync([
+                {
+                  to: token,
+                  sound: 'default',
+                  body: newNotification.song.title,
+                  data: newNotification.song._id
+                }
+              ]);
+            }  
             res.json({ receipts })
             console.log('notification sent? idk');
           } catch (error) {
