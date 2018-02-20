@@ -61,7 +61,28 @@ module.exports = app => {
         res.status(501).send({ error });
       } else {
         res.send(notification);
-        console.log('notification sent to server');
+        console.log('notification: ' + notification);
+        getTokens().array.forEach(element => {
+          console.log('forEach: ' + element);
+          try {
+            async() => {
+              let receipts = await expo.sendPushNotificationsAsync([
+                {
+                  to: element.pushToken,
+                  sound: 'default',
+                  body: notification.song.title,
+                  data : notification.song._id
+                }
+              ]);
+              res.json({receipts});
+              console.log('notification sent to devices')
+            }
+            console.log('notification sent? idk');
+          } catch (error) {
+            console.error(error);
+          }
+        });
+        /*
         for (var token in getTokens()) {
           console.log('token: ' + token.pushToken);
           try {
@@ -81,7 +102,7 @@ module.exports = app => {
           } catch (error) {
             console.error(error);
           }
-        }  
+        }  */
       }
     });
   });
