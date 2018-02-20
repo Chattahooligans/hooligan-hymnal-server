@@ -60,7 +60,9 @@ module.exports = app => {
         res.status(501).send({ error });
       } else {
         res.send(notification);
+        console.log('notification sent to server');
         for (var token in getTokens) {
+          console.log('token: ' + token);
           try {
             async () => {
               let receipts = await expo.sendPushNotificationsAsync([
@@ -71,8 +73,9 @@ module.exports = app => {
                   data: newNotification.song._id
                 }
               ]);
+              res.json({ receipts });
+              console.log('notification sent')
             }  
-            res.json({ receipts })
             console.log('notification sent? idk');
           } catch (error) {
             console.error(error);
