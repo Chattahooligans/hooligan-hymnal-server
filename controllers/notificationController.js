@@ -68,7 +68,7 @@ module.exports = app => {
             async () => {
               let receipts = await expo.sendPushNotificationsAsync([
                 {
-                  to: token,
+                  to: token.pushToken,
                   sound: 'default',
                   body: newNotification.song.title,
                   data: newNotification.song._id
