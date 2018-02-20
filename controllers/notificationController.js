@@ -61,7 +61,7 @@ module.exports = app => {
       } else {
         res.send(notification);
         console.log('notification sent to server');
-        for (var token in getTokens) {
+        for (var token in getTokens()) {
           console.log('token: ' + token);
           try {
             async () => {
@@ -74,7 +74,7 @@ module.exports = app => {
                 }
               ]);
               res.json({ receipts });
-              console.log('notification sent')
+              console.log('notification sent to devices')
             }  
             console.log('notification sent? idk');
           } catch (error) {
