@@ -1,6 +1,7 @@
 var Expo = require('expo-server-sdk');
 
 var Notifications = require('../models/notifications');
+var PushTokens = require('../models/pushTokens');
 var bodyParser = require('body-parser');
 let expo = new Expo();
 
