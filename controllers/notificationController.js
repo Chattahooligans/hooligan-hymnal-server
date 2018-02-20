@@ -135,7 +135,7 @@ function getTokens() {
       return error;
     }
     else {
-      console.log(tokens);
+      console.log('getTokens log' + tokens);
       return tokens;
     }
   });
