@@ -63,7 +63,7 @@ module.exports = app => {
         res.send(notification);
         console.log('notification sent to server');
         for (var token in getTokens()) {
-          console.log('token: ' + token);
+          console.log('token: ' + token.pushToken);
           try {
             async () => {
               let receipts = await expo.sendPushNotificationsAsync([
