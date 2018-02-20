@@ -109,9 +109,13 @@ module.exports = app => {
 // returns all tokens for sending notifications
 function getTokens() {
   return PushTokens.find((error, tokens) => {
-    if (error)
+    if (error) {
+      console.log('getTokens failed');
       return error;
-    else
-      return tokens;  
+    }
+    else {
+      console.log(tokens);
+      return tokens;
+    }
   });
 }
