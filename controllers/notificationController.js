@@ -76,7 +76,8 @@ module.exports = app => {
               return {
                 'to': token.pushToken,
                 'sound': 'default',
-                'body': newNotification.song.title,
+                'title': newNotification.song.title,
+                'body': newNotification.song.lyrics,
                 'data': { 'song': newNotification.song },
               };
             });
