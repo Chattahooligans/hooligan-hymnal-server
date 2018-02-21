@@ -58,51 +58,41 @@ module.exports = app => {
     var newNotification = Notifications(req.body);
     newNotification.save((error, notification) => {
       if (error) {
-        res.status(501).send({ error });
+        res.status(501).send({ error: `Error saving notification: ${error}` });
       } else {
-        res.send(notification);
         console.log('notification: ' + notification);
-        getTokens().array.forEach(element => {
-          console.log('forEach: ' + element);
-          try {
-            async() => {
-              let receipts = await expo.sendPushNotificationsAsync([
-                {
-                  to: element.pushToken,
-                  sound: 'default',
-                  body: notification.song.title,
-                  data : notification.song._id
-                }
-              ]);
-              res.json({receipts});
-              console.log('notification sent to devices')
+        PushTokens.find(async(error, tokens) => {
+          if (error) {
+            res.status(501).send({ 'error': `Error fetching push tokens: ${error}` });
+            return;
+          }
+
+          let errors = [];
+          let receipts = [];
+          let chunks = expo.chunkPushNotifications(tokens);
+          for (chunk of chunks) {
+            console.log(`sending notification to tokens: ${chunk}`);
+            let notifications = chunk.map(token => {
+              return {
+                'to': token.pushToken,
+                'sound': 'default',
+                //'body': newNotification.song,
+                //'data': newNotification.song._id
+                'body': newNotification.message,
+                'data': { 'song': newNotification.song },
+              };
+            });
+            try {
+              receipts.push(...await expo.sendPushNotificationsAsync(notifications));
+              console.log('notification sent to devices, or so Expo tells us')
+            } catch (error) {
+              let tokenString = chunk.map(token => token.pushToken ).join(', ');
+              console.error(`Error notifying with tokens [${tokenString}]: ${error}`);
+              errors.push(...chunk.map(token => `Error notifying with token ${token}: ${error}` ));
             }
-            console.log('notification sent? idk');
-          } catch (error) {
-            console.error(error);
-          }
+          };
+          res.send({ 'errors': errors, 'receipts': receipts });
         });
-        /*
-        for (var token in getTokens()) {
-          console.log('token: ' + token.pushToken);
-          try {
-            async () => {
-              let receipts = await expo.sendPushNotificationsAsync([
-                {
-                  to: token.pushToken,
-                  sound: 'default',
-                  body: newNotification.song.title,
-                  data: newNotification.song._id
-                }
-              ]);
-              res.json({ receipts });
-              console.log('notification sent to devices')
-            }  
-            console.log('notification sent? idk');
-          } catch (error) {
-            console.error(error);
-          }
-        }  */
       }
     });
   });
@@ -126,17 +116,3 @@ module.exports = app => {
     });
   });
 };
-
-// returns all tokens for sending notifications
-function getTokens() {
-  return PushTokens.find((error, tokens) => {
-    if (error) {
-      console.log('getTokens failed');
-      return error;
-    }
-    else {
-      console.log('getTokens log' + tokens);
-      return tokens;
-    }
-  });
-}
