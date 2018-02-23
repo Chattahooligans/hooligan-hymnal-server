@@ -8,6 +8,6 @@ module.exports = new mongoose.Schema({
   sender_latitude: String,
   sender_longitude: String,
   message: String,
-  push: boolean,
+  push: Boolean,
   song: songSchema
 });
