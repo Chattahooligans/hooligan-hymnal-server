@@ -1,5 +1,4 @@
 var Expo = require('expo-server-sdk');
-
 var Notifications = require('../models/notifications');
 var PushTokens = require('../models/pushTokens');
 var bodyParser = require('body-parser');
@@ -53,13 +52,13 @@ module.exports = app => {
     );
   });
 
-  // creates notification
+  // creates new notification and sends it as a push to all registered devices
   app.post('/api/notification', (req, res) => {
     var newNotification = Notifications(req.body);
     newNotification.save((error, notification) => {
       if (error) {
         res.status(501).send({ error: `Error saving notification: ${error}` });
-      } else {
+      } else if (newNotification.push) {
         console.log('notification: ' + notification);
         PushTokens.find(async(error, tokens) => {
           if (error) {
