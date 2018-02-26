@@ -55,6 +55,9 @@ module.exports = app => {
   app.post('/api/notification', (req, res) => {
     var newNotification = Notifications(req.body);
     newNotification.save((error, notification) => {
+      console.log('####');
+      console.log(newNotification);
+      console.log(notification);
       if (error) {
         res.status(501).send({ error: `Error saving notification: ${error}` });
       } else if (newNotification.push) {
