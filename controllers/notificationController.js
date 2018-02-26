@@ -90,6 +90,9 @@ module.exports = app => {
           };
           res.send({ 'errors': errors, 'receipts': receipts });
         });
+      } else {
+        //no push notification
+        res.send(notification);
       }
     });
   });
