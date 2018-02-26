@@ -1,5 +1,5 @@
 {
-  "name": "Supporter Song Server",
+  "name": "Supporter Hymnal Server",
   "description": "A Node.js app built to manage CRUD ops for your supporter section songs",
   "repository": "https://github.com/Chattahooligans/hymnal-server",
   "logo": "https://pbs.twimg.com/profile_images/730194454431203328/MpkhDrSW.jpg",
