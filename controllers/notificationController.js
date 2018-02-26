@@ -45,7 +45,6 @@ module.exports = app => {
   app.get('/api/notification/:id', (req, res) => {
     Notifications.findById(
       req.params.id,
-      'title lyrics',
       (error, notification) => {
         res.send(notification);
       }
@@ -106,6 +105,7 @@ module.exports = app => {
     );
   });
 
+  // deletes notification
   app.delete('/api/notification/:id', (req, res) => {
     Notifications.findByIdAndRemove(req.params.id, error => {
       error
