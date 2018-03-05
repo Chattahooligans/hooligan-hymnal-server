@@ -55,13 +55,9 @@ module.exports = app => {
   app.post('/api/notification', (req, res) => {
     var newNotification = Notifications(req.body);
     newNotification.save((error, notification) => {
-      console.log('####');
-      console.log(newNotification);
-      console.log(notification);
       if (error) {
         res.status(501).send({ error: `Error saving notification: ${error}` });
-      } else if (newNotification.push) {
-        console.log('notification: ' + notification);
+      } else if (notification.push) {
         PushTokens.find(async(error, tokens) => {
           if (error) {
             res.status(501).send({ 'error': `Error fetching push tokens: ${error}` });
@@ -72,26 +68,24 @@ module.exports = app => {
           let receipts = [];
           let chunks = expo.chunkPushNotifications(tokens);
           for (chunk of chunks) {
-            console.log(`sending notification to tokens: ${chunk}`);
             let notifications = chunk.map(token => {
               return {
                 'to': token.pushToken,
                 'sound': 'default',
-                'title': newNotification.song.title,
-                'body': newNotification.song.lyrics,
-                'data': { 'song': newNotification.song },
+                'title': notification.song.title,
+                'body': notification.song.lyrics,
+                'data': { 'song': notification.song },
               };
             });
             try {
               receipts.push(...await expo.sendPushNotificationsAsync(notifications));
-              console.log('notification sent to devices, or so Expo tells us')
             } catch (error) {
               let tokenString = chunk.map(token => token.pushToken ).join(', ');
               console.error(`Error notifying with tokens [${tokenString}]: ${error}`);
               errors.push(...chunk.map(token => `Error notifying with token ${token}: ${error}` ));
             }
           };
-          res.send({ 'errors': errors, 'receipts': receipts });
+          res.send({ 'errors': errors, 'receipts': receipts, 'notification': notification});
         });
       } else {
         //no push notification
