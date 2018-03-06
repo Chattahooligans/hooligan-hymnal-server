@@ -3,6 +3,7 @@ var app = express();
 var mongoose = require('mongoose');
 
 var songController = require('./controllers/songController');
+var playerController = require('./controllers/playerController');
 var notificationController = require('./controllers/notificationController');
 var pushTokenController = require('./controllers/pushTokenController');
 
@@ -16,6 +17,7 @@ app.set('view engine', 'ejs');
 mongoose.connect(MONGO_URI, { useMongoClient: true });
 
 songController(app);
+playerController(app);
 notificationController(app);
 pushTokenController(app);
 

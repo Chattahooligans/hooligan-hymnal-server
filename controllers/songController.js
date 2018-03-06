@@ -27,7 +27,7 @@ module.exports = app => {
 
   // returns single song by _id
   app.get('/api/song/:id', (req, res) => {
-    Songs.findById(req.params.id, 'title lyrics', (error, song) => {
+    Songs.findById(req.params.id, (error, song) => {
       res.send(song);
     });
   });
@@ -47,6 +47,7 @@ module.exports = app => {
     });
   });
 
+  // deletes song
   app.delete('/api/song/:id', (req, res) => {
     Songs.findByIdAndRemove(req.params.id, error => {
       error

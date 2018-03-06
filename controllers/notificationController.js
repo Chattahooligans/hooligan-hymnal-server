@@ -1,5 +1,8 @@
+var Expo = require('expo-server-sdk');
 var Notifications = require('../models/notifications');
+var PushTokens = require('../models/pushTokens');
 var bodyParser = require('body-parser');
+let expo = new Expo();
 
 module.exports = app => {
   app.use(bodyParser.json());
@@ -14,7 +17,7 @@ module.exports = app => {
     res.send('Chattahooligans API is running');
   });
 
-  // returns all notifications
+  // returns most recent notification
   app.get('/api/notifications/last', (req, res) => {
     Notifications.find()
       .sort({ send_time: -1 })
@@ -42,18 +45,52 @@ module.exports = app => {
   app.get('/api/notification/:id', (req, res) => {
     Notifications.findById(
       req.params.id,
-      'title lyrics',
       (error, notification) => {
         res.send(notification);
       }
     );
   });
 
-  // creates notification
+  // creates new notification and sends it as a push to all registered devices
   app.post('/api/notification', (req, res) => {
     var newNotification = Notifications(req.body);
     newNotification.save((error, notification) => {
-      error ? res.status(501).send({ error }) : res.send(notification);
+      if (error) {
+        res.status(501).send({ error: `Error saving notification: ${error}` });
+      } else if (notification.push) {
+        PushTokens.find(async(error, tokens) => {
+          if (error) {
+            res.status(501).send({ 'error': `Error fetching push tokens: ${error}` });
+            return;
+          }
+
+          let errors = [];
+          let receipts = [];
+          let chunks = expo.chunkPushNotifications(tokens);
+          for (chunk of chunks) {
+            let notifications = chunk.map(token => {
+              return {
+                'to': token.pushToken,
+                'sound': 'default',
+                'title': notification.song.title,
+                'body': notification.song.lyrics,
+                'data': { 'song': notification.song },
+              };
+            });
+            try {
+              receipts.push(...await expo.sendPushNotificationsAsync(notifications));
+            } catch (error) {
+              let tokenString = chunk.map(token => token.pushToken ).join(', ');
+              console.error(`Error notifying with tokens [${tokenString}]: ${error}`);
+              errors.push(...chunk.map(token => `Error notifying with token ${token}: ${error}` ));
+            }
+          };
+          res.send({ 'errors': errors, 'receipts': receipts, 'notification': notification});
+        });
+      } else {
+        //no push notification
+        res.send(notification);
+      }
     });
   });
 
@@ -68,6 +105,7 @@ module.exports = app => {
     );
   });
 
+  // deletes notification
   app.delete('/api/notification/:id', (req, res) => {
     Notifications.findByIdAndRemove(req.params.id, error => {
       error
