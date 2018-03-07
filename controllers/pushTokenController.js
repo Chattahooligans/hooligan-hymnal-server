@@ -39,7 +39,7 @@ module.exports = app => {
         });
       } else {
         //token already exists, so updating timestamp
-        PushTokens.findByIdAndUpdate(req.params.id, req.body, (error, pushToken) => {
+        newToken.findByIdAndUpdate(req.params.id, req.body, (error, pushToken) => {
           error
             ? res
               .status(501)
