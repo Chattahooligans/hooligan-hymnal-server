@@ -24,12 +24,12 @@ module.exports = app => {
   app.post('/api/pushToken', (req, res) => {
     var newToken = PushTokens(req.body);
     var tokenString = req.body.pushToken;
-    newToken.lastUsed = new Date()
-      .getTime()
-      .toString();
     getToken(tokenString).then(function (token) {
       if (token === null) {
         //token is new
+        newToken.lastUsed = new Date()
+          .getTime()
+          .toString();
         newToken.save((error, pushToken) => {
           error
             ? res
@@ -39,7 +39,10 @@ module.exports = app => {
         });
       } else {
         //token already exists, so updating timestamp
-        newToken.findByIdAndUpdate(req.params.id, req.body, (error, pushToken) => {
+        token.lastUsed = new Date()
+          .getTime()
+          .toString();
+        token.findByIdAndUpdate(token._id, req.body, (error, pushToken) => {
           error
             ? res
               .status(501)
