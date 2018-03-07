@@ -6,13 +6,15 @@ var mongoose = require('mongoose');
 
 module.exports = app => {
   app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.urlencoded({extended: true}));
 
   // returns all push tokens
   app.get('/api/pushToken', (req, res) => {
     PushTokens.find((error, pushTokens) => {
       if (error) {
-        res.status(501).send({ error });
+        res
+          .status(501)
+          .send({error});
       }
       res.send(pushTokens);
     });
@@ -22,21 +24,46 @@ module.exports = app => {
   app.post('/api/pushToken', (req, res) => {
     var newToken = PushTokens(req.body);
     var tokenString = req.body.pushToken;
-    getToken(tokenString).then(function(token) {
+    newToken.lastUsed = new Date()
+      .getTime()
+      .toString();
+    getToken(tokenString).then(function (token) {
       if (token === null) {
         //token is new
         newToken.save((error, pushToken) => {
-          error ? res.status(501).send({ error }) : res.send(pushToken);
+          error
+            ? res
+              .status(501)
+              .send({error})
+            : res.send(pushToken);
         });
       } else {
-        //token already exists
+        //token already exists, so updating timestamp
+        PushTokens.findByIdAndUpdate(req.params.id, req.body, (error, pushToken) => {
+          error
+            ? res
+              .status(501)
+              .send({error})
+            : res.send(pushToken);
+        });
         res.send(token);
       }
     });
   });
 
+  // updates notification
+  app.put('/api/notification/:id', (req, res) => {
+    PushTokens.findByIdAndUpdate(req.params.id, req.body, (error, pushToken) => {
+      error
+        ? res
+          .status(501)
+          .send({error})
+        : res.send(pushToken);
+    });
+  });
+
   //validates that a push token doesn't already exist in database
   function getToken(newPushToken) {
-    return PushTokens.findOne({ pushToken: newPushToken });
+    return PushTokens.findOne({pushToken: newPushToken});
   }
 };

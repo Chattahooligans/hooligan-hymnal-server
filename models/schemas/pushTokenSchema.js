@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 
 module.exports = new mongoose.Schema({
-  pushToken: String
+  pushToken: String,
+  lastUsed: String
 });
