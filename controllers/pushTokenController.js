@@ -51,17 +51,6 @@ module.exports = app => {
     });
   });
 
-  // updates notification
-  app.put('/api/notification/:id', (req, res) => {
-    PushTokens.findByIdAndUpdate(req.params.id, req.body, (error, pushToken) => {
-      error
-        ? res
-          .status(501)
-          .send({error})
-        : res.send(pushToken);
-    });
-  });
-
   //validates that a push token doesn't already exist in database
   function getToken(newPushToken) {
     return PushTokens.findOne({pushToken: newPushToken});
