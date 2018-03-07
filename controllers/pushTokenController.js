@@ -41,7 +41,7 @@ module.exports = app => {
         //token already exists, so updating timestamp
         newToken.findOneAndUpdate({ pushToken: token }, {
           "$set": {
-            "lastUsed": new Date().getTime().toString();
+            "lastUsed": new Date().getTime().toString()
           }
         });
         res.send(token);
