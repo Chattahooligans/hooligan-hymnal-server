@@ -6,7 +6,13 @@ module.exports = new mongoose.Schema({
   squad_number: Number,
   position: String,
   teams: [{ type: ObjectId, ref: 'Team' }],
+  bio: String,
   image_thumbnail: String,
   image: String,
   image_hash: String
+}, {
+  timestamps: {
+    createdAt: 'create_time',
+    updatedAt: 'update_time'
+  }
 });
