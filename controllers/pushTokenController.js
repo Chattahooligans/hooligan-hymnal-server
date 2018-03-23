@@ -22,9 +22,9 @@ module.exports = app => {
 
   // creates new push token
   app.post('/api/pushToken', (req, res) => {
-    var now = new Date()
-      .getTime()
-      .toString();
+    var now = new Date().toISOString().
+      replace(/T/, ' ').      // replace T with a space
+      replace(/\..+/, '');
     var tokenData = Object.assign({}, req.body, { lastUsed: now });
 
     PushTokens.findOneAndUpdate(
