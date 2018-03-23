@@ -1,5 +1,8 @@
 # hymnal-server
 
+## API Reference
+You can find a reference on all of the methods and what they do [here](./API.md)
+
 ## Setup
 
 Tools you'll need: 
