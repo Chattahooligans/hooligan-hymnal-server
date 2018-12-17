@@ -1,45 +1,52 @@
-var express = require('express');
-var app = express();
-var mongoose = require('mongoose');
+let express = require("express");
+let app = express();
+let mongoose = require("mongoose");
 
-var songController = require('./controllers/songController');
-var playerController = require('./controllers/playerController');
-var notificationController = require('./controllers/notificationController');
-var pushTokenController = require('./controllers/pushTokenController');
+let songController = require("./controllers/songController");
+let playerController = require("./controllers/playerController");
+let notificationController = require("./controllers/notificationController");
+let pushTokenController = require("./controllers/pushTokenController");
+let songbookController = require("./controllers/songbookController");
 
-var port = process.env.PORT || 3000;
-let MONGO_URI = process.env.MONGO_URI;
+const port = process.env.PORT || 3000;
+const MONGO_URI = process.env.MONGO_URI;
 
-app.use('/assets', express.static(__dirname + '/public'));
+app.use("/assets", express.static(__dirname + "/public"));
 
 // Add headers
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
+  // Website you wish to allow to connect
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
 
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
+  // Request methods you wish to allow
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
 
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  // Request headers you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
 
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader("Access-Control-Allow-Credentials", true);
 
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-
-    // Pass to next layer of middleware
-    next();
+  // Pass to next layer of middleware
+  next();
 });
 
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 
-mongoose.connect(MONGO_URI, { useMongoClient: true });
+mongoose.connect(
+  MONGO_URI,
+  {useMongoClient: true}
+);
 
 songController(app);
 playerController(app);
 notificationController(app);
 pushTokenController(app);
+songbookController(app);
 
 app.listen(port);
-console.log('app listening on ' + port);
+console.log("app listening on " + port);
