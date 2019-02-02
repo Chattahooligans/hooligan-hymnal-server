@@ -12,7 +12,7 @@ module.exports = new mongoose.Schema(
     chapters: [
       {
         chapter_title: String,
-        songs: [{ _id: String }]
+        songs: [{ _id: String, featured: Boolean }]
       }
     ]
   },
