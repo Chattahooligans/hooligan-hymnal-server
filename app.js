@@ -2,11 +2,12 @@ let express = require("express");
 let app = express();
 let mongoose = require("mongoose");
 
-let songController = require("./controllers/songController");
-let playerController = require("./controllers/playerController");
-let notificationController = require("./controllers/notificationController");
 let pushTokenController = require("./controllers/pushTokenController");
+let notificationController = require("./controllers/notificationController");
+let songController = require("./controllers/songController");
 let songbookController = require("./controllers/songbookController");
+let playersController = require("./controllers/playersController");
+let rosterController = require("./controllers/rosterController");
 
 const port = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
@@ -42,11 +43,12 @@ mongoose.connect(
   {useMongoClient: true}
 );
 
-songController(app);
-playerController(app);
-notificationController(app);
 pushTokenController(app);
+notificationController(app);
+songController(app);
 songbookController(app);
+playersController(app);
+rosterController(app);
 
 app.listen(port);
 console.log("app listening on " + port);

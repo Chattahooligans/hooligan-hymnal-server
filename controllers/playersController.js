@@ -20,14 +20,14 @@ module.exports = app => {
   });
 
   // returns single player by _id
-  app.get('/api/player/:id', (req, res) => {
+  app.get('/api/players/:id', (req, res) => {
     Players.findById(req.params.id, (error, player) => {
       res.send(song);
     });
   });
 
   // creates player
-  app.post('/api/player', (req, res) => {
+  app.post('/api/players', (req, res) => {
     var newPlayer = Players(req.body);
     newPlayer.save((error, player) => {
       error ? res.status(501).send({ error }) : res.send(player);
@@ -35,14 +35,14 @@ module.exports = app => {
   });
 
   // updates player
-  app.put('/api/player/:id', (req, res) => {
+  app.put('/api/players/:id', (req, res) => {
     Players.findByIdAndUpdate(req.params.id, req.body, (error, player) => {
       error ? res.status(501).send({ error }) : res.send(player);
     });
   });
 
   //deletes player
-  app.delete('/api/player/:id', (req, res) => {
+  app.delete('/api/players/:id', (req, res) => {
     Players.findByIdAndRemove(req.params.id, error => {
       error
         ? res.status(501).send({ error })

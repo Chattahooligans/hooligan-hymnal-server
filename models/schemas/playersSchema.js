@@ -3,13 +3,11 @@ var ObjectId = mongoose.Schema.Types.ObjectId;
 
 module.exports = new mongoose.Schema({
   name: String,
-  squad_number: Number,
+  squadNumber: Number,
   position: String,
-  teams: [{ type: ObjectId, ref: 'Team' }],
+  team: String,
   bio: String,
-  image_thumbnail: String,
-  image: String,
-  image_hash: String
+  image: String
 }, {
   timestamps: {
     createdAt: 'create_time',

@@ -1,4 +1,4 @@
 var mongoose = require('mongoose');
-var playerSchema = require('./schemas/playerSchema');
+var playersSchema = require('./schemas/playersSchema');
 
-module.exports = mongoose.model('player', playerSchema);
+module.exports = mongoose.model('players', playersSchema);
