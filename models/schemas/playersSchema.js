@@ -7,7 +7,10 @@ module.exports = new mongoose.Schema({
   position: String,
   team: String,
   bio: String,
-  image: String
+  thumbnail: String,
+  image: String,
+  twitter: String,
+  instagram: String
 }, {
   timestamps: {
     createdAt: 'create_time',
