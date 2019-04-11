@@ -6,12 +6,10 @@ module.exports = new mongoose.Schema(
     delete_local: String,
     instructions: String,
     lyrics: String,
-    override_html: String,
     player_id: String,
     reference_link: String,
     reference_title: String,
-    tags: String,
-    tbd_various_boolean_flags: String,
+    legend: String,
     title: String
   },
   {
