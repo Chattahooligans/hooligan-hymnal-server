@@ -4,13 +4,13 @@ module.exports = new mongoose.Schema(
   {
     category: String,
     delete_local: String,
+    title: String,
     instructions: String,
     lyrics: String,
-    player_id: String,
-    reference_link: String,
     reference_title: String,
-    legend: String,
-    title: String
+    reference_link: String,
+    player_id: String,
+    legend: String
   },
   {
     timestamps: {
