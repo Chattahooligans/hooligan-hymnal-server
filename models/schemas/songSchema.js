@@ -10,7 +10,8 @@ module.exports = new mongoose.Schema(
     reference_title: String,
     reference_link: String,
     player_id: String,
-    legend: String
+    legend: String,
+    capoSignal: String
   },
   {
     timestamps: {
