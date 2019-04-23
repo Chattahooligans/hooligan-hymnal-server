@@ -8,7 +8,7 @@ module.exports = new mongoose.Schema(
     squads: [
       {
         squadTitle: String,
-        players: [{ _id: String }]
+        players: [{ _id: String, hint: String }]
       }
     ]
   },
