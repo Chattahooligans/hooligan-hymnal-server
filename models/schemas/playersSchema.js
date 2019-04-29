@@ -3,6 +3,7 @@ var ObjectId = mongoose.Schema.Types.ObjectId;
 
 module.exports = new mongoose.Schema({
   name: String,
+  flag: String,
   squadNumber: String,
   position: String,
   team: String,
