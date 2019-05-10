@@ -8,6 +8,7 @@ let songController = require("./controllers/songController");
 let songbookController = require("./controllers/songbookController");
 let playersController = require("./controllers/playersController");
 let rosterController = require("./controllers/rosterController");
+let goalkeeperNicknameController = require("./controllers/goalkeeperNicknameController");
 
 const port = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
@@ -49,6 +50,7 @@ songController(app);
 songbookController(app);
 playersController(app);
 rosterController(app);
+goalkeeperNicknameController(app);
 
 app.listen(port);
 console.log("app listening on " + port);
