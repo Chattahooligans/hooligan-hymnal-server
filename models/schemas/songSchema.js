@@ -9,6 +9,7 @@ module.exports = new mongoose.Schema(
     lyrics: String,
     reference_title: String,
     reference_link: String,
+    sheetMusicLink: String,
     player_id: String,
     legend: String,
     capoSignal: String
