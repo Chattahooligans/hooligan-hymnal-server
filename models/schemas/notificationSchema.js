@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
 var songSchema = require("./songSchema");
+var goalkeeperNicknameSchema = require("./goalkeeperNicknameSchema");
 var announcementSchema = require("./announcementSchema");
 
 module.exports = new mongoose.Schema({
@@ -11,5 +12,6 @@ module.exports = new mongoose.Schema({
   message: String,
   push: Boolean,
   song: songSchema,
+  goalkeeperNickname: goalkeeperNicknameSchema,
   announcement: announcementSchema
 });
