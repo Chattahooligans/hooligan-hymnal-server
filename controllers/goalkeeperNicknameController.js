@@ -12,9 +12,9 @@ module.exports = app => {
   // returns most recent goalkeeper nickname
   app.get('/api/goalkeeperNicknames/last', (req, res) => {
     GoalkeeperNickname.find()
-      .sort({ send_time: -1 })
+      .sort({ createdAt: -1 })
       .limit(1)
-      .then(notificgoalkeeperNicknamesations => {
+      .then(goalkeeperNicknames => {
         if (goalkeeperNicknames.length) {
           res.send(goalkeeperNicknames[0]);
         } else {
