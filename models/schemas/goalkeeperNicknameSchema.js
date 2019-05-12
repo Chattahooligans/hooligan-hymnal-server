@@ -9,8 +9,8 @@ module.exports = new mongoose.Schema(
   },
   {
     timestamps: {
-      createdAt: "create_time",
-      updatedAt: "update_time"
+      createdAt: "createdAt",
+      updatedAt: "updatedAt"
     }
   }
 );
