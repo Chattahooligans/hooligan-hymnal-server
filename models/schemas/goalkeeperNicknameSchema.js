@@ -5,7 +5,8 @@ module.exports = new mongoose.Schema(
   {
     nickname: String,
     backgroundColor: String,
-    textColor: String
+    textColor: String,
+    push: Boolean
   },
   {
     timestamps: {
