@@ -3,10 +3,11 @@ var ObjectId = mongoose.Schema.Types.ObjectId;
 
 module.exports = new mongoose.Schema(
   {
+    sender: String,
+    push: Boolean,
     nickname: String,
     backgroundColor: String,
-    textColor: String,
-    push: Boolean
+    textColor: String
   },
   {
     timestamps: {
