@@ -36,8 +36,48 @@ module.exports = app => {
   // creates goalkeeperNickname
   app.post("/api/goalkeeperNicknames", (req, res) => {
     var newGoalkeeperNickname = GoalkeeperNickname(req.body);
-    newGoalkeeperNickname.save((error, goalkeeperNickname) => {
-      error ? res.status(501).send({error}) : res.send(goalkeeperNickname);
+    newGoalkeeperNickname.save((error, gkMessage) => {
+      if (error) {
+        console.log("error: ", error);
+        res.status(501).send({ error: `Error saving notification: ${error}` });
+      } else if (gkMessage.push) {
+        console.log('no error, pushing forward');
+        PushTokens.find(async(error, tokens) => {
+          if (error) {
+            console.log('error 2: ', error);
+            res.status(501).send({ 'error': `Error fetching push tokens: ${error}` });
+            return;
+          }
+
+          let errors = [];
+          let receipts = [];
+          let chunks = expo.chunkPushNotifications(tokens);
+          for (chunk of chunks) {
+            let notifications = chunk.map(token => {
+              console.log('trying to send notification to token: ', token.pushToken);
+              return {
+                'to': token.pushToken,
+                'sound': 'default',
+                'title': "We're gonna score on you...",
+                'body': '🖐 ' + gkMessage.nickname
+              };
+            });
+            try {
+              console.log('trying to push');
+              receipts.push(...await expo.sendPushNotificationsAsync(notifications));
+            } catch (error) {
+              console.log('there was a problem with the push');
+              let tokenString = chunk.map(token => token.pushToken ).join(', ');
+              console.error(`Error notifying with tokens [${tokenString}]: ${error}`);
+              errors.push(...chunk.map(token => `Error notifying with token ${token}: ${error}` ));
+            }
+          };
+          res.send({ 'errors': errors, 'receipts': receipts, 'gkMessage': gkMessage});
+        });
+      } else {
+        //no push notification
+        res.send(gkMessage);
+      }
     });
   });
 };
