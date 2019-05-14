@@ -59,7 +59,7 @@ module.exports = app => {
                 'to': token.pushToken,
                 'sound': 'default',
                 'title': "We're gonna score on you...",
-                'body': '🖐 ' + gkMessage.nickname
+                'body': gkMessage.nickname
               };
             });
             try {
