@@ -1,5 +1,8 @@
+var Expo = require('expo-server-sdk');
 var GoalkeeperNickname = require("../models/goalkeeperNickname");
+var PushTokens = require('../models/pushTokens');
 var bodyParser = require("body-parser");
+let expo = new Expo();
 
 module.exports = app => {
   app.use(bodyParser.json());
@@ -35,6 +38,7 @@ module.exports = app => {
 
   // creates goalkeeperNickname
   app.post("/api/goalkeeperNicknames", (req, res) => {
+    console.log('entering post for gk nickname push');
     var newGoalkeeperNickname = GoalkeeperNickname(req.body);
     newGoalkeeperNickname.save((error, gkMessage) => {
       if (error) {
@@ -59,8 +63,7 @@ module.exports = app => {
                 'to': token.pushToken,
                 'sound': 'default',
                 'title': 'We\u2019re gonna score on you...',
-                'body': gkMessage.nickname,
-                'data': {}
+                'body': '🖐 '+ gkMessage.nickname
               };
             });
             try {
