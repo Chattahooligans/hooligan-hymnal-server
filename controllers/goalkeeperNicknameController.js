@@ -58,8 +58,9 @@ module.exports = app => {
               return {
                 'to': token.pushToken,
                 'sound': 'default',
-                'title': "We're gonna score on you...",
-                'body': gkMessage.nickname
+                'title': 'We\u2019re gonna score on you...',
+                'body': gkMessage.nickname,
+                'data': {}
               };
             });
             try {
