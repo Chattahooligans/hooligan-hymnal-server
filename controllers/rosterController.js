@@ -2,7 +2,6 @@ var Roster = require("../models/roster");
 var bodyParser = require("body-parser");
 var config = require("../config.js");
 
-
 var roster_cache = {
   data: null,
   last_refresh: 0,
