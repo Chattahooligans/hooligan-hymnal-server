@@ -10,7 +10,9 @@ var song_cache = {
     var that = this;
     Songs.find((error, songs) => {
       if (error) {
-        that.data = {};
+        that.data = null;
+        that.last_refresh = 0;
+        if(res != null) res.send(error);
       }
       that.data = songs;
       that.last_refresh = Date.now();
@@ -19,10 +21,8 @@ var song_cache = {
   },
   send_data: function(res) {
     if(this.last_refresh + config.cache_timeout < Date.now()) {
-      console.log("forcing reload");
       this.force_reload(res);
     } else {
-      console.log("sending from cache");
       res.send(this.data);
     }
   }
@@ -58,16 +58,16 @@ module.exports = app => {
     var newSong = Songs(req.body);
     newSong.save((error, song) => {
       error ? res.status(501).send({ error }) : res.send(song);
+      song_cache.force_reload();
     });
-    song_cache.force_reload();
   });
 
   // updates song
   app.put('/api/song/:id', (req, res) => {
     Songs.findByIdAndUpdate(req.params.id, req.body, (error, song) => {
       error ? res.status(501).send({ error }) : res.send(song);
+      song_cache.force_reload();
     });
-    song_cache.force_reload();
   });
 
   // deletes song
@@ -76,7 +76,7 @@ module.exports = app => {
       error
         ? res.status(501).send({ error })
         : res.send({ message: 'Deleted' + req.params.id });
+        song_cache.force_reload();
     });
-    song_cache.force_reload();
   });
 };
