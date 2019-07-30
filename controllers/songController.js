@@ -1,6 +1,32 @@
 var Songs = require('../models/songs');
 var Notifications = require('../models/notifications');
 var bodyParser = require('body-parser');
+var config = require("../config.js");
+
+var song_cache = {
+  data: null,
+  last_refresh: 0,
+  force_reload: function(res) {
+    var that = this;
+    Songs.find((error, songs) => {
+      if (error) {
+        that.data = null;
+        that.last_refresh = 0;
+        if(res != null) res.send(error);
+      }
+      that.data = songs;
+      that.last_refresh = Date.now();
+      if(res != null) res.send(that.data);
+    });
+  },
+  send_data: function(res) {
+    if(this.last_refresh + config.cache_timeout < Date.now()) {
+      this.force_reload(res);
+    } else {
+      res.send(this.data);
+    }
+  }
+}
 
 module.exports = app => {
   app.use(bodyParser.json());
@@ -17,12 +43,7 @@ module.exports = app => {
 
   // returns all songs
   app.get('/api/songs', (req, res) => {
-    Songs.find((error, songs) => {
-      if (error) {
-        res.status(501).send({ error });
-      }
-      res.send(songs);
-    });
+    song_cache.send_data(res);
   });
 
   // returns single song by _id
@@ -37,6 +58,7 @@ module.exports = app => {
     var newSong = Songs(req.body);
     newSong.save((error, song) => {
       error ? res.status(501).send({ error }) : res.send(song);
+      song_cache.force_reload();
     });
   });
 
@@ -44,6 +66,7 @@ module.exports = app => {
   app.put('/api/song/:id', (req, res) => {
     Songs.findByIdAndUpdate(req.params.id, req.body, (error, song) => {
       error ? res.status(501).send({ error }) : res.send(song);
+      song_cache.force_reload();
     });
   });
 
@@ -53,6 +76,7 @@ module.exports = app => {
       error
         ? res.status(501).send({ error })
         : res.send({ message: 'Deleted' + req.params.id });
+        song_cache.force_reload();
     });
   });
 };

@@ -10,6 +10,8 @@ let playersController = require("./controllers/playersController");
 let rosterController = require("./controllers/rosterController");
 let goalkeeperNicknameController = require("./controllers/goalkeeperNicknameController");
 
+let config = require("./config");
+
 const port = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
 
