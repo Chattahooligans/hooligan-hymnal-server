@@ -42,6 +42,10 @@ module.exports = app => {
 
   // creates songbook
   app.post("/api/songbook", (req, res) => {
+    if(req.body.authKey !== process.env.AUTH_KEY) {
+      res.status(403).send( {'error' : "bad auth key"});
+      return;
+    }
     var newSongbook = Songbook(req.body);
     newSongbook.save((error, songbook) => {
       error ? res.status(501).send({error}) : res.send(songbook);
@@ -51,6 +55,10 @@ module.exports = app => {
 
   // updates songbook
   app.put("/api/songbook/:id", (req, res) => {
+    if(req.body.authKey !== process.env.AUTH_KEY) {
+      res.status(403).send( {'error' : "bad auth key"});
+      return;
+    }
     Songbook.findByIdAndUpdate(req.params.id, req.body, (error, songbook) => {
       error ? res.status(501).send({error}) : res.send(songbook);
       songbook_cache.force_reload();
@@ -59,6 +67,10 @@ module.exports = app => {
 
   // deletes songbook
   app.delete("/api/songbook/:id", (req, res) => {
+    if(req.body.authKey !== process.env.AUTH_KEY) {
+      res.status(403).send( {'error' : "bad auth key"});
+      return;
+    }
     Songbook.findByIdAndRemove(req.params.id, error => {
       error
         ? res.status(501).send({error})

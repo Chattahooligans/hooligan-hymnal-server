@@ -42,6 +42,10 @@ module.exports = app => {
 
   // creates roster
   app.post("/api/roster", (req, res) => {
+    if(req.body.authKey !== process.env.AUTH_KEY) {
+      res.status(403).send( {'error' : "bad auth key"});
+      return;
+    }
     var newRoster = Roster(req.body);
     newRoster.save((error, roster) => {
       error ? res.status(501).send({error}) : res.send(roster);
@@ -51,6 +55,10 @@ module.exports = app => {
 
   // updates roster
   app.put("/api/roster/:id", (req, res) => {
+    if(req.body.authKey !== process.env.AUTH_KEY) {
+      res.status(403).send( {'error' : "bad auth key"});
+      return;
+    }
     Roster.findByIdAndUpdate(req.params.id, req.body, (error, roster) => {
       error ? res.status(501).send({error}) : res.send(roster);
       roster_cache.force_reload();
@@ -59,6 +67,10 @@ module.exports = app => {
 
   // deletes roster
   app.delete("/api/roster/:id", (req, res) => {
+    if(req.body.authKey !== process.env.AUTH_KEY) {
+      res.status(403).send( {'error' : "bad auth key"});
+      return;
+    }
     Roster.findByIdAndRemove(req.params.id, error => {
       error
         ? res.status(501).send({error})

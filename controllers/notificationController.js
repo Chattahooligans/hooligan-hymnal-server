@@ -54,6 +54,10 @@ module.exports = app => {
   // creates new notification and sends it as a push to all registered devices
   app.post('/api/notification', (req, res) => {
     console.log('entering post for notification push');
+    if(req.body.authKey !== process.env.AUTH_KEY) {
+      res.status(403).send( {'error' : "bad auth key"});
+      return;
+    }
     var newNotification = Notifications(req.body);
     newNotification.save((error, notification) => {
       if (error) {
@@ -103,6 +107,10 @@ module.exports = app => {
 
   // updates notification
   app.put('/api/notification/:id', (req, res) => {
+    if(req.body.authKey !== process.env.AUTH_KEY) {
+      res.status(403).send( {'error' : "bad auth key"});
+      return;
+    }
     Notifications.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -114,6 +122,10 @@ module.exports = app => {
 
   // deletes notification
   app.delete('/api/notification/:id', (req, res) => {
+    if(req.body.authKey !== process.env.AUTH_KEY) {
+      res.status(403).send( {'error' : "bad auth key"});
+      return;
+    }
     Notifications.findByIdAndRemove(req.params.id, error => {
       error
         ? res.status(501).send({ error })
