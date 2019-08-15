@@ -11,7 +11,7 @@ module.exports = app => {
   );
 
   // is this the right password?
-  app.get('/api/authCheck/', (req, res) => {    
+  app.get('/api/authCheck', (req, res) => {    
     if(req.body.authKey !== process.env.AUTH_KEY) {
       res.status(403).send( {'error' : "bad auth key"});
       return;
