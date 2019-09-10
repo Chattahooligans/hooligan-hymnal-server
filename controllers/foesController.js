@@ -1,19 +1,19 @@
-var Players = require('../models/players');
+var Foes = require('../models/foes');
 var bodyParser = require('body-parser');
 var config = require("../config.js");
 
-var players_cache = {
+var foes_cache = {
   data: null,
   last_refresh: 0,
   force_reload: function(res) {
     var that = this;
-    Players.find((error, players) => {
+    Foes.find((error, foes) => {
       if (error) {
         that.data = null;
         that.last_refresh = 0;
         if(res != null) res.send(error);
       }
-      that.data = players;
+      that.data = foes;
       that.last_refresh = Date.now();
       if(res != null) res.send(that.data);
     });
@@ -36,28 +36,28 @@ module.exports = app => {
   );
 
   // returns all players
-  app.get('/api/players', (req, res) => {
-    players_cache.send_data(res);
+  app.get('/api/foes', (req, res) => {
+    foes_cache.send_data(res);
   });
 
   // returns single player by _id
-  app.get('/api/players/:id', (req, res) => {
-    Players.findById(req.params.id, (error, player) => {
-      res.send(player);
-      players_cache.force_reload();
+  app.get('/api/foes/:id', (req, res) => {
+    Foes.findById(req.params.id, (error, foe) => {
+      res.send(foe);
+      foes_cache.force_reload();
     });
   });
 
   // creates player
-  app.post('/api/players', (req, res) => {
+  app.post('/api/foes', (req, res) => {
     if(req.body.authKey !== process.env.AUTH_KEY) {
       res.status(403).send( {'error' : "bad auth key"});
       return;
     }
-    var newPlayer = Players(req.body);
-    newPlayer.save((error, player) => {
-      error ? res.status(501).send({ error }) : res.send(player);
-      players_cache.force_reload();
+    var newFoe = Foes(req.body);
+    newFoe.save((error, foe) => {
+      error ? res.status(501).send({ error }) : res.send(foe);
+      foes_cache.force_reload();
     });
   });
 
@@ -67,9 +67,9 @@ module.exports = app => {
       res.status(403).send( {'error' : "bad auth key"});
       return;
     }
-    Players.findByIdAndUpdate(req.params.id, req.body, (error, player) => {
-      error ? res.status(501).send({ error }) : res.send(player);
-      players_cache.force_reload();
+    Foes.findByIdAndUpdate(req.params.id, req.body, (error, foe) => {
+      error ? res.status(501).send({ error }) : res.send(foe);
+      foes_cache.force_reload();
     });
   });
 
@@ -79,11 +79,11 @@ module.exports = app => {
       res.status(403).send( {'error' : "bad auth key"});
       return;
     }
-    Players.findByIdAndRemove(req.params.id, error => {
+    Foes.findByIdAndRemove(req.params.id, error => {
       error
         ? res.status(501).send({ error })
         : res.send({ message: 'Deleted' + req.params.id });
-      players_cache.force_reload();
+      foes_cache.force_reload();
     });
   });
 };

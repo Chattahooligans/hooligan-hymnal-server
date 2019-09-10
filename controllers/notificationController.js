@@ -58,7 +58,9 @@ module.exports = app => {
       res.status(403).send( {'error' : "bad auth key"});
       return;
     }
+    console.log(req.body);
     var newNotification = Notifications(req.body);
+    console.log('retrieved notification from body');
     newNotification.save((error, notification) => {
       if (error) {
         console.log("error: ", error);
