@@ -4,7 +4,9 @@
   "description": "Serving those diss tracks like we're the Paul brothers",
   "main": "index.js",
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
+    "cookies": "^0.7.3",
     "ejs": "^2.7.1",
     "expo-server-sdk": "^2.4.0",
     "express": "^4.17.1",
@@ -12,6 +14,7 @@
     "mongoose": "^4.13.19",
     "node": "^9.11.2",
     "npm": "^6.11.3",
+    "uuid": "^3.3.3",
     "yarn": ">=1.17.3"
   },
   "devDependencies": {},

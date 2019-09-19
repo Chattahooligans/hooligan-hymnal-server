@@ -11,6 +11,7 @@ let rosterController = require("./controllers/rosterController");
 let goalkeeperNicknameController = require("./controllers/goalkeeperNicknameController");
 let authCheckController = require("./controllers/authCheckController");
 let foesController = require("./controllers/foesController");
+let usersController = require("./controllers/usersController");
 
 let config = require("./config");
 
@@ -57,6 +58,7 @@ rosterController(app);
 goalkeeperNicknameController(app);
 authCheckController(app);
 foesController(app);
+usersController(app);
 
 app.listen(port);
 console.log("app listening on " + port);
