@@ -9,20 +9,27 @@ const Song = ({ songId }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    getSong(songId)
+  })
+
+  const getSong = (songId) => {
     Axios.get(`/song/${songId}`)
-      .then(({ data }) => console.log(data))
+      .then(({ data }) => setSong(data))
       .catch(err => console.error(err))
-  }, [setSong])
+    console.log(`Getting Song ${songId}`)
+  }
 
   return (
-    <Layout
-      title={`${song.title}`}>
+    // <Layout
+    //   title={`${song.title}`}>
+    <>
         {song.length ? (
           <h2>{song.title}</h2>
         ) : (
           <h2>No song with id: {songId}</h2>
         )}
-    </Layout>
+      </>
+    // </Layout>
   )
 }
 
