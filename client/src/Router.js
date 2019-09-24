@@ -8,6 +8,13 @@ import NotFound from 'pages/NotFound';
 import SongsIndex from 'pages/SongsIndex';
 import EditSong from 'pages/Songs/EditSong';
 import NewSong from 'pages/Songs/NewSong';
+// Index pages
+import SongBookIndex from 'pages/SongBook/SongBookIndex';
+import PlayersIndex from 'pages/Players/PlayersIndex';
+import RosterIndex from 'pages/Roster/RosterIndex';
+import GoalKeeperNicknameIndex from 'pages/GoalKeeperNickname/GoalKeeperNicknameIndex';
+import FoesIndex from 'pages/Foes/FoesIndex';
+import UsersIndex from 'pages/Users/UsersIndex';
 
 const AppRouter = () => (
   <Router>
@@ -19,6 +26,24 @@ const AppRouter = () => (
       <Song path=":songId" />
       <EditSong path=":songId/edit" />
     </SongsIndex>
+    <SongBookIndex path="song-books">
+      {/* Add Songbooks routes here */}
+    </SongBookIndex>
+    <PlayersIndex path="players">
+      {/* Add Players routes here */}
+    </PlayersIndex>
+    <RosterIndex path="roster">
+      {/* Add Roster routes here */}
+    </RosterIndex>
+    <GoalKeeperNicknameIndex path="goalkeeper-nickname">
+      {/* Add GoalKeeperNickname routes here */}
+    </GoalKeeperNicknameIndex>
+    <FoesIndex path="foes">
+      {/* Add Foes routes here */}
+    </FoesIndex>
+    <UsersIndex path="users">
+      {/* Add Users routes here */}
+    </UsersIndex>
   </Router>
 );
 
