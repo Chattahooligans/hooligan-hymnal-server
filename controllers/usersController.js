@@ -1,5 +1,6 @@
 var Users = require('../models/users');
 var UserCredentials = require('../models/userCredentials');
+var Sessions = require('../models/sessions');
 var bodyParser = require('body-parser');
 var bcrypt = require('bcrypt');
 var Cookies = require('cookies');
@@ -54,6 +55,13 @@ module.exports = app => {
           var cookies = new Cookies(req, res, { keys: keys });
           var sessionKey = uuidv4();
           cookies.set('SessionKey', sessionKey, { signed: true });
+          var session = Sessions();
+          session.email = user.email;
+          session.sessionKey = sessionKey;
+          //token expires one year from now. Encourages complex-enough passwords
+          //while still logging people out as phones die, people leave, etc
+          session.expiresOn = new Date(new Date().setFullYear(new Date().getFullYear() + 1));
+          session.save();
           res.send("sessionKey " + sessionKey);
         } else {
           //failure, return failure
@@ -65,6 +73,7 @@ module.exports = app => {
 
   // updates user
   app.put('/api/users/:id', (req, res) => {
+    //not implemented yet, use nosqlbooster for now
     return;
     //validate cookie
     Users.findByIdAndUpdate(
@@ -76,8 +85,9 @@ module.exports = app => {
     );
   });
 
-  // deletes notification
+  // deletes user
   app.delete('/api/users/:id', (req, res) => {
+    //not implemented yet, use nosqlbooster for now
     return;
     //validate cookie
     Users.findByIdAndRemove(req.params.id, error => {
