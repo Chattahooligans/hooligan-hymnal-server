@@ -6,3 +6,5 @@ const UsersIndex = ({ children }) => (
     {children}
   </Layout>
 )
+
+export default UsersIndex

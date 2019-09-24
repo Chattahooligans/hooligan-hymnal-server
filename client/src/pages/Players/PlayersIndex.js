@@ -6,3 +6,5 @@ const PlayersIndex = ({ children }) => (
     {children}
   </Layout>
 )
+
+export default PlayersIndex
