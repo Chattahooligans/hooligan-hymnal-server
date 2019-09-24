@@ -4,17 +4,33 @@ import { Link } from '@reach/router'
 const Layout = ({ title, children }) => {
   useEffect(() => {
     if (title) document.title = `${title}`
-  })
+  }, [title])
   return (
     <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link> | <Link to="/songs">All Songs</Link>
-        </nav>
+      <header style={{padding: '.3em'}}>
+        <Link to="/">Hymnal Admin</Link>
       </header>
-      <main id="main">
-        {children}
-      </main>
+      <section style={{
+        display: 'flex'
+      }}>
+        <aside>
+          <nav style={{
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <Link to="/songs">All Songs</Link>
+            <Link to="/song-books">Song Books</Link>
+            <Link to="/players">All Players</Link>
+            <Link to="/roster">Roster</Link>
+            <Link to="/goalkeeper-nickname">Goalkeeper Nickname</Link>
+            <Link to="/foes">foes</Link>
+            <Link to="/users">Users</Link>
+          </nav>
+        </aside>
+        <main id="main">
+          {children}
+        </main>
+      </section>
     </>
   )
 };
