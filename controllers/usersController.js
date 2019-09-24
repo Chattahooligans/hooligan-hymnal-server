@@ -1,6 +1,7 @@
 var Users = require('../models/users');
 var UserCredentials = require('../models/userCredentials');
 var Sessions = require('../models/sessions');
+var Permissions = require('../models/permissions');
 var bodyParser = require('body-parser');
 var bcrypt = require('bcrypt');
 var Cookies = require('cookies');
@@ -44,7 +45,9 @@ module.exports = app => {
 
   // logs the user in and returns a cookie
   app.post('/api/users/login', (req, res) => {
-
+    Permissions.userCanEditRoster(req, res, (result) => {
+      console.log("permission returned " + result);
+    })
     var userCredentials = UserCredentials(req.body);
     Users.findOne({email: userCredentials.email}, (error, user) => {
       bcrypt.compare(userCredentials.password, user.hash, function(err, result) {
@@ -69,6 +72,11 @@ module.exports = app => {
         }
       });
     });
+  });
+
+  app.post('api/users/testcookie', (req, res) => {  
+    var cookies = new Cookies(req, res, { keys: keys });
+    console.log(cookies.get("SessionKey", {signed: true}));
   });
 
   // updates user
