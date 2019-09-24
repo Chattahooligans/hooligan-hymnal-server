@@ -7,7 +7,6 @@ var bcrypt = require('bcrypt');
 var Cookies = require('cookies');
 const uuidv4 = require('uuid/v4');
 const saltRounds = 10;
-const keys = ["TEST DON'T USE THIS"];
 
 module.exports = app => {
   app.use(bodyParser.json());
@@ -47,7 +46,7 @@ module.exports = app => {
   app.post('/api/users/login', (req, res) => {
     Permissions.userCanEditRoster(req, res, (result) => {
       console.log("permission returned " + result);
-    })
+    });
     var userCredentials = UserCredentials(req.body);
     Users.findOne({email: userCredentials.email}, (error, user) => {
       bcrypt.compare(userCredentials.password, user.hash, function(err, result) {
@@ -55,7 +54,7 @@ module.exports = app => {
           //success, return a cookie
           //TODO: save sessionKey into session store
           //TODO: set a random key in the database or heroku vars
-          var cookies = new Cookies(req, res, { keys: keys });
+          var cookies = new Cookies(req, res, { keys: [process.env.COOKIE_KEY] });
           var sessionKey = uuidv4();
           cookies.set('SessionKey', sessionKey, { signed: true });
           var session = Sessions();

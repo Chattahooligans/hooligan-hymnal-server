@@ -1,7 +1,6 @@
 var Cookies = require('cookies');
 var Sessions = require('../models/sessions');
 var Users = require('../models/users');
-const keys = ["TEST DON'T USE THIS"];
 
 module.exports.userCanEditRoster = function(req, res, callback) {
     getUser(req, res, (user) => {
@@ -44,10 +43,10 @@ module.exports.userCanEditFoes = function(req, res, callback) {
 }
 
 function getUser(req, res, callback) {
-    var cookies = new Cookies(req, res, { keys: keys });
+    var cookies = new Cookies(req, res, { keys: [process.env.COOKIE_KEY] });
     var sessionKey = cookies.get("SessionKey", {signed: true});
     Sessions.findOne({sessionKey: sessionKey}, (error, session) => { 
-        if(error) {
+        if(error || session == null) {
             callback(null);
             return;
         }
