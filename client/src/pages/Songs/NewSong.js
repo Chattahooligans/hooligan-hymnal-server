@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Axios from "axios";
-import { redirectTo, navigate } from "@reach/router";
+import { navigate } from "@reach/router";
 
-import NewSongForm from "forms/NewSongForm";
+import SongForm from "forms/SongForm";
 
 const NewSong = () => {
   const [values, setValues] = useState({
@@ -24,7 +24,7 @@ const NewSong = () => {
     setValues({ ...values, [name]: value });
   };
 
-  const handelFormSubmit = e => {
+  const handleFormSubmit = e => {
     e.preventDefault();
     Axios.post("/api/song", values)
       .then(({ data }) => {
@@ -53,9 +53,9 @@ const NewSong = () => {
   return (
     <>
       <h2>New Song</h2>
-      <NewSongForm
+      <SongForm
         values={values}
-        handelFormSubmit={handelFormSubmit}
+        handleFormSubmit={handleFormSubmit}
         handleInputChange={handleInputChange}
         resetForm={resetForm}
       />

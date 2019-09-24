@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, redirectTo, navigate } from "@reach/router";
-import Layout from "layouts/Layout";
 import Axios from "axios";
-import NotFound from "pages/NotFound";
 
 const Song = ({ songId }) => {
   const [song, setSong] = useState({});
 
   useEffect(() => {
     getSong(songId);
-  }, [setSong]);
+  }, [songId]);
 
   const getSong = songId => {
     Axios.get(`/api/song/${songId}`)
@@ -30,7 +28,7 @@ const Song = ({ songId }) => {
     <>
       <h2>{song.title}</h2>
       <div>
-        <Link to={`${song._id}/edit`}>Edit</Link> |{" "}
+        <Link to="edit">Edit</Link> |{" "}
         <button onClick={deleteSong}>Delete</button>
       </div>
       <div>{song.lyrics}</div>

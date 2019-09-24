@@ -19,8 +19,6 @@ const AppRouter = () => (
       <Song path=":songId" />
       <EditSong path=":songId/edit" />
     </SongsIndex>
-    {/* <Songs path="songs" />
-    <Song path="songs/:songId" /> */}
   </Router>
 );
 
