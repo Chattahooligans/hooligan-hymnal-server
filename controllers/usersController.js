@@ -44,16 +44,11 @@ module.exports = app => {
 
   // logs the user in and returns a cookie
   app.post('/api/users/login', (req, res) => {
-    Permissions.userCanEditRoster(req, res, (result) => {
-      console.log("permission returned " + result);
-    });
     var userCredentials = UserCredentials(req.body);
     Users.findOne({email: userCredentials.email}, (error, user) => {
       bcrypt.compare(userCredentials.password, user.hash, function(err, result) {
         if(result && !err) {
           //success, return a cookie
-          //TODO: save sessionKey into session store
-          //TODO: set a random key in the database or heroku vars
           var cookies = new Cookies(req, res, { keys: [process.env.COOKIE_KEY] });
           var sessionKey = uuidv4();
           cookies.set('SessionKey', sessionKey, { signed: true });
