@@ -1,36 +1,41 @@
-import React, { useState, useEffect } from 'react'
-import { redirectTo } from '@reach/router'
-import Layout from 'layouts/Layout'
-import Axios from 'axios';
-import NotFound from 'pages/NotFound';
+import React, { useState, useEffect } from "react";
+import { Link, redirectTo, navigate } from "@reach/router";
+import Layout from "layouts/Layout";
+import Axios from "axios";
+import NotFound from "pages/NotFound";
 
 const Song = ({ songId }) => {
   const [song, setSong] = useState({});
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getSong(songId)
-  })
+    getSong(songId);
+  }, [setSong]);
 
-  const getSong = (songId) => {
-    Axios.get(`/song/${songId}`)
+  const getSong = songId => {
+    Axios.get(`/api/song/${songId}`)
       .then(({ data }) => setSong(data))
-      .catch(err => console.error(err))
-    console.log(`Getting Song ${songId}`)
-  }
+      .catch(err => redirectTo("404"));
+  };
+
+  const deleteSong = () => {
+    Axios.delete(`/api/song/${songId}`)
+      .then(res => {
+        alert(`${song.title} was deleted successfully`);
+        navigate("/songs");
+      })
+      .catch(res => console.error(res));
+  };
 
   return (
-    // <Layout
-    //   title={`${song.title}`}>
     <>
-        {song.length ? (
-          <h2>{song.title}</h2>
-        ) : (
-          <h2>No song with id: {songId}</h2>
-        )}
-      </>
-    // </Layout>
-  )
-}
+      <h2>{song.title}</h2>
+      <div>
+        <Link to={`${song._id}/edit`}>Edit</Link> |{" "}
+        <button onClick={deleteSong}>Delete</button>
+      </div>
+      <div>{song.lyrics}</div>
+    </>
+  );
+};
 
 export default Song;
