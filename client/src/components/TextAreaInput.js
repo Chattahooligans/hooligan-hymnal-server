@@ -9,7 +9,7 @@ const TextAreaInput = ({
 }) => {
   return (
     <>
-      {/* TODO: LOOK INTO REACH TEXT AREA?? */}
+      {/* TODO: LOOK INTO RICH TEXT AREA?? */}
       <label htmlFor={target}>{label}</label>
       <br />
       <textarea

@@ -7,8 +7,19 @@ const Layout = ({ title, children }) => {
   }, [title])
   return (
     <>
-      <header style={{padding: '.3em'}}>
-        <Link to="/">Hymnal Admin</Link>
+      <header style={{
+        padding: '.3em',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      }}>
+        <h1>
+          <Link to="/">Hymnal Admin</Link>
+        </h1>
+        <nav>
+          <Link to="/users/register">Register</Link>
+        </nav>
       </header>
       <section style={{
         display: 'flex'
