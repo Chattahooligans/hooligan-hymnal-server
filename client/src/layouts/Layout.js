@@ -18,7 +18,8 @@ const Layout = ({ title, children }) => {
           <Link to="/">Hymnal Admin</Link>
         </h1>
         <nav>
-          <Link to="/users/register">Register</Link>
+          <Link to="/users/register">Register</Link> | {" "}
+          <Link to="/users/login">Login</Link>
         </nav>
       </header>
       <section style={{

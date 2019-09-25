@@ -68,7 +68,19 @@ module.exports = app => {
     });
   });
 
-  app.post('api/users/testcookie', (req, res) => {  
+  app.get('/api/users/me', (req, res) => {
+    const { cookie } = req.headers;
+    const sessionId = cookie.split("; ")[0].replace("SessionKey=", "");
+    Sessions.findOne({sessionKey: sessionId}, (error, session) => {
+      if (error) {
+        res.status(401).send({ message: "No session found, please log back in" })
+        return;
+      }
+      res.json(session);
+    });
+  });
+
+  app.post('api/users/testcookie', (req, res) => {
     var cookies = new Cookies(req, res, { keys: keys });
     console.log(cookies.get("SessionKey", {signed: true}));
   });

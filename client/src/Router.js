@@ -17,6 +17,7 @@ import FoesIndex from "pages/Foes/FoesIndex";
 import UsersIndex from "pages/Users/UsersIndex";
 
 import Register from "pages/Users/Register";
+import Login from "pages/Users/Login";
 
 const AppRouter = () => (
   <Router>
@@ -40,6 +41,7 @@ const AppRouter = () => (
     <FoesIndex path="foes">{/* Add Foes routes here */}</FoesIndex>
     <UsersIndex path="users">
       <Register path="register" />
+      <Login path="login" />
       {/* Add Users routes here */}
     </UsersIndex>
   </Router>
