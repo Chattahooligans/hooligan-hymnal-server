@@ -18,6 +18,11 @@ const Register = () => {
 
   const handleFormSubmit = event => {
     event.preventDefault();
+    setMessage("");
+    if (values.emailConfirmed !== values.email) {
+      setMessage("The email fields didn't match. Please check again");
+      return;
+    }
     Axios.post(`/api/users/register`, {
       email: values.email,
       password: values.password
