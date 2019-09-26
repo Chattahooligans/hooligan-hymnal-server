@@ -8,8 +8,12 @@ const Login = () => {
   })
 
   const handleFormSubmit = e => {
+    const storage = sessionStorage || localStorage;
     Axios.post(`/api/users/login`, values)
-      .then(res => console.log(res))
+      .then(res => {
+        console.log(res)
+        // storage.setItem('key', )
+      })
       .catch(res => console.log(res))
   }
 

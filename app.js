@@ -2,6 +2,7 @@ let express = require("express");
 let path = require("path");
 let app = express();
 let mongoose = require("mongoose");
+let env = require('dotenv').config();
 
 let pushTokenController = require("./controllers/pushTokenController");
 let notificationController = require("./controllers/notificationController");

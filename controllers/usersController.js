@@ -44,6 +44,15 @@ module.exports = app => {
 
   // logs the user in and returns a cookie
   app.post('/api/users/login', (req, res) => {
+    if (req.headers.cookie) {
+      const { cookie } = req.headers;
+      const sessionId = cookie.split("; ")[0].replace("SessionKey=", "");
+      Sessions.findOne({ sessionKey: sessionId }, (error, session) => {
+        if (session) {
+          return res.status(200).send({ message: "You are already logged in" })
+        }
+      })
+    }
     var userCredentials = UserCredentials(req.body);
     Users.findOne({email: userCredentials.email}, (error, user) => {
       bcrypt.compare(userCredentials.password, user.hash, function(err, result) {
@@ -51,7 +60,10 @@ module.exports = app => {
           //success, return a cookie
           var cookies = new Cookies(req, res, { keys: [process.env.COOKIE_KEY] });
           var sessionKey = uuidv4();
-          cookies.set('SessionKey', sessionKey, { signed: true });
+          let date = new Date;
+          date.setDate(date.getDate() + 2);
+          date.toUTCString();
+          cookies.set('SessionKey', sessionKey, { signed: true, expires: date });
           var session = Sessions();
           session.email = user.email;
           session.sessionKey = sessionKey;
@@ -71,13 +83,42 @@ module.exports = app => {
   app.get('/api/users/me', (req, res) => {
     const { cookie } = req.headers;
     const sessionId = cookie.split("; ")[0].replace("SessionKey=", "");
-    Sessions.findOne({sessionKey: sessionId}, (error, session) => {
-      if (error) {
+    const sessionQuery = Sessions.findOne({ sessionKey: sessionId }).select('email')
+    sessionQuery.exec((error, session) => {
+      if (error || session === null ) {
         res.status(401).send({ message: "No session found, please log back in" })
         return;
       }
-      res.json(session);
-    });
+      Users.findOne({ email: session.email }, (err, user) => {
+        if (err) {
+          res.status(401).send({ message: "No user found with that requested email address" })
+          return;
+        }
+        res.send({
+          _id: user.id,
+          email: user.email,
+          pushNotificationsAllowed: user.pushNotificationsAllowed,
+          rosterAllowed: user.rosterAllowed,
+          songbookAllowed: user.songbookAllowed,
+          foesAllowed: user.foesAllowed
+        })
+      })
+    })
+  });
+
+  app.post('/api/users/logout', (req, res) => {
+    if (req.headers.cookie) {
+      const { cookie } = req.headers;
+      const sessionId = cookie.split("; ")[0].replace("SessionKey=", "");
+      Sessions.findOneAndRemove({ sessionKey: sessionId }, (err, session) => {
+        if (!err) {
+          // console.log(res.clearCookie("SessionKey", { path: '/', keys: [process.env.COOKIE_KEY] }))
+          // TODO: delete cookies here
+          return res.sendStatus(200)
+        }
+        res.send(err)
+      })
+    }
   });
 
   app.post('api/users/testcookie', (req, res) => {
