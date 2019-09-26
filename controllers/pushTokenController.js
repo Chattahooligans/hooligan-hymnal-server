@@ -25,7 +25,8 @@ module.exports = app => {
     var now = new Date().toISOString().
       replace(/T/, ' ').      // replace T with a space
       replace(/\..+/, '');
-    var tokenData = Object.assign({}, req.body, { lastUsed: now });
+    var tokenData = Object.assign({}, req.body, { lastUsed: now, $inc: {checkinCount: 1} });
+    console.log(tokenData);
 
     PushTokens.findOneAndUpdate(
       { pushToken: tokenData.pushToken },
