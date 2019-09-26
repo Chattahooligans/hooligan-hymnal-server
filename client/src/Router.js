@@ -1,5 +1,5 @@
 import React from "react";
-import { Router, Redirect } from "@reach/router";
+import { Router } from "@reach/router";
 
 import Home from "pages/Home";
 import Songs from "pages/Songs/Songs";
@@ -11,7 +11,10 @@ import NewSong from "pages/Songs/NewSong";
 // Index pages
 import SongBookIndex from "pages/SongBook/SongBookIndex";
 import PlayersIndex from "pages/Players/PlayersIndex";
-import CreatePlayer from 'pages/Players/CreatePlayer';
+import Players from "pages/Players/Players";
+import Player from "pages/Players/Player";
+import CreatePlayer from "pages/Players/CreatePlayer";
+import EditPlayer from "pages/Players/EditPlayer";
 import RosterIndex from "pages/Roster/RosterIndex";
 import GoalKeeperNicknameIndex from "pages/GoalKeeperNickname/GoalKeeperNicknameIndex";
 import FoesIndex from "pages/Foes/FoesIndex";
@@ -35,8 +38,11 @@ const AppRouter = () => (
       {/* Add Songbooks routes here */}
     </SongBookIndex>
     <PlayersIndex path="players">
-    {/* Add Players routes here */}
+      {/* Add Players routes here */}
+      <Players path="/" />
       <CreatePlayer path="create" />
+      <Player path=":playerId" />
+      <EditPlayer path=":playerId/edit" />
     </PlayersIndex>
     <RosterIndex path="roster">{/* Add Roster routes here */}</RosterIndex>
     <GoalKeeperNicknameIndex path="goalkeeper-nickname">

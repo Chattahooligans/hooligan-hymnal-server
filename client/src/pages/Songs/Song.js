@@ -31,7 +31,10 @@ const Song = ({ songId }) => {
         <Link to="edit">Edit</Link> |{" "}
         <button onClick={deleteSong}>Delete</button>
       </div>
-      <div>{song.lyrics}</div>
+      <div>
+        {song.lyrics &&
+          song.lyrics.split("\n").map((line, i) => <p key={i}>{line}</p>)}
+      </div>
     </>
   );
 };
