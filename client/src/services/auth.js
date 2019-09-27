@@ -1,8 +1,6 @@
 import Axios from "axios";
-import { useState } from "react";
 
 export const isBrower = () => typeof window !== "undefined";
-export const [getMessage, setMessage] = useState({});
 export const getUser = () => {
   Axios.get(`/api/users/me`)
     .then(({ data }) => {
@@ -37,7 +35,9 @@ export const handleLogin = ({ email, password }) => {
 
 export const isLoggedIn = () => {
   const user = getUser();
-  return !!user.email;
+  if (user) {
+    return !!user.email;
+  }
 };
 
 export const logout = callback => {
