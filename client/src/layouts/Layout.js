@@ -1,35 +1,62 @@
-import React, { useEffect } from 'react'
-import { Link } from '@reach/router'
+import React, { useEffect } from "react";
+import { Link, navigate } from "@reach/router";
+
+import { getUser, isLoggedIn, logout } from "services/auth";
 
 const Layout = ({ title, children }) => {
   useEffect(() => {
-    if (title) document.title = `${title}`
-  }, [title])
+    if (title) document.title = `${title}`;
+  }, [title]);
   return (
     <>
-      <header style={{
-        padding: '.3em',
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-      }}>
+      {isLoggedIn() ? (
+        <span>Hello {getUser().name}</span>
+      ) : (
+        <span>Not Logged In</span>
+      )}
+      <header
+        style={{
+          padding: ".3em",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between"
+        }}
+      >
         <h1>
           <Link to="/">Hymnal Admin</Link>
         </h1>
         <nav>
-          <Link to="/users/register">Register</Link> | {" "}
-          <Link to="/users/login">Login</Link>
+          {!isLoggedIn() ? (
+            <>
+              <Link to="/users/register">Register</Link> |{" "}
+              <Link to="/users/login">Login</Link>
+            </>
+          ) : (
+            <a
+              href="/"
+              onClick={event => {
+                event.preventDefault();
+                logout(() => navigate("/users/login"));
+              }}
+            >
+              Logout
+            </a>
+          )}
         </nav>
       </header>
-      <section style={{
-        display: 'flex'
-      }}>
+      <section
+        style={{
+          display: "flex"
+        }}
+      >
         <aside>
-          <nav style={{
-            display: 'flex',
-            flexDirection: 'column'
-          }}>
+          <nav
+            style={{
+              display: "flex",
+              flexDirection: "column"
+            }}
+          >
             <Link to="/songs">All Songs</Link>
             <Link to="/song-books">Song Books</Link>
             <Link to="/players">All Players</Link>
@@ -39,12 +66,10 @@ const Layout = ({ title, children }) => {
             <Link to="/users">Users</Link>
           </nav>
         </aside>
-        <main id="main">
-          {children}
-        </main>
+        <main id="main">{children}</main>
       </section>
     </>
-  )
+  );
 };
 
-export default Layout
+export default Layout;

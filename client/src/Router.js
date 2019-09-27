@@ -1,6 +1,8 @@
 import React from "react";
 import { Router } from "@reach/router";
 
+import PrivateRoute from "components/PrivateRoute";
+
 import Home from "pages/Home";
 import Songs from "pages/Songs/Songs";
 import Song from "pages/Songs/Song";
@@ -27,32 +29,36 @@ const AppRouter = () => (
   <Router>
     <NotFound default />
     <Home path="/" />
-    {/* <Redirect from="register" to="/users/register" /> */}
-    <SongsIndex path="songs">
+    <PrivateRoute path="songs" component={SongsIndex}>
       <Songs path="/" />
       <NewSong path="new" />
       <Song path=":songId" />
       <EditSong path=":songId/edit" />
-    </SongsIndex>
-    <SongBookIndex path="song-books">
+    </PrivateRoute>
+    <PrivateRoute path="song-books" component={SongBookIndex}>
       {/* Add Songbooks routes here */}
-    </SongBookIndex>
-    <PlayersIndex path="players">
-      {/* Add Players routes here */}
+    </PrivateRoute>
+    <PrivateRoute path="players" component={PlayersIndex}>
       <Players path="/" />
       <CreatePlayer path="create" />
       <Player path=":playerId" />
       <EditPlayer path=":playerId/edit" />
-    </PlayersIndex>
-    <RosterIndex path="roster">{/* Add Roster routes here */}</RosterIndex>
-    <GoalKeeperNicknameIndex path="goalkeeper-nickname">
-      {/* Add GoalKeeperNickname routes here */}
-    </GoalKeeperNicknameIndex>
-    <FoesIndex path="foes">{/* Add Foes routes here */}</FoesIndex>
+    </PrivateRoute>
+    <PrivateRoute path="roster" component={RosterIndex}>
+      {/*  */}
+    </PrivateRoute>
+    <PrivateRoute
+      path="goalkeeper-nickname"
+      component={GoalKeeperNicknameIndex}
+    >
+      {/*  */}
+    </PrivateRoute>
+    <PrivateRoute path="foes" component={FoesIndex}>
+      {/*  */}
+    </PrivateRoute>
     <UsersIndex path="users">
       <Register path="register" />
       <Login path="login" />
-      {/* Add Users routes here */}
     </UsersIndex>
   </Router>
 );
