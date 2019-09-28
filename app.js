@@ -5,6 +5,7 @@ let mongoose = require("mongoose");
 const env = require("dotenv");
 const bodyParser = require("body-parser");
 const fs = require("fs");
+const cors = require("cors");
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
 const ExtractJwt = passportJWT.ExtractJwt;
@@ -26,6 +27,7 @@ const MONGO_URI = process.env.MONGO_URI;
 app.use("/assets", express.static(__dirname + "/public"));
 app.use(express.static(`${__dirname}/client/build`));
 app.use(bodyParser.json());
+app.use(cors());
 app.use(passport.initialize());
 
 passport.use(
@@ -46,7 +48,7 @@ passport.use(
 // Add headers
 app.use(function(req, res, next) {
   // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
 
   // Request methods you wish to allow
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");

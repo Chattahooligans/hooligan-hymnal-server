@@ -17,6 +17,7 @@ const Login = () => {
       email: values.email,
       password: values.password
     });
+    navigate("/");
   };
 
   const handleInputChange = e => {

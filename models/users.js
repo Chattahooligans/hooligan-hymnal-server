@@ -30,6 +30,10 @@ const UserSchema = new Schema({
   foesAllowed: {
     type: Boolean,
     default: false
+  },
+  usersAllowed: {
+    type: Boolean,
+    default: false
   }
 });
 

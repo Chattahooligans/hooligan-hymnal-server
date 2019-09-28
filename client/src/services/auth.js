@@ -1,34 +1,84 @@
 import Axios from "axios";
+import cookies from "cookies-js";
 
-export const isBrower = () => typeof window !== "undefined";
+export const isBrowser = () => typeof window !== "undefined";
 export const getUser = () => {
-  Axios.get(`/api/users/me`)
-    .then(({ data }) => {
-      setUser({
-        id: data._id,
-        email: data.email,
-        pushNotificationsAllowed: data.pushNotificationsAllowed,
-        rosterAllowed: data.rosterAllowed,
-        songbookAllowed: data.songbookAllowed,
-        foesAllowed: data.foesAllowed
-      });
+  if (
+    isBrowser() &&
+    (localStorage.getItem("user") && localStorage.getItem("token"))
+  ) {
+    const user = JSON.parse(localStorage.getItem("user"));
+    return user;
+  } else {
+    Axios.get(`http://localhost:5000/api/users/me`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
     })
-    .catch(_ => setUser({}));
+      .then(({ data }) => {
+        const { user } = data;
+        setUser(user);
+      })
+      .catch(_ => {
+        // debugger;
+      });
+  }
 };
 
-const setUser = user =>
-  window.localStorage.setItem("user", JSON.stringify(user));
+const setUser = user => {
+  localStorage.setItem("user", JSON.stringify(user));
+};
+
+const setToken = token => window.localStorage.setItem("token", token);
+
+const setCookie = (cname, cvalue, exdays) => {
+  let date = new Date();
+  date = date.addDays(exdays);
+  date = date.toUTCString();
+  let expires = "expires=" + date;
+  document.cookie = `${cname}=${cvalue};${expires};path=/`;
+};
+
+const getCookie = cname => {
+  const name = `${cname}=`;
+  const cookieArray = document.cookie.split(";");
+  for (let i = 0; i < cookieArray.length; i++) {
+    let cookie = cookieArray[i];
+    while (cookie.charAt(0) == " ") {
+      cookie = cookie.substring(1);
+    }
+    if (cookie.indexOf(name)) {
+      return cookie.substr(name.length, cookie.length);
+    }
+  }
+};
+
+const storeRefresh = refreshToken => {
+  setCookie("refreshToken", refreshToken, 1);
+};
+
+/**
+ * @param {Number} days
+ */
+Date.prototype.addDays = function(days) {
+  let date = new Date(this.valueOf());
+  date.setDate(date.getDate() + days);
+  return date;
+};
 
 export const handleLogin = ({ email, password }) => {
   if (email && password) {
-    Axios.post(`/api/users/login`, {
+    Axios.post(`http://localhost:5000/api/users/login`, {
       email: email,
       password: password
     })
-      .then(res => {
+      .then(({ data }) => {
+        console.log({ data });
+        setToken(data.token);
+        storeRefresh(data.refreshToken);
         getUser();
       })
-      .catch(_ => setUser({}));
+      .catch(err => console.log(err));
   }
   return false;
 };
@@ -36,11 +86,12 @@ export const handleLogin = ({ email, password }) => {
 export const isLoggedIn = () => {
   const user = getUser();
   if (user) {
-    return !!user.email;
+    return user;
   }
 };
 
 export const logout = callback => {
-  setUser({});
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
   callback();
 };
