@@ -2,6 +2,7 @@ const User = require("../models/users");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 
+// Might need to implement a redis setup eventually...
 let tokenList = {};
 
 module.exports = app => {
