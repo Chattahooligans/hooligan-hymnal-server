@@ -1,7 +1,12 @@
 var mongoose = require("mongoose");
 
 module.exports = new mongoose.Schema({
-  email: String,
+  email: {
+    type: String,
+    index: {
+      unique: true
+    }
+  },
   hash: String,
   pushNotificationsAllowed: Boolean,
   rosterAllowed: Boolean,
