@@ -63,7 +63,8 @@ module.exports = app => {
         foesAllowed,
         songbookAllowed,
         rosterAllowed,
-        pushNotificationsAllowed
+        pushNotificationsAllowed,
+        usersAllowed
       } = req.user;
       res.json({
         user: {
@@ -71,7 +72,8 @@ module.exports = app => {
           foesAllowed,
           songbookAllowed,
           rosterAllowed,
-          pushNotificationsAllowed
+          pushNotificationsAllowed,
+          usersAllowed
         }
       });
     }
@@ -122,6 +124,48 @@ module.exports = app => {
           res.json({ message: "Something happend" });
         }
         res.json({ users });
+      });
+    }
+  );
+
+  app.get(
+    "/api/users/:id",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      const { id } = req.params;
+      User.findOne({ _id: id }, (err, user) => {
+        if (!user) {
+          res.status(404).send({ message: "User doesn't exist" });
+        }
+        res.json(user);
+      });
+    }
+  );
+
+  app.put(
+    "/api/users/:id",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      const { id } = req.params;
+      User.findByIdAndUpdate(id, req.body, (error, user) => {
+        if (!error) {
+          res.status(501).send({ error });
+        }
+        res.send(user);
+      });
+    }
+  );
+
+  app.delete(
+    "/api/users/:id",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      const { id } = req.params;
+      User.findByIdAndDelete(id, error => {
+        if (error) {
+          res.status(501).send({ error });
+        }
+        res.send({ message: `Deleted: ${id}` });
       });
     }
   );
