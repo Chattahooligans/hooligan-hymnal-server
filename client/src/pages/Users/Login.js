@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { handleLogin, isLoggedIn } from "services/auth";
+import { handleLogin, isLoggedIn, getUser } from "services/auth";
 import { navigate } from "@reach/router";
 import Axios from "axios";
 
@@ -24,11 +24,6 @@ const Login = () => {
     const { name, value } = e.target;
     setValues({ ...values, [name]: value });
   };
-
-  if (isLoggedIn()) {
-    navigate("/");
-  }
-
   return (
     <>
       <h2>Login</h2>

@@ -1,6 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
 import { Link, navigate } from "@reach/router";
 
+import Sidebar from "components/Sidebar";
 import { isLoggedIn, getUser, logout } from "services/auth";
 
 const Layout = ({ title, children }) => {
@@ -52,36 +53,7 @@ const Layout = ({ title, children }) => {
           display: "flex"
         }}
       >
-        <aside>
-          <nav
-            style={{
-              display: "flex",
-              flexDirection: "column"
-            }}
-          >
-            {/* {user &&
-              (user.songbookAllowed && ( */}
-            <>
-              <Link to="/songs">All Songs</Link>
-              <Link to="/song-books">Song Books</Link>
-            </>
-            {/* ))} */}
-            {/* {user &&
-              (user.rosterAllowed && ( */}
-            <>
-              <Link to="/players">All Players</Link>
-              <Link to="/roster">Roster</Link>
-              <Link to="/goalkeeper-nickname">Goalkeeper Nickname</Link>
-            </>
-            {/* ))} */}
-            {/* {user && (user.foesAllowed &&
-            )} */}
-            <Link to="/foes">foes</Link>
-            {/* {user && (user.usersAllowed &&
-            )} */}
-            <Link to="/users">Users</Link>
-          </nav>
-        </aside>
+        <Sidebar user={user} />
         <main id="main">{children}</main>
       </section>
     </>
