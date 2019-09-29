@@ -1,5 +1,6 @@
 const User = require("../models/users");
 const jwt = require("jsonwebtoken");
+const bcryptjs = require("bcrypt");
 const passport = require("passport");
 
 // Might need to implement a redis setup eventually...
@@ -15,7 +16,7 @@ module.exports = app => {
 
     User.createUser(newUser, (error, user) => {
       if (error) {
-        res.staus(422).json({
+        res.status(422).json({
           message:
             "Something happened... please check that you don't already have an account otherwise try again later"
         });
@@ -26,35 +27,28 @@ module.exports = app => {
 
   app.post("/api/users/login", (req, res) => {
     const { email, password } = req.body;
-    User.getUserByEmail(email, (err, user) => {
+    User.findOne({ email: email }, "email password", (err, user) => {
       if (!user) {
         res.status(404).json({
-          message: "User not found please register"
+          message: "User not found"
         });
       }
-      User.comparePassword(password, user.password, (err, isMatch) => {
+      bcryptjs.compare(password, user.password, (err, isMatch) => {
         if (isMatch) {
-          const payload = { id: user.id };
-          const secretOrKey = process.env.SECRET_KEY || "NOTsoSECRETkey";
-          const tokenExpires = process.env.TOKEN_EXPIRES || "30m";
-          const refreshSecretOrKey =
-            process.env.REFRESH_SECRET_KEY || "NOTsoSECRETkey";
-          const refreshTokenExpires = process.env.REFRESH_TOKEN_EXPIRES || "1d";
+          const payload = { id: user._id };
+          const secretOrKey = process.env.SECRET_KEY;
+          const tokenExpires = process.env.TOKEN_EXPIRES;
+          const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
+          const refreshExpires = process.env.REFRESH_TOKEN_EXPIRES;
           const token = jwt.sign(payload, secretOrKey, {
             expiresIn: tokenExpires
           });
           const refreshToken = jwt.sign(payload, refreshSecretOrKey, {
-            expiresIn: refreshTokenExpires
+            expiresIn: refreshExpires
           });
-          const response = {
-            message: "Logged In",
-            token: token,
-            refreshToken: refreshToken
-          };
-          tokenList[refreshToken] = response;
-          res.status(200).json(response);
+          res.status(200).send({ message: "Logged in", token, refreshToken });
         } else {
-          res.status(401).json({ message: "The password is incorrect" });
+          res.status(400).send({ message: "What happend" });
         }
       });
     });
@@ -115,6 +109,20 @@ module.exports = app => {
     (req, res) => {
       req.user = {};
       res.status(201).json({ message: "You have been logged out" });
+    }
+  );
+
+  app.get(
+    "/api/users",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      const { email } = req.user;
+      User.find({ email: { $ne: email } }, "email", (err, users) => {
+        if (err) {
+          res.json({ message: "Something happend" });
+        }
+        res.json({ users });
+      });
     }
   );
 };

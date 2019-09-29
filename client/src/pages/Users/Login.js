@@ -1,24 +1,13 @@
 import React, { useState, useContext } from "react";
-import { handleLogin, isLoggedIn, getUser } from "services/auth";
-import { navigate } from "@reach/router";
-import Axios from "axios";
 
-import UserProvider from "providers/UserProvider";
+import { UserContext } from "providers/UserContext";
 
 const Login = () => {
+  const { handleLogin } = useContext(UserContext);
   const [values, setValues] = useState({
     email: "",
     password: ""
   });
-
-  const handleFormSubmit = e => {
-    e.preventDefault();
-    handleLogin({
-      email: values.email,
-      password: values.password
-    });
-    navigate("/");
-  };
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -27,7 +16,13 @@ const Login = () => {
   return (
     <>
       <h2>Login</h2>
-      <form method="POST" onSubmit={handleFormSubmit}>
+      <form
+        method="POST"
+        onSubmit={e => {
+          e.preventDefault();
+          handleLogin(values);
+        }}
+      >
         <div>
           <label htmlFor="email">Email</label>
           <input

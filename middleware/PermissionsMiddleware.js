@@ -1,8 +1,8 @@
-module.exports = function(options) {
+module.exports = function(option) {
   return (req, res, next) => {
     const { user } = req;
-    if (user) {
-      if (options in user) {
+    if (user && option in user) {
+      if (user[option]) {
         next();
       } else {
         res.send({ message: "You do not have the correct permissions" });

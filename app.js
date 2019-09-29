@@ -32,14 +32,15 @@ app.use(passport.initialize());
 
 passport.use(
   new JwtStrategy(JWTOptions, function(jwt_payload, done) {
-    User.findOne({ id: jwt_payload.sub }, (err, user) => {
+    const { id } = jwt_payload;
+    User.findOne({ _id: id }, (err, user) => {
       if (err) {
         return done(err, false);
       }
       if (user) {
         return done(null, user);
       } else {
-        done(null, false);
+        return done(null, false);
       }
     });
   })

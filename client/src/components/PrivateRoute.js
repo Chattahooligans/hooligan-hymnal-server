@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import { navigate } from "@reach/router";
-import { isLoggedIn } from "services/auth";
+import { UserContext } from "providers/UserContext";
 
 const PrivateRoute = ({ component: Component, location, ...rest }) => {
-  if (!isLoggedIn() && location.pathname !== `/user/login`) {
-    navigate(`/users/login`);
-    return null;
-  }
-
+  const { isLoggedIn } = useContext(UserContext);
+  setTimeout(() => {
+    if (isLoggedIn() !== undefined) {
+      if (!isLoggedIn() && location.pathname !== `/user/login`) {
+        navigate(`/users/login`);
+      }
+    }
+  }, 10);
   return <Component {...rest} />;
 };
 

@@ -67,8 +67,7 @@ module.exports.createUser = (newUser, callback) => {
  * @return {Function} callback
  */
 module.exports.getUserByEmail = (email, callback) => {
-  const query = { email };
-  User.findOne({ email }, "password", callback);
+  User.find({ email: email }, "_id email password", callback);
 };
 
 /**

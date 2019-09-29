@@ -7,10 +7,10 @@ const Songs = () => {
 
   useEffect(() => {
     getSongs();
-  }, [setSongs]);
+  }, []);
 
-  const getSongs = () => {
-    Axios.get("/api/songs")
+  const getSongs = async () => {
+    await Axios.get("/api/songs")
       .then(({ data }) => {
         setSongs(data);
       })

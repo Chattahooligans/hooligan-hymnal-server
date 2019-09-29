@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import Axios from "axios";
+// import Axios from "axios";
+import { axios } from "helpers/custom-api";
 import { navigate } from "@reach/router";
 
 import SongForm from "forms/SongForm";
@@ -26,7 +27,8 @@ const NewSong = () => {
 
   const handleFormSubmit = e => {
     e.preventDefault();
-    Axios.post("/api/song", values)
+    axios
+      .post("/api/song", values)
       .then(({ data }) => {
         navigate(`${data._id}`);
       })

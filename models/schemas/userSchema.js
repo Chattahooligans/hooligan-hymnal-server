@@ -9,7 +9,16 @@ module.exports = new mongoose.Schema({
   },
   hash: String,
   pushNotificationsAllowed: Boolean,
-  rosterAllowed: Boolean,
-  songbookAllowed: Boolean,
-  foesAllowed: Boolean
+  rosterAllowed: {
+    type: Boolean,
+    default: false
+  },
+  songbookAllowed: {
+    type: Boolean,
+    default: false
+  },
+  foesAllowed: {
+    type: Boolean,
+    default: false
+  }
 });

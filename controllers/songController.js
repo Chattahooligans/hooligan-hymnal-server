@@ -52,10 +52,6 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     permissions("songbookAllowed"),
     (req, res) => {
-      if (req.body.authKey !== process.env.AUTH_KEY) {
-        res.status(403).send({ error: "bad auth key" });
-        return;
-      }
       var newSong = Songs(req.body);
       newSong.save((error, song) => {
         error ? res.status(501).send({ error }) : res.send(song);
@@ -70,10 +66,6 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     permissions("songbookAllowed"),
     (req, res) => {
-      if (req.body.authKey !== process.env.AUTH_KEY) {
-        res.status(403).send({ error: "bad auth key" });
-        return;
-      }
       Songs.findByIdAndUpdate(req.params.id, req.body, (error, song) => {
         error ? res.status(501).send({ error }) : res.send(song);
         song_cache.force_reload();
@@ -87,10 +79,6 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     permissions("songbookAllowed"),
     (req, res) => {
-      if (req.body.authKey !== process.env.AUTH_KEY) {
-        res.status(403).send({ error: "bad auth key" });
-        return;
-      }
       Songs.findByIdAndRemove(req.params.id, error => {
         error
           ? res.status(501).send({ error })

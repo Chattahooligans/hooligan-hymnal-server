@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Link, navigate } from "@reach/router";
+import React, { useContext } from "react";
+import { Link } from "@reach/router";
+import { UserContext } from "providers/UserContext";
 
-const Sidebar = user => {
+const Sidebar = () => {
+  const { isLoggedIn, user } = useContext(UserContext);
   return (
     <aside>
       <nav
@@ -11,13 +13,29 @@ const Sidebar = user => {
         }}
       >
         {/* TODO: Add checks if you have the correct rights */}
-        <Link to="/songs">All Songs</Link>
-        <Link to="/song-books">Song Books</Link>
-        <Link to="/players">Players</Link>
-        <Link to="/roster">Roster</Link>
-        <Link to="/goalkeeper-nickname">Goalkeeper Nickname</Link>
-        <Link to="/foes">Foes</Link>
-        <Link to="/users">Users</Link>
+        {isLoggedIn() && (
+          <>
+            {user.songbookAllowed && (
+              <>
+                <Link to="/songs">All Songs</Link>
+                <Link to="/song-books">Song Books</Link>
+              </>
+            )}
+            {user.rosterAllowed && (
+              <>
+                <Link to="/players">Players</Link>
+                <Link to="/roster">Roster</Link>
+              </>
+            )}
+            {user.foesAllowed && (
+              <>
+                <Link to="/goalkeeper-nickname">Goalkeeper Nickname</Link>
+                <Link to="/foes">Foes</Link>
+              </>
+            )}
+            {user.usersAllowed && <Link to="/users">Users</Link>}
+          </>
+        )}
       </nav>
     </aside>
   );

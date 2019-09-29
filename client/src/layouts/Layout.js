@@ -1,22 +1,14 @@
-import React, { useEffect, useContext, useState } from "react";
-import { Link, navigate } from "@reach/router";
+import React, { useContext } from "react";
+import { Link } from "@reach/router";
 
 import Sidebar from "components/Sidebar";
-import { isLoggedIn, getUser, logout } from "services/auth";
+import { UserContext } from "providers/UserContext";
 
-const Layout = ({ title, children }) => {
-  const user = getUser();
-  useEffect(() => {
-    if (title) document.title = `${title}`;
-  }, [title]);
+const Layout = ({ children }) => {
+  const { user, isLoggedIn, logout } = useContext(UserContext);
 
   return (
     <>
-      {isLoggedIn() ? (
-        user && <span>Hello {user.email}</span>
-      ) : (
-        <span>Not Logged In</span>
-      )}
       <header
         style={{
           padding: ".3em",
@@ -36,15 +28,18 @@ const Layout = ({ title, children }) => {
               <Link to="/users/login">Login</Link>
             </>
           ) : (
-            <a
-              href="/"
-              onClick={event => {
-                event.preventDefault();
-                logout(() => navigate("/users/login"));
-              }}
-            >
-              Logout
-            </a>
+            <>
+              <span>Hello {user.email}</span> |{" "}
+              <a
+                href="/"
+                onClick={e => {
+                  e.preventDefault();
+                  logout();
+                }}
+              >
+                Logout
+              </a>
+            </>
           )}
         </nav>
       </header>
@@ -53,7 +48,7 @@ const Layout = ({ title, children }) => {
           display: "flex"
         }}
       >
-        <Sidebar user={user} />
+        <Sidebar />
         <main id="main">{children}</main>
       </section>
     </>

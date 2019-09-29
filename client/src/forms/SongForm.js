@@ -85,9 +85,9 @@ const SongForm = ({
         <TextInput
           type="text"
           target="reference_title"
-          label="Reference Link"
-          placeholder="Reference Link"
-          value={values.reference_link}
+          label="Reference Title"
+          placeholder="Reference Title"
+          value={values.reference_title}
           handleInputChange={handleInputChange}
         />
       </div>
