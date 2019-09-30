@@ -5,7 +5,8 @@ const TextInput = ({
   type,
   placeholder,
   value,
-  handleInputChange
+  handleInputChange,
+  required
 }) => {
   // TODO: Add optional required
   return (
@@ -19,6 +20,7 @@ const TextInput = ({
         placeholder={placeholder}
         value={value}
         onChange={handleInputChange}
+        required={required}
       />
     </>
   );

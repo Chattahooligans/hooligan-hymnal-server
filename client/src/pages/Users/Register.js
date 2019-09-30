@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "@reach/router";
+import Layout from "layouts/Layout";
 import RegisterForm from "forms/RegisterForm";
 import Axios from "axios";
 

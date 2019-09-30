@@ -24,6 +24,9 @@ import UsersIndex from "pages/Users/UsersIndex";
 
 import Register from "pages/Users/Register";
 import Login from "pages/Users/Login";
+import Users from "pages/Users/Users";
+import User from "pages/Users/User";
+import NewUser from "pages/Users/NewUser";
 
 const AppRouter = () => (
   <Router>
@@ -57,6 +60,9 @@ const AppRouter = () => (
       {/*  */}
     </PrivateRoute>
     <UsersIndex path="users">
+      <Users path="/" />
+      <User path=":userId" />
+      <NewUser path="add-user" />
       <Register path="register" />
       <Login path="login" />
     </UsersIndex>

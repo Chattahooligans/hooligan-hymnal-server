@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import Layout from "layouts/Layout";
 
 import { UserContext } from "providers/UserContext";
 

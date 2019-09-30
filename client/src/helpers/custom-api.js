@@ -3,7 +3,7 @@ import { getCookie } from "helpers/cookies";
 let axios = Axios;
 const token = localStorage.getItem("token");
 const cookie = getCookie("refreshToken");
-if (token || cookie) {
+if (cookie) {
   axios.defaults.headers["Authorization"] = `Bearer ${token || cookie}`;
 }
 

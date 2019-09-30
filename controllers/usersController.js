@@ -123,7 +123,41 @@ module.exports = app => {
         if (err) {
           res.json({ message: "Something happend" });
         }
-        res.json({ users });
+        res.json(users);
+      });
+    }
+  );
+
+  app.post(
+    "/api/users",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      const {
+        email,
+        password,
+        songbookAllowed,
+        rosterAllowed,
+        foesAllowed,
+        usersAllowed,
+        pushNotificationsAllowed
+      } = req.body;
+      const newUser = new User({
+        email,
+        password
+      });
+      newUser.songbookAllowed = songbookAllowed;
+      newUser.rosterAllowed = rosterAllowed;
+      newUser.foesAllowed = foesAllowed;
+      newUser.usersAllowed = usersAllowed;
+      newUser.pushNotificationsAllowed = pushNotificationsAllowed;
+
+      User.createUser(newUser, (error, user) => {
+        if (error) {
+          res.status(422).json({
+            message: `Something happened... Please verify they don't already have an account: ${email}`
+          });
+        }
+        res.json({ user });
       });
     }
   );
