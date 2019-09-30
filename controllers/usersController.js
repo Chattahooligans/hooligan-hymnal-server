@@ -157,7 +157,23 @@ module.exports = app => {
             message: `Something happened... Please verify they don't already have an account: ${email}`
           });
         }
-        res.json({ user });
+        User.findByIdAndUpdate(
+          user,
+          {
+            ...user,
+            songbookAllowed,
+            rosterAllowed,
+            foesAllowed,
+            usersAllowed,
+            pushNotificationsAllowed
+          },
+          (err, user) => {
+            if (err) {
+              res.status(422).json({ message: err });
+            }
+            res.json(user);
+          }
+        );
       });
     }
   );
@@ -195,7 +211,7 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
       const { id } = req.params;
-      User.findByIdAndDelete(id, error => {
+      User.findByIdAndRemove(id, error => {
         if (error) {
           res.status(501).send({ error });
         }

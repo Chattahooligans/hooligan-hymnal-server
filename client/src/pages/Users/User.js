@@ -17,7 +17,7 @@ const User = ({ userId }) => {
       .catch(err => console.log(err));
   };
 
-  const deleteUser = userId => {
+  const deleteUser = () => {
     axios
       .delete(`/api/users/${userId}`)
       .then(({ data }) => {
@@ -45,7 +45,8 @@ const User = ({ userId }) => {
         </li>
       </ul>
       <div>
-        <Link to={`${user._id}/edit`}>Edit</Link> | <button>Delete</button>
+        <Link to={`${user._id}/edit`}>Edit</Link> |{" "}
+        <button onClick={deleteUser}>Delete</button>
       </div>
     </>
   );
