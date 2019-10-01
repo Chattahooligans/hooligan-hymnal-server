@@ -2,28 +2,22 @@ import React, { useState } from "react";
 import { UserContext } from "./UserContext";
 import { navigate } from "@reach/router";
 import { getCookie, setCookie } from "helpers/cookies";
-import axios from "axios";
+import { axios } from 'helpers/custom-api'
 
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const handleLogin = values => {
-    const { email, password } = values;
-    if (email && password) {
-      axios
-        .post(`/api/users/login`, {
-          email: email,
-          password: password
-        })
-        .then(({ data }) => {
-          setToken(data.token);
-          storeRefresh(data.refreshToken);
-          setUser(data.user);
-          getUser();
-          navigate("/");
-        })
-        .catch(err => console.log(err));
-    }
+    axios
+      .post(`/api/users/login`, values)
+      .then(({ data }) => {
+        setToken(data.token);
+        storeRefresh(data.refreshToken);
+        setUser(data.user);
+        getUser();
+        navigate("/");
+      })
+      .catch(err => console.log(err));
   };
 
   const isBrowser = () => typeof window !== "undefined";
@@ -33,8 +27,8 @@ const UserProvider = ({ children }) => {
     const cookie = getCookie("refreshToken");
     if (isBrowser() && (user && token)) {
       return user;
-    } else if (token || cookie) {
-      let bearer = token || cookie;
+    } else if (token) {
+      let bearer = token;
       axios
         .get(`/api/users/me`, {
           headers: {
@@ -66,11 +60,10 @@ const UserProvider = ({ children }) => {
   };
 
   const logout = e => {
-    setTimeout(() => {}, 500);
+    // setTimeout(() => {}, 1);
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
     setUser(null);
-    navigate("/users/login");
+    navigate("/login");
   };
 
   return (

@@ -7,14 +7,14 @@ const passport = require("passport");
 let tokenList = {};
 
 module.exports = app => {
-  app.post("/api/users/register", (req, res) => {
+  app.post("/api/users/register", async (req, res) => {
     const { email, password } = req.body;
     const newUser = new User({
       email,
       password
     });
 
-    User.createUser(newUser, (error, user) => {
+    await User.createUser(newUser, (error, user) => {
       if (error) {
         res.status(422).json({
           message:
@@ -25,9 +25,9 @@ module.exports = app => {
     });
   });
 
-  app.post("/api/users/login", (req, res) => {
+  app.post("/api/users/login", async (req, res) => {
     const { email, password } = req.body;
-    User.findOne({ email: email }, "email password", (err, user) => {
+    await User.findOne({ email: email }, "email password", (err, user) => {
       if (!user) {
         res.status(404).json({
           message: "User not found"
@@ -48,7 +48,7 @@ module.exports = app => {
           });
           res.status(200).send({ message: "Logged in", token, refreshToken });
         } else {
-          res.status(400).send({ message: "What happend" });
+          res.status(400).send({ message: "Something happened please make sure you have an account" });
         }
       });
     });

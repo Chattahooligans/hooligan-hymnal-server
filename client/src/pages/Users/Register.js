@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Link } from "@reach/router";
 import Layout from "layouts/Layout";
 import RegisterForm from "forms/RegisterForm";
-import Axios from "axios";
+// import Axios from "axios";
+import { axios } from 'helpers/custom-api'
 
 const Register = () => {
   const [values, setValues] = useState({
@@ -17,29 +18,30 @@ const Register = () => {
     setValues({ ...values, [name]: value });
   };
 
-  const handleFormSubmit = event => {
+  const handleFormSubmit = async event => {
     event.preventDefault();
     setMessage("");
     if (values.emailConfirmed !== values.email) {
       setMessage("The email fields didn't match. Please check again");
       return;
     }
-    Axios.post(`/api/users/register`, {
+    axios.post('/api/users/register', {
       email: values.email,
       password: values.password
     })
       .then(({ data }) => {
-        setMessage(data.message);
-        setValues({
-          email: "",
-          emailConfirmed: "",
-          password: ""
-        });
+        console.log(data)
+        // setMessage(data.message);
+        // setValues({
+        //   email: "",
+        //   emailConfirmed: "",
+        //   password: ""
+        // });
       })
       .catch(res => console.log(res));
   };
   return (
-    <>
+    <Layout>
       <h2>Register</h2>
       {message.length > 0 && (
         <div>
@@ -54,7 +56,7 @@ const Register = () => {
         handleInputChange={handleInputChange}
         handleFormSubmit={handleFormSubmit}
       />
-    </>
+    </Layout>
   );
 };
 

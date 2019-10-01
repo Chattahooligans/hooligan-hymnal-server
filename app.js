@@ -1,28 +1,28 @@
-let express = require("express");
-let path = require("path");
-let app = express();
-let mongoose = require("mongoose");
-const env = require("dotenv");
-const bodyParser = require("body-parser");
-const fs = require("fs");
-const cors = require("cors");
-const passport = require("passport");
-const passportJWT = require("passport-jwt");
-const ExtractJwt = passportJWT.ExtractJwt;
-const JwtStrategy = passportJWT.Strategy;
-const User = require("./models/users");
+var express = require("express");
+var path = require("path");
+var app = express();
+var mongoose = require("mongoose");
+var env = require("dotenv");
+var bodyParser = require("body-parser");
+var fs = require("fs");
+var cors = require("cors");
+var passport = require("passport");
+var passportJWT = require("passport-jwt");
+var ExtractJwt = passportJWT.ExtractJwt;
+var JwtStrategy = passportJWT.Strategy;
+var User = require("./models/users");
 
 let config = require("./config");
 
 env.config();
-const secretOrKey = process.env.SECRET_KEY || "NOTsoSECRETkey";
-const JWTOptions = {
+var secretOrKey = process.env.SECRET_KEY || "NOTsoSECRETkey";
+var JWTOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: secretOrKey
 };
 
-const port = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI;
+var port = process.env.PORT || 3000;
+var MONGO_URI = process.env.MONGO_URI;
 
 app.use("/assets", express.static(__dirname + "/public"));
 app.use(express.static(`${__dirname}/client/build`));
@@ -32,7 +32,7 @@ app.use(passport.initialize());
 
 passport.use(
   new JwtStrategy(JWTOptions, function(jwt_payload, done) {
-    const { id } = jwt_payload;
+    var { id } = jwt_payload;
     User.findOne({ _id: id }, (err, user) => {
       if (err) {
         return done(err, false);
@@ -49,7 +49,7 @@ passport.use(
 // Add headers
 app.use(function(req, res, next) {
   // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", "*");
 
   // Request methods you wish to allow
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
@@ -68,12 +68,12 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.set("view engine", "ejs");
+// app.set("view engine", "ejs");
 mongoose
-  .connect(MONGO_URI, function() {
+  .connect(MONGO_URI, {useMongoClient: true}, function() {
     console.log(`Connection has been made`);
   })
-  .catch(function() {
+  .catch(function(err) {
     console.log(`App starting error:`, err.stack);
     process.exit(1);
   });

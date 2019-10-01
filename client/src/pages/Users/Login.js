@@ -15,7 +15,7 @@ const Login = () => {
     setValues({ ...values, [name]: value });
   };
   return (
-    <>
+    <Layout>
       <h2>Login</h2>
       <form
         method="POST"
@@ -50,7 +50,7 @@ const Login = () => {
           <button type="submit">Login</button>
         </div>
       </form>
-    </>
+    </Layout>
   );
 };
 

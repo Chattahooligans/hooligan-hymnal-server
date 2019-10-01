@@ -7,7 +7,7 @@ const PrivateRoute = ({ component: Component, location, ...rest }) => {
   setTimeout(() => {
     if (isLoggedIn() !== undefined) {
       if (!isLoggedIn() && location.pathname !== `/user/login`) {
-        navigate(`/users/login`);
+        navigate(`/login`);
       }
     }
   }, 10);

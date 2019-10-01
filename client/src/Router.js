@@ -59,13 +59,15 @@ const AppRouter = () => (
     <PrivateRoute path="foes" component={FoesIndex}>
       {/*  */}
     </PrivateRoute>
-    <UsersIndex path="users">
+    <PrivateRoute path="users" component={UsersIndex}>
       <Users path="/" />
       <User path=":userId" />
       <NewUser path="add-user" />
-      <Register path="register" />
-      <Login path="login" />
-    </UsersIndex>
+    </PrivateRoute>
+    {/* <UsersIndex path="users"> */}
+    <Register path="register" />
+    <Login path="login" />
+    {/* </UsersIndex> */}
   </Router>
 );
 
