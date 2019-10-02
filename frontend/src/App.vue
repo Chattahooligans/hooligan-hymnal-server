@@ -3,7 +3,7 @@
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link> |
-      <template v-if="!loggedIn">
+      <template v-if="!isLoggedIn">
         <router-link :to="{ name: 'login' }">Login</router-link>
       </template>
       <template v-else>
@@ -11,7 +11,7 @@
       </template>
     </div>
     <div style="display:flex;flex-direction:row">
-      <template v-if="loggedIn">
+      <template v-if="isLoggedIn">
         <aside>
           <nav style="display:flex; flex-direction:column">
             <router-link to="/songs">Songs</router-link>
@@ -32,16 +32,16 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 export default {
   methods: {
-    logout() {
-      localStorage.removeItem("token");
-    }
+    // logout() {
+    //   localStorage.removeItem("token");
+    // }
+    ...mapActions(["logout"])
   },
   computed: {
-    loggedIn() {
-      return this.$store.state.token;
-    }
+    ...mapGetters(["isLoggedIn"])
   }
 };
 </script>

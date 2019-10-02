@@ -32,6 +32,14 @@ export default {
         })
         .catch(res => console.log(res));
     }
+  },
+  beforeRouteEnters(to, from, next) {
+    if (to.meta.AuthRequired) {
+      if (this.$store.state.token !== "") {
+        next();
+      }
+      this.$router.push("/login");
+    }
   }
 };
 </script>

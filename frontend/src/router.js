@@ -36,12 +36,32 @@ const routes = [
   {
     path: "/songs",
     name: "all-songs",
-    component: () => import("./views/songs/Index.vue")
+    component: () => import("./views/songs/Index.vue"),
+    meta: {
+      requiresAuth: true
+    }
   }
 ];
 
-export default new Router({
+const router = new Router({
   mode: "history",
   base: process.env.BASE_URL,
   routes
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth == true)) {
+    if (localStorage.getItem("token") == null) {
+      next({
+        path: "/login",
+        params: { nextUrl: to.fullPath }
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+export default router;

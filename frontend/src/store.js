@@ -8,6 +8,20 @@ export default new Vuex.Store({
     token: localStorage.getItem("token") || "",
     user: {}
   },
-  mutations: {},
-  actions: {}
+  mutations: {
+    logout(state) {
+      localStorage.removeItem("token");
+      state.token = "";
+    }
+  },
+  actions: {
+    logout(context, payload) {
+      context.commit("logout", payload);
+    }
+  },
+  getters: {
+    isLoggedIn: state => {
+      return state.token;
+    }
+  }
 });
