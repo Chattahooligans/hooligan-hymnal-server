@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Layout>
     <h2>Register</h2>
     <form method="POST" @submit.prevent="register">
       <div>
@@ -28,10 +28,11 @@
         <button type="submit">Register</button>
       </div>
     </form>
-  </div>
+  </Layout>
 </template>
 
 <script>
+import Layout from "@/layouts/Layout";
 export default {
   data() {
     return {
@@ -41,6 +42,9 @@ export default {
         password: ""
       }
     };
+  },
+  components: {
+    Layout
   },
   computed: {
     isMatch() {

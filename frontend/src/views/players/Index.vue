@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Layout>
     <h2>All Players</h2>
     <div v-if="loading">
       Loading...
@@ -11,16 +11,20 @@
         </li>
       </ul>
     </div>
-  </div>
+  </Layout>
 </template>
 
 <script>
+import Layout from "@/layouts/Layout";
 export default {
   data() {
     return {
       loading: false,
       players: []
     };
+  },
+  components: {
+    Layout
   },
   methods: {
     getPlayers() {

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Layout>
     <h2>Login</h2>
     <form @submit.prevent="login">
       <div>
@@ -19,10 +19,11 @@
         <button type="submit">Login</button>
       </div>
     </form>
-  </div>
+  </Layout>
 </template>
 
 <script>
+import Layout from "@/layouts/Layout";
 export default {
   data() {
     return {
@@ -32,6 +33,9 @@ export default {
       }
     };
   },
+  components: {
+    Layout
+  },
   methods: {
     login() {
       this.$axios
@@ -39,6 +43,7 @@ export default {
         .then(({ data }) => {
           const { token } = data;
           localStorage.setItem("token", token);
+          setTimeout(() => {}, 10);
           this.$router.push("/");
         })
         .catch(res => console.log(res));

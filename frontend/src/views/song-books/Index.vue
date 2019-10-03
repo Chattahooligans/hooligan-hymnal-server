@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Layout>
     <h2>All Song Books</h2>
     <div v-if="loading">
       Loading...
@@ -9,16 +9,20 @@
         <li v-for="book in books" :key="book._id">{{ book }}</li>
       </ul>
     </div>
-  </div>
+  </Layout>
 </template>
 
 <script>
+import Layout from "@/layouts/Layout";
 export default {
   data() {
     return {
       loading: false,
       books: []
     };
+  },
+  components: {
+    Layout
   },
   mounted() {
     this.getBooks();

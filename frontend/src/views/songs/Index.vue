@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Layout>
     <h2>All Songs</h2>
     <div v-if="loading">
       Loading...
@@ -14,10 +14,11 @@
         </li>
       </ul>
     </div>
-  </div>
+  </Layout>
 </template>
 
 <script>
+import Layout from "@/layouts/Layout";
 export default {
   data() {
     return {
@@ -25,6 +26,9 @@ export default {
       loading: false,
       error: null
     };
+  },
+  components: {
+    Layout
   },
   mounted() {
     this.getSongs();

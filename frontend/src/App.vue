@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <!-- <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link> |
@@ -16,15 +16,16 @@
         <router-view />
       </main>
     </div>
-  </div>
+  </div> -->
+  <router-view />
 </template>
 
 <script>
-import Sidebar from "./components/Sidebar";
+// import Sidebar from "./components/Sidebar";
 import { mapActions, mapGetters } from "vuex";
 export default {
   components: {
-    Sidebar
+    // Sidebar
   },
   methods: {
     ...mapActions(["logout"])

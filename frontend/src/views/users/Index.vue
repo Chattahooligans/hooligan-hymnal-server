@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Layout>
     <h2>All Users</h2>
     <div v-if="loading">Loading...</div>
     <div v-else>
@@ -7,16 +7,20 @@
         <li v-for="user in users" :key="user._id">{{ user.email }}</li>
       </ul>
     </div>
-  </div>
+  </Layout>
 </template>
 
 <script>
+import Layout from "@/layouts/Layout";
 export default {
   data() {
     return {
       users: [],
       loading: false
     };
+  },
+  components: {
+    Layout
   },
   created() {
     this.getUsers();

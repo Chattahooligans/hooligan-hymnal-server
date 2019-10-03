@@ -21,17 +21,26 @@ const routes = [
   {
     path: "/login",
     name: "login",
-    component: () => import("./views/Login.vue")
+    component: () => import("./views/Login.vue"),
+    meta: {
+      guest: true
+    }
   },
   {
     path: "/register",
     name: "register",
-    component: () => import("./views/Register.vue")
+    component: () => import("./views/Register.vue"),
+    meta: {
+      guest: true
+    }
   },
   {
     path: "/users",
     name: "all-users",
-    component: () => import("./views/users/Index.vue")
+    component: () => import("./views/users/Index.vue"),
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: "/songs",
@@ -90,11 +99,19 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth == true)) {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
     if (localStorage.getItem("token") == null) {
       next({
         path: "/login",
         params: { nextUrl: to.fullPath }
+      });
+    } else {
+      next();
+    }
+  } else if (to.matched.some(record => record.meta.guest)) {
+    if (localStorage.getItem("token")) {
+      next({
+        path: "/"
       });
     } else {
       next();
