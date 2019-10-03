@@ -4,7 +4,9 @@
     <div v-if="loading">Loading...</div>
     <div v-else>
       <ul>
-        <li v-for="user in users" :key="user._id">{{ user.email }}</li>
+        <li v-for="user in users" :key="user._id">
+          <router-link :to="`/users/${user._id}`">{{ user.email }}</router-link>
+        </li>
       </ul>
     </div>
   </Layout>

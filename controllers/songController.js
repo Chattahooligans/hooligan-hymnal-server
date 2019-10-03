@@ -38,7 +38,7 @@ module.exports = app => {
   app.get(
     "/api/song/:id",
     passport.authenticate("jwt", { session: false }),
-    permissions("songbookAllowed"),
+    // permissions("songbookAllowed"),
     (req, res) => {
       Songs.findById(req.params.id, (error, song) => {
         res.send(song);

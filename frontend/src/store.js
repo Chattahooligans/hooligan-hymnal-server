@@ -12,11 +12,19 @@ export default new Vuex.Store({
     logout(state) {
       localStorage.removeItem("token");
       state.token = "";
+    },
+    getUser(state) {
+      this.$axios.get("/api/users/me").then(({ data }) => {
+        state.user = data;
+      });
     }
   },
   actions: {
     logout(context, payload) {
       context.commit("logout", payload);
+    },
+    getUser(context) {
+      context.commit("getUser");
     }
   },
   getters: {

@@ -2,9 +2,12 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "./views/Home.vue";
 
+import songsRouter from "./routes/songs-router";
+import userRouter from "@/routes/user-router";
+
 Vue.use(Router);
 
-const routes = [
+const baseRoutes = [
   {
     path: "/",
     name: "home",
@@ -34,22 +37,30 @@ const routes = [
       guest: true
     }
   },
-  {
-    path: "/users",
-    name: "all-users",
-    component: () => import("./views/users/Index.vue"),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: "/songs",
-    name: "all-songs",
-    component: () => import("./views/songs/Index.vue"),
-    meta: {
-      requiresAuth: true
-    }
-  },
+  // {
+  //   path: "/songs",
+  //   name: "all-songs",
+  //   component: () => import("./views/songs/Index.vue"),
+  //   meta: {
+  //     requiresAuth: true
+  //   }
+  // },
+  // {
+  //   path: "/songs/:id",
+  //   name: "song-detail",
+  //   component: () => import("./views/songs/_id.vue"),
+  //   meta: {
+  //     requiresAuth: true
+  //   }
+  // },
+  // {
+  //   path: "/songs/create",
+  //   name: "create-song",
+  //   component: () => import("./views/songs/create.vue"),
+  //   meta: {
+  //     requiresAuth: true
+  //   }
+  // },
   {
     path: "/song-books",
     name: "all-song-books",
@@ -91,6 +102,9 @@ const routes = [
     }
   }
 ];
+
+let routes = baseRoutes.concat(songsRouter);
+routes = routes.concat(userRouter);
 
 const router = new Router({
   mode: "history",

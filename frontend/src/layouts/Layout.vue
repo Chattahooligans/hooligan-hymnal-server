@@ -27,6 +27,7 @@ export default {
   components: {
     Sidebar
   },
+  mounted() {},
   methods: {
     logoutUser() {
       this.logout();

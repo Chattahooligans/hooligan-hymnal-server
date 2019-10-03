@@ -10,7 +10,7 @@
     <div v-else>
       <ul>
         <li v-for="song in songs" :key="song._id">
-          {{ song.title }}
+          <router-link :to="`/songs/${song._id}`">{{ song.title }}</router-link>
         </li>
       </ul>
     </div>

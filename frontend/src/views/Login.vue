@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import Layout from "@/layouts/Layout";
 export default {
   data() {
@@ -37,13 +38,14 @@ export default {
     Layout
   },
   methods: {
+    ...mapActions(["getUser"]),
     login() {
       this.$axios
         .post("/api/users/login", this.user)
         .then(({ data }) => {
           const { token } = data;
           localStorage.setItem("token", token);
-          setTimeout(() => {}, 10);
+          this.getUser();
           this.$router.push("/");
         })
         .catch(res => console.log(res));
