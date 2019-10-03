@@ -33,24 +33,28 @@ module.exports = app => {
           message: "User not found"
         });
       }
-      bcryptjs.compare(password, user.password, (err, isMatch) => {
-        if (isMatch) {
-          const payload = { id: user._id };
-          const secretOrKey = process.env.SECRET_KEY;
-          const tokenExpires = process.env.TOKEN_EXPIRES;
-          const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
-          const refreshExpires = process.env.REFRESH_TOKEN_EXPIRES;
-          const token = jwt.sign(payload, secretOrKey, {
-            expiresIn: tokenExpires
-          });
-          const refreshToken = jwt.sign(payload, refreshSecretOrKey, {
-            expiresIn: refreshExpires
-          });
-          res.status(200).send({ message: "Logged in", token, refreshToken });
-        } else {
-          res.status(400).send({ message: "Something happened please make sure you have an account" });
-        }
-      });
+      if (password) {
+        bcryptjs.compare(password, user.password, (err, isMatch) => {
+          if (isMatch) {
+            const payload = { id: user._id };
+            const secretOrKey = process.env.SECRET_KEY;
+            const tokenExpires = process.env.TOKEN_EXPIRES;
+            const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
+            const refreshExpires = process.env.REFRESH_TOKEN_EXPIRES;
+            const token = jwt.sign(payload, secretOrKey, {
+              expiresIn: tokenExpires
+            });
+            const refreshToken = jwt.sign(payload, refreshSecretOrKey, {
+              expiresIn: refreshExpires
+            });
+            res.status(200).send({ message: "Logged in", token, refreshToken });
+          } else {
+            res.status(400).send({ message: "Something happened please make sure you have an account" });
+          }
+        });
+      } else {
+        res.send(422).json({"message": "Password was incorrect or wasn't provided"})
+      }
     });
   });
 

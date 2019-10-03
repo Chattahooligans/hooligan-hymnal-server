@@ -25,7 +25,7 @@ var port = process.env.PORT || 3000;
 var MONGO_URI = process.env.MONGO_URI;
 
 app.use("/assets", express.static(__dirname + "/public"));
-app.use(express.static(`${__dirname}/client/build`));
+app.use(express.static(`${__dirname}/frontend/dist`));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(passport.initialize());
@@ -88,7 +88,7 @@ fs.readdirSync("controllers").forEach(function(file) {
 
 //! Intercepts all other requests and routes them to React(@reach-router)
 app.get("*", (req, res) => {
-  res.sendFile(path.join(`${__dirname}/client/build/index.html`));
+  res.sendFile(path.join(`${__dirname}/frontend/dist/index.html`));
 });
 
 app.listen(port, function() {
