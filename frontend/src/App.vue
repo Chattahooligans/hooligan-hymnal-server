@@ -11,19 +11,7 @@
       </template>
     </div>
     <div style="display:flex;flex-direction:row">
-      <template v-if="isLoggedIn">
-        <aside>
-          <nav style="display:flex; flex-direction:column">
-            <router-link to="/songs">Songs</router-link>
-            <router-link to="/">Song Book</router-link>
-            <router-link to="/">Players</router-link>
-            <router-link to="/">Roster</router-link>
-            <router-link to="/">Goalkeeper Nickname</router-link>
-            <router-link to="/">Foes</router-link>
-            <router-link to="/users">Users</router-link>
-          </nav>
-        </aside>
-      </template>
+      <Sidebar />
       <main>
         <router-view />
       </main>
@@ -32,12 +20,13 @@
 </template>
 
 <script>
+import Sidebar from "./components/Sidebar";
 import { mapActions, mapGetters } from "vuex";
 export default {
+  components: {
+    Sidebar
+  },
   methods: {
-    // logout() {
-    //   localStorage.removeItem("token");
-    // }
     ...mapActions(["logout"])
   },
   computed: {

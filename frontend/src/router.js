@@ -40,6 +40,46 @@ const routes = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: "/song-books",
+    name: "all-song-books",
+    component: () => import("./views/song-books/Index.vue"),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/players",
+    name: "all-players",
+    component: () => import("./views/players/Index.vue"),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/rosters",
+    name: "all-rosters",
+    component: () => import("./views/rosters/Index.vue"),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/goalkeeper-nickname",
+    name: "goalkeeper-nickname",
+    component: () => import("./views/GoalkeepersNickname/Index.vue"),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/foes",
+    name: "all-foes",
+    component: () => import("./views/foes/Index.vue"),
+    meta: {
+      requiresAuth: true
+    }
   }
 ];
 
