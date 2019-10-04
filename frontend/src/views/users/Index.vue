@@ -1,6 +1,7 @@
 <template>
   <Layout>
     <h2>All Users</h2>
+    <router-link to="/users/create">Add User</router-link>
     <div v-if="loading">Loading...</div>
     <div v-else>
       <ul>
@@ -14,6 +15,7 @@
 
 <script>
 import Layout from "@/layouts/Layout";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -30,21 +32,13 @@ export default {
   methods: {
     getUsers() {
       this.loading = true;
-      this.$axios
+      axios
         .get("/api/users")
         .then(({ data }) => {
           this.loading = false;
           this.users = data;
         })
         .catch(res => console.log(res));
-    }
-  },
-  beforeRouteEnters(to, from, next) {
-    if (to.meta.AuthRequired) {
-      if (this.$store.state.token !== "") {
-        next();
-      }
-      this.$router.push("/login");
     }
   }
 };

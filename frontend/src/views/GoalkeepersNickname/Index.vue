@@ -5,11 +5,12 @@
       Loading...
     </div>
     <div v-else>
-      <ul>
+      <ul v-if="goalkeepers.length">
         <li v-for="keeper in goalkeepers" :key="keeper._id">
           {{ JSON.stringify(keeper) }}
         </li>
       </ul>
+      <h3 v-else>No Goalkeepers</h3>
     </div>
   </Layout>
 </template>

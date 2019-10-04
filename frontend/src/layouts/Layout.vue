@@ -3,11 +3,12 @@
     <header style="display:flex;justify-content:space-between">
       <router-link to="/">Home</router-link>
       <nav>
-        <template v-if="!isLoggedIn">
-          <router-link to="/login">Login</router-link>
+        <template v-if="loggedIn">
+          <span>{{ user.email }}</span> |
+          <a href="#" @click.prevent="logout">Logout</a>
         </template>
         <template v-else>
-          <a href="#" @click.prevent="logoutUser">Logout</a>
+          <router-link to="/login">Login</router-link>
         </template>
       </nav>
     </header>
@@ -22,21 +23,19 @@
 
 <script>
 import Sidebar from "@/components/Sidebar";
-import { mapGetters, mapActions } from "vuex";
+import { mapActions } from "vuex";
+import { authComputed, userInfo } from "../vuex/helpers";
 export default {
   components: {
     Sidebar
   },
   mounted() {},
   methods: {
-    logoutUser() {
-      this.logout();
-      this.$router.push("/login");
-    },
     ...mapActions(["logout"])
   },
   computed: {
-    ...mapGetters(["isLoggedIn"])
+    ...authComputed,
+    ...userInfo
   }
 };
 </script>

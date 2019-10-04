@@ -5,11 +5,12 @@
       Loading...
     </div>
     <div v-else>
-      <ul>
+      <ul v-if="rosters.length">
         <li v-for="roster in rosters" :key="roster._id">
           {{ roster }}
         </li>
       </ul>
+      <h3 v-else>No Rosters</h3>
     </div>
   </Layout>
 </template>

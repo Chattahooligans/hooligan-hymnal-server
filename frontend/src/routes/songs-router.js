@@ -4,7 +4,8 @@ export default [
     name: "all-songs",
     component: () => import("@/views/songs/Index.vue"),
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      songbookAllowed: true
     }
   },
   {
@@ -12,7 +13,8 @@ export default [
     name: "show-song",
     component: () => import("@/views/songs/_id.vue"),
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      songbookAllowed: true
     }
   },
   {
@@ -20,7 +22,8 @@ export default [
     name: "create-song",
     component: () => import("@/views/songs/create.vue"),
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      songbookAllowed: true
     }
   },
   {
@@ -28,7 +31,8 @@ export default [
     name: "edit-song",
     component: () => import("@/views/songs/edit.vue"),
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      songbookAllowed: true
     }
   }
 ];

@@ -19,6 +19,8 @@
 
 <script>
 import Layout from "@/layouts/Layout";
+import { mapGetters } from "vuex";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -36,7 +38,7 @@ export default {
   methods: {
     getSongs() {
       this.loading = false;
-      this.$axios
+      axios
         .get("/api/songs")
         .then(({ data }) => {
           this.loading = false;
@@ -44,6 +46,9 @@ export default {
         })
         .catch(({ data }) => (this.message = data));
     }
+  },
+  computed: {
+    ...mapGetters(["user"])
   }
 };
 </script>

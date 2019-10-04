@@ -1,35 +1,49 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import axios from "axios";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    token: localStorage.getItem("token") || "",
-    user: {}
+    user: null
   },
   mutations: {
-    logout(state) {
-      localStorage.removeItem("token");
-      state.token = "";
+    SET_USER_DATA(state, userData) {
+      state.user = userData;
+      localStorage.setItem("user", JSON.stringify(userData));
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${userData.token}`;
     },
-    getUser(state) {
-      this.$axios.get("/api/users/me").then(({ data }) => {
-        state.user = data;
-      });
+    LOGOUT() {
+      localStorage.removeItem("user");
+      location.reload();
     }
   },
   actions: {
-    logout(context, payload) {
-      context.commit("logout", payload);
+    register({ commit }, credentials) {
+      return axios.post("/api/users/register", credentials).then(({ data }) => {
+        commit("SET_USER_DATA", data);
+      });
     },
-    getUser(context) {
-      context.commit("getUser");
+    login({ commit }, credentials) {
+      return axios.post("/api/users/login", credentials).then(({ data }) => {
+        commit("SET_USER_DATA", data);
+      });
+    },
+    logout({ commit }) {
+      commit("LOGOUT");
     }
   },
   getters: {
-    isLoggedIn: state => {
-      return state.token;
+    loggedIn(state) {
+      return !!state.user;
+    },
+    user(state) {
+      if (state.user) {
+        return state.user.user;
+      }
     }
   }
 });

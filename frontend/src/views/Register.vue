@@ -28,11 +28,17 @@
         <button type="submit">Register</button>
       </div>
     </form>
+    <div>
+      <router-link to="/login"
+        >Already have an account, please login</router-link
+      >
+    </div>
   </Layout>
 </template>
 
 <script>
 import Layout from "@/layouts/Layout";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -54,13 +60,14 @@ export default {
   methods: {
     register() {
       if (this.isMatch) {
-        this.$axios
-          .post("/api/users/register", {
+        this.$store
+          .dispatch("register", {
             email: this.user.email,
             password: this.user.password
           })
-          .then(res => console.log(res))
-          .catch(res => console.log(res));
+          .then(() => {
+            this.$router.push("/login");
+          });
       } else {
         alert("The email addresses do not match");
       }

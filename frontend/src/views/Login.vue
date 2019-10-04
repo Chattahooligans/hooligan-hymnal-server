@@ -19,11 +19,16 @@
         <button type="submit">Login</button>
       </div>
     </form>
+    <div>
+      <router-link to="/register"
+        >Don't have an account. Register for one here</router-link
+      >
+    </div>
   </Layout>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+// import { mapActions } from "vuex";
 import Layout from "@/layouts/Layout";
 export default {
   data() {
@@ -38,17 +43,15 @@ export default {
     Layout
   },
   methods: {
-    ...mapActions(["getUser"]),
     login() {
-      this.$axios
-        .post("/api/users/login", this.user)
-        .then(({ data }) => {
-          const { token } = data;
-          localStorage.setItem("token", token);
-          this.getUser();
-          this.$router.push("/");
+      this.$store
+        .dispatch("login", {
+          email: this.user.email,
+          password: this.user.password
         })
-        .catch(res => console.log(res));
+        .then(() => {
+          this.$router.push("/");
+        });
     }
   },
   computed: {}

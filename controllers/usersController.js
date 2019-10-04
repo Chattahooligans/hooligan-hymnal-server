@@ -25,11 +25,11 @@ module.exports = app => {
     });
   });
 
-  app.post("/api/users/login", async (req, res) => {
+  app.post("/api/users/login", (req, res) => {
     const { email, password } = req.body;
-    await User.findOne({ email: email }, "email password", (err, user) => {
+    User.findOne({ email: email }, "+password", (err, user) => {
       if (!user) {
-        res.status(404).json({
+        return res.status(404).json({
           message: "User not found"
         });
       }
@@ -47,13 +47,21 @@ module.exports = app => {
             const refreshToken = jwt.sign(payload, refreshSecretOrKey, {
               expiresIn: refreshExpires
             });
-            res.status(200).send({ message: "Logged in", token, refreshToken });
+            user = {
+              email: user.email,
+              foesAllowed: user.foesAllowed,
+              pushNotificationsAllowed: user.pushNotificationsAllowed,
+              rosterAllowed: user.rosterAllowed,
+              songbookAllowed: user.songbookAllowed,
+              usersAllowed: user.usersAllowed
+            }
+            return res.status(200).send({ token, refreshToken, user });
           } else {
-            res.status(400).send({ message: "Something happened please make sure you have an account" });
+            return res.status(400).send({ message: "Something happened please make sure you have an account" });
           }
         });
       } else {
-        res.send(422).json({"message": "Password was incorrect or wasn't provided"})
+        return res.send(422).json({"message": "Password was incorrect or wasn't provided"})
       }
     });
   });

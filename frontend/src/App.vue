@@ -30,9 +30,7 @@ export default {
   methods: {
     ...mapActions(["logout"])
   },
-  computed: {
-    ...mapGetters(["isLoggedIn"])
-  }
+  computed: {}
 };
 </script>
 

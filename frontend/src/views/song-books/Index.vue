@@ -5,15 +5,17 @@
       Loading...
     </div>
     <div v-else>
-      <ul>
+      <ul v-if="books.length">
         <li v-for="book in books" :key="book._id">{{ book }}</li>
       </ul>
+      <h3 v-else>No Song Books</h3>
     </div>
   </Layout>
 </template>
 
 <script>
 import Layout from "@/layouts/Layout";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -30,7 +32,7 @@ export default {
   methods: {
     getBooks() {
       this.loading = true;
-      this.$axios
+      axios
         .get("/api/songbook")
         .then(({ data }) => {
           this.loading = false;

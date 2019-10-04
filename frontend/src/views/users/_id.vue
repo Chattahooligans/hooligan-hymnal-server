@@ -7,13 +7,36 @@
       {{ message }}
     </div>
     <div v-else>
-      {{ user.email }}
+      <h2>
+        {{ user.email }} -
+        <router-link :to="`/users/${user._id}/edit`">Edit</router-link>
+      </h2>
+      <h3>Users Permissions</h3>
+      <ul>
+        <li>
+          Songs & Song Books:
+          <input type="checkbox" :checked="user.songbookAllowed" disabled />
+        </li>
+        <li>
+          Players & Rosters & Goalkeepers:
+          <input type="checkbox" :checked="user.rosterAllowed" disabled />
+        </li>
+        <li>
+          Foes:
+          <input type="checkbox" :checked="user.foesAllowed" disabled />
+        </li>
+        <li>
+          Users/Admin:
+          <input type="checkbox" :checked="user.usersAllowed" disabled />
+        </li>
+      </ul>
     </div>
   </Layout>
 </template>
 
 <script>
 import Layout from "@/layouts/Layout";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -32,7 +55,7 @@ export default {
     getUser() {
       this.loading = true;
       const { id } = this.$route.params;
-      this.$axios.get(`/api/users/${id}`).then(({ data }) => {
+      axios.get(`/api/users/${id}`).then(({ data }) => {
         this.loading = false;
         if (data.message) {
           this.message = data.message;
