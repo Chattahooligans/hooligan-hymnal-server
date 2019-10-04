@@ -14,6 +14,7 @@ export default {
     return {
       user: {
         email: "",
+        password: "",
         songbookAllowed: false,
         rosterAllowed: false,
         foesAllowed: false,
@@ -37,6 +38,7 @@ export default {
     cancel() {
       this.user = {
         email: "",
+        password: "",
         songbookAllowed: false,
         rosterAllowed: false,
         foesAllowed: false,

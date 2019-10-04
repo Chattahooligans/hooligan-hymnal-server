@@ -8,17 +8,17 @@ export default [
     }
   },
   {
-    path: "/users/:id",
-    name: "view-user",
-    component: () => import("@/views/users/_id.vue"),
+    path: "/users/create",
+    name: "create-user",
+    component: () => import("@/views/users/create.vue"),
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: "/users/create",
-    name: "create-user",
-    component: () => import("@/views/users/create.vue"),
+    path: "/users/:id",
+    name: "view-user",
+    component: () => import("@/views/users/_id.vue"),
     meta: {
       requiresAuth: true
     }

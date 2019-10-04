@@ -74,28 +74,23 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
     if (!loggedIn) {
       next("/login");
-      return;
     }
-    if (loggedIn) {
-      const { user } = JSON.parse(loggedIn);
-      if (
-        to.matched.some(
-          record => record.meta.songBooksAllowed === user.songBooksAllowed
-        ) ||
-        to.matched.some(
-          record => record.meta.rosterAllowed === user.rosterAllowed
-        ) ||
-        to.matched.some(
-          record => record.meta.foesAllowed === user.foesAllowed
-        ) ||
-        to.matched.some(
-          record => record.meta.usersAllowed === user.usersAllowed
-        )
-      ) {
-        next();
-      } else {
-        next("/");
-      }
+  }
+  if (loggedIn) {
+    const { user } = JSON.parse(loggedIn);
+    if (
+      to.matched.some(
+        record => record.meta.rostersAllowed === user.rostersAllowed
+      ) ||
+      to.matched.some(
+        record => record.meta.songbookAllowed === user.songbookAllowed
+      ) ||
+      to.matched.some(record => record.meta.foesAllowed === user.foesAllowed) ||
+      to.matched.some(record => record.meta.usersAllowed === user.usersAllowed)
+    ) {
+      next();
+    } else {
+      next("/");
     }
   }
   next();

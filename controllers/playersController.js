@@ -48,10 +48,6 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     permissions("rosterAllowed"),
     (req, res) => {
-      if (req.body.authKey !== process.env.AUTH_KEY) {
-        res.status(403).send({ error: "bad auth key" });
-        return;
-      }
       var newPlayer = Players(req.body);
       newPlayer.save((error, player) => {
         error ? res.status(501).send({ error }) : res.send(player);
@@ -66,10 +62,6 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     permissions("rosterAllowed"),
     (req, res) => {
-      if (req.body.authKey !== process.env.AUTH_KEY) {
-        res.status(403).send({ error: "bad auth key" });
-        return;
-      }
       Players.findByIdAndUpdate(req.params.id, req.body, (error, player) => {
         error ? res.status(501).send({ error }) : res.send(player);
         players_cache.force_reload();
@@ -83,10 +75,6 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     permissions("rosterAllowed"),
     (req, res) => {
-      if (req.body.authKey !== process.env.AUTH_KEY) {
-        res.status(403).send({ error: "bad auth key" });
-        return;
-      }
       Players.findByIdAndRemove(req.params.id, error => {
         error
           ? res.status(501).send({ error })

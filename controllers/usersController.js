@@ -29,7 +29,7 @@ module.exports = app => {
     const { email, password } = req.body;
     User.findOne({ email: email }, "+password", (err, user) => {
       if (!user) {
-        return res.status(404).json({
+        return res.sendStatus(404).json({
           message: "User not found"
         });
       }
