@@ -12,6 +12,9 @@
         <h3>Bio</h3>
         <div v-html="linebreaks" />
       </div>
+      <div>
+        <button @click="deletePlayer">Delete {{ player.name }}</button>
+      </div>
     </div>
   </Layout>
 </template>
@@ -47,6 +50,27 @@ export default {
           this.loading = false;
           this.$router.push("/404");
         });
+    },
+    deletePlayer() {
+      const { id } = this.$route.params;
+      this.$swal({
+        title: `Are you sure you want to delete?`,
+        text: `${this.player.name}`,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true
+      }).then(willDelete => {
+        if (willDelete) {
+          axios.delete(`/api/players/${id}`).then(res => {
+            console.log(res);
+            // this.$swal({
+            //   title: `${this.player.name} was deleted succesfully`
+            // });
+          });
+        } else {
+          console.log("cancel");
+        }
+      });
     }
   },
   computed: {

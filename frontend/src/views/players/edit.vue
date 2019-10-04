@@ -8,7 +8,7 @@
       <PlayerForm
         :player="player"
         :formMethod="updateUser"
-        edit="true"
+        :edit="true"
         :cancel="cancel"
       />
     </template>
@@ -58,7 +58,7 @@ export default {
         });
     },
     cancel() {
-      this.router.go(-1);
+      this.$router.go(-1);
     }
   }
 };

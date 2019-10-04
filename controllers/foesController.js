@@ -62,7 +62,7 @@ module.exports = app => {
 
   // updates player
   app.put(
-    "/api/players/:id",
+    "/api/foes/players/:id",
     passport.authenticate("jwt", { session: false }),
     permissions("foesAllowed"),
     (req, res) => {
@@ -79,7 +79,7 @@ module.exports = app => {
 
   //deletes player
   app.delete(
-    "/api/players/:id",
+    "/api/foes/players/:id",
     passport.authenticate("jwt", { session: false }),
     permissions("foesAllowed"),
     (req, res) => {
