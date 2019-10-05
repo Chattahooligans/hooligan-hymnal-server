@@ -40,10 +40,10 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     permissions("songbookAllowed"),
     (req, res) => {
-      if (req.body.authKey !== process.env.AUTH_KEY) {
-        res.status(403).send({ error: "bad auth key" });
-        return;
-      }
+      // if (req.body.authKey !== process.env.AUTH_KEY) {
+      //   res.status(403).send({ error: "bad auth key" });
+      //   return;
+      // }
       var newSongbook = Songbook(req.body);
       newSongbook.save((error, songbook) => {
         error ? res.status(501).send({ error }) : res.send(songbook);

@@ -6,7 +6,11 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    user: null
+    user: null,
+    global_message: {
+      type: null,
+      message: null
+    }
   },
   mutations: {
     SET_USER_DATA(state, userData) {
@@ -19,6 +23,9 @@ export default new Vuex.Store({
     LOGOUT() {
       localStorage.removeItem("user");
       location.reload();
+    },
+    SET_GLOBAL_MESSAGE(state, message) {
+      state.global_message = message;
     }
   },
   actions: {
@@ -34,6 +41,9 @@ export default new Vuex.Store({
     },
     logout({ commit }) {
       commit("LOGOUT");
+    },
+    global_message({ commit }, message) {
+      commit("SET_GLOBAL_MESSAGE", message);
     }
   },
   getters: {
@@ -44,6 +54,9 @@ export default new Vuex.Store({
       if (state.user) {
         return state.user.user;
       }
+    },
+    getMessage(state) {
+      return state.global_message;
     }
   }
 });

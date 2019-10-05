@@ -7,5 +7,14 @@ export default [
       requiresAuth: true,
       songbookAllowed: true
     }
+  },
+  {
+    path: "/song-books/create",
+    name: "create-song-book",
+    component: () => import("@/views/song-books/create.vue"),
+    meta: {
+      requiresAuth: true,
+      songbookAllowed: true
+    }
   }
 ];

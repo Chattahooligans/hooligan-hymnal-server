@@ -1,6 +1,7 @@
 <template>
   <Layout>
     <h2>All Song Books</h2>
+    <router-link :to="{ name: 'create-song-book' }">Add Songbook</router-link>
     <div v-if="loading">
       Loading...
     </div>
@@ -39,6 +40,20 @@ export default {
           this.books = data;
         })
         .catch(res => console.log(res));
+    },
+    addSong() {
+      this.new_chapter.songs = this.new_chapter.songs.concat(this.new_song);
+      this.new_song = {
+        _id: null,
+        featured: null,
+        hint: null
+      };
+    },
+    removeSong(song) {
+      this.new_chapter.songs.filter(s => s._id !== song._id);
+      // this.new_chapter.songs = this.new_chapter.songs.filter(
+      //   s => s._id !== song._id
+      // );
     }
   }
 };
