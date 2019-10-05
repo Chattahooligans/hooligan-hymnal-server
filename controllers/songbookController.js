@@ -34,6 +34,15 @@ module.exports = app => {
     songbook_cache.send_data(res);
   });
 
+
+  app.get("/api/songbook/:id", passport.authenticate("jwt", { session: false }),(req, res) => {
+    const { id } = req.params;
+    Songbook.findById(id, (err, songbook) => {
+      if (err) { return res.send(404).json({ message: "Songbook Not Found" }) }
+      return res.send(songbook)
+    })
+  })
+
   // creates songbook
   app.post(
     "/api/songbook",

@@ -4,16 +4,17 @@ import router from "./router";
 import store from "./store";
 import axios from "axios";
 import VueSwal from "vue-swal";
-import config from "../../frontend-config";
+
+import Layout from "@/layouts/Layout";
 
 Vue.config.productionTip = false;
 
 Vue.use(VueSwal);
+Vue.component("Layout", Layout);
 
 new Vue({
   created() {
     const userString = localStorage.getItem("user");
-    console.log(config);
     if (userString) {
       const userData = JSON.parse(userString);
       this.$store.commit("SET_USER_DATA", userData);
@@ -24,11 +25,12 @@ new Vue({
       response => response,
       error => {
         if (error.response.status === 401) {
-          this.$store.dispatch("global_message", {
-            type: "danger",
-            message: "Your session has expored please log back in."
+          this.$swal({
+            title: "Your session has expired please log back in.",
+            icon: "danger"
+          }).then(() => {
+            this.$store.dispatch("logout");
           });
-          this.$store.dispatch("logout");
         }
         return Promise.reject(error);
       }

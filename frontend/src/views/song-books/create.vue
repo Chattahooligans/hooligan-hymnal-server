@@ -10,6 +10,7 @@
       :addSong="addSong"
       :removeSong="removeSong"
       :formSubmit="submitSongBook"
+      :cancel="cancel"
     />
   </Layout>
 </template>
@@ -82,6 +83,9 @@ export default {
           // this.$swal("Songbook Created");
         })
         .catch(err => console.log(err.response));
+    },
+    cancel() {
+      location.reload();
     }
   }
 };

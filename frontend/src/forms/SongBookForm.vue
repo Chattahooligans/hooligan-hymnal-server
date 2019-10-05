@@ -151,7 +151,14 @@
       </div>
     </div>
     <div>
-      <button type="submit">Add Songbook</button>
+      <template v-if="!edit">
+        <button type="submit">Add Songbook</button> |
+        <button @click="cancel" type="button">Reset</button>
+      </template>
+      <template v-else>
+        <button type="submit">Update {{ songbook.songbook_title }}</button> |
+        <button type="button" @click="cancel">Go Back</button>
+      </template>
     </div>
   </form>
 </template>
@@ -187,7 +194,13 @@ export default {
       type: Function
     },
     formSubmit: {
-      type: Function
+      type: Function,
+      required: true
+    },
+    edit: Boolean,
+    cancel: {
+      type: Function,
+      required: true
     }
   }
 };

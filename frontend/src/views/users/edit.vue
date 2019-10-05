@@ -8,6 +8,7 @@
     </div>
     <div v-else>
       <h2>Edit {{ user.email }}</h2>
+      <button @click="deleteUser">Delete {{ user.email }}</button>
       <UserForm
         :user="user"
         :edit="true"
@@ -50,14 +51,41 @@ export default {
         });
     },
     updateUser() {
-      axios.put(`/api/users/${this.user._id}`, this.user).then(() => {
-        this.router
-          .push(`/users/${this.user._id}`)
-          .catch(err => console.log(err.response));
-      });
+      axios
+        .put(`/api/users/${this.user._id}`, this.user)
+        .then(() => {
+          this.$swal({
+            title: `${this.user.email} permissions updated successfully`,
+            item: "success"
+          }).then(() => {
+            this.$router.push(`/users/${this.user._id}`);
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     back() {
-      this.router.go(-1);
+      this.$router.go(-1);
+    },
+    deleteUser() {
+      const { _id } = this.user;
+      this.$swal({
+        title: `Are you sure you want to delete ${this.user.email}`,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true
+      }).then(willDelete => {
+        if (willDelete) {
+          axios.delete(`/api/users/${_id}`).then(() => {
+            this.$swal({
+              title: "User succesfully deleted"
+            }).then(() => {
+              this.$router.push("/users");
+            });
+          });
+        }
+      });
     }
   }
 };

@@ -210,7 +210,7 @@ module.exports = app => {
     (req, res) => {
       const { id } = req.params;
       User.findByIdAndUpdate(id, req.body, (error, user) => {
-        if (!error) {
+        if (error) {
           res.status(501).send({ error });
         }
         res.send(user);

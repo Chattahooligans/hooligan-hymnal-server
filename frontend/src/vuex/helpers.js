@@ -7,3 +7,7 @@ export const authComputed = {
 export const userInfo = {
   ...mapGetters(["user"])
 };
+
+export const globalMessage = {
+  ...mapGetters(["getMessage"])
+};
