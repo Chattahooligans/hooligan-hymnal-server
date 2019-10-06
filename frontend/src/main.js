@@ -3,13 +3,17 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import axios from "axios";
-import VueSwal from "vue-swal";
+import VueSweetalert2 from "vue-sweetalert2";
+import { Plugin } from "vue-fragment";
 
 import Layout from "@/layouts/Layout";
 
 Vue.config.productionTip = false;
 
-Vue.use(VueSwal);
+import "sweetalert2/dist/sweetalert2.all";
+
+Vue.use(VueSweetalert2);
+Vue.use(Plugin);
 Vue.component("Layout", Layout);
 
 new Vue({

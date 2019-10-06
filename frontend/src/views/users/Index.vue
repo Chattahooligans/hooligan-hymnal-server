@@ -2,7 +2,7 @@
   <Layout>
     <h2>All Users</h2>
     <!-- TODO: Need to add new endpoint -->
-    <!-- <router-link to="/users/create">Add User</router-link> -->
+    <router-link to="/users/create">Add User</router-link>
     <div v-if="loading">Loading...</div>
     <div v-else>
       <ul v-if="users.length">

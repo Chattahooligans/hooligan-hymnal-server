@@ -4,7 +4,8 @@ export default [
     name: "all-users",
     component: () => import("@/views/users/Index.vue"),
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      usersAllowed: true
     }
   },
   {
@@ -12,7 +13,8 @@ export default [
     name: "create-user",
     component: () => import("@/views/users/create.vue"),
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      usersAllowed: true
     }
   },
   {
@@ -20,7 +22,8 @@ export default [
     name: "view-user",
     component: () => import("@/views/users/_id.vue"),
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      usersAllowed: true
     }
   },
   {
@@ -28,7 +31,8 @@ export default [
     name: "edit-user",
     component: () => import("@/views/users/edit.vue"),
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      usersAllowed: true
     }
   }
 ];

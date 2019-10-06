@@ -56,7 +56,7 @@ export default {
         .then(() => {
           this.$swal({
             title: `${this.user.email} permissions updated successfully`,
-            item: "success"
+            icon: "success"
           }).then(() => {
             this.$router.push(`/users/${this.user._id}`);
           });
@@ -72,11 +72,10 @@ export default {
       const { _id } = this.user;
       this.$swal({
         title: `Are you sure you want to delete ${this.user.email}`,
-        icon: "warning",
-        buttons: true,
-        dangerMode: true
-      }).then(willDelete => {
-        if (willDelete) {
+        type: "warning",
+        showCancelButton: true
+      }).then(result => {
+        if (result.value) {
           axios.delete(`/api/users/${_id}`).then(() => {
             this.$swal({
               title: "User succesfully deleted"

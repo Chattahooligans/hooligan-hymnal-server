@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <fragment>
     <header style="display:flex;justify-content:space-between">
       <router-link to="/">Home</router-link>
       <nav>
@@ -18,7 +18,7 @@
         <slot />
       </main>
     </section>
-  </div>
+  </fragment>
 </template>
 
 <script>

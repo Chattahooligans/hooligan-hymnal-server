@@ -155,7 +155,7 @@ module.exports = app => {
       } = req.body;
       const newUser = new User({
         email,
-        password
+        password,
       });
       newUser.songbookAllowed = songbookAllowed;
       newUser.rosterAllowed = rosterAllowed;
@@ -170,7 +170,7 @@ module.exports = app => {
           });
         }
         User.findByIdAndUpdate(
-          user,
+          user.id,
           {
             ...user,
             songbookAllowed,
