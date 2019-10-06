@@ -51,6 +51,13 @@ export default {
         })
         .then(() => {
           this.$router.push("/");
+        })
+        .catch(err => {
+          this.$swal({
+            title: `${err.response.data.message}`
+          }).then(() => {
+            this.user.password = "";
+          });
         });
     }
   },

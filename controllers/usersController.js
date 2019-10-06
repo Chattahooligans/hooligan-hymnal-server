@@ -58,7 +58,7 @@ module.exports = app => {
             }
             return res.status(200).send({ token, refreshToken, user });
           } else {
-            return res.status(400).send({ message: "Something happened please make sure you have an account" });
+            return res.status(400).send({ message: "Incorrect Password. Please try again." });
           }
         });
       } else {

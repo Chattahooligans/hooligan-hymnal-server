@@ -4,7 +4,7 @@
       <router-link to="/">Home</router-link>
       <nav>
         <template v-if="loggedIn">
-          <router-link :to="{ name: 'edit-user', params: { id: user.id } }">{{
+          <router-link :to="{ name: 'my-profile' }">{{
             user.email
           }}</router-link>
           |
