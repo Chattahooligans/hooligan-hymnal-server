@@ -48,6 +48,7 @@ module.exports = app => {
               expiresIn: refreshExpires
             });
             user = {
+              id: user.id,
               email: user.email,
               foesAllowed: user.foesAllowed,
               pushNotificationsAllowed: user.pushNotificationsAllowed,
@@ -231,4 +232,26 @@ module.exports = app => {
       });
     }
   );
+
+  app.put("/api/users/:id/reset-password", (req, res) => {
+    const { id } = req.params;
+    const { currentPassword, newPassword } = req.body;
+    User.findByIdAndUpdate(id, (err, user) => {
+      if (err) { return res.status(404).send(err) }
+      bcryptjs.compare(currentPassword, user.password, (err, isMatch) => {
+        if (err) { return res.status(422).send(err) }
+        if (isMatch) {
+          bcryptjs.genSalt(10, (err, salt) => {
+            if (err) { return res.send(err) }
+            bcryptjs.hash(newPassword, salt, (err, hash) => {
+              if (err) { return res.send(err) }
+              user.hash = hash;
+              user.save()
+              return res.send(user)
+            })
+          })
+        }
+      })
+    })
+  });
 };

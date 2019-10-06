@@ -4,7 +4,10 @@
       <router-link to="/">Home</router-link>
       <nav>
         <template v-if="loggedIn">
-          <span>{{ user.email }}</span> |
+          <router-link :to="{ name: 'edit-user', params: { id: user.id } }">{{
+            user.email
+          }}</router-link>
+          |
           <a href="#" @click.prevent="logout">Logout</a>
         </template>
         <template v-else>
