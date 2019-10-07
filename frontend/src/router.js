@@ -6,6 +6,7 @@ import songsRouter from "./routes/songs-router";
 import userRouter from "@/routes/user-router";
 import songBooksRouter from "@/routes/song-book-router";
 import playerRouter from "@/routes/players-router";
+import rosterRouter from "@/routes/roster-router";
 
 Vue.use(Router);
 
@@ -32,14 +33,6 @@ const baseRoutes = [
     }
   },
   {
-    path: "/rosters",
-    name: "all-rosters",
-    component: () => import("./views/rosters/Index.vue"),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
     path: "/goalkeeper-nickname",
     name: "goalkeeper-nickname",
     component: () => import("./views/GoalkeepersNickname/Index.vue"),
@@ -62,6 +55,7 @@ let routes = baseRoutes.concat(songsRouter);
 routes = routes.concat(userRouter);
 routes = routes.concat(songBooksRouter);
 routes = routes.concat(playerRouter);
+routes = routes.concat(rosterRouter);
 
 const router = new Router({
   mode: "history",
@@ -78,15 +72,18 @@ router.beforeEach((to, from, next) => {
   }
   if (loggedIn) {
     const { user } = JSON.parse(loggedIn);
+    console.log(user);
     if (
-      to.matched.some(
-        record => record.meta.rostersAllowed === user.rostersAllowed
-      ) ||
       to.matched.some(
         record => record.meta.songbookAllowed === user.songbookAllowed
       ) ||
       to.matched.some(record => record.meta.foesAllowed === user.foesAllowed) ||
-      to.matched.some(record => record.meta.usersAllowed === user.usersAllowed)
+      to.matched.some(
+        record => record.meta.usersAllowed === user.usersAllowed
+      ) ||
+      to.matched.some(
+        record => record.meta.rosterAllowed === user.rosterAllowed
+      )
     ) {
       next();
     } else {

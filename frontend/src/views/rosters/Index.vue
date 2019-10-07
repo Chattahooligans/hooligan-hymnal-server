@@ -1,6 +1,7 @@
 <template>
   <Layout>
     <h2>Rosters</h2>
+    <router-link :to="{ name: 'create-roster' }">Create Roster</router-link>
     <div v-if="loading">
       Loading...
     </div>
