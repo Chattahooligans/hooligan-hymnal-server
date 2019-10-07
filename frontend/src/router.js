@@ -72,7 +72,6 @@ router.beforeEach((to, from, next) => {
   }
   if (loggedIn) {
     const { user } = JSON.parse(loggedIn);
-    console.log(user);
     if (
       to.matched.some(
         record => record.meta.songbookAllowed === user.songbookAllowed
