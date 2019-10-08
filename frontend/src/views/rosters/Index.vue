@@ -18,6 +18,7 @@
 
 <script>
 import Layout from "@/layouts/Layout";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -28,13 +29,21 @@ export default {
   components: {
     Layout
   },
+  created() {
+    this.getRosters();
+  },
   methods: {
     getRosters() {
       this.loading = true;
-      this.$axios.get("/api/rosters").then(({ data }) => {
-        this.loading = false;
-        this.rosters = data;
-      });
+      axios
+        .get("/api/roster")
+        .then(({ data }) => {
+          this.loading = false;
+          this.rosters = data;
+        })
+        .catch(err => {
+          console.log(err.response);
+        });
     }
   }
 };
