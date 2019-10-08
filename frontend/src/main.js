@@ -5,6 +5,7 @@ import store from "./store";
 import axios from "axios";
 import VueSweetalert2 from "vue-sweetalert2";
 import { Plugin } from "vue-fragment";
+import VueFormGenerator from "vue-form-generator";
 
 import Layout from "@/layouts/Layout";
 
@@ -15,6 +16,7 @@ import "sweetalert2/dist/sweetalert2.all";
 Vue.use(VueSweetalert2);
 Vue.use(Plugin);
 Vue.component("Layout", Layout);
+Vue.use(VueFormGenerator);
 
 new Vue({
   created() {

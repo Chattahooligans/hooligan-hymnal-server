@@ -20,6 +20,7 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "uuid": "^3.3.3",
+    "vue-form-generator": "^2.3.4",
     "yarn": ">=1.17.3"
   },
   "devDependencies": {

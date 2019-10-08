@@ -7,6 +7,7 @@ import userRouter from "@/routes/user-router";
 import songBooksRouter from "@/routes/song-book-router";
 import playerRouter from "@/routes/players-router";
 import rosterRouter from "@/routes/roster-router";
+import goalKeeperNickname from "@/routes/goalkeepers-router";
 
 Vue.use(Router);
 
@@ -33,14 +34,6 @@ const baseRoutes = [
     }
   },
   {
-    path: "/goalkeeper-nickname",
-    name: "goalkeeper-nickname",
-    component: () => import("./views/GoalkeepersNickname/Index.vue"),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
     path: "/foes",
     name: "all-foes",
     component: () => import("./views/foes/Index.vue"),
@@ -56,6 +49,7 @@ routes = routes.concat(userRouter);
 routes = routes.concat(songBooksRouter);
 routes = routes.concat(playerRouter);
 routes = routes.concat(rosterRouter);
+routes = routes.concat(goalKeeperNickname);
 
 const router = new Router({
   mode: "history",
