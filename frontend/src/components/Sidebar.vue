@@ -1,5 +1,5 @@
 <template>
-  <aside v-if="loggedIn">
+  <aside class="col-md-3" v-if="loggedIn">
     <nav style="display:flex; flex-direction:column">
       <template v-if="user.songbookAllowed">
         <router-link to="/songs">Songs</router-link>
