@@ -1,56 +1,25 @@
 <template>
   <Layout>
-    <div v-if="loading">
-      <h2>Loading...</h2>
+    <h2>
+      {{ player.name }} -
+      <router-link :to="`/players/${player._id}/edit`">Edit</router-link>
+    </h2>
+    <div>
+      <h3>Bio</h3>
+      <div v-html="linebreaks" />
     </div>
-    <div v-else>
-      <h2>
-        {{ player.name }} -
-        <router-link :to="`/players/${player._id}/edit`">Edit</router-link>
-      </h2>
-      <div>
-        <h3>Bio</h3>
-        <div v-html="linebreaks" />
-      </div>
-      <div>
-        <button @click="deletePlayer">Delete {{ player.name }}</button>
-      </div>
+    <div>
+      <button @click="deletePlayer">Delete {{ player.name }}</button>
     </div>
   </Layout>
 </template>
 
 <script>
-import Layout from "@/layouts/Layout";
+import { mapGetters } from "vuex";
 import axios from "axios";
 
 export default {
-  components: {
-    Layout
-  },
-  data() {
-    return {
-      loading: false,
-      player: null
-    };
-  },
-  created() {
-    this.getPlayer();
-  },
   methods: {
-    getPlayer() {
-      const { id } = this.$route.params;
-      this.loading = true;
-      axios
-        .get(`/api/players/${id}`)
-        .then(({ data }) => {
-          this.loading = false;
-          this.player = data;
-        })
-        .catch(() => {
-          this.loading = false;
-          this.$router.push("/404");
-        });
-    },
     deletePlayer() {
       const { id } = this.$route.params;
       this.$swal({
@@ -74,6 +43,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(["player"]),
     linebreaks() {
       return this.player.bio.replace("\n", "<br />");
     }

@@ -1,3 +1,6 @@
+import NProgress from "nprogress";
+import store from "@/store";
+
 export default [
   {
     path: "/players",
@@ -6,6 +9,13 @@ export default [
     meta: {
       requiresAuth: true,
       rosterAllowed: true
+    },
+    beforeEnter(routeTo, routeFrom, next) {
+      NProgress.start();
+      store.dispatch("fetchPlayers").then(() => {
+        NProgress.done();
+        next();
+      });
     }
   },
   {
@@ -15,6 +25,11 @@ export default [
     meta: {
       requiresAuth: true,
       rosterAllowed: true
+    },
+    beforeEnter(to, from, next) {
+      NProgress.start();
+      NProgress.done();
+      next();
     }
   },
   {
@@ -24,6 +39,14 @@ export default [
     meta: {
       requiresAuth: true,
       rosterAllowed: true
+    },
+    beforeEnter(to, from, next) {
+      NProgress.start();
+      const { id } = to.params;
+      store.dispatch("fetchPlayer", id).then(() => {
+        NProgress.done();
+        next();
+      });
     }
   },
   {

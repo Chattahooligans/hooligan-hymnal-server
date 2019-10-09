@@ -2,11 +2,8 @@
   <Layout>
     <h2>All Players</h2>
     <router-link to="/players/create">Add Player</router-link>
-    <div v-if="loading">
-      Loading...
-    </div>
-    <div v-else>
-      <ul v-if="players.length">
+    <div>
+      <ul v-if="players">
         <li v-for="player in players" :key="player._id">
           <router-link :to="`/players/${player._id}`">{{
             player.name
@@ -19,29 +16,18 @@
 </template>
 
 <script>
-import Layout from "@/layouts/Layout";
-import axios from "axios";
+import { mapGetters } from "vuex";
+import NProgress from "nprogress";
+import store from "@/store";
 export default {
-  data() {
-    return {
-      loading: false,
-      players: []
-    };
-  },
-  components: {
-    Layout
-  },
-  created() {
-    this.getPlayers();
-  },
-  methods: {
-    getPlayers() {
-      axios
-        .get("/api/players")
-        .then(({ data }) => (this.players = data))
-        .catch(res => console.log(res));
-    }
-  }
+  // beforeRouteEnter(routeTo, routeFrom, next) {
+  //   NProgress.start();
+  //   store.dispatch("fetchPlayers").then(() => {
+  //     NProgress.done();
+  //     next();
+  //   });
+  // },
+  computed: mapGetters(["players"])
 };
 </script>
 

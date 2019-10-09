@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import axios from "axios";
+import axios from "@/services/api-service";
 
 Vue.use(Vuex);
 
@@ -10,7 +10,9 @@ export default new Vuex.Store({
     global_message: {
       type: null,
       message: null
-    }
+    },
+    players: null,
+    player: null
   },
   mutations: {
     SET_USER_DATA(state, userData) {
@@ -26,6 +28,12 @@ export default new Vuex.Store({
     },
     SET_GLOBAL_MESSAGE(state, message) {
       state.global_message = message;
+    },
+    GET_ALL_PLAYERS(state, data) {
+      state.players = data;
+    },
+    GET_PLAYER(state, data) {
+      state.player = data;
     }
   },
   actions: {
@@ -44,6 +52,16 @@ export default new Vuex.Store({
     },
     global_message({ commit }, message) {
       commit("SET_GLOBAL_MESSAGE", message);
+    },
+    fetchPlayers({ commit }) {
+      return axios.get(`/api/players`).then(({ data }) => {
+        commit("GET_ALL_PLAYERS", data);
+      });
+    },
+    fetchPlayer({ commit }, id) {
+      return axios.get(`/api/players/${id}`).then(({ data }) => {
+        commit("GET_PLAYER", data);
+      });
     }
   },
   getters: {
@@ -57,6 +75,12 @@ export default new Vuex.Store({
     },
     getMessage(state) {
       return state.global_message;
+    },
+    players(state) {
+      return state.players;
+    },
+    player(state) {
+      return state.player;
     }
   }
 });

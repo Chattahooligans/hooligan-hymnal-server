@@ -9,6 +9,7 @@
 import Layout from "@/layouts/Layout";
 import PlayerForm from "@/forms/PlayerForm";
 import axios from "axios";
+
 export default {
   components: {
     Layout,

@@ -1,10 +1,10 @@
 <template>
   <Layout>
     <div class="container mx-auto">
-      <div class="w-2/3 shadow mx-auto mt-5 p-3">
-        <h2 class="border-bottom-1 text-2xl font-bold mb-3 border-bottom">
+      <div class="w-2/3 shadow-2xl  mx-auto mt-5 p-3">
+        <h1 class="border-bottom-1 text-2xl font-bold mb-3 border-bottom">
           Login
-        </h2>
+        </h1>
         <form @submit.prevent="login">
           <div class="flex flex-col mb-3">
             <label class="flex-1 font-semibold" for="email">Email</label>
@@ -12,8 +12,11 @@
               type="email"
               name="email"
               id="email"
+              placeholder="email@email.com"
+              aria-placeholder="Enter your email address"
               v-model="user.email"
-              class="border flex-auto rounded p-2"
+              class="border flex-auto rounded p-2 shadow"
+              required
             />
           </div>
           <div class="flex flex-col mb-3">
@@ -23,7 +26,10 @@
               name="password"
               id="password"
               v-model="user.password"
-              class="border flex-auto rounded p-2"
+              placeholder="******"
+              aria-placeholder="Enter your password"
+              class="border flex-auto rounded p-2 shadow"
+              required
             />
           </div>
           <div>
@@ -45,6 +51,7 @@
 <script>
 // import { mapActions } from "vuex";
 import Layout from "@/layouts/Layout";
+import NProgress from "nprogress";
 export default {
   data() {
     return {
@@ -56,6 +63,11 @@ export default {
   },
   components: {
     Layout
+  },
+  beforeRouteEnter(toRoute, fromRoute, next) {
+    NProgress.start();
+    NProgress.done();
+    next();
   },
   methods: {
     login() {

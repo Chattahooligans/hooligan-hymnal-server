@@ -7,6 +7,7 @@ import VueSweetalert2 from "vue-sweetalert2";
 import { Plugin } from "vue-fragment";
 import VueFormGenerator from "vue-form-generator";
 // import env from "dotenv";
+import "nprogress/nprogress.css";
 const env = require("dotenv");
 
 env.config();
@@ -30,7 +31,9 @@ new Vue({
       const userData = JSON.parse(userString);
       this.$store.commit("SET_USER_DATA", userData);
     }
-    axios.defaults.baseURL = "//localhost:5000";
+    if (process.env.NODE_ENV !== "production") {
+      axios.defaults.baseURL = "//localhost:5000";
+    }
     // axios.defaults.headers["api-key"] = ""
     axios.interceptors.response.use(
       response => response,

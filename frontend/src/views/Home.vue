@@ -11,12 +11,18 @@
 // @ is an alias to /src
 import HelloWorld from "@/components/HelloWorld.vue";
 import Layout from "@/layouts/Layout";
+import NProgress from "nprogress";
 
 export default {
   name: "home",
   components: {
     HelloWorld,
     Layout
+  },
+  beforeRouteEnter(routeTo, routeFrom, next) {
+    NProgress.start();
+    NProgress.done();
+    next();
   }
 };
 </script>
