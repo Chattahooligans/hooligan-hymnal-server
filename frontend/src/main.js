@@ -6,21 +6,22 @@ import axios from "axios";
 import VueSweetalert2 from "vue-sweetalert2";
 import { Plugin } from "vue-fragment";
 import VueFormGenerator from "vue-form-generator";
-import BootstrapVue from "bootstrap-vue";
+// import env from "dotenv";
+const env = require("dotenv");
+
+env.config();
 
 import Layout from "@/layouts/Layout";
 
 Vue.config.productionTip = false;
 
 import "sweetalert2/dist/sweetalert2.all";
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap-vue/dist/bootstrap-vue";
+import "@/assets/css/tailwind.css";
 
 Vue.use(VueSweetalert2);
 Vue.use(Plugin);
 Vue.component("Layout", Layout);
 Vue.use(VueFormGenerator);
-Vue.use(BootstrapVue);
 
 new Vue({
   created() {

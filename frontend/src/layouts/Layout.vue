@@ -1,7 +1,7 @@
 <template>
   <fragment>
-    <header>
-      <div class="container-fluid d-flex justify-content-between">
+    <header class="bg-gray-800 text-white py-3">
+      <div class="mx-3 flex flex-row justify-between">
         <router-link to="/">Home</router-link>
         <nav>
           <template v-if="loggedIn">
@@ -17,13 +17,11 @@
         </nav>
       </div>
     </header>
-    <section class="container-fluid">
-      <div class="row">
-        <Sidebar />
-        <main :class="{ 'col-md-9': loggedIn, 'col-md-12': !loggedIn }">
-          <slot />
-        </main>
-      </div>
+    <section class="mx-3 flex h-screen">
+      <Sidebar />
+      <main :class="{ 'w-2/3 ml-6': loggedIn, 'w-full': !loggedIn }">
+        <slot />
+      </main>
     </section>
   </fragment>
 </template>
