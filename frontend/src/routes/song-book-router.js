@@ -1,3 +1,5 @@
+import NProgress from "nprogress";
+import store from "@/store";
 export default [
   {
     path: "/song-books",
@@ -6,6 +8,13 @@ export default [
     meta: {
       requiresAuth: true,
       songbookAllowed: true
+    },
+    beforeEnter(to, from, next) {
+      NProgress.start();
+      store.dispatch("fetchSongbooks").then(() => {
+        NProgress.done();
+        next();
+      });
     }
   },
   {

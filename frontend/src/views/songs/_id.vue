@@ -1,49 +1,18 @@
 <template>
   <Layout>
-    <div v-if="message">
-      {{ message }}
-    </div>
     <h2>{{ song.title }}</h2>
+    <router-link :to="{ name: 'edit-song', params: { id: song._id } }"
+      >Edit</router-link
+    >
   </Layout>
 </template>
 
 <script>
-import Layout from "@/layouts/Layout";
+import { mapState } from "vuex";
 export default {
-  components: {
-    Layout
-  },
-  data() {
-    return {
-      message: "",
-      song: {}
-    };
-  },
-  mounted() {
-    this.getSong();
-  },
-  methods: {
-    getSong() {
-      const { id } = this.$route.params;
-      this.$axios
-        .get(`/api/song/${id}`)
-        .then(res => {
-          if (res.data.message) {
-            this.message = res.data.message;
-          } else {
-            this.song = res.data;
-          }
-        })
-        .catch(({ response }) => {
-          if (response.status === 401) {
-            localStorage.removeItem("token");
-            this.$router.push({
-              path: "/login"
-            });
-          }
-        });
-    }
-  }
+  computed: mapState({
+    song: state => state.song
+  })
 };
 </script>
 

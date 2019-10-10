@@ -1,13 +1,11 @@
 <template>
   <Layout>
     <h2>All Songs</h2>
-    <div v-if="loading">
-      Loading...
+    <router-link :to="{ name: 'create-song' }">Add Song</router-link>
+    <div v-if="!songs">
+      <h3>No Songs Currently</h3>
     </div>
-    <div v-if="error">
-      Error
-    </div>
-    <div v-else>
+    <div>
       <ul>
         <li v-for="song in songs" :key="song._id">
           <router-link :to="`/songs/${song._id}`">{{ song.title }}</router-link>
@@ -18,38 +16,12 @@
 </template>
 
 <script>
-import Layout from "@/layouts/Layout";
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import axios from "axios";
 export default {
-  data() {
-    return {
-      songs: [],
-      loading: false,
-      error: null
-    };
-  },
-  components: {
-    Layout
-  },
-  mounted() {
-    this.getSongs();
-  },
-  methods: {
-    getSongs() {
-      this.loading = false;
-      axios
-        .get("/api/songs")
-        .then(({ data }) => {
-          this.loading = false;
-          this.songs = data;
-        })
-        .catch(({ data }) => (this.message = data));
-    }
-  },
-  computed: {
-    ...mapGetters(["user"])
-  }
+  computed: mapState({
+    songs: state => state.songs
+  })
 };
 </script>
 

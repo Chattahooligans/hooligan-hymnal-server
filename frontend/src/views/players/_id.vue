@@ -5,6 +5,9 @@
       <router-link :to="`/players/${player._id}/edit`">Edit</router-link>
     </h2>
     <div>
+      <h3>Flag: {{ player.flag }}</h3>
+    </div>
+    <div>
       <h3>Bio</h3>
       <div v-html="linebreaks" />
     </div>

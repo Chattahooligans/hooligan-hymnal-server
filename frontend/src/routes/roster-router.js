@@ -1,3 +1,5 @@
+import NProgress from "nprogress";
+import store from "@/store";
 export default [
   {
     path: "/rosters",
@@ -6,6 +8,13 @@ export default [
     meta: {
       requiresAuth: true,
       rosterAllowed: true
+    },
+    beforeEnter(to, from, next) {
+      NProgress.start();
+      store.dispatch("fetchRosters").then(() => {
+        NProgress.done();
+        next();
+      });
     }
   },
   {
@@ -15,6 +24,11 @@ export default [
     meta: {
       requiresAuth: true,
       rosterAllowed: true
+    },
+    beforeEnter(to, from, next) {
+      NProgress.start();
+      NProgress.done();
+      next();
     }
   }
 ];

@@ -1,3 +1,5 @@
+import NProgress from "nprogress";
+import store from "@/store";
 export default [
   {
     path: "/songs",
@@ -6,6 +8,13 @@ export default [
     meta: {
       requiresAuth: true,
       songbookAllowed: true
+    },
+    beforeEnter(to, from, next) {
+      NProgress.start();
+      store.dispatch("fetchSongs").then(() => {
+        NProgress.done();
+        next();
+      });
     }
   },
   {
@@ -15,6 +24,14 @@ export default [
     meta: {
       requiresAuth: true,
       songbookAllowed: true
+    },
+    beforeEnter(to, from, next) {
+      NProgress.start();
+      const { id } = to.params;
+      store.dispatch("fetchSong", id).then(() => {
+        NProgress.done();
+        next();
+      });
     }
   },
   {
@@ -33,6 +50,14 @@ export default [
     meta: {
       requiresAuth: true,
       songbookAllowed: true
+    },
+    beforeEnter(to, from, next) {
+      NProgress.start();
+      const { id } = to.params;
+      store.dispatch("fetchSong", id).then(() => {
+        NProgress.done();
+        next();
+      });
     }
   }
 ];
