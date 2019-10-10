@@ -27,6 +27,7 @@ Vue.use(VueFormGenerator);
 
 new Vue({
   created() {
+    document.body.classList.add('min-h-screen');
     const userString = localStorage.getItem('user');
     if (userString) {
       const userData = JSON.parse(userString);

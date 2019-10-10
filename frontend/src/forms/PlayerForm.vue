@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="formMethod">
+  <form @submit.prevent="formMethod" class="mb-10">
     <div class="flex flex-col mb-3">
       <BaseInput
         type="text"
@@ -108,10 +108,10 @@
       </fragment>
       <fragment v-else>
         <button
-          class="px-3 py-2 text-white bg-blue-600 rounded"
+          class="px-3 py-2 text-white bg-blue-600 rounded mr-3"
           type="submit"
         >Update {{ player.name }}</button>
-        <button class="px-3 py-2 text-white bg-red-700 rounded mr-3" @click.prevent="cancel">Cancel</button>
+        <button class="px-3 py-2 text-white bg-red-700 rounded" @click.prevent="cancel">Cancel</button>
       </fragment>
     </div>
   </form>

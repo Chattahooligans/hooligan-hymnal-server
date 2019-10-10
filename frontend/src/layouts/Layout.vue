@@ -1,14 +1,15 @@
 <template>
-  <fragment>
+  <fragment class="overflow-hidden">
     <header class="bg-gray-800 text-white py-3">
       <div class="mx-3 flex flex-row justify-between">
         <router-link to="/">Hymnal Server</router-link>
         <nav>
           <template v-if="loggedIn">
-            <router-link :to="{ name: 'my-profile' }">{{
+            <router-link :to="{ name: 'my-profile' }">
+              {{
               user.email
-            }}</router-link>
-            |
+              }}
+            </router-link>|
             <a href="#" @click.prevent="logout">Logout</a>
           </template>
           <template v-else>
@@ -17,7 +18,7 @@
         </nav>
       </div>
     </header>
-    <section class="mx-3 flex h-screen">
+    <section class="mx-3 flex min-h-screen h-full">
       <Sidebar />
       <main :class="{ 'w-2/3 ml-6': loggedIn, 'w-full': !loggedIn }">
         <slot />

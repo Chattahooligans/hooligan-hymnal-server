@@ -118,6 +118,9 @@ export default new Vuex.Store({
       return $http.get(`/api/goalkeeperNicknames`).then(({ data }) => {
         commit('GET_ALL_GOALKEEPERS_NICKNAMES', data);
       });
+    },
+    fetchNickname({ commit }, id) {
+      return $http.get(`/api/goalkeeper`)
     }
   },
   getters: {
@@ -146,6 +149,9 @@ export default new Vuex.Store({
     },
     songbooks(state) {
       return state.songbooks;
+    },
+    goalkeepers(state) {
+      return state.goalkeepersnicknames;
     }
   }
 });

@@ -2,21 +2,71 @@
   <Layout>
     <h2>Goal Keeper Nickname</h2>
     <form @submit.prevent="addGoalkeeperNickname">
-      <vue-form-generator
-        :schema="schema"
-        :model="goalkeeper"
-        :options="formOptions"
-      >
-      </vue-form-generator>
-      <div>
-        <button type="submit">Add Goalkeeper Nickname</button>
+      <div class="flex flex-col mb-3">
+        <BaseInput
+          type="text"
+          label="Sender"
+          name="sender"
+          placeholder="Sender"
+          arPlaceholder="Sender name"
+          v-model="goalkeeper.sender"
+          :required="true"
+        />
+      </div>
+      <div class="flex flex-col mb-3">
+        <BaseInput
+          type="text"
+          label="Nickname"
+          name="nickname"
+          placeholder="Nickname"
+          arPlaceholder="Enter Players Nickname"
+          :required="true"
+          v-model="goalkeeper.nickname"
+        />
+      </div>
+      <div class="flex flex-row mb-3">
+        <div class="md:w-1/2">
+          <BaseInput
+            label="Background Color"
+            name="background-color"
+            type="color"
+            v-model="goalkeeper.backgroundColor"
+          />
+        </div>
+        <div class="md:w-1/2">
+          <BaseInput
+            label="Text Color"
+            name="text-color"
+            type="color"
+            v-model="goalkeeper.textColor"
+          />
+        </div>
+      </div>
+      <div class="flex flex-row mb-3">
+        <label for="push">
+          Push?
+          <input type="checkbox" name="push" id="push" v-model="goalkeeper.push" />
+        </label>
+      </div>
+      <div class>
+        <button
+          class="rounded px-3 py-2 bg-blue-600 text-white mr-3"
+          type="submit"
+        >Add Goalkeeper Nickname</button>
+        <button
+          class="rounded px-3 py-2 bg-red-700 text-white"
+          type="button"
+          @click="clearForm"
+        >Clear Form</button>
       </div>
     </form>
   </Layout>
 </template>
 
 <script>
-import { validators } from "vue-form-generator";
+import BaseInput from "@/components/BaseInput";
+import NProgress from "nprogress";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -26,66 +76,37 @@ export default {
         nickname: "",
         backgroundColor: "",
         textColor: ""
-      },
-      schema: {
-        groups: [
-          {
-            legend: "Goalkeeper Nickname",
-            fields: [
-              {
-                type: "input",
-                inputType: "text",
-                label: "Sender",
-                model: "sender",
-                id: "sender",
-                placeholder: "sender",
-                featured: true,
-                required: true,
-                validator: validators.string
-              },
-              {
-                type: "input",
-                inputType: "checkbox",
-                label: "Push",
-                model: "push"
-              },
-              {
-                type: "input",
-                inputType: "text",
-                model: "nickname",
-                label: "Nickname",
-                placeholder: "Nickname",
-                required: true,
-                featured: true,
-                validator: validators.string
-              },
-              {
-                type: "input",
-                inputType: "color",
-                model: "backgroundColor",
-                label: "Background Color"
-              },
-              {
-                type: "input",
-                inputType: "color",
-                model: "textColor",
-                label: "Text Color"
-              }
-            ]
-          }
-        ]
-      },
-      formOptions: {
-        validateAfterLoad: true,
-        validateAfterChange: true,
-        fieldIdPrefix: "goalkeeper-"
       }
     };
   },
+  components: {
+    BaseInput
+  },
   methods: {
     addGoalkeeperNickname() {
+      NProgress.start();
+      axios
+        .post(`/api/goalkeeperNicknames`, this.goalkeeper)
+        .then(res => {
+          console.log(res);
+          NProgress.done();
+        })
+        .catch(err => {
+          console.log(err.response);
+          NProgress.done();
+        });
       // TODO Implement this
-      return false;
+      // return false;
+    },
+    clearForm() {
+      this.goalkeeper = {
+        sender: "",
+        push: false,
+        nickname: "",
+        backgroundColor: "",
+        textColor: ""
+      };
+      // location.reload();
     }
   }
 };

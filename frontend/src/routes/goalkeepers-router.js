@@ -24,6 +24,25 @@ export default [
     meta: {
       requiresAuth: true,
       rosterAllowed: true
+    },
+    beforeEnter(routeTo, routeFrom, next) {
+      NProgress.start();
+      NProgress.done();
+      next();
+    }
+  },
+  {
+    path: '/goalkeeper-nickname/:id',
+    name: 'get-nickname',
+    component: () => import('@/views/GoalkeepersNickname/_id.vue'),
+    meta: {
+      requiresAuth: true,
+      rosterAllowed: true
+    },
+    beforeEnter(routeTo, routeFrom, next) {
+      NProgress.start();
+      NProgress.done();
+      next();
     }
   }
 ];
