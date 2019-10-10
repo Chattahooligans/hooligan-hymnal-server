@@ -1,7 +1,7 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import axios from "@/services/api-service";
-// import axios from "axios";
+import Vue from 'vue';
+import Vuex from 'vuex';
+import $http from '@/services/api-service';
+// import axios from 'axios';
 
 Vue.use(Vuex);
 
@@ -17,18 +17,23 @@ export default new Vuex.Store({
     songs: null,
     song: null,
     songbooks: null,
-    rosters: null
+    rosters: null,
+    roster: null,
+    goalkeepersnicknames: null,
+    goalkeepersnickname: null,
+    foes: null,
+    foe: null,
+    users: null,
+    user: null
   },
   mutations: {
     SET_USER_DATA(state, userData) {
       state.user = userData;
-      localStorage.setItem("user", JSON.stringify(userData));
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${userData.token}`;
+      localStorage.setItem('user', JSON.stringify(userData));
+      $http.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`;
     },
     LOGOUT() {
-      localStorage.removeItem("user");
+      localStorage.removeItem('user');
       location.reload();
     },
     SET_GLOBAL_MESSAGE(state, message) {
@@ -51,53 +56,67 @@ export default new Vuex.Store({
     },
     GET_ALL_ROSTERS(state, data) {
       state.rosters = data;
+    },
+    GET_ALL_GOALKEEPERS_NICKNAMES(state, data) {
+      state.goalkeepersnicknames = data;
+    },
+    GET_GOALKEEPERS_NICKNAME(state, data) {
+      state.goalkeepersnickname = data;
     }
   },
   actions: {
     register({ commit }, credentials) {
-      return axios.post("/api/users/register", credentials).then(({ data }) => {
-        commit("SET_USER_DATA", data);
+      return $http.post('/api/users/register', credentials).then(({ data }) => {
+        commit('SET_USER_DATA', data);
       });
     },
     login({ commit }, credentials) {
-      return axios.post("/api/users/login", credentials).then(({ data }) => {
-        commit("SET_USER_DATA", data);
+      return $http.post('/api/users/login', credentials).then(({ data }) => {
+        commit('SET_USER_DATA', data);
       });
     },
     logout({ commit }) {
-      commit("LOGOUT");
+      commit('LOGOUT');
+    },
+    setUserData({ commit }, data) {
+      commit('SET_USER_DATA', data);
     },
     global_message({ commit }, message) {
-      commit("SET_GLOBAL_MESSAGE", message);
+      commit('SET_GLOBAL_MESSAGE', message);
     },
     fetchPlayers({ commit }) {
-      return axios.get(`/api/players`).then(({ data }) => {
-        commit("GET_ALL_PLAYERS", data);
+      return $http.get(`/api/players`).then(({ data }) => {
+        commit('GET_ALL_PLAYERS', data);
       });
     },
     fetchPlayer({ commit }, id) {
-      return axios.get(`/api/players/${id}`).then(({ data }) => {
-        commit("GET_PLAYER", data);
+      return $http.get(`/api/players/${id}`).then(({ data }) => {
+        commit('GET_PLAYER', data);
       });
     },
     fetchSongs({ commit }) {
-      return axios.get(`/api/songs`).then(({ data }) => {
-        commit("GET_ALL_SONGS", data);
+      return $http.get(`/api/songs`).then(({ data }) => {
+        commit('GET_ALL_SONGS', data);
       });
     },
     fetchSong({ commit }, id) {
-      return axios.get(`/api/song/${id}`).then(({ data }) => {
-        commit("GET_SONG", data);
+      return $http.get(`/api/song/${id}`).then(({ data }) => {
+        commit('GET_SONG', data);
       });
     },
     fetchSongbooks({ commit }) {
-      return axios.get(`/api/songbook`).then(({ data }) => {
-        commit("GET_ALL_SONGBOOKS", data);
+      return $http.get(`/api/songbook`).then(({ data }) => {
+        commit('GET_ALL_SONGBOOKS', data);
       });
     },
     fetchRosters({ commit }) {
-      return axios.get(`/api/roster`).then(({ data }) => {
-        commit("GET_ALL_ROSTERS", data);
+      return $http.get(`/api/roster`).then(({ data }) => {
+        commit('GET_ALL_ROSTERS', data);
+      });
+    },
+    fetchGoalkeepersNicknames({ commit }) {
+      return $http.get(`/api/goalkeeperNicknames`).then(({ data }) => {
+        commit('GET_ALL_GOALKEEPERS_NICKNAMES', data);
       });
     }
   },

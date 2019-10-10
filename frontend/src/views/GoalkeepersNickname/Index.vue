@@ -1,14 +1,10 @@
 <template>
   <Layout>
     <h2>Goalkeepers Nickname</h2>
-    <div v-if="loading">
-      Loading...
-    </div>
+    <div v-if="loading">Loading...</div>
     <div v-else>
       <ul v-if="goalkeepers.length">
-        <li v-for="keeper in goalkeepers" :key="keeper._id">
-          {{ JSON.stringify(keeper) }}
-        </li>
+        <li v-for="keeper in goalkeepers" :key="keeper._id">{{ JSON.stringify(keeper) }}</li>
       </ul>
       <h3 v-else>No Goalkeepers</h3>
     </div>
@@ -16,7 +12,8 @@
 </template>
 
 <script>
-import Layout from "@/layouts/Layout";
+import NProgress from "nprogress";
+import store from "@/store";
 export default {
   data() {
     return {
@@ -24,9 +21,14 @@ export default {
       goalkeepers: []
     };
   },
-  components: {
-    Layout
-  },
+  // beforeRouteEnter(to, from, next) {
+  //   NProgress.start();
+  //   store.dispatch("fetchGoalkeepersNicknames").then(() => {
+  //     NProgress.done();
+  //     next();
+  //   });
+  // },
+  components: {},
   methods: {
     getGoalKeepers() {
       this.loading = true;

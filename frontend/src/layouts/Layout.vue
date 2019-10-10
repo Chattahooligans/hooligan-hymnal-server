@@ -2,7 +2,7 @@
   <fragment>
     <header class="bg-gray-800 text-white py-3">
       <div class="mx-3 flex flex-row justify-between">
-        <router-link to="/">Home</router-link>
+        <router-link to="/">Hymnal Server</router-link>
         <nav>
           <template v-if="loggedIn">
             <router-link :to="{ name: 'my-profile' }">{{

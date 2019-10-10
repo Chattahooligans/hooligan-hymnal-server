@@ -34,10 +34,11 @@ export default {
       }).then(willDelete => {
         if (willDelete) {
           axios.delete(`/api/players/${id}`).then(res => {
-            console.log(res);
-            // this.$swal({
-            //   title: `${this.player.name} was deleted succesfully`
-            // });
+            this.$router.push({ name: "all-players" });
+            // console.log(res);
+            // // this.$swal({
+            // //   title: `${this.player.name} was deleted succesfully`
+            // // });
           });
         } else {
           console.log("cancel");

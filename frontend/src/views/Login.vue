@@ -1,47 +1,46 @@
 <template>
   <Layout>
     <div class="container mx-auto">
-      <div class="w-2/3 shadow-2xl  mx-auto mt-5 p-3">
-        <h1 class="border-bottom-1 text-2xl font-bold mb-3 border-bottom">
-          Login
-        </h1>
-        <form @submit.prevent="login">
-          <div class="flex flex-col mb-3">
-            <label class="flex-1 font-semibold" for="email">Email</label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              placeholder="email@email.com"
-              aria-placeholder="Enter your email address"
-              v-model="user.email"
-              class="border flex-auto rounded p-2 shadow"
-              required
-            />
+      <div class="w-2/3 shadow-2xl mx-auto mt-5 rounded">
+        <div class="bg-gray-300 p-3 border-b border-gray-500">
+          <h1 class="text-2xl font-bold mb-3">Login</h1>
+        </div>
+        <div class="p-3">
+          <form @submit.prevent="login">
+            <div class="flex flex-col mb-3">
+              <BaseInput
+                type="email"
+                name="email"
+                label="Email"
+                placeholder="email@email.com"
+                aria-placeholder="Enter your email address"
+                :autocomplete="true"
+                :autofocus="true"
+                :required="true"
+                v-model="email"
+              />
+            </div>
+            <div class="flex flex-col mb-3">
+              <BaseInput
+                type="password"
+                name="password"
+                label="Password"
+                placeholder="******"
+                aria-placeholder="Enter your email address"
+                :required="true"
+                v-model="password"
+              />
+            </div>
+            <div>
+              <button class="bg-blue-700 text-white py-2 px-3 rounded" type="submit">Login</button>
+            </div>
+          </form>
+          <div class="text-center my-2">
+            <router-link
+              class="hover:underline"
+              to="/register"
+            >Don't have an account. Register for one here</router-link>
           </div>
-          <div class="flex flex-col mb-3">
-            <label class="block font-semibold" for="password">Password</label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              v-model="user.password"
-              placeholder="******"
-              aria-placeholder="Enter your password"
-              class="border flex-auto rounded p-2 shadow"
-              required
-            />
-          </div>
-          <div>
-            <button class="bg-blue-700 text-white p-3 rounded" type="submit">
-              Login
-            </button>
-          </div>
-        </form>
-        <div class="text-center my-2">
-          <router-link class="hover:underline" to="/register"
-            >Don't have an account. Register for one here</router-link
-          >
         </div>
       </div>
     </div>
@@ -49,20 +48,21 @@
 </template>
 
 <script>
-// import { mapActions } from "vuex";
-import Layout from "@/layouts/Layout";
+import BaseInput from "@/components/BaseInput";
 import NProgress from "nprogress";
 export default {
   data() {
     return {
-      user: {
-        email: "",
-        password: ""
-      }
+      email: "",
+      password: ""
+      // user: {
+      //   email: "",
+      //   password: ""
+      // }
     };
   },
   components: {
-    Layout
+    BaseInput
   },
   beforeRouteEnter(toRoute, fromRoute, next) {
     NProgress.start();
@@ -73,8 +73,8 @@ export default {
     login() {
       this.$store
         .dispatch("login", {
-          email: this.user.email,
-          password: this.user.password
+          email: this.email,
+          password: this.password
         })
         .then(() => {
           this.$router.push("/");
