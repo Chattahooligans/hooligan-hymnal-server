@@ -11,10 +11,10 @@ var passportJWT = require("passport-jwt");
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 var User = require("./models/users");
-
-let config = require("./config");
+const apiKeyMiddleware = require("./middleware/ApiKeyMiddleware");
 
 env.config();
+
 var secretOrKey = process.env.SECRET_KEY || "NOTsoSECRETkey";
 var JWTOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -28,6 +28,7 @@ app.use("/assets", express.static(__dirname + "/public"));
 app.use(express.static(`${__dirname}/frontend/dist`));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(apiKeyMiddleware());
 app.use(passport.initialize());
 
 passport.use(

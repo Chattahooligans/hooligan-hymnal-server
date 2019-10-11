@@ -1,6 +1,6 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import $http from '@/services/api-service';
+import Vue from "vue";
+import Vuex from "vuex";
+import $http from "@/services/api-service";
 // import axios from 'axios';
 
 Vue.use(Vuex);
@@ -24,16 +24,18 @@ export default new Vuex.Store({
     foes: null,
     foe: null,
     users: null,
-    user: null
+    single_user: null
   },
   mutations: {
     SET_USER_DATA(state, userData) {
       state.user = userData;
-      localStorage.setItem('user', JSON.stringify(userData));
-      $http.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`;
+      localStorage.setItem("user", JSON.stringify(userData));
+      $http.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${userData.token}`;
     },
     LOGOUT() {
-      localStorage.removeItem('user');
+      localStorage.removeItem("user");
       location.reload();
     },
     SET_GLOBAL_MESSAGE(state, message) {
@@ -66,61 +68,61 @@ export default new Vuex.Store({
   },
   actions: {
     register({ commit }, credentials) {
-      return $http.post('/api/users/register', credentials).then(({ data }) => {
-        commit('SET_USER_DATA', data);
+      return $http.post("/api/users/register", credentials).then(({ data }) => {
+        commit("SET_USER_DATA", data);
       });
     },
     login({ commit }, credentials) {
-      return $http.post('/api/users/login', credentials).then(({ data }) => {
-        commit('SET_USER_DATA', data);
+      return $http.post("/api/users/login", credentials).then(({ data }) => {
+        commit("SET_USER_DATA", data);
       });
     },
     logout({ commit }) {
-      commit('LOGOUT');
+      commit("LOGOUT");
     },
     setUserData({ commit }, data) {
-      commit('SET_USER_DATA', data);
+      commit("SET_USER_DATA", data);
     },
     global_message({ commit }, message) {
-      commit('SET_GLOBAL_MESSAGE', message);
+      commit("SET_GLOBAL_MESSAGE", message);
     },
     fetchPlayers({ commit }) {
       return $http.get(`/api/players`).then(({ data }) => {
-        commit('GET_ALL_PLAYERS', data);
+        commit("GET_ALL_PLAYERS", data);
       });
     },
     fetchPlayer({ commit }, id) {
       return $http.get(`/api/players/${id}`).then(({ data }) => {
-        commit('GET_PLAYER', data);
+        commit("GET_PLAYER", data);
       });
     },
     fetchSongs({ commit }) {
       return $http.get(`/api/songs`).then(({ data }) => {
-        commit('GET_ALL_SONGS', data);
+        commit("GET_ALL_SONGS", data);
       });
     },
     fetchSong({ commit }, id) {
       return $http.get(`/api/song/${id}`).then(({ data }) => {
-        commit('GET_SONG', data);
+        commit("GET_SONG", data);
       });
     },
     fetchSongbooks({ commit }) {
       return $http.get(`/api/songbook`).then(({ data }) => {
-        commit('GET_ALL_SONGBOOKS', data);
+        commit("GET_ALL_SONGBOOKS", data);
       });
     },
     fetchRosters({ commit }) {
       return $http.get(`/api/roster`).then(({ data }) => {
-        commit('GET_ALL_ROSTERS', data);
+        commit("GET_ALL_ROSTERS", data);
       });
     },
     fetchGoalkeepersNicknames({ commit }) {
       return $http.get(`/api/goalkeeperNicknames`).then(({ data }) => {
-        commit('GET_ALL_GOALKEEPERS_NICKNAMES', data);
+        commit("GET_ALL_GOALKEEPERS_NICKNAMES", data);
       });
     },
     fetchNickname({ commit }, id) {
-      return $http.get(`/api/goalkeeper`)
+      return $http.get(`/api/goalkeeper`);
     }
   },
   getters: {
