@@ -24,7 +24,12 @@ export default new Vuex.Store({
     foes: null,
     foe: null,
     users: null,
-    single_user: null
+    single_user: null,
+    pushTokens: null,
+    pushToken: null,
+    notifications: null,
+    notification: null,
+    latestNotification: null
   },
   mutations: {
     SET_USER_DATA(state, userData) {
@@ -41,29 +46,44 @@ export default new Vuex.Store({
     SET_GLOBAL_MESSAGE(state, message) {
       state.global_message = message;
     },
-    GET_ALL_PLAYERS(state, data) {
+    SET_ALL_PLAYERS(state, data) {
       state.players = data;
     },
-    GET_PLAYER(state, data) {
+    SET_PLAYER(state, data) {
       state.player = data;
     },
-    GET_ALL_SONGS(state, data) {
+    SET_ALL_SONGS(state, data) {
       state.songs = data;
     },
-    GET_SONG(state, data) {
+    SET_SONG(state, data) {
       state.song = data;
     },
-    GET_ALL_SONGBOOKS(state, data) {
+    SET_ALL_SONGBOOKS(state, data) {
       state.songbooks = data;
     },
-    GET_ALL_ROSTERS(state, data) {
+    SET_ALL_ROSTERS(state, data) {
       state.rosters = data;
     },
-    GET_ALL_GOALKEEPERS_NICKNAMES(state, data) {
+    SET_ALL_GOALKEEPERS_NICKNAMES(state, data) {
       state.goalkeepersnicknames = data;
     },
-    GET_GOALKEEPERS_NICKNAME(state, data) {
+    SET_GOALKEEPERS_NICKNAME(state, data) {
       state.goalkeepersnickname = data;
+    },
+    SET_PUSH_TOKENS(state, data) {
+      state.pushTokens = data;
+    },
+    SET_PUSH_TOKEN(state, data) {
+      state.pushToken = data;
+    },
+    SET_NOTIFICATIONS(state, data) {
+      state.notifications = data;
+    },
+    SET_NOTIFICATION(state, data) {
+      state.notification = data;
+    },
+    SET_LATEST_NOTIFICATION(state, data) {
+      state.latestNotification = data;
     }
   },
   actions: {
@@ -88,41 +108,66 @@ export default new Vuex.Store({
     },
     fetchPlayers({ commit }) {
       return $http.get(`/api/players`).then(({ data }) => {
-        commit("GET_ALL_PLAYERS", data);
+        commit("SET_ALL_PLAYERS", data);
       });
     },
     fetchPlayer({ commit }, id) {
       return $http.get(`/api/players/${id}`).then(({ data }) => {
-        commit("GET_PLAYER", data);
+        commit("SET_PLAYER", data);
       });
     },
     fetchSongs({ commit }) {
       return $http.get(`/api/songs`).then(({ data }) => {
-        commit("GET_ALL_SONGS", data);
+        commit("SET_ALL_SONGS", data);
       });
     },
     fetchSong({ commit }, id) {
       return $http.get(`/api/song/${id}`).then(({ data }) => {
-        commit("GET_SONG", data);
+        commit("SET_SONG", data);
       });
     },
     fetchSongbooks({ commit }) {
       return $http.get(`/api/songbook`).then(({ data }) => {
-        commit("GET_ALL_SONGBOOKS", data);
+        commit("SET_ALL_SONGBOOKS", data);
       });
     },
     fetchRosters({ commit }) {
       return $http.get(`/api/roster`).then(({ data }) => {
-        commit("GET_ALL_ROSTERS", data);
+        commit("SET_ALL_ROSTERS", data);
       });
     },
     fetchGoalkeepersNicknames({ commit }) {
       return $http.get(`/api/goalkeeperNicknames`).then(({ data }) => {
-        commit("GET_ALL_GOALKEEPERS_NICKNAMES", data);
+        commit("SET_ALL_GOALKEEPERS_NICKNAMES", data);
       });
     },
-    fetchNickname({ commit }, id) {
-      return $http.get(`/api/goalkeeper`);
+    // fetchNickname({ commit }, id) {
+    //   // return $http.get(`/api/goalkeeper`);
+    // }
+    fetchPushTokens({ commit }) {
+      return $http.get(`/api/pushToken`).then(({ data }) => {
+        commit("SET_PUSH_TOKENS", data);
+      });
+    },
+    fetchPushToken({ commit }, id) {
+      return $http.get(`/api/pushToken/${id}`).then(({ data }) => {
+        commit("SET_PUSH_TOKEN", data);
+      });
+    },
+    fetchNotifications({ commit }) {
+      return $http.get(`/api/notifications`).then(({ data }) => {
+        commit("SET_NOTIFICATIONS", data);
+      });
+    },
+    fetchNotification({ commit }, id) {
+      return $http.get(`/api/notifications/${id}`).then(({ data }) => {
+        commit("SET_NOTIFICATION", data);
+      });
+    },
+    fetchLatestNotification({ commit }) {
+      return $http.get(`/api/notifications/last`).then(({ data }) => {
+        commit("SET_LATEST_NOTIFICATION", data);
+      });
     }
   },
   getters: {

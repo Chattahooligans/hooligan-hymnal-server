@@ -2,8 +2,6 @@ const PushTokens = require("../models/pushTokens");
 const passport = require("passport");
 
 module.exports = app => {
-  // app.use(passport.authenticate("jwt", { session: false }));
-
   // returns all push tokens
   app.get(
     "/api/pushToken",

@@ -6,10 +6,8 @@
         <nav>
           <template v-if="loggedIn">
             <router-link :to="{ name: 'my-profile' }">
-              {{
-              user.email
-              }}
-            </router-link>|
+              {{ user.email }} </router-link
+            >|
             <a href="#" @click.prevent="logout">Logout</a>
           </template>
           <template v-else>
