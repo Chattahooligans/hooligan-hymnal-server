@@ -29,7 +29,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
-    "start": "node app.js"
+    "start": "node app.js",
+    "heroku-postdeploy": "cd frontend && npm install --only=dev && npm install && npm run build"
   },
   "repository": {
     "type": "git",
