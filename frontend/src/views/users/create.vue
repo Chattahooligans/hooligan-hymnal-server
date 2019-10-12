@@ -31,6 +31,16 @@
           />
         </div>
       </div>
+      <div class="flex mb-3">
+        <div class="flex flex-col mb:w-1/2">
+          <BaseInput
+            type="checkbox"
+            name="foesAllowed"
+            label="Foes Allowed"
+            v-model="user.foesAllowed"
+          />
+        </div>
+      </div>
       <div>
         <button class="rounded px-3 py-2 bg-blue-700 text-white" type="submit">
           Add User
