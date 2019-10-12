@@ -1,3 +1,5 @@
+import NProgress from "nprogress";
+import store from "@/store";
 export default [
   {
     path: "/users",
@@ -41,6 +43,11 @@ export default [
     component: () => import("@/views/users/profile.vue"),
     meta: {
       requiresAuth: true
+    },
+    beforeEnter(routeTo, routeFrom, next) {
+      NProgress.start();
+      NProgress.done();
+      next();
     }
   }
 ];

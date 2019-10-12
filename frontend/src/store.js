@@ -30,7 +30,8 @@ export default new Vuex.Store({
     pushToken: null,
     notifications: null,
     notification: null,
-    latestNotification: null
+    latestNotification: null,
+    profile: null
   },
   mutations: {
     SET_API_KEY(state, key) {
@@ -88,6 +89,9 @@ export default new Vuex.Store({
     },
     SET_LATEST_NOTIFICATION(state, data) {
       state.latestNotification = data;
+    },
+    SET_USER_PROFILE(state, data) {
+      state.profile = data;
     }
   },
   actions: {

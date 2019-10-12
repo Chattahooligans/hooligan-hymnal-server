@@ -4,23 +4,30 @@
     <div>
       <h3>Update Password</h3>
       <form @submit.prevent="updatePassword">
-        <div>
-          <label for="password">Password</label>
-          <input
-            v-model="password"
+        <div class="flex flex-col mb-3">
+          <BaseInput
             type="password"
-            id="password"
+            label="Current Password"
             name="password"
+            placeholder="Password"
+            v-model="password"
           />
         </div>
-        <div>
-          <label for="newPassword">New Password</label>
+        <div class="flex flex-col mb-3">
+          <BaseInput
+            type="password"
+            label="New Password"
+            name="newPassword"
+            v-model="newPassword"
+            placeholder="New Password"
+          />
+          <!-- <label for="newPassword">New Password</label>
           <input
             type="password"
             name="newPassword"
             id="newPassword"
             v-model="newPassword"
-          />
+          /> -->
         </div>
         <div>
           <label for="confirmNewPassword">Confirm New Password</label>
@@ -42,6 +49,8 @@
 <script>
 import axios from "axios";
 import { userInfo } from "@/vuex/helpers";
+import NProgress from "nprogress";
+import BaseInput from "@/components/BaseInput";
 export default {
   data() {
     return {
@@ -49,6 +58,9 @@ export default {
       newPassword: "",
       confirmNewPassword: ""
     };
+  },
+  components: {
+    BaseInput
   },
   computed: {
     ...userInfo
@@ -64,6 +76,7 @@ export default {
           this.confirmNewPassword = "";
         });
       }
+      NProgress.start();
       axios
         .put(`/api/users/${id}/reset-password`, {
           password: this.password,
@@ -71,9 +84,13 @@ export default {
           confirmNewPassword: this.confirmNewPassword
         })
         .then(res => {
+          NProgress.done();
           console.log(res);
         })
-        .catch(err => console.log(err.response));
+        .catch(err => {
+          NProgress.done();
+          console.log(err.response);
+        });
     }
   }
 };
