@@ -1,8 +1,9 @@
 <template>
   <Layout>
-    <h2>All Users</h2>
-    <!-- TODO: Need to add new endpoint -->
-    <router-link to="/users/create">Add User</router-link>
+    <h2 class="text-2xl font-bold mb-3">All Users</h2>
+    <router-link class="text-green-700" to="/users/create"
+      >Add User</router-link
+    >
     <div v-if="loading">Loading...</div>
     <div v-else>
       <ul v-if="users.length">

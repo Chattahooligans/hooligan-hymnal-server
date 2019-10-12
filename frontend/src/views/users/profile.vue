@@ -1,47 +1,53 @@
 <template>
   <Layout>
-    <h2>{{ user.email }}</h2>
+    <h2 class="font-bold text-2xl mb-3">Hello {{ user.email }}</h2>
     <div>
-      <h3>Update Password</h3>
-      <form @submit.prevent="updatePassword">
-        <div class="flex flex-col mb-3">
-          <BaseInput
-            type="password"
-            label="Current Password"
-            name="password"
-            placeholder="Password"
-            v-model="password"
-          />
-        </div>
-        <div class="flex flex-col mb-3">
-          <BaseInput
-            type="password"
-            label="New Password"
-            name="newPassword"
-            v-model="newPassword"
-            placeholder="New Password"
-          />
-          <!-- <label for="newPassword">New Password</label>
-          <input
-            type="password"
-            name="newPassword"
-            id="newPassword"
-            v-model="newPassword"
-          /> -->
-        </div>
-        <div>
-          <label for="confirmNewPassword">Confirm New Password</label>
-          <input
-            type="password"
-            name="confirmNewPassword"
-            id="confirmNewPassword"
-            v-model="confirmNewPassword"
-          />
-        </div>
-        <div>
-          <button type="submit">Update Password</button>
-        </div>
-      </form>
+      <h3 class="font-semibold text-xl pb-2 mb-3 border-b">Update Password</h3>
+      <div class="rounded shadow p-3">
+        <form @submit.prevent="updatePassword">
+          <div class="flex flex-col mb-3">
+            <BaseInput
+              type="password"
+              label="Current Password"
+              name="password"
+              placeholder="Password"
+              arPlaceholder="Enter your current password"
+              v-model="password"
+              :required="true"
+            />
+          </div>
+          <div class="flex flex-col mb-3">
+            <BaseInput
+              type="password"
+              label="New Password"
+              name="newPassword"
+              v-model="newPassword"
+              placeholder="New Password"
+              arPlaceholder="Enter your new password"
+              :required="true"
+            />
+          </div>
+          <div class="flex flex-col mb-3">
+            <BaseInput
+              type="password"
+              label="Confirm New Password"
+              name="confirmNewPassword"
+              v-model="confirmNewPassword"
+              arPlaceholder="Confirm your new password"
+              placeholder="Confirm New Password"
+              :required="true"
+            />
+          </div>
+          <div class="flex flex-col mb-3">
+            <button
+              class="rounded px-3 py-2 bg-blue-600 text-white"
+              type="submit"
+            >
+              Update Password
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </Layout>
 </template>
