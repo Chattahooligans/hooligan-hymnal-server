@@ -28,7 +28,6 @@ app.use("/assets", express.static(__dirname + "/public"));
 app.use(express.static(`${__dirname}/frontend/dist`));
 app.use(bodyParser.json());
 app.use(cors());
-app.use(apiKeyMiddleware());
 app.use(passport.initialize());
 
 passport.use(
@@ -79,6 +78,16 @@ mongoose
     process.exit(1);
   });
 
+/**
+ * ! DO NOT SHARE THIS ENDPOINT AND DO NOT DOCUMENT IT...
+ * ! THIS IS A HACK FOR NOW TO SHARE API_KEY TO FRONTEND
+ */
+app.get("/api/___endpoint___", (req, res) => {
+  const { API_KEY } = process.env || "";
+  return res.status(410).json({ key: API_KEY });
+});
+
+app.use(apiKeyMiddleware());
 // Autoloads all controllers in directory
 fs.readdirSync("controllers").forEach(function(file) {
   if (file.substr(-3) === ".js") {

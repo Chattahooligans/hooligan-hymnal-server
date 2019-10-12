@@ -23,7 +23,7 @@ Vue.use(VueFormGenerator);
 
 new Vue({
   created() {
-    axios.defaults.headers.common["API_KEY"] = "API_KEY";
+    // axios.defaults.headers.common["API_KEY"] = "API_KEY";
     document.body.classList.add("min-h-screen");
     const userString = localStorage.getItem("user");
     if (userString) {
@@ -44,9 +44,15 @@ new Vue({
             this.$store.dispatch("logout");
           });
         }
+        if (error.response.status === 410) {
+          const { key } = error.response.data;
+          store.dispatch("fetchAPIKey", key);
+          axios.defaults.headers.common["x-api-key"] = store.state.API_KEY;
+        }
         return Promise.reject(error);
       }
     );
+    axios.get(`/api/___endpoint___`);
   },
   router,
   store,

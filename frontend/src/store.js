@@ -1,12 +1,13 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import $http from "@/services/api-service";
-// import axios from 'axios';
+// import $http from "@/services/api-service";
+import axios from "axios";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    API_KEY: null,
     user: null,
     global_message: {
       type: null,
@@ -32,10 +33,13 @@ export default new Vuex.Store({
     latestNotification: null
   },
   mutations: {
+    SET_API_KEY(state, key) {
+      state.API_KEY = key;
+    },
     SET_USER_DATA(state, userData) {
       state.user = userData;
       localStorage.setItem("user", JSON.stringify(userData));
-      $http.defaults.headers.common[
+      axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${userData.token}`;
     },
@@ -87,13 +91,16 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    fetchAPIKey({ commit }, key) {
+      commit("SET_API_KEY", key);
+    },
     register({ commit }, credentials) {
-      return $http.post("/api/users/register", credentials).then(({ data }) => {
+      return axios.post("/api/users/register", credentials).then(({ data }) => {
         commit("SET_USER_DATA", data);
       });
     },
     login({ commit }, credentials) {
-      return $http.post("/api/users/login", credentials).then(({ data }) => {
+      return axios.post("/api/users/login", credentials).then(({ data }) => {
         commit("SET_USER_DATA", data);
       });
     },
@@ -107,65 +114,65 @@ export default new Vuex.Store({
       commit("SET_GLOBAL_MESSAGE", message);
     },
     fetchPlayers({ commit }) {
-      return $http.get(`/api/players`).then(({ data }) => {
+      return axios.get(`/api/players`).then(({ data }) => {
         commit("SET_ALL_PLAYERS", data);
       });
     },
     fetchPlayer({ commit }, id) {
-      return $http.get(`/api/players/${id}`).then(({ data }) => {
+      return axios.get(`/api/players/${id}`).then(({ data }) => {
         commit("SET_PLAYER", data);
       });
     },
     fetchSongs({ commit }) {
-      return $http.get(`/api/songs`).then(({ data }) => {
+      return axios.get(`/api/songs`).then(({ data }) => {
         commit("SET_ALL_SONGS", data);
       });
     },
     fetchSong({ commit }, id) {
-      return $http.get(`/api/song/${id}`).then(({ data }) => {
+      return axios.get(`/api/song/${id}`).then(({ data }) => {
         commit("SET_SONG", data);
       });
     },
     fetchSongbooks({ commit }) {
-      return $http.get(`/api/songbook`).then(({ data }) => {
+      return axios.get(`/api/songbook`).then(({ data }) => {
         commit("SET_ALL_SONGBOOKS", data);
       });
     },
     fetchRosters({ commit }) {
-      return $http.get(`/api/roster`).then(({ data }) => {
+      return axios.get(`/api/roster`).then(({ data }) => {
         commit("SET_ALL_ROSTERS", data);
       });
     },
     fetchGoalkeepersNicknames({ commit }) {
-      return $http.get(`/api/goalkeeperNicknames`).then(({ data }) => {
+      return axios.get(`/api/goalkeeperNicknames`).then(({ data }) => {
         commit("SET_ALL_GOALKEEPERS_NICKNAMES", data);
       });
     },
     // fetchNickname({ commit }, id) {
-    //   // return $http.get(`/api/goalkeeper`);
+    //   // return axios.get(`/api/goalkeeper`);
     // }
     fetchPushTokens({ commit }) {
-      return $http.get(`/api/pushToken`).then(({ data }) => {
+      return axios.get(`/api/pushToken`).then(({ data }) => {
         commit("SET_PUSH_TOKENS", data);
       });
     },
     fetchPushToken({ commit }, id) {
-      return $http.get(`/api/pushToken/${id}`).then(({ data }) => {
+      return axios.get(`/api/pushToken/${id}`).then(({ data }) => {
         commit("SET_PUSH_TOKEN", data);
       });
     },
     fetchNotifications({ commit }) {
-      return $http.get(`/api/notifications`).then(({ data }) => {
+      return axios.get(`/api/notifications`).then(({ data }) => {
         commit("SET_NOTIFICATIONS", data);
       });
     },
     fetchNotification({ commit }, id) {
-      return $http.get(`/api/notifications/${id}`).then(({ data }) => {
+      return axios.get(`/api/notifications/${id}`).then(({ data }) => {
         commit("SET_NOTIFICATION", data);
       });
     },
     fetchLatestNotification({ commit }) {
-      return $http.get(`/api/notifications/last`).then(({ data }) => {
+      return axios.get(`/api/notifications/last`).then(({ data }) => {
         commit("SET_LATEST_NOTIFICATION", data);
       });
     }
