@@ -68,6 +68,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      holder: "",
       user: {
         email: "",
         password: "",
