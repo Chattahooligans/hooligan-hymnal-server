@@ -52,7 +52,7 @@ new Vue({
         return Promise.reject(error);
       }
     );
-    axios.get(`/api/___endpoint___`);
+    axios.get(`/secret/___endpoint___`);
   },
   router,
   store,

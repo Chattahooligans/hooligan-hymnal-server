@@ -70,24 +70,25 @@ app.use(function(req, res, next) {
 
 // app.set("view engine", "ejs");
 mongoose
-  .connect(MONGO_URI, {useMongoClient: true}, function() {
+  .connect(MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      }, function () {
     console.log(`Connection has been made`);
   })
   .catch(function(err) {
     console.log(`App starting error:`, err.stack);
     process.exit(1);
   });
-
 /**
  * ! DO NOT SHARE THIS ENDPOINT AND DO NOT DOCUMENT IT...
  * ! THIS IS A HACK FOR NOW TO SHARE API_KEY TO FRONTEND
  */
-app.get("/api/___endpoint___", (req, res) => {
+app.get("/secret/___endpoint___", (req, res) => {
   const { API_KEY } = process.env || "";
   return res.status(410).json({ key: API_KEY });
 });
 
-app.use(apiKeyMiddleware());
 // Autoloads all controllers in directory
 fs.readdirSync("controllers").forEach(function(file) {
   if (file.substr(-3) === ".js") {
@@ -100,6 +101,8 @@ fs.readdirSync("controllers").forEach(function(file) {
 app.get("*", (req, res) => {
   res.sendFile(path.join(`${__dirname}/frontend/dist/index.html`));
 });
+
+// app.use(apiKeyMiddleware());
 
 app.listen(port, function() {
   console.log(`app listening on http://localhost:${port}`);

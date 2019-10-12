@@ -2,6 +2,7 @@ const Songs = require("../models/songs");
 const passport = require("passport");
 const permissions = require("../middleware/PermissionsMiddleware");
 const config = require("../config.js");
+const APIMiddleware = require("../middleware/ApiKeyMiddleware");
 
 const song_cache = {
   data: null,
@@ -29,6 +30,7 @@ const song_cache = {
 };
 
 module.exports = app => {
+  app.all('/api/*', APIMiddleware());
   // returns all songs
   app.get("/api/songs", (req, res) => {
     song_cache.send_data(res);
