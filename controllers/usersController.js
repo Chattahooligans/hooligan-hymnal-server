@@ -107,7 +107,7 @@ module.exports = app => {
         if (user) {
           const payload = { id: user.id };
           const secretOrKey = process.env.SECRET_KEY || 'NOTsoSECRETkey';
-          const tokenExpires = process.env.TOKEN_EXPIRES || '30m';
+          const tokenExpires = process.env.TOKEN_EXPIRES || '1h';
 
           const token = jwt.sign(payload, secretOrKey, {
             expiresIn: tokenExpires
