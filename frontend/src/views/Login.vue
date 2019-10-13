@@ -88,6 +88,10 @@ export default {
             title: `${err.response.data.message}`
           }).then(() => {
             this.password = "";
+            const password = document.getElementById("password");
+            password.setAttribute("tabindex", "-1");
+            password.focus();
+            password.removeAttribute("tabindex");
           });
         });
     }
