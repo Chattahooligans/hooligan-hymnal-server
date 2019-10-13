@@ -30,15 +30,15 @@ const song_cache = {
 };
 
 module.exports = app => {
-  app.all('/api/*', APIMiddleware());
   // returns all songs
-  app.get("/api/songs", (req, res) => {
+  app.get("/api/songs", APIMiddleware(),(req, res) => {
     song_cache.send_data(res);
   });
 
   // returns single song by _id
   app.get(
     "/api/song/:id",
+    APIMiddleware(),
     passport.authenticate("jwt", { session: false }),
     // permissions("songbookAllowed"),
     (req, res) => {
@@ -51,6 +51,7 @@ module.exports = app => {
   // creates song
   app.post(
     "/api/song",
+    APIMiddleware(),
     passport.authenticate("jwt", { session: false }),
     permissions("songbookAllowed"),
     (req, res) => {
@@ -65,6 +66,7 @@ module.exports = app => {
   // updates song
   app.put(
     "/api/song/:id",
+    APIMiddleware(),
     passport.authenticate("jwt", { session: false }),
     permissions("songbookAllowed"),
     (req, res) => {
@@ -78,6 +80,7 @@ module.exports = app => {
   // deletes song
   app.delete(
     "/api/song/:id",
+    APIMiddleware(),
     passport.authenticate("jwt", { session: false }),
     permissions("songbookAllowed"),
     (req, res) => {
