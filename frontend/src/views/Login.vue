@@ -1,7 +1,7 @@
 <template>
   <Layout>
     <div class="container mx-auto">
-      <div class="w-2/3 shadow-2xl mx-auto mt-5 rounded">
+      <div class="w-2/3 shadow-2xl mx-auto mt-5 rounded overflow-hidden">
         <div class="bg-gray-300 p-3 border-b border-gray-500">
           <h1 class="text-2xl font-bold mb-3">Login</h1>
         </div>
