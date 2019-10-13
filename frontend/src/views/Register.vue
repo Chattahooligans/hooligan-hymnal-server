@@ -43,11 +43,18 @@
               />
             </div>
             <div class="mb-3">
-              <button class="px-3 py-2 bg-blue-600 text-white rounded" type="submit">Register</button>
+              <button
+                class="px-3 py-2 bg-blue-600 text-white rounded"
+                type="submit"
+              >
+                Register
+              </button>
             </div>
           </form>
           <div class="text-center mb-3">
-            <router-link to="/login">Already have an account, please login</router-link>
+            <router-link to="/login"
+              >Already have an account, please login</router-link
+            >
           </div>
         </div>
       </div>

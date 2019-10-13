@@ -100,7 +100,7 @@ export default new Vuex.Store({
     },
     register({ commit }, credentials) {
       return axios.post("/api/users/register", credentials).then(({ data }) => {
-        commit("SET_USER_DATA", data);
+        commit("SET_GLOBAL_MESSAGE", data);
       });
     },
     login({ commit }, credentials) {

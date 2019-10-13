@@ -32,14 +32,18 @@
               />
             </div>
             <div>
-              <button class="bg-blue-700 text-white py-2 px-3 rounded" type="submit">Login</button>
+              <button
+                class="bg-blue-700 text-white py-2 px-3 rounded"
+                type="submit"
+              >
+                Login
+              </button>
             </div>
           </form>
           <div class="text-center my-2">
-            <router-link
-              class="hover:underline"
-              to="/register"
-            >Don't have an account. Register for one here</router-link>
+            <router-link class="hover:underline" to="/register"
+              >Don't have an account. Register for one here</router-link
+            >
           </div>
         </div>
       </div>
@@ -83,7 +87,7 @@ export default {
           this.$swal({
             title: `${err.response.data.message}`
           }).then(() => {
-            this.user.password = "";
+            this.password = "";
           });
         });
     }
