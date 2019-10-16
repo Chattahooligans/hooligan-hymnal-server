@@ -7,9 +7,6 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js & vue-cli-service serve",
-    "start": "nodemon app.js",
     "heroku-postbuild": "cd frontend && npm install --only=dev && npm install && npm run build"
   },
   "dependencies": {
