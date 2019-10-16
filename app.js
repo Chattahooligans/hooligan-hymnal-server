@@ -88,14 +88,6 @@ mongoose
     console.log(`App starting error:`, err.stack);
     process.exit(1);
   });
-/**
- * ! DO NOT SHARE THIS ENDPOINT AND DO NOT DOCUMENT IT...
- * ! THIS IS A HACK FOR NOW TO SHARE API_KEY TO FRONTEND
- */
-app.get("/secret/___endpoint___", (req, res) => {
-  const { API_KEY } = process.env || "";
-  return res.status(410).json({ key: API_KEY });
-});
 
 // Autoloads all controllers in directory
 fs.readdirSync("controllers").forEach(function(file) {
@@ -104,9 +96,11 @@ fs.readdirSync("controllers").forEach(function(file) {
     controller(app);
   }
 });
-
 app.use(serveStatic(__dirname + "/dist"));
-app.use(history());
+// app.use(history("index.html", `${__dirname}/dist/`));
+app.all("*", (req, res) => {
+  res.sendFile(`${__dirname}/dist/index.html`);
+});
 
 app.listen(port, function() {
   console.log(`app listening on http://localhost:${port}`);

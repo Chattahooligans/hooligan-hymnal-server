@@ -24,13 +24,8 @@ Vue.use(VueFormGenerator);
 
 new Vue({
   created() {
-    console.log(process.env);
     document.body.classList.add("min-h-screen");
-    const userString = localStorage.getItem("user");
-    if (userString) {
-      const userData = JSON.parse(userString);
-      this.$store.commit("SET_USER_DATA", userData);
-    }
+    axios.defaults.headers.common["x-api-key"] = process.env.VUE_APP_API_KEY;
     if (process.env.NODE_ENV !== "production") {
       axios.defaults.baseURL = "//localhost:5000";
     }
@@ -46,15 +41,14 @@ new Vue({
             this.$store.dispatch("logout");
           });
         }
-        // if (error.response.status === 410) {
-        //   const { key } = error.response.data;
-        //   store.dispatch("fetchAPIKey", key);
-        //   axios.defaults.headers.common["x-api-key"] = store.state.API_KEY;
-        // }
         return Promise.reject(error);
       }
     );
-    // axios.get(`/secret/___endpoint___`);
+    const userString = localStorage.getItem("user");
+    if (userString) {
+      const userData = JSON.parse(userString);
+      this.$store.commit("SET_USER_DATA", userData);
+    }
   },
   router,
   store,

@@ -50,11 +50,16 @@ module.exports.createUser = (newUser, callback) => {
   bcryptjs.genSalt(10, (err, salt) => {
     bcryptjs.hash(newUser.password, salt, (error, hash) => {
       const newUserResource = newUser;
+      User.find({}, (err, users) => {
+        if (!users.length) {
+          newUserResource.pushNotificationsAllowed = true;
+          newUserResource.rosterAllowed = true;
+          newUserResource.songbookAllowed = true;
+          newUserResource.foesAllowed = true;
+          newUserResource.usersAllowed = true;
+        }
+      });
       newUserResource.password = hash;
-      newUserResource.pushNotificationsAllowed = false;
-      newUserResource.rosterAllowed = false;
-      newUserResource.songbookAllowed = false;
-      newUserResource.foesAllowed = false;
       newUserResource.save(callback);
     });
   });

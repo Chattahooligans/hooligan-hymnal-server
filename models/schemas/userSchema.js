@@ -8,7 +8,10 @@ module.exports = new mongoose.Schema({
     }
   },
   hash: String,
-  pushNotificationsAllowed: Boolean,
+  pushNotificationsAllowed: {
+    type: Boolean,
+    default: true
+  },
   rosterAllowed: {
     type: Boolean,
     default: false

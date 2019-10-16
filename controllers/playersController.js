@@ -2,6 +2,7 @@ let Players = require("../models/players");
 let config = require("../config.js");
 const passport = require("passport");
 const permissions = require("../middleware/PermissionsMiddleware");
+const apiMiddleware = require("../middleware/ApiKeyMiddleware");
 
 var players_cache = {
   data: null,

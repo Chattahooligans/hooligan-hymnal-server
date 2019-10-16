@@ -20,7 +20,7 @@
                 v-model="user.email"
               />
             </div>
-            <div class="flex flex-col mb-3">
+            <!-- <div class="flex flex-col mb-3">
               <BaseInput
                 type="email"
                 name="email_confirm"
@@ -30,17 +30,47 @@
                 :required="true"
                 v-model="user.email_confirm"
               />
-            </div>
+            </div> -->
             <div class="flex flex-col mb-3">
               <BaseInput
-                type="password"
+                :type="showPassword ? 'text' : 'password'"
                 name="password"
                 label="Password"
                 placeholder="******"
-                aria-placeholder="Enter your password"
+                arplaceholder="Enter your password"
                 :required="true"
                 v-model="user.password"
               />
+            </div>
+            <div class="flex flex-col mb-3">
+              <BaseInput
+                :type="showPassword ? 'text' : 'password'"
+                name="confirmPassword"
+                label="Confirm
+              Password"
+                placeholder="Confirm ******"
+                arplaceholder="Please
+              confirm password"
+                :required="true"
+                v-model="user.passwordConfirm"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="show-password">
+                Show Password
+                <input
+                  class="ml-2"
+                  type="checkbox"
+                  name="show-password"
+                  id="show-password"
+                  v-model="showPassword"
+                  @click="
+                    {
+                      showPassword = !!showPassword;
+                    }
+                  "
+                />
+              </label>
             </div>
             <div class="mb-3">
               <button
@@ -70,9 +100,10 @@ export default {
     return {
       user: {
         email: "",
-        email_confirm: "",
-        password: ""
-      }
+        password: "",
+        passwordConfirm: ""
+      },
+      showPassword: false
     };
   },
   components: {
@@ -80,7 +111,7 @@ export default {
   },
   computed: {
     isMatch() {
-      return this.user.email == this.user.email_confirm;
+      return this.user.password === this.user.passwordConfirm;
     }
   },
   methods: {
@@ -92,10 +123,22 @@ export default {
             password: this.user.password
           })
           .then(() => {
+            this.$swal({
+              title: "User Created.",
+              text: "Please Login",
+              type: "success"
+            });
             this.$router.push("/login");
           });
       } else {
-        alert("The email addresses do not match");
+        // alert("The passwords did not match");
+        this.$swal({
+          title: "Your passwords did not match",
+          type: "error",
+          text: "Please try again"
+        });
+        this.user.password = "";
+        this.user.passwordConfirm = "";
       }
     }
   }

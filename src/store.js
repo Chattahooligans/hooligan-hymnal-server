@@ -1,11 +1,10 @@
 import Vue from "vue";
 import Vuex from "vuex";
-// import $http from "@/services/api-service";
 import axios from "axios";
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
     API_KEY: null,
     user: null,
@@ -213,3 +212,29 @@ export default new Vuex.Store({
     }
   }
 });
+
+if (process.env.NODE_ENV !== "production") {
+  axios.defaults.baseURL = "//localhost:5000";
+}
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response.status === 401) {
+      // this.$swal({
+      // title: "Your session has expired please log back in.",
+      // icon: "danger"
+      // }).then(() => {
+      store.dispatch("logout");
+      // });
+    }
+    return Promise.reject(error);
+  }
+);
+const userString = localStorage.getItem("user");
+if (userString) {
+  const userData = JSON.parse(userString);
+  store.commit("SET_USER_DATA", userData);
+}
+axios.defaults.headers.common["x-api-key"] = process.env.VUE_APP_API_KEY;
+
+export default store;
