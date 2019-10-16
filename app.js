@@ -10,6 +10,7 @@ var passport = require("passport");
 var passportJWT = require("passport-jwt");
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
+var serveStatic = require('serve-static');
 var User = require("./models/users");
 const apiKeyMiddleware = require("./middleware/ApiKeyMiddleware");
 
@@ -24,8 +25,8 @@ var JWTOptions = {
 var port = process.env.PORT || 3000;
 var MONGO_URI = process.env.MONGO_URI;
 
-app.use("/assets", express.static(__dirname + "/public"));
-app.use(express.static(`${__dirname}/frontend/dist`));
+// app.use("/assets", express.static(__dirname + "/public"));
+// app.use(express.static(`${__dirname}/frontend/dist`));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(passport.initialize());
@@ -47,26 +48,26 @@ passport.use(
 );
 
 // Add headers
-app.use(function(req, res, next) {
-  // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", "*");
+// app.use(function(req, res, next) {
+//   // Website you wish to allow to connect
+//   res.setHeader("Access-Control-Allow-Origin", "*");
 
-  // Request methods you wish to allow
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+//   // Request methods you wish to allow
+//   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
 
-  // Request headers you wish to allow
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type"
-  );
+//   // Request headers you wish to allow
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "X-Requested-With,content-type"
+//   );
 
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
-  res.setHeader("Access-Control-Allow-Credentials", true);
+//   // Set to true if you need the website to include cookies in the requests sent
+//   // to the API (e.g. in case you use sessions)
+//   res.setHeader("Access-Control-Allow-Credentials", true);
 
-  // Pass to next layer of middleware
-  next();
-});
+//   // Pass to next layer of middleware
+//   next();
+// });
 
 // app.set("view engine", "ejs");
 mongoose
@@ -97,12 +98,14 @@ fs.readdirSync("controllers").forEach(function(file) {
   }
 });
 
-//! Intercepts all other requests and routes them to React(@reach-router)
-app.get("*", (req, res) => {
-  res.sendFile(path.join(`${__dirname}/frontend/dist/index.html`));
-});
+app.use(serveStatic(__dirname + '/frontend/dist'));
 
 // app.use(apiKeyMiddleware());
+
+
+app.get('*', (req, res) => {
+  res.sendFile(`${__dirname}/frontend/dist/index.html`);
+});
 
 app.listen(port, function() {
   console.log(`app listening on http://localhost:${port}`);

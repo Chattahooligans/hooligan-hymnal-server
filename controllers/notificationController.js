@@ -6,10 +6,10 @@ const passport = require("passport");
 const permissions = require("../middleware/PermissionsMiddleware");
 
 module.exports = app => {
-  // Return something for bare URL just so we can be sure the server is running
-  app.get("/", (req, res) => {
-    res.send("Chattahooligans API is running");
-  });
+  // // Return something for bare URL just so we can be sure the server is running
+  // app.get("/", (req, res) => {
+  //   res.send("Chattahooligans API is running");
+  // });
 
   // returns most recent notification
   app.get("/api/notifications/last", (req, res) => {
