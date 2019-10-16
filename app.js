@@ -5,12 +5,14 @@ var mongoose = require("mongoose");
 var env = require("dotenv");
 var bodyParser = require("body-parser");
 var fs = require("fs");
+var morgan = require("morgan");
 var cors = require("cors");
 var passport = require("passport");
 var passportJWT = require("passport-jwt");
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
-var serveStatic = require('serve-static');
+var serveStatic = require("serve-static");
+var history = require("express-history-api-fallback");
 var User = require("./models/users");
 const apiKeyMiddleware = require("./middleware/ApiKeyMiddleware");
 
@@ -25,8 +27,9 @@ var JWTOptions = {
 var port = process.env.PORT || 3000;
 var MONGO_URI = process.env.MONGO_URI;
 
-// app.use("/assets", express.static(__dirname + "/public"));
+app.use("/assets", express.static(__dirname + "/public"));
 // app.use(express.static(`${__dirname}/frontend/dist`));
+app.use(morgan("combined"));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(passport.initialize());
@@ -71,12 +74,16 @@ passport.use(
 
 // app.set("view engine", "ejs");
 mongoose
-  .connect(MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      }, function () {
-    console.log(`Connection has been made`);
-  })
+  .connect(
+    MONGO_URI,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    },
+    function() {
+      console.log(`Connection has been made`);
+    }
+  )
   .catch(function(err) {
     console.log(`App starting error:`, err.stack);
     process.exit(1);
@@ -98,14 +105,8 @@ fs.readdirSync("controllers").forEach(function(file) {
   }
 });
 
-app.use(serveStatic(__dirname + '/frontend/dist'));
-
-// app.use(apiKeyMiddleware());
-
-
-app.get('*', (req, res) => {
-  res.sendFile(`${__dirname}/frontend/dist/index.html`);
-});
+app.use(serveStatic(__dirname + "/dist"));
+app.use(history());
 
 app.listen(port, function() {
   console.log(`app listening on http://localhost:${port}`);
