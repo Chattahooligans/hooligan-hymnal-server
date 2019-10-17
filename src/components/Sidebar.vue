@@ -1,9 +1,9 @@
 <template>
   <aside
-    class="bg-gray-300 -mx-3 px-3 py-4 md:w-1/3 sm:w-100 md:block sm:hidden"
+    class="bg-gray-300 -mx-3 px-3 py-4 md:w-64 sm:w-100 md:block"
     v-if="loggedIn"
   >
-    <nav class="flex flex-col -mx-3">
+    <nav class="flex flex-col -mx-3 md:block hidden">
       <template v-if="user.pushNotificationsAllowed">
         <router-link
           class="block p-3 hover:bg-gray-600 hover:text-white"

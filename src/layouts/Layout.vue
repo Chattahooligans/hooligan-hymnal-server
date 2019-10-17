@@ -16,9 +16,9 @@
         </nav>
       </div>
     </header>
-    <section class="mx-3 flex min-h-screen h-full">
+    <section class="mx-3 flex flex-col md:flex-row min-h-screen h-full">
       <Sidebar />
-      <main :class="{ 'w-2/3 ml-6': loggedIn, 'w-full': !loggedIn }">
+      <main :class="{ 'w-auto ml-6': loggedIn, 'w-full': !loggedIn }">
         <slot />
       </main>
     </section>
