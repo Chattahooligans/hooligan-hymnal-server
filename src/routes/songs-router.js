@@ -18,6 +18,15 @@ export default [
     }
   },
   {
+    path: "/songs/create",
+    name: "create-song",
+    component: () => import("@/views/songs/create.vue"),
+    meta: {
+      requiresAuth: true,
+      songbookAllowed: true
+    }
+  },
+  {
     path: "/songs/:id",
     name: "show-song",
     component: () => import("@/views/songs/_id.vue"),
@@ -32,15 +41,6 @@ export default [
         NProgress.done();
         next();
       });
-    }
-  },
-  {
-    path: "/songs/create",
-    name: "create-song",
-    component: () => import("@/views/songs/create.vue"),
-    meta: {
-      requiresAuth: true,
-      songbookAllowed: true
     }
   },
   {

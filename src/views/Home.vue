@@ -15,8 +15,6 @@
             @click="commands.bold"
           >
             <font-awesome-icon icon="bold" />
-            <!-- Bold -->
-            <!-- <icon name="bold" /> -->
           </button>
 
           <button
@@ -24,9 +22,7 @@
             :class="{ 'is-active': isActive.italic() }"
             @click="commands.italic"
           >
-            <!-- Italic -->
             <font-awesome-icon icon="italic" />
-            <!-- <icon name="italic" /> -->
           </button>
 
           <button
@@ -36,7 +32,6 @@
           >
             <!-- Strike -->
             <font-awesome-icon icon="strikethrough" />
-            <!-- <icon name="strike" /> -->
           </button>
 
           <button
@@ -44,9 +39,8 @@
             :class="{ 'is-active': isActive.underline() }"
             @click="commands.underline"
           >
-            <font-awesome-icon icon="underline" />
             <!-- Underline -->
-            <!-- <icon name="underline" /> -->
+            <font-awesome-icon icon="underline" />
           </button>
 
           <button
@@ -56,7 +50,6 @@
           >
             <!-- Code -->
             <font-awesome-icon icon="code" />
-            <!-- <icon name="code" /> -->
           </button>
 
           <button
@@ -65,16 +58,6 @@
             @click="commands.paragraph"
           >
             <font-awesome-icon icon="paragraph" />
-            <!-- <icon name="paragraph" /> -->
-          </button>
-
-          <button
-            class="menubar__button block"
-            :class="{ 'is-active': isActive.heading({ level: 1 }) }"
-            @click="commands.heading({ level: 1 })"
-          >
-            <!-- H1 -->
-            <font-awesome-icon icon="heading" />1
           </button>
 
           <button
@@ -83,15 +66,7 @@
             @click="commands.heading({ level: 2 })"
           >
             <!-- H2 -->
-            <font-awesome-icon icon="heading" />2
-          </button>
-
-          <button
-            class="menubar__button block"
-            :class="{ 'is-active': isActive.heading({ level: 3 }) }"
-            @click="commands.heading({ level: 3 })"
-          >
-            <font-awesome-icon icon="heading" />3
+            <font-awesome-icon icon="heading" />
           </button>
 
           <button
@@ -101,7 +76,6 @@
           >
             <!-- ul -->
             <font-awesome-icon icon="list-ul" />
-            <!-- <icon name="ul" /> -->
           </button>
 
           <button
@@ -111,7 +85,6 @@
           >
             <!-- ol -->
             <font-awesome-icon icon="list-ol" />
-            <!-- <icon name="ol" /> -->
           </button>
 
           <button
@@ -121,32 +94,22 @@
           >
             ""
             <font-awesome-icon icon="quote-left" />
-            <!-- <icon name="quote" /> -->
           </button>
 
-          <!-- <button
+          <button
             class="menubar__button block"
-            :class="{ 'is-active': isActive.code_block() }"
-            @click="commands.code_block"
+            @click="commands.horizontal_rule"
           >
-            Code Block
-            <icon name="code" />
-          </button>-->
-
-          <button class="menubar__button block" @click="commands.horizontal_rule">
-            <!-- <icon name="hr" /> -->
             <!-- hr -->
             <font-awesome-icon icon="ruler-horizontal" />
           </button>
 
           <button class="menubar__button block" @click="commands.undo">
-            <!-- <icon name="undo" /> -->
             <!-- Undo -->
             <font-awesome-icon icon="undo" />
           </button>
 
           <button class="menubar__button block" @click="commands.redo">
-            <!-- <icon name="redo" /> -->
             <!-- redo -->
             <font-awesome-icon icon="redo" />
           </button>
@@ -165,14 +128,11 @@ import { Editor, EditorContent, EditorMenuBar } from "tiptap";
 import {
   Blockquote,
   CodeBlock,
-  HardBreak,
   Heading,
   HorizontalRule,
   OrderedList,
   BulletList,
   ListItem,
-  TodoItem,
-  TodoList,
   Bold,
   Code,
   Italic,
@@ -200,13 +160,10 @@ export default {
           new Blockquote(),
           new BulletList(),
           new CodeBlock(),
-          new HardBreak(),
-          new Heading({ levels: [1, 2, 3] }),
+          new Heading({ levels: [2] }),
           new HorizontalRule(),
           new ListItem(),
           new OrderedList(),
-          new TodoItem(),
-          new TodoList(),
           new Link(),
           new Bold(),
           new Code(),
@@ -215,28 +172,7 @@ export default {
           new Underline(),
           new History()
         ],
-        content: `
-          <h2>
-            Hi there,
-          </h2>
-          <p>
-            this is a very <em>basic</em> example of tiptap.
-          </p>
-          <pre><code>body { display: none; }</code></pre>
-          <ul>
-            <li>
-              A regular list
-            </li>
-            <li>
-              With regular items
-            </li>
-          </ul>
-          <blockquote>
-            It's amazing 👏
-            <br />
-            – mom
-          </blockquote>
-        `,
+        content: this.html,
         onUpdate: ({ getHTML }) => {
           // get new content on update
           this.html = getHTML();
@@ -249,10 +185,7 @@ export default {
     this.editor.destroy();
   },
   computed: {
-    ...authComputed,
-    updateHTML() {
-      return this.editor.content;
-    }
+    ...authComputed
   }
 };
 </script>
