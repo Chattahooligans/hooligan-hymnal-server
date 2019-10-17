@@ -49,17 +49,35 @@
             >
               Remove
             </button>
-            <ul v-if="squad.players">
-              <li v-for="(player, i) in squad.players" :key="i">
-                {{ player.hint }} -
-                <button
-                  type="button"
-                  @click.prevent="removePlayer(index, player._id)"
+            <div class="mb-3">
+              <ul>
+                <li v-for="player in squad.players" :key="player._id">
+                  {{ player.name }}
+                </li>
+              </ul>
+              <multiselect
+                v-if="squad.players"
+                v-model="squad.players"
+                :options="squad.players"
+                :multiple="true"
+                :close-on-select="false"
+                :clear-on-select="false"
+                :preserve-search="true"
+                placeholder="Select Players"
+                label="name"
+                track-by="name"
+                :preselect-first="false"
+              >
+                <template
+                  slot="selection"
+                  slot-scope="{ players, search, isOpen }"
                 >
-                  Remove
-                </button>
-              </li>
-            </ul>
+                  <span v-if="squad.players.length && !isOpen"
+                    >{{ squad.players.length }} selected</span
+                  >
+                </template>
+              </multiselect>
+            </div>
           </div>
         </div>
         <div class="mb-3">
@@ -82,6 +100,27 @@
             v-model="newSquad.squadTitle"
             :required="true"
           />
+        </div>
+        <div class="mb-3">
+          <multiselect
+            v-if="players"
+            v-model="newSquad.players"
+            :options="players"
+            :multiple="true"
+            :close-on-select="false"
+            :clear-on-select="false"
+            :preserve-search="true"
+            placeholder="Select Players"
+            label="name"
+            track-by="name"
+            :preselect-first="false"
+          >
+            <template slot="selection" slot-scope="{ players, search, isOpen }">
+              <span v-if="newSquad.players.length && !isOpen"
+                >{{ newSquad.players.length }} selected</span
+              >
+            </template>
+          </multiselect>
         </div>
         <div class="mb-3">
           <button
@@ -145,6 +184,7 @@
 
 <script>
 import BaseInput from "@/components/BaseInput";
+import { mapGetters } from "vuex";
 import axios from "axios";
 export default {
   data() {
@@ -208,6 +248,9 @@ export default {
         index
       ].players.filter(player => player._id !== id);
     }
+  },
+  computed: {
+    ...mapGetters(["players"])
   }
 };
 </script>

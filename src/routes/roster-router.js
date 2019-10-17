@@ -27,7 +27,9 @@ export default [
     },
     beforeEnter(to, from, next) {
       NProgress.start();
-      NProgress.done();
+      store.dispatch("fetchPlayers").then(() => {
+        NProgress.done();
+      });
       next();
     }
   }

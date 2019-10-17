@@ -9,8 +9,10 @@ import VueSweetalert2 from "vue-sweetalert2";
 import { Plugin } from "vue-fragment";
 import VueFormGenerator from "vue-form-generator";
 import "nprogress/nprogress.css";
+import Multiselect from "vue-multiselect";
 
 import Layout from "@/layouts/Layout";
+import BaseInput from "@/components/BaseInput";
 
 Vue.config.productionTip = false;
 
@@ -20,6 +22,8 @@ import "@/assets/css/tailwind.css";
 Vue.use(VueSweetalert2);
 Vue.use(Plugin);
 Vue.component("Layout", Layout);
+Vue.component("multiselect", Multiselect);
+Vue.component("baseinput", BaseInput);
 Vue.use(VueFormGenerator);
 
 new Vue({
