@@ -4,8 +4,7 @@
     <router-link class="text-green-700" to="/users/create"
       >Add User</router-link
     >
-    <div v-if="loading">Loading...</div>
-    <div v-else>
+    <div>
       <ul v-if="users.length">
         <li v-for="user in users" :key="user._id">
           <router-link :to="`/users/${user._id}`">{{ user.email }}</router-link>
@@ -17,32 +16,10 @@
 </template>
 
 <script>
-import Layout from "@/layouts/Layout";
-import axios from "axios";
+import { mapState, mapGetters } from "vuex";
 export default {
-  data() {
-    return {
-      users: [],
-      loading: false
-    };
-  },
-  components: {
-    Layout
-  },
-  created() {
-    this.getUsers();
-  },
-  methods: {
-    getUsers() {
-      this.loading = true;
-      axios
-        .get("/api/users")
-        .then(({ data }) => {
-          this.loading = false;
-          this.users = data;
-        })
-        .catch(res => console.log(res));
-    }
+  computed: {
+    ...mapGetters(["users"])
   }
 };
 </script>

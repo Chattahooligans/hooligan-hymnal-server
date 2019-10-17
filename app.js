@@ -29,7 +29,7 @@ var MONGO_URI = process.env.MONGO_URI;
 
 app.use("/assets", express.static(__dirname + "/public"));
 // app.use(express.static(`${__dirname}/frontend/dist`));
-app.use(morgan("combined"));
+// app.use(morgan("combined"));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(passport.initialize());

@@ -45,16 +45,17 @@ const baseRoutes = [
       NProgress.done();
       next();
     }
-  },
-  {
-    path: "/foes",
-    name: "all-foes",
-    component: () => import("./views/foes/Index.vue"),
-    meta: {
-      requiresAuth: true,
-      foesAllowed: true
-    }
   }
+  // Disabled because currently we are just scraping foes
+  // {
+  //   path: "/foes",
+  //   name: "all-foes",
+  //   component: () => import("./views/foes/Index.vue"),
+  //   meta: {
+  //     requiresAuth: true,
+  //     foesAllowed: true
+  //   }
+  // }
 ];
 
 let routes = baseRoutes.concat(songsRouter);
@@ -65,6 +66,13 @@ routes = routes.concat(rosterRouter);
 // routes = routes.concat(goalKeeperNickname);
 routes = routes.concat(pushTokenRouter);
 routes = routes.concat(notificationsRouter);
+routes = routes.concat([
+  {
+    path: "**",
+    name: "not-found",
+    component: () => import("@/views/NotFound.vue")
+  }
+]);
 
 const router = new Router({
   mode: "history",

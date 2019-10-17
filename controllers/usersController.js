@@ -10,86 +10,68 @@ let tokenList = {};
 module.exports = app => {
   app.post("/api/users/register", (req, res) => {
     const { email, password } = req.body;
-    let newUser = new User({
+    const newUser = new User({
       email,
       password
     });
 
-    User.find({}, (err, users) => {
-      // if (users.length == 0) {
-      //   newUser.pushNotificationsAllowed = true;
-      //   newUser.rosterAllowed = true;
-      //   newUser.songbookAllowed = true;
-      //   newUser.foesAllowed = true;
-      //   newUser.usersAllowed = true;
-      // }
-      User.createUser(newUser, (error, user) => {
-        if (error) {
-          res.status(422).json({
-            message:
-              "Something happened... please check that you don't already have an account otherwise try again later"
-          });
-        }
-        res.json({ message: "User created please login", user });
-      });
+    User.createUser(newUser, (error, user) => {
+      if (error) {
+        return res.status(422).json({
+          message:
+            "Something happened... please check that you don't already have an account otherwise try again later"
+        });
+      }
+      return res.json({ message: "User created please login", user });
     });
   });
 
-  app.post(
-    "/api/users/login",
-    check("email")
-      .not()
-      .isEmpty()
-      .isEmail(),
-    check("password")
-      .not()
-      .isEmpty(),
-    (req, res) => {
-      const { email, password } = req.body;
-      User.findOne({ email: email }, "+password", (err, user) => {
-        if (!user) {
-          return res.status(404).json({
-            message: "User not found"
-          });
-        }
-        if (password) {
-          bcryptjs.compare(password, user.password, (err, isMatch) => {
-            if (isMatch) {
-              const payload = { id: user._id };
-              const secretOrKey = process.env.SECRET_KEY;
-              const tokenExpires = process.env.TOKEN_EXPIRES;
-              const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
-              const refreshExpires = process.env.REFRESH_TOKEN_EXPIRES;
-              const token = jwt.sign(payload, secretOrKey, {
-                expiresIn: tokenExpires
-              });
-              const refreshToken = jwt.sign(payload, refreshSecretOrKey, {
-                expiresIn: refreshExpires
-              });
-              user = {
-                id: user.id,
-                email: user.email,
-                foesAllowed: user.foesAllowed,
-                pushNotificationsAllowed: user.pushNotificationsAllowed,
-                rosterAllowed: user.rosterAllowed,
-                songbookAllowed: user.songbookAllowed,
-                usersAllowed: user.usersAllowed
-              };
-              return res.status(200).send({ token, refreshToken, user });
-            } else {
-              return res
-                .status(400)
-                .send({ message: "Incorrect Password. Please try again." });
-            }
-          });
-        } else {
-          return res
-            .send(422)
-            .json({ message: "Password was incorrect or wasn't provided" });
-        }
-      });
-    }
-  );
+  app.post("/api/users/login", (req, res) => {
+    const { email, password } = req.body;
+    User.findOne({ email: email }, "+password", (err, user) => {
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found"
+        });
+      }
+      if (password) {
+        bcryptjs.compare(password, user.password, (err, isMatch) => {
+          if (isMatch) {
+            const payload = { id: user._id };
+            const secretOrKey = process.env.SECRET_KEY;
+            const tokenExpires = `${process.env.TOKEN_EXPIRES}` || "1h";
+            const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
+            const refreshExpires =
+              `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
+            const token = jwt.sign(payload, secretOrKey, {
+              expiresIn: tokenExpires
+            });
+            const refreshToken = jwt.sign(payload, refreshSecretOrKey, {
+              expiresIn: refreshExpires
+            });
+            user = {
+              id: user.id,
+              email: user.email,
+              foesAllowed: user.foesAllowed,
+              pushNotificationsAllowed: user.pushNotificationsAllowed,
+              rosterAllowed: user.rosterAllowed,
+              songbookAllowed: user.songbookAllowed,
+              usersAllowed: user.usersAllowed
+            };
+            return res.status(200).send({ token, refreshToken, user });
+          } else {
+            return res
+              .status(400)
+              .send({ message: "Incorrect Password. Please try again." });
+          }
+        });
+      } else {
+        return res
+          .send(422)
+          .json({ message: "Password was incorrect or wasn't provided" });
+      }
+    });
+  });
 
   app.get(
     "/api/users/me",

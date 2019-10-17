@@ -49,14 +49,14 @@
           >Goalkeeper Nickname</router-link
         > -->
       </template>
-      <template v-if="user.foesAllowed">
+      <!-- <template v-if="user.foesAllowed">
         <router-link
           class="block p-3 hover:bg-gray-600 hover:text-white"
           :active-class="'bg-gray-600 text-white'"
           to="/foes"
           >Foes</router-link
         >
-      </template>
+      </template> -->
       <template v-if="user.usersAllowed">
         <router-link
           class="block p-3 hover:bg-gray-600 hover:text-white"

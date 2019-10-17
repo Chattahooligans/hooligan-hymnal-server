@@ -1,8 +1,11 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
+import VueSweetalert2 from "vue-sweetalert2";
 
 Vue.use(Vuex);
+Vue.use(VueSweetalert2);
+let _this = Vue;
 
 const store = new Vuex.Store({
   state: {
@@ -91,6 +94,9 @@ const store = new Vuex.Store({
     },
     SET_USER_PROFILE(state, data) {
       state.profile = data;
+    },
+    SET_ALL_USERS(state, data) {
+      state.users = data;
     }
   },
   actions: {
@@ -178,6 +184,11 @@ const store = new Vuex.Store({
       return axios.get(`/api/notifications/last`).then(({ data }) => {
         commit("SET_LATEST_NOTIFICATION", data);
       });
+    },
+    fetchUsers({ commit }) {
+      return axios.get(`/api/users`).then(({ data }) => {
+        commit("SET_ALL_USERS", data);
+      });
     }
   },
   getters: {
@@ -209,10 +220,12 @@ const store = new Vuex.Store({
     },
     goalkeepers(state) {
       return state.goalkeepersnicknames;
+    },
+    users(state) {
+      return state.users;
     }
   }
 });
-
 if (process.env.NODE_ENV !== "production") {
   axios.defaults.baseURL = "//localhost:5000";
 }

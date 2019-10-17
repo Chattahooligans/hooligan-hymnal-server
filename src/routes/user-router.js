@@ -8,6 +8,13 @@ export default [
     meta: {
       requiresAuth: true,
       usersAllowed: true
+    },
+    beforeEnter(routeTo, routeFrom, next) {
+      NProgress.start();
+      store.dispatch("fetchUsers").then(() => {
+        NProgress.done();
+        next();
+      });
     }
   },
   {
