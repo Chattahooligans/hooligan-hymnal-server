@@ -12,7 +12,7 @@
         :addPlayer="addPlayer"
         :removePlayer="removePlayer"
         :selectedSquad="selectedSquad"
-      /> -->
+      />-->
       <form @submit.prevent="addRoster" method="POST">
         <div class="flex flex-col mb-3">
           <BaseInput
@@ -147,9 +147,8 @@
               v-for="(squad, index) in roster.squads"
               :key="index"
               :value="index"
+              >{{ squad.squadTitle }}</option
             >
-              {{ squad.squadTitle }}
-            </option>
           </select>
         </div>
         <div class="flex flex-col mb-3">
