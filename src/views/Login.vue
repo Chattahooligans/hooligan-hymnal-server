@@ -32,6 +32,17 @@
               />
             </div>
             <div class="mb-3">
+              <label for="rememberMe"
+                >Remember Me
+                <input
+                  class="ml-2"
+                  type="checkbox"
+                  name="rememberMe"
+                  id="rememberMe"
+                  v-model="rememberMe"
+              /></label>
+            </div>
+            <!-- <div class="mb-3">
               <label for="showPassword">
                 Show Password
                 <input
@@ -47,7 +58,7 @@
                   "
                 />
               </label>
-            </div>
+            </div> -->
             <div>
               <button
                 class="bg-blue-700 text-white py-2 px-3 rounded"
@@ -76,7 +87,8 @@ export default {
     return {
       email: "",
       password: "",
-      showPassword: false
+      showPassword: false,
+      rememberMe: false
     };
   },
   components: {
@@ -92,7 +104,8 @@ export default {
       this.$store
         .dispatch("login", {
           email: this.email,
-          password: this.password
+          password: this.password,
+          rememberMe: this.rememberMe
         })
         .then(() => {
           this.$router.push("/");

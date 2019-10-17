@@ -27,7 +27,7 @@ module.exports = app => {
   });
 
   app.post("/api/users/login", (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, rememberMe } = req.body;
     User.findOne({ email: email }, "+password", (err, user) => {
       if (!user) {
         return res.status(404).json({
@@ -43,7 +43,7 @@ module.exports = app => {
             const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
             const refreshExpires =
               `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
-            const token = jwt.sign(payload, secretOrKey, {
+            let token = jwt.sign(payload, secretOrKey, {
               expiresIn: tokenExpires
             });
             const refreshToken = jwt.sign(payload, refreshSecretOrKey, {
@@ -58,7 +58,10 @@ module.exports = app => {
               songbookAllowed: user.songbookAllowed,
               usersAllowed: user.usersAllowed
             };
-            return res.status(200).send({ token, refreshToken, user });
+            if (rememberMe) {
+              token = refreshToken;
+            }
+            return res.status(200).send({ token, user, rememberMe });
           } else {
             return res
               .status(400)
