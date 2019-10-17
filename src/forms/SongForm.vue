@@ -18,6 +18,14 @@
         placeholder="Song Lyrics"
         v-model="song.lyrics"
       />
+      <!-- <div>
+        <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
+          <button @click="commands.bold">
+            Bold
+          </button>
+        </editor-menu-bar>
+        <editor-content :editor="editor" />
+      </div> -->
     </div>
     <div>
       <label for="instructions">Instructions</label>
