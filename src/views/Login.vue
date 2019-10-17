@@ -22,7 +22,7 @@
             </div>
             <div class="flex flex-col mb-3">
               <BaseInput
-                type="password"
+                :type="showPassword ? 'text' : 'password'"
                 name="password"
                 label="Password"
                 placeholder="******"
@@ -30,6 +30,23 @@
                 :required="true"
                 v-model="password"
               />
+            </div>
+            <div class="mb-3">
+              <label for="showPassword">
+                Show Password
+                <input
+                  type="checkbox"
+                  name="showPassword"
+                  id="showPassword"
+                  class="ml-1"
+                  v-model="showPassword"
+                  @click="
+                    {
+                      showPassword = !!showPassword;
+                    }
+                  "
+                />
+              </label>
             </div>
             <div>
               <button
@@ -58,11 +75,8 @@ export default {
   data() {
     return {
       email: "",
-      password: ""
-      // user: {
-      //   email: "",
-      //   password: ""
-      // }
+      password: "",
+      showPassword: false
     };
   },
   components: {
@@ -95,7 +109,6 @@ export default {
           });
         });
     }
-  },
-  computed: {}
+  }
 };
 </script>
