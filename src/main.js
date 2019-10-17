@@ -10,6 +10,23 @@ import { Plugin } from "vue-fragment";
 import VueFormGenerator from "vue-form-generator";
 import "nprogress/nprogress.css";
 import Multiselect from "vue-multiselect";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import {
+  faBold,
+  faItalic,
+  faStrikethrough,
+  faUnderline,
+  faCode,
+  faParagraph,
+  faHeading,
+  faListUl,
+  faListOl,
+  faQuoteLeft,
+  faRulerHorizontal,
+  faUndo,
+  faRedo
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 import Layout from "@/layouts/Layout";
 import BaseInput from "@/components/BaseInput";
@@ -19,11 +36,28 @@ Vue.config.productionTip = false;
 import "sweetalert2/dist/sweetalert2.all";
 import "@/assets/css/tailwind.css";
 
+library.add(
+  faBold,
+  faItalic,
+  faStrikethrough,
+  faUnderline,
+  faCode,
+  faParagraph,
+  faHeading,
+  faListUl,
+  faListOl,
+  faQuoteLeft,
+  faRulerHorizontal,
+  faUndo,
+  faRedo
+);
+
 Vue.use(VueSweetalert2);
 Vue.use(Plugin);
 Vue.component("Layout", Layout);
 Vue.component("multiselect", Multiselect);
 Vue.component("baseinput", BaseInput);
+Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.use(VueFormGenerator);
 
 new Vue({
