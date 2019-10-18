@@ -19,16 +19,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import NProgress from "nprogress";
-import store from "@/store";
 export default {
-  // beforeRouteEnter(routeTo, routeFrom, next) {
-  //   NProgress.start();
-  //   store.dispatch("fetchPlayers").then(() => {
-  //     NProgress.done();
-  //     next();
-  //   });
-  // },
   computed: mapGetters(["players"])
 };
 </script>
