@@ -9,7 +9,7 @@
     </div>
     <div>
       <h3>Bio</h3>
-      <div v-html="linebreaks" />
+      <div v-html="player.bio" />
     </div>
     <div>
       <button @click="deletePlayer">Delete {{ player.name }}</button>
@@ -47,10 +47,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["player"]),
-    linebreaks() {
-      return this.player.bio.replace("\n", "<br />");
-    }
+    ...mapGetters(["player"])
   }
 };
 </script>

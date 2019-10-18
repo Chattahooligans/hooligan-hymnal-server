@@ -1,13 +1,15 @@
 <template>
   <Layout>
     <h2>All Players</h2>
-    <router-link to="/players/create">Add Player</router-link>
+    <router-link class="btn mb-3" to="/players/create">Add Player</router-link>
     <div>
       <ul v-if="players">
         <li v-for="player in players" :key="player._id">
-          <router-link :to="`/players/${player._id}`">{{
+          <router-link :to="`/players/${player._id}`">
+            {{
             player.name
-          }}</router-link>
+            }}
+          </router-link>
         </li>
       </ul>
       <h3 v-else>No Players</h3>

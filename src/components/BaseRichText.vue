@@ -3,13 +3,10 @@
   <div>
     <label class="flex-1 font-semibold" for="edit-area">{{ label }}</label>
     <div class="rounded border shadow px-3 pb-3">
-      <editor-menu-bar
-        class="border-b -mx-3"
-        :editor="editor"
-        v-slot="{ commands, isActive }"
-      >
+      <editor-menu-bar class="border-b -mx-3" :editor="editor" v-slot="{ commands, isActive }">
         <div class="menubar flex justify-between flex-wrap">
           <button
+            type="button"
             class="menubar__button hover:bg-gray-200 block flex-1 px-3"
             :class="{ 'bg-gray-400': isActive.bold() }"
             @click="commands.bold"
@@ -18,6 +15,7 @@
           </button>
 
           <button
+            type="button"
             class="menubar__button hover:bg-gray-200 block flex-1 px-3"
             :class="{ 'bg-gray-400': isActive.italic() }"
             @click="commands.italic"
@@ -26,6 +24,7 @@
           </button>
 
           <button
+            type="button"
             class="menubar__button hover:bg-gray-200 block flex-1 px-3"
             :class="{ 'bg-gray-400': isActive.strike() }"
             @click="commands.strike"
@@ -34,6 +33,7 @@
           </button>
 
           <button
+            type="button"
             class="menubar__button hover:bg-gray-200 block flex-1 px-3"
             :class="{ 'bg-gray-400': isActive.underline() }"
             @click="commands.underline"
@@ -42,6 +42,7 @@
           </button>
 
           <button
+            type="button"
             class="menubar__button hover:bg-gray-200 block flex-1 px-3"
             :class="{ 'bg-gray-400': isActive.code() }"
             @click="commands.code"
@@ -49,15 +50,16 @@
             <font-awesome-icon icon="code" />
           </button>
 
-          <button
+          <!-- <button type="button"
             class="menubar__button hover:bg-gray-200 block flex-1 px-3"
             :class="{ 'bg-gray-400': isActive.paragraph() }"
             @click="commands.paragraph"
           >
             <font-awesome-icon icon="paragraph" />
-          </button>
+          </button>-->
 
           <button
+            type="button"
             class="menubar__button hover:bg-gray-200 block flex-1 px-3"
             :class="{ 'bg-gray-400': isActive.heading({ level: 2 }) }"
             @click="commands.heading({ level: 2 })"
@@ -66,6 +68,7 @@
           </button>
 
           <button
+            type="button"
             class="menubar__button hover:bg-gray-200 block flex-1 px-3"
             :class="{ 'bg-gray-400': isActive.bullet_list() }"
             @click="commands.bullet_list"
@@ -74,6 +77,7 @@
           </button>
 
           <button
+            type="button"
             class="menubar__button hover:bg-gray-200 block flex-1 px-3"
             :class="{ 'bg-gray-400': isActive.ordered_list() }"
             @click="commands.ordered_list"
@@ -82,6 +86,7 @@
           </button>
 
           <button
+            type="button"
             class="menubar__button hover:bg-gray-200 block flex-1 px-3"
             :class="{ 'bg-gray-400': isActive.blockquote() }"
             @click="commands.blockquote"
@@ -90,16 +95,15 @@
           </button>
 
           <button
-            class="menubar__button hover:bg-gray-200 block p-3"
+            type="button"
+            class="menubar__button hover:bg-gray-200 block flex px-3"
             @click="commands.horizontal_rule"
-            x-3
-            y-3
-            x-3
           >
             <font-awesome-icon icon="ruler-horizontal" />
           </button>
 
           <button
+            type="button"
             class="menubar__button hover:bg-gray-200 block flex-1 px-3"
             @click="commands.undo"
           >
@@ -107,6 +111,7 @@
           </button>
 
           <button
+            type="button"
             class="menubar__button hover:bg-gray-200 block flex-1 px-3"
             @click="commands.redo"
           >
