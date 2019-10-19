@@ -14,6 +14,7 @@ var serveStatic = require("serve-static");
 var User = require("./models/users");
 var APIMiddleware = require("./middleware/ApiKeyMiddleware");
 var helmet = require("helmet");
+var fileUpload = require("express-fileupload");
 
 env.config();
 
@@ -32,6 +33,12 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(helmet());
 app.disable("x-powered-by");
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp/"
+  })
+);
 app.use(passport.initialize());
 
 passport.use(

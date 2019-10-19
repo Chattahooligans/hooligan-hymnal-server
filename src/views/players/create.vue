@@ -1,6 +1,8 @@
 <template>
   <Layout>
-    <h2 class="text-xl font-semibold mb-3 mt-2">Create {{ player.name ? player.name : "Player" }}</h2>
+    <h2 class="text-xl font-semibold mb-3 mt-2">
+      Create {{ player.name ? player.name : "Player" }}
+    </h2>
     <form method="POST" @submit.prevent="addPlayer">
       <div class="flex flex-col mb-3">
         <BaseInput
@@ -40,7 +42,7 @@
           label="Position"
           placeholder="Position"
           arPlaceholder="Enter Player Position"
-          v-mdoel="player.position"
+          v-model="player.position"
         />
       </div>
       <div class="mb-3 flex flex-col">
@@ -57,14 +59,39 @@
         <base-rich-text label="Bio" v-model="player.bio" />
       </div>
       <div class="mb-3 flex flex-col">
-        <BaseInput
+        <img
+          class="rounded-full h-50 w-50"
+          :src="player.thumbnail"
+          :alt="`${player.name} thumbnail`"
+          v-if="player.thumbnail"
+        />
+        <input
+          class="rounded outline-none bg-transparent border-none mb-3"
+          type="file"
+          id="file"
+          accept="image/*"
+          ref="playerThumbnail"
+          v-on:change="handleThumbnailChange()"
+        />
+        <div :class="thumbnail ? 'mb-3' : ''">
+          <button
+            :disabled="uploading"
+            v-if="thumbnail"
+            type="button"
+            @click.prevent="uploadThumbnail"
+            class="btn"
+          >
+            Upload Thumbnail
+          </button>
+        </div>
+        <!-- <BaseInput
           type="url"
           name="thumbnail"
           label="Thumbnail"
           placeholder="Thumbnail URL"
           arPlaceholder="Player Thumbnail URL"
           v-model="player.thumbnail"
-        />
+        /> -->
       </div>
       <div class="mb-3 flex flex-col">
         <BaseInput
@@ -97,27 +124,26 @@
         />
       </div>
       <div class="mb-3">
-        <button
-          class="px-3 py-2 bg-blue-700 text-white rounded mr-3"
-        >Add {{ player.name ? player.name : "Player" }}</button>
+        <button class="px-3 py-2 bg-blue-700 text-white rounded mr-3">
+          Add {{ player.name ? player.name : "Player" }}
+        </button>
         <button
           class="px-3 py-2 bg-red-700 text-white rounded"
           type="reset"
           @click.prevent="clearForm"
-        >Reset Form</button>
+        >
+          Reset Form
+        </button>
       </div>
     </form>
   </Layout>
 </template>
 
 <script>
-import Layout from "@/layouts/Layout";
 import axios from "axios";
+import NProgress from "nprogress";
 
 export default {
-  components: {
-    Layout
-  },
   data() {
     return {
       player: {
@@ -127,11 +153,14 @@ export default {
         position: "",
         team: "",
         bio: "",
-        thumbnail: "",
+        thumbnail: null,
         image: "",
         twitter: "",
         instagram: ""
-      }
+      },
+      uploading: false,
+      thumbnail_public_id: null,
+      thumbnail: null
     };
   },
   methods: {
@@ -156,6 +185,35 @@ export default {
         twitter: "",
         instagram: ""
       };
+    },
+    handleThumbnailChange() {
+      this.thumbnail = this.$refs.playerThumbnail.files[0];
+    },
+    uploadThumbnail() {
+      NProgress.start();
+      this.uploading = true;
+      let formData = new FormData();
+      formData.append("playerThumbnail", this.thumbnail);
+      formData.append("public_id", this.thumbnail_public_id);
+      axios
+        .post("/api/players/thumbnail-upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(({ data }) => {
+          NProgress.done();
+          this.uploading = false;
+          this.player.thumbnail = data.url;
+          this.thumbnail_public_id = data.public_id;
+          this.thumbnail = null;
+          this.$refs.playerThumbnail.value = null;
+        })
+        .catch(err => {
+          NProgress.done();
+          this.uploading = false;
+          console.log(err.response);
+        });
     }
   }
 };

@@ -71,7 +71,7 @@ new Vue({
     if (process.env.NODE_ENV !== "production") {
       axios.defaults.baseURL = "//localhost:5000";
     }
-    axios.defaults.timeout = 5000;
+    // axios.defaults.timeout = 5000;
     axios.interceptors.response.use(
       response => response,
       error => {

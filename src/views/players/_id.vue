@@ -1,5 +1,10 @@
 <template>
   <Layout>
+    <img
+      :src="player.thumbnail"
+      class="h-50px w-50px rounded-full"
+      :alt="`${player.name} thumbnail`"
+    />
     <h2>
       {{ player.name }} -
       <router-link :to="`/players/${player._id}/edit`">Edit</router-link>

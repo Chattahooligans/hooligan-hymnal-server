@@ -57,14 +57,40 @@
         <base-rich-text label="Bio" v-model="player.bio" />
       </div>
       <div class="mb-3 flex flex-col">
-        <BaseInput
+        <label for="image" class="font-semibold mb-3">Thumbnail</label>
+        <img
+          class="h-50 w-50 rounded-full mr-auto mb-3"
+          :src="player.thumbnail"
+          :alt="`${player.name} thumbnail`"
+          v-if="player.thumbnail"
+        />
+        <input
+          class="rounded outline-none bg-transparent border-none mb-3"
+          type="file"
+          id="file"
+          accept="image/*"
+          ref="playerThumbnail"
+          v-on:change="handleThumbnailChange()"
+        />
+        <div :class="thumbnail ? 'mb-3' : ''">
+          <button
+            :disabled="uploading"
+            v-if="thumbnail"
+            type="button"
+            @click.prevent="updateThumbnail"
+            class="btn"
+          >
+            Upload Thumbnail
+          </button>
+        </div>
+        <!-- <BaseInput
           type="url"
           name="thumbnail"
           label="Thumbnail"
           placeholder="Thumbnail URL"
           arPlaceholder="Player Thumbnail URL"
           v-model="player.thumbnail"
-        />
+        /> -->
       </div>
       <div class="mb-3 flex flex-col">
         <BaseInput
@@ -100,12 +126,16 @@
         <button
           type="submit"
           class="px-3 py-2 bg-blue-700 text-white rounded mr-3"
-        >Update {{ player.name ? player.name : "Player" }}</button>
+        >
+          Update {{ player.name ? player.name : "Player" }}
+        </button>
         <button
           class="px-3 py-2 bg-red-700 text-white rounded"
           type="reset"
           @click.prevent="cancel"
-        >Cancel \ Go back</button>
+        >
+          Cancel \ Go back
+        </button>
       </div>
     </form>
   </Layout>
@@ -114,7 +144,15 @@
 <script>
 import { mapGetters } from "vuex";
 import axios from "axios";
+import NProgress from "nprogress";
+
 export default {
+  data() {
+    return {
+      thumbnail: null,
+      uploading: false
+    };
+  },
   methods: {
     updatePlayer() {
       axios
@@ -137,10 +175,37 @@ export default {
     },
     cancel() {
       this.$router.go(-1);
+    },
+    handleThumbnailChange() {
+      this.thumbnail = this.$refs.playerThumbnail.files[0];
+    },
+    updateThumbnail() {
+      let formData = new FormData();
+      formData.append("playerThumbnail", this.thumbnail);
+      formData.append("public_id", this.public_id);
+      this.uploading = true;
+      NProgress.start();
+      axios
+        .post("/api/players/thumbnail-upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(({ data }) => {
+          NProgress.done();
+          this.uploading = false;
+          this.player.thumbnail = data.url;
+          this.public_id = data.public_id;
+          this.thumbnail = null;
+          this.$refs.playerThumbnail.value = null;
+        });
     }
   },
   computed: {
-    ...mapGetters(["player"])
+    ...mapGetters(["player"]),
+    public_id() {
+      return this.player.thumbnail.split("/").reverse()[1];
+    }
   }
 };
 </script>
