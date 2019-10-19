@@ -66,7 +66,6 @@ Vue.use(VueMeta);
 
 new Vue({
   created() {
-    console.log(process.env);
     document.body.classList.add("min-h-screen");
     axios.defaults.headers.common["x-api-key"] = process.env.VUE_APP_API_KEY;
     if (process.env.NODE_ENV !== "production") {
