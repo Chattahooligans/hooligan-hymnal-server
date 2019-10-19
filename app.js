@@ -1,5 +1,4 @@
 var express = require("express");
-var path = require("path");
 var app = express();
 var mongoose = require("mongoose");
 var env = require("dotenv");
@@ -12,9 +11,9 @@ var passportJWT = require("passport-jwt");
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 var serveStatic = require("serve-static");
-var history = require("express-history-api-fallback");
 var User = require("./models/users");
-const apiKeyMiddleware = require("./middleware/ApiKeyMiddleware");
+var APIMiddleware = require("./middleware/ApiKeyMiddleware");
+var helmet = require("helmet");
 
 env.config();
 
@@ -24,14 +23,15 @@ var JWTOptions = {
   secretOrKey: secretOrKey
 };
 
-var port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 var MONGO_URI = process.env.MONGO_URI;
 
 app.use("/assets", express.static(__dirname + "/public"));
-// app.use(express.static(`${__dirname}/frontend/dist`));
-// app.use(morgan("combined"));
+app.use(morgan("combined"));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(helmet());
+app.disable("x-powered-by");
 app.use(passport.initialize());
 
 passport.use(
@@ -102,6 +102,8 @@ app.all("*", (req, res) => {
   res.sendFile(`${__dirname}/dist/index.html`);
 });
 
-app.listen(port, function() {
-  console.log(`app listening on http://localhost:${port}`);
+app.all("/api/*", APIMiddleware());
+
+app.listen(PORT, function() {
+  console.log(`app listening on http://localhost:${PORT}`);
 });
