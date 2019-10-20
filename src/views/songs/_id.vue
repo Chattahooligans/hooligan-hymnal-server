@@ -73,7 +73,7 @@
           {{ song.legend ? song.legend : "No Song Legend" }}
         </div>
       </section>
-      <section>
+      <section class="border-0">
         <h3>Capo Signal</h3>
         <div>
           {{ song.capoSignal ? song.capoSignal : "No Capo Signal" }}
