@@ -3,7 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import axios from "axios";
-import "./registerServiceWorker";
+// import "./registerServiceWorker";
 import VueMeta from "vue-meta";
 // import axios from '@/services/api-service';
 import VueSweetalert2 from "vue-sweetalert2";

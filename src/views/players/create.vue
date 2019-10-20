@@ -60,7 +60,7 @@
       </div>
       <div class="mb-3 flex flex-col">
         <img
-          class="rounded-full h-50 w-50"
+          class="rounded-full h-50 w-50 mr-auto"
           :src="player.thumbnail"
           :alt="`${player.name} thumbnail`"
           v-if="player.thumbnail"
@@ -84,24 +84,42 @@
             Upload Thumbnail
           </button>
         </div>
-        <!-- <BaseInput
-          type="url"
-          name="thumbnail"
-          label="Thumbnail"
-          placeholder="Thumbnail URL"
-          arPlaceholder="Player Thumbnail URL"
-          v-model="player.thumbnail"
-        /> -->
       </div>
       <div class="mb-3 flex flex-col">
-        <BaseInput
+        <label for="playerImage">Image</label>
+        <img
+          :src="player.image"
+          :alt="`${player.name} full image`"
+          v-if="player.image"
+          class="max-w-md mr-auto"
+        />
+        <input
+          type="file"
+          accept="images/*"
+          name="playerImage"
+          id="playerImage"
+          ref="playerImage"
+          v-on:change="handleImageChange()"
+        />
+        <div v-show="image" class="mb-3">
+          <button
+            type="button"
+            @click.prevent="uploadImage"
+            :disabled="uploading"
+            :class="{ 'opacity-50': uploading }"
+            class="btn"
+          >
+            Upload Image
+          </button>
+        </div>
+        <!-- <BaseInput
           type="url"
           name="image"
           label="Image"
           placeholder="Image URL"
           arPlaceholder="Player full image url"
           v-model="player.image"
-        />
+        /> -->
       </div>
       <div class="mb-3 flex flex-col">
         <BaseInput
@@ -160,7 +178,9 @@ export default {
       },
       uploading: false,
       thumbnail_public_id: null,
-      thumbnail: null
+      thumbnail: null,
+      image: null,
+      image_public_id: null
     };
   },
   methods: {
@@ -189,6 +209,9 @@ export default {
     handleThumbnailChange() {
       this.thumbnail = this.$refs.playerThumbnail.files[0];
     },
+    handleImageChange() {
+      this.image = this.$refs.playerImage.files[0];
+    },
     uploadThumbnail() {
       NProgress.start();
       this.uploading = true;
@@ -208,6 +231,32 @@ export default {
           this.thumbnail_public_id = data.public_id;
           this.thumbnail = null;
           this.$refs.playerThumbnail.value = null;
+        })
+        .catch(err => {
+          NProgress.done();
+          this.uploading = false;
+          console.log(err.response);
+        });
+    },
+    async uploadImage() {
+      NProgress.start();
+      this.uploading = true;
+      let formData = new FormData();
+      formData.append("playerImage", this.image);
+      formData.append("public_id", this.image_public_id);
+      await axios
+        .post("/api/players/full-image", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(({ data }) => {
+          NProgress.done();
+          this.uploading = false;
+          this.player.image = data.url;
+          this.image_public_id = data.public_id;
+          this.image = null;
+          this.$refs.playerImage.value = null;
         })
         .catch(err => {
           NProgress.done();

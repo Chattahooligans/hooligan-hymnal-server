@@ -93,14 +93,39 @@
         /> -->
       </div>
       <div class="mb-3 flex flex-col">
-        <BaseInput
+        <label for="image">Image</label>
+        <img
+          :src="player.image"
+          :alt="`${player.name} full image`"
+          v-if="player.image"
+          class="max-w-sm"
+        />
+        <input
+          type="file"
+          name="image"
+          id="image"
+          ref="playerImage"
+          class="mb-3"
+          v-on:change="handleImageChange()"
+        />
+        <div v-show="image" class="mb-3">
+          <button
+            type="button"
+            class="btn"
+            :disabled="uploading"
+            @click.prevent="uploadPlayerImage"
+          >
+            Upload Image
+          </button>
+        </div>
+        <!-- <BaseInput
           type="url"
           name="image"
           label="Image"
           placeholder="Image URL"
           arPlaceholder="Player full image url"
           v-model="player.image"
-        />
+        /> -->
       </div>
       <div class="mb-3 flex flex-col">
         <BaseInput
@@ -150,7 +175,8 @@ export default {
   data() {
     return {
       thumbnail: null,
-      uploading: false
+      uploading: false,
+      image: null
     };
   },
   methods: {
@@ -182,7 +208,7 @@ export default {
     updateThumbnail() {
       let formData = new FormData();
       formData.append("playerThumbnail", this.thumbnail);
-      formData.append("public_id", this.public_id);
+      formData.append("public_id", this.thumbnail_public_id);
       this.uploading = true;
       NProgress.start();
       axios
@@ -199,12 +225,47 @@ export default {
           this.thumbnail = null;
           this.$refs.playerThumbnail.value = null;
         });
+    },
+    handleImageChange() {
+      this.image = this.$refs.playerImage.files[0];
+    },
+    uploadPlayerImage() {
+      this.uploading = true;
+      NProgress.start();
+      let formData = new FormData();
+      formData.append("playerImage", this.image);
+      formData.append("public_id", this.image_public_id);
+      axios
+        .post(`/api/players/full-image`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(({ data }) => {
+          NProgress.done();
+          this.uploading = false;
+          this.player.image = data.url;
+          this.image = null;
+          this.$refs.playerImage.value = null;
+        })
+        .catch(err => {
+          console.warn(err.response);
+        });
     }
   },
   computed: {
     ...mapGetters(["player"]),
-    public_id() {
-      return this.player.thumbnail.split("/").reverse()[1];
+    thumbnail_public_id() {
+      if (this.player.thumbnail) {
+        return this.player.thumbnail.split("/").reverse()[1];
+      }
+      return false;
+    },
+    image_public_id() {
+      if (this.player.image) {
+        return this.player.image.split("/").reverse()[1];
+      }
+      return false;
     }
   }
 };

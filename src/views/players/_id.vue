@@ -1,8 +1,15 @@
 <template>
   <Layout>
     <img
+      :src="player.image"
+      :alt="`${player} full image`"
+      v-if="player.image"
+      class="mb-3 max-w-md mx-auto mt-3 rounded shadow-md"
+    />
+    <img
+      v-else-if="!player.image && player.thumbnaul"
       :src="player.thumbnail"
-      class="h-50px w-50px rounded-full"
+      class="h-50px w-50px rounded-full shadow-md"
       :alt="`${player.name} thumbnail`"
     />
     <h2>

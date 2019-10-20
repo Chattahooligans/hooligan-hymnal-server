@@ -45,38 +45,78 @@ module.exports = app => {
   });
 
   // upload player thumbnail
-  app.post("/api/players/thumbnail-upload", (req, res) => {
-    if (!req.files || Object.keys(req.files).length === 0) {
-      return res.status(400).send("No files were uploaded");
+  app.post(
+    "/api/players/thumbnail-upload",
+    passport.authenticate("jwt", { session: false }),
+    permissions("rosterAllowed"),
+    (req, res) => {
+      if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).send("No files were uploaded");
+      }
+      const { playerThumbnail } = req.files;
+      const { public_id } = req.body;
+      if (public_id !== "") {
+        cloudinary.uploader.destroy(public_id, (err, result) => {
+          if (err) {
+            console.warn(err);
+            return;
+          }
+        });
+      }
+      cloudinary.uploader
+        .upload(playerThumbnail.tempFilePath, {
+          tags: "player_thumbnail",
+          height: 50,
+          width: 50,
+          crop: "thumb",
+          gravity: "face"
+        })
+        .then(image => {
+          return res.send(image);
+        })
+        .catch(err => {
+          if (err) {
+            console.warn(err);
+            return;
+          }
+        });
     }
-    const { playerThumbnail } = req.files;
-    const { public_id } = req.body;
-    if (public_id !== "") {
-      cloudinary.uploader.destroy(public_id, (err, result) => {
-        if (err) {
-          console.warn(err);
-          return;
-        }
-      });
+  );
+
+  // Upload player full image
+  app.post(
+    "/api/players/full-image",
+    passport.authenticate("jwt", { session: false }),
+    permissions("rosterAllowed"),
+    (req, res) => {
+      if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).send("No files were uploaded");
+      }
+      const { playerImage } = req.files;
+      const { public_id } = req.body;
+      if (public_id !== "") {
+        cloudinary.uploader.destroy(public_id, (err, result) => {
+          if (err) {
+            console.warn(err);
+            return;
+          }
+        });
+      }
+      cloudinary.uploader
+        .upload(playerImage.tempFilePath, {
+          tags: "player_image"
+        })
+        .then(image => {
+          return res.send(image);
+        })
+        .catch(err => {
+          if (err) {
+            console.warn(err);
+            return;
+          }
+        });
     }
-    cloudinary.uploader
-      .upload(playerThumbnail.tempFilePath, {
-        tags: "player_thumbnail",
-        height: 50,
-        width: 50,
-        crop: "thumb",
-        gravity: "face"
-      })
-      .then(image => {
-        return res.send(image);
-      })
-      .catch(err => {
-        if (err) {
-          console.warn(err);
-          return;
-        }
-      });
-  });
+  );
 
   // creates player
   app.post(
