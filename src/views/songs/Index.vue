@@ -1,14 +1,24 @@
 <template>
   <Layout>
     <h2>All Songs</h2>
-    <router-link :to="{ name: 'create-song' }">Add Song</router-link>
+    <router-link
+      class="btn bg-green-700 text-white mb-3"
+      :to="{ name: 'create-song' }"
+      >Add Song</router-link
+    >
     <div v-if="!songs">
       <h3>No Songs Currently</h3>
     </div>
     <div>
-      <ul>
-        <li v-for="song in songs" :key="song._id">
-          <router-link :to="`/songs/${song._id}`">{{ song.title }}</router-link>
+      <ul class="list-none m-0 p-0 flex flex-wrap justify-around">
+        <li
+          class="m-0 shadow flex-auto rounded m-2 max-w-xl md:w-1/3 hover:shadow-xl hover:font-bold"
+          v-for="song in songs"
+          :key="song._id"
+        >
+          <router-link class="block p-3" :to="`/songs/${song._id}`">{{
+            song.title
+          }}</router-link>
         </li>
       </ul>
     </div>
@@ -16,12 +26,11 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
-import axios from "axios";
+import { mapGetters } from "vuex";
 export default {
-  computed: mapState({
-    songs: state => state.songs
-  })
+  computed: {
+    ...mapGetters(["songs"])
+  }
 };
 </script>
 
