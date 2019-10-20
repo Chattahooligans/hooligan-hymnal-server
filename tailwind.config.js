@@ -1,7 +1,11 @@
 module.exports = {
   theme: {
-    extend: {}
+    extend: {
+      inset: {
+        "-16": "-4em"
+      }
+    }
   },
   variants: {},
   plugins: []
-}
+};

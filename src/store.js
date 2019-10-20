@@ -137,7 +137,7 @@ const store = new Vuex.Store({
       });
     },
     fetchSong({ commit }, id) {
-      return axios.get(`/api/song/${id}`).then(({ data }) => {
+      return axios.get(`/api/songs/${id}`).then(({ data }) => {
         commit("SET_SONG", data);
       });
     },

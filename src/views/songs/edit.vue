@@ -129,11 +129,10 @@ import axios from "axios";
 export default {
   methods: {
     updateSong() {
-      const { id } = this.$router.params;
+      const { id } = this.$route.params;
       axios
-        .put(`/api/songs/${id}`)
-        .then(({ data }) => {
-          // this.song = data;
+        .put(`/api/songs/${id}`, this.song)
+        .then(() => {
           this.$swal({
             title: `${this.song.title} succefully updated!`,
             type: "success"

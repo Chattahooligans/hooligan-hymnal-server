@@ -40,7 +40,7 @@ module.exports = app => {
 
   // returns single song by _id
   app.get(
-    "/api/song/:id",
+    "/api/songs/:id",
     // APIMiddleware(),
     passport.authenticate("jwt", { session: false }),
     // permissions("songbookAllowed"),
@@ -53,7 +53,7 @@ module.exports = app => {
 
   // creates song
   app.post(
-    "/api/song",
+    "/api/songs",
     // APIMiddleware(),
     passport.authenticate("jwt", { session: false }),
     permissions("songbookAllowed"),
@@ -68,7 +68,7 @@ module.exports = app => {
 
   // updates song
   app.put(
-    "/api/song/:id",
+    "/api/songs/:id",
     // APIMiddleware(),
     passport.authenticate("jwt", { session: false }),
     permissions("songbookAllowed"),
@@ -82,7 +82,7 @@ module.exports = app => {
 
   // deletes song
   app.delete(
-    "/api/song/:id",
+    "/api/songs/:id",
     // APIMiddleware(),
     passport.authenticate("jwt", { session: false }),
     permissions("songbookAllowed"),

@@ -1,6 +1,13 @@
 <template>
   <fragment class="overflow-hidden">
     <header class="bg-gray-800 text-white py-3">
+      <button
+        @click.prevent="skip"
+        type="button"
+        class="btn absolute -top-16 -left-16 bg-black"
+      >
+        Skip To Content
+      </button>
       <div class="mx-3 flex flex-row justify-between">
         <router-link to="/">Hymnal Server</router-link>
         <nav>
@@ -18,10 +25,13 @@
     </header>
     <section class="mx-3 flex flex-col md:flex-row min-h-screen h-full">
       <Sidebar />
-      <main :class="{ 'ml-6': loggedIn }" class="w-full">
+      <main id="main" :class="{ 'ml-6': loggedIn }" class="w-full">
         <slot />
       </main>
     </section>
+    <footer class="text-center bg-gray-700 text-white py-3">
+      &copy; Open Hymnal
+    </footer>
   </fragment>
 </template>
 
@@ -35,7 +45,13 @@ export default {
   },
   mounted() {},
   methods: {
-    ...mapActions(["logout"])
+    ...mapActions(["logout"]),
+    skip() {
+      const main = document.getElementById("main");
+      main.setAttribute("tabindex", "-1");
+      main.focus();
+      main.removeAttribute("tabindex");
+    }
   },
   computed: {
     ...authComputed,
@@ -44,12 +60,8 @@ export default {
 };
 </script>
 
-<style scoped>
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
+<style>
+header > button:focus {
+  @apply top-0 left-0;
 }
 </style>

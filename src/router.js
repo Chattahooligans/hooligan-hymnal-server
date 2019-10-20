@@ -81,6 +81,8 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+  document.body.focus();
+  window.scrollTo(0, 0);
   const loggedIn = localStorage.getItem("user");
   if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
     if (!loggedIn) {
