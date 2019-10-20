@@ -5,7 +5,6 @@ import VueSweetalert2 from "vue-sweetalert2";
 
 Vue.use(Vuex);
 Vue.use(VueSweetalert2);
-let _this = Vue;
 
 const store = new Vuex.Store({
   state: {
