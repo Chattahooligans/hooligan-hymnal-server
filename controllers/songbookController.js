@@ -30,22 +30,28 @@ var songbook_cache = {
 
 module.exports = app => {
   // returns songbooks
-  app.get("/api/songbook", (req, res) => {
+  app.get("/api/songbooks", (req, res) => {
     songbook_cache.send_data(res);
   });
 
-
-  app.get("/api/songbook/:id", passport.authenticate("jwt", { session: false }),(req, res) => {
-    const { id } = req.params;
-    Songbook.findById(id, (err, songbook) => {
-      if (err) { return res.send(404).json({ message: "Songbook Not Found" }) }
-      return res.send(songbook)
-    })
-  })
+  app.get(
+    "/api/songbooks/:id",
+    passport.authenticate("jwt", { session: false }),
+    permissions("songbookAllowed"),
+    async (req, res) => {
+      const { id } = req.params;
+      await Songbook.findById(id, (err, songbook) => {
+        if (err) {
+          return res.send(404).json({ message: "Songbook Not Found" });
+        }
+        return res.send(songbook);
+      });
+    }
+  );
 
   // creates songbook
   app.post(
-    "/api/songbook",
+    "/api/songbooks",
     passport.authenticate("jwt", { session: false }),
     permissions("songbookAllowed"),
     (req, res) => {
@@ -63,7 +69,7 @@ module.exports = app => {
 
   // updates songbook
   app.put(
-    "/api/songbook/:id",
+    "/api/songbooks/:id",
     passport.authenticate("jwt", { session: false }),
     permissions("songbookAllowed"),
     (req, res) => {
@@ -80,7 +86,7 @@ module.exports = app => {
 
   // deletes songbook
   app.delete(
-    "/api/songbook/:id",
+    "/api/songbooks/:id",
     passport.authenticate("jwt", { session: false }),
     permissions("songbookAllowed"),
     (req, res) => {

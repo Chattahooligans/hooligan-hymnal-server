@@ -1,6 +1,13 @@
 <template>
   <Layout>
-    <template v-if="loading">
+    <h2>Edit {{ songbook.songbook_title }}</h2>
+    {{ songbook }}
+    <form method="POST" @submit.prevent="" class="border rounded shadow p-3">
+      <div class="mb-3 flex flex-col">
+        <BaseInput label="Songbook Title" name="songbook-title" type="text" placeholder="Songbook Title" v-model="songbook.songbook_title" />
+      </div>
+    </form>
+    <!-- <template v-if="loading">
       <h2>Loading...</h2>
     </template>
     <template v-else>
@@ -17,11 +24,12 @@
         :edit="true"
         :cancel="cancel"
       />
-    </template>
+    </template> -->
   </Layout>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import axios from "axios";
 import SongBookForm from "@/forms/SongBookForm";
 export default {
@@ -98,6 +106,9 @@ export default {
     cancel() {
       this.$router.go(-1);
     }
+  },
+  computed: {
+    ...mapGetters(["songbook"])
   }
 };
 </script>

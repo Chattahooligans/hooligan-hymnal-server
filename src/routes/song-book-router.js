@@ -33,6 +33,14 @@ export default [
     meta: {
       requiresAuth: true,
       songbookAllowed: true
+    },
+    beforeEnter(to, from, next) {
+      const { id } = to.params;
+      NProgress.start();
+      store.dispatch("fetchSongbook", id).then(() => {
+        NProgress.done();
+        next();
+      });
     }
   },
   {
@@ -42,6 +50,14 @@ export default [
     meta: {
       requiresAuth: true,
       songbookAllowed: true
+    },
+    beforeEnter(to, from, next) {
+      NProgress.start();
+      const { id } = to.params;
+      store.dispatch("fetchSongbook", id).then(() => {
+        NProgress.done()
+        next();
+      })
     }
   }
 ];

@@ -19,6 +19,7 @@ const store = new Vuex.Store({
     songs: null,
     song: null,
     songbooks: null,
+    songbook: null,
     rosters: null,
     roster: null,
     goalkeepersnicknames: null,
@@ -66,6 +67,9 @@ const store = new Vuex.Store({
     },
     SET_ALL_SONGBOOKS(state, data) {
       state.songbooks = data;
+    },
+    SET_SONGBOOK(state, data) {
+      state.songbook = data;
     },
     SET_ALL_ROSTERS(state, data) {
       state.rosters = data;
@@ -142,8 +146,13 @@ const store = new Vuex.Store({
       });
     },
     fetchSongbooks({ commit }) {
-      return axios.get(`/api/songbook`).then(({ data }) => {
+      return axios.get(`/api/songbooks`).then(({ data }) => {
         commit("SET_ALL_SONGBOOKS", data);
+      });
+    },
+    fetchSongbook({ commit }, id) {
+      return axios.get(`/api/songbooks/${id}`).then(({ data }) => {
+        commit("SET_SONGBOOK", data);
       });
     },
     fetchRosters({ commit }) {
@@ -191,23 +200,27 @@ const store = new Vuex.Store({
     }
   },
   getters: {
-    loggedIn(state) {
-      return !!state.user;
-    },
+    loggedIn: state => !!state.user,
+    // loggedIn(state) {
+    //   return !!state.user;
+    // },
     user(state) {
       if (state.user) {
         return state.user.user;
       }
     },
-    getMessage(state) {
-      return state.global_message;
-    },
-    players(state) {
-      return state.players;
-    },
-    player(state) {
-      return state.player;
-    },
+    getMessage: state => state.global_message,
+    // getMessage(state) {
+    //   return state.global_message;
+    // },
+    players: state => state.players,
+    // players(state) {
+    //   return state.players;
+    // },
+    player: state => state.player,
+    // player(state) {
+    //   return state.player;
+    // },
     songs(state) {
       return state.songs;
     },
@@ -217,6 +230,7 @@ const store = new Vuex.Store({
     songbooks(state) {
       return state.songbooks;
     },
+    songbook: state => state.songbook,
     goalkeepers(state) {
       return state.goalkeepersnicknames;
     },
