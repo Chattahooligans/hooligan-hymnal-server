@@ -1,7 +1,9 @@
 <template>
   <Layout>
     <h2>{{ songbook.songbook_title }}</h2>
-    <router-link class="btn bg-green-700 text-white mb-3" :to="{ name: 'edit-song-book', params: { id: songbook._id } }"
+    <router-link
+      class="btn bg-green-700 text-white mb-3"
+      :to="{ name: 'edit-song-book', params: { id: songbook._id } }"
       >Edit {{ songbook.songbook_title }}</router-link
     >
     <div class="border shadow rounded p-3">

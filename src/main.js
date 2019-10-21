@@ -90,6 +90,7 @@ new Vue({
     if (userString) {
       const userData = JSON.parse(userString);
       this.$store.commit("SET_USER_DATA", userData);
+      this.$store.dispatch("authCheck");
     }
   },
   router,

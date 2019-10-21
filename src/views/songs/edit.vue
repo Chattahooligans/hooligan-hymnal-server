@@ -131,7 +131,7 @@ export default {
     updateSong() {
       const { id } = this.$route.params;
       axios
-        .put(`/api/songs/${id}`, this.song)
+        .put(`/api/song/${id}`, this.song)
         .then(() => {
           this.$swal({
             title: `${this.song.title} succefully updated!`,

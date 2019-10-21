@@ -141,7 +141,7 @@ const store = new Vuex.Store({
       });
     },
     fetchSong({ commit }, id) {
-      return axios.get(`/api/songs/${id}`).then(({ data }) => {
+      return axios.get(`/api/song/${id}`).then(({ data }) => {
         commit("SET_SONG", data);
       });
     },
@@ -196,6 +196,11 @@ const store = new Vuex.Store({
     fetchUsers({ commit }) {
       return axios.get(`/api/users`).then(({ data }) => {
         commit("SET_ALL_USERS", data);
+      });
+    },
+    authCheck() {
+      return axios.get(`/api/users/me`).then(() => {
+        return true;
       });
     }
   },
@@ -260,6 +265,7 @@ const userString = localStorage.getItem("user");
 if (userString) {
   const userData = JSON.parse(userString);
   store.commit("SET_USER_DATA", userData);
+  store.dispatch("authCheck");
 }
 axios.defaults.headers.common["x-api-key"] = process.env.VUE_APP_API_KEY;
 

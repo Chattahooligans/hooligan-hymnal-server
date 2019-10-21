@@ -101,31 +101,31 @@ module.exports = app => {
     }
   );
 
-  app.post("/api/users/refresh", (req, res) => {
-    const { refreshToken } = req.body;
-    if (refreshToken && refreshToken in tokenList) {
-      const refToken = jwt.decode(refreshToken);
-      User.findById(refToken.id, (err, user) => {
-        if (user) {
-          const payload = { id: user.id };
-          const secretOrKey = process.env.SECRET_KEY || "NOTsoSECRETkey";
-          const tokenExpires = process.env.TOKEN_EXPIRES || "1h";
+  // app.post("/api/users/refresh", (req, res) => {
+  //   const { refreshToken } = req.body;
+  //   if (refreshToken && refreshToken in tokenList) {
+  //     const refToken = jwt.decode(refreshToken);
+  //     User.findById(refToken.id, (err, user) => {
+  //       if (user) {
+  //         const payload = { id: user.id };
+  //         const secretOrKey = process.env.SECRET_KEY || "NOTsoSECRETkey";
+  //         const tokenExpires = process.env.TOKEN_EXPIRES || "1h";
 
-          const token = jwt.sign(payload, secretOrKey, {
-            expiresIn: tokenExpires
-          });
+  //         const token = jwt.sign(payload, secretOrKey, {
+  //           expiresIn: tokenExpires
+  //         });
 
-          const response = {
-            token: token
-          };
-          tokenList[refreshToken].token = token;
-          res.status(200).json(response);
-        }
-      });
-    } else {
-      res.status(404).send("Invalid please log back in");
-    }
-  });
+  //         const response = {
+  //           token: token
+  //         };
+  //         tokenList[refreshToken].token = token;
+  //         res.status(200).json(response);
+  //       }
+  //     });
+  //   } else {
+  //     res.status(404).send("Invalid please log back in");
+  //   }
+  // });
 
   app.post(
     "/api/users/logout",

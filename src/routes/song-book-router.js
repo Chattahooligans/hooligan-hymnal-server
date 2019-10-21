@@ -55,9 +55,9 @@ export default [
       NProgress.start();
       const { id } = to.params;
       store.dispatch("fetchSongbook", id).then(() => {
-        NProgress.done()
+        NProgress.done();
         next();
-      })
+      });
     }
   }
 ];

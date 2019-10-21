@@ -4,7 +4,13 @@
     {{ songbook }}
     <form method="POST" @submit.prevent="" class="border rounded shadow p-3">
       <div class="mb-3 flex flex-col">
-        <BaseInput label="Songbook Title" name="songbook-title" type="text" placeholder="Songbook Title" v-model="songbook.songbook_title" />
+        <BaseInput
+          label="Songbook Title"
+          name="songbook-title"
+          type="text"
+          placeholder="Songbook Title"
+          v-model="songbook.songbook_title"
+        />
       </div>
     </form>
     <!-- <template v-if="loading">
