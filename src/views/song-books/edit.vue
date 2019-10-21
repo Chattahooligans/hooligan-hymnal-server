@@ -1,8 +1,11 @@
 <template>
   <Layout>
     <h2>Edit {{ songbook.songbook_title }}</h2>
-    {{ songbook }}
-    <form method="POST" @submit.prevent="" class="border rounded shadow p-3">
+    <form
+      method="POST"
+      @submit.prevent=""
+      class="border rounded shadow p-3 mb-3"
+    >
       <div class="mb-3 flex flex-col">
         <BaseInput
           label="Songbook Title"
@@ -10,35 +13,75 @@
           type="text"
           placeholder="Songbook Title"
           v-model="songbook.songbook_title"
+          :required="true"
         />
       </div>
+      <div class="mb-3 flex flex-col">
+        <BaseInput
+          label="Organization"
+          name="orginization"
+          type="text"
+          placeholder="organization"
+          v-model="songbook.organization"
+        />
+      </div>
+      <div class="mb-3 flex flex-col">
+        <BaseInput
+          label="Description"
+          name="description"
+          type="text"
+          placeholder="description"
+          v-model="songbook.description"
+        />
+      </div>
+      <div class="mb-3 flex flex-col">
+        <BaseInput
+          label="Front Cover"
+          name="front-cover"
+          type="text"
+          placeholder="Front Cover"
+          v-model="songbook.front_cover"
+        />
+      </div>
+      <div class="mb-3 flex flex-col">
+        <BaseInput
+          type="text"
+          label="Back Cover"
+          name="back-cover"
+          placeholder="Back Cover"
+          v-model="songbook.back_cover"
+        />
+      </div>
+      <div class="mb-3 flex flex-col">
+        <span class="block font-semibold">Chapters</span>
+        <ul v-if="songbook.chapters.length">
+          <li v-for="chapter in songbook.chapters" :key="chapter._id">
+            {{ chapter.chapter_title }}
+            <ul v-if="chapter.songs.length">
+              <template>
+                Songs
+              </template>
+              <li v-for="song in chapter.songs" :key="song._id">
+                {{ song.hint }}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="mb-3">
+        <button type="submit" class="btn bg-blue-700 text-white">
+          Update {{ songbook.songbook_title }}
+        </button>
+      </div>
     </form>
-    <!-- <template v-if="loading">
-      <h2>Loading...</h2>
-    </template>
-    <template v-else>
-      <h2>Edit {{ book.songbook_title }}</h2>
-      <SongBookForm
-        :songbook="book"
-        :chapter="new_chapter"
-        :song="new_song"
-        :addChapter="addChapter"
-        :removeChapter="removeChapter"
-        :addSong="addSong"
-        :removeSong="removeSong"
-        :formSubmit="submitSongBook"
-        :edit="true"
-        :cancel="cancel"
-      />
-    </template> -->
   </Layout>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import axios from "axios";
-import SongBookForm from "@/forms/SongBookForm";
 export default {
+  // TODO: IMPLEMENT MULTISELECT FOR SONGS
   data() {
     return {
       book: null,
@@ -53,9 +96,6 @@ export default {
         hint: ""
       }
     };
-  },
-  components: {
-    SongBookForm
   },
   created() {
     this.getBook();
