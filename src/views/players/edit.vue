@@ -54,7 +54,13 @@
         />
       </div>
       <div class="mb-3 flex flex-col">
-        <base-rich-text label="Bio" v-model="player.bio" />
+        <BaseInput
+          type="textarea"
+          name="bio"
+          label="Bio"
+          v-model="player.bio"
+        />
+        <!-- <base-rich-text label="Bio" v-model="player.bio" /> -->
       </div>
       <div class="mb-3 flex flex-col">
         <label for="image" class="font-semibold mb-3">Thumbnail</label>

@@ -15,8 +15,15 @@
           v-model="song.title"
         />
       </div>
-      <!-- <span id="lyrics-label">Lyrics</span> -->
-      <base-rich-text label="Lyrics" v-model="song.lyrics" />
+      <div class="flex flex-col mb-3">
+        <BaseInput
+          type="textarea"
+          name="lyrics"
+          label="Lyrics"
+          v-model="song.lyrics"
+        />
+      </div>
+      <!-- <base-rich-text label="Lyrics" v-model="song.lyrics" /> -->
       <div class="flex flex-col mb-3">
         <BaseInput
           type="text"
