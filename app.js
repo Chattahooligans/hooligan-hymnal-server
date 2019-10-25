@@ -109,7 +109,7 @@ app.all("*", (req, res) => {
   res.sendFile(`${__dirname}/dist/index.html`);
 });
 
-app.all("/api/*", APIMiddleware());
+// app.all("/api/*", APIMiddleware());
 
 app.listen(PORT, function() {
   console.log(`app listening on http://localhost:${PORT}`);
