@@ -34,20 +34,15 @@ module.exports = app => {
     songbook_cache.send_data(res);
   });
 
-  app.get(
-    "/api/songbooks/:id",
-    passport.authenticate("jwt", { session: false }),
-    permissions("songbookAllowed"),
-    async (req, res) => {
-      const { id } = req.params;
-      await Songbook.findById(id, (err, songbook) => {
-        if (err) {
-          return res.send(404).json({ message: "Songbook Not Found" });
-        }
-        return res.send(songbook);
-      });
-    }
-  );
+  app.get("/api/songbooks/:id", async (req, res) => {
+    const { id } = req.params;
+    await Songbook.findById(id, (err, songbook) => {
+      if (err) {
+        return res.send(404).json({ message: "Songbook Not Found" });
+      }
+      return res.send(songbook);
+    });
+  });
 
   // creates songbook
   app.post(

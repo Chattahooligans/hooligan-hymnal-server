@@ -1,10 +1,10 @@
-const Expo = require('expo-server-sdk');
-const GoalkeeperNickname = require('../models/goalkeeperNickname');
-let config = require('../config.js');
-const PushTokens = require('../models/pushTokens');
+const Expo = require("expo-server-sdk");
+const GoalkeeperNickname = require("../models/goalkeeperNickname");
+let config = require("../config.js");
+const PushTokens = require("../models/pushTokens");
 let expo = new Expo();
-const passport = require('passport');
-const permissions = require('../middleware/PermissionsMiddleware');
+const passport = require("passport");
+const permissions = require("../middleware/PermissionsMiddleware");
 
 var goalkeepers_nickname_cache = {
   data: null,
@@ -38,26 +38,22 @@ module.exports = app => {
   // );
 
   // returns most recent goalkeeper nickname
-  app.get(
-    '/api/goalkeeperNicknames/last',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
-      GoalkeeperNickname.find()
-        .sort({ createdAt: -1 })
-        .limit(1)
-        .then(goalkeeperNicknames => {
-          if (goalkeeperNicknames.length) {
-            res.send(goalkeeperNicknames[0]);
-          } else {
-            res.status(204).send();
-          }
-        });
-    }
-  );
+  app.get("/api/goalkeeperNicknames/last", (req, res) => {
+    GoalkeeperNickname.find()
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .then(goalkeeperNicknames => {
+        if (goalkeeperNicknames.length) {
+          res.send(goalkeeperNicknames[0]);
+        } else {
+          res.status(204).send();
+        }
+      });
+  });
 
   // returns goalkeeperNickname
   app.get(
-    '/api/goalkeeperNicknames',
+    "/api/goalkeeperNicknames",
     // passport.authenticate('jwt', { session: false }),
     (req, res) => {
       goalkeepers_nickname_cache.send_data(res);
@@ -72,8 +68,8 @@ module.exports = app => {
 
   // creates goalkeeperNickname
   app.post(
-    '/api/goalkeeperNicknames',
-    passport.authenticate('jwt', { session: false }),
+    "/api/goalkeeperNicknames",
+    passport.authenticate("jwt", { session: false }),
     (req, res) => {
       // console.log('entering post for gk nickname push');
       // if (req.body.authKey !== process.env.AUTH_KEY) {
@@ -83,14 +79,18 @@ module.exports = app => {
       var newGoalkeeperNickname = GoalkeeperNickname(req.body);
       newGoalkeeperNickname.save((error, gkMessage) => {
         if (error) {
-          console.log('error: ', error);
-          res.status(501).send({ error: `Error saving notification: ${error}` });
+          console.log("error: ", error);
+          res
+            .status(501)
+            .send({ error: `Error saving notification: ${error}` });
         } else if (gkMessage.push) {
-          console.log('no error, pushing forward');
+          console.log("no error, pushing forward");
           PushTokens.find(async (error, tokens) => {
             if (error) {
-              console.log('error 2: ', error);
-              res.status(501).send({ error: `Error fetching push tokens: ${error}` });
+              console.log("error 2: ", error);
+              res
+                .status(501)
+                .send({ error: `Error fetching push tokens: ${error}` });
               return;
             }
 
@@ -99,22 +99,35 @@ module.exports = app => {
             let chunks = expo.chunkPushNotifications(tokens);
             for (chunk of chunks) {
               let notifications = chunk.map(token => {
-                console.log('trying to send notification to token: ', token.pushToken);
+                console.log(
+                  "trying to send notification to token: ",
+                  token.pushToken
+                );
                 return {
                   to: token.pushToken,
-                  sound: 'default',
-                  title: 'We\u2019re gonna score on you...',
-                  body: '🖐 ' + gkMessage.nickname
+                  sound: "default",
+                  title: "We\u2019re gonna score on you...",
+                  body: "🖐 " + gkMessage.nickname
                 };
               });
               try {
-                console.log('trying to push');
-                receipts.push(...(await expo.sendPushNotificationsAsync(notifications)));
+                console.log("trying to push");
+                receipts.push(
+                  ...(await expo.sendPushNotificationsAsync(notifications))
+                );
               } catch (error) {
-                console.log('there was a problem with the push');
-                let tokenString = chunk.map(token => token.pushToken).join(', ');
-                console.error(`Error notifying with tokens [${tokenString}]: ${error}`);
-                errors.push(...chunk.map(token => `Error notifying with token ${token}: ${error}`));
+                console.log("there was a problem with the push");
+                let tokenString = chunk
+                  .map(token => token.pushToken)
+                  .join(", ");
+                console.error(
+                  `Error notifying with tokens [${tokenString}]: ${error}`
+                );
+                errors.push(
+                  ...chunk.map(
+                    token => `Error notifying with token ${token}: ${error}`
+                  )
+                );
               }
             }
             res.send({
