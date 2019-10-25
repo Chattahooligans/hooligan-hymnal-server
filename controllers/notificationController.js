@@ -49,10 +49,6 @@ module.exports = app => {
     permissions("pushNotificationsAllowed"),
     (req, res) => {
       console.log("entering post for notification push");
-      if (req.body.authKey !== process.env.AUTH_KEY) {
-        res.status(403).send({ error: "bad auth key" });
-        return;
-      }
       console.log(req.body);
       var newNotification = Notifications(req.body);
       console.log("retrieved notification from body");
@@ -130,10 +126,6 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     permissions("pushNotificationsAllowed"),
     (req, res) => {
-      if (req.body.authKey !== process.env.AUTH_KEY) {
-        res.status(403).send({ error: "bad auth key" });
-        return;
-      }
       Notifications.findByIdAndUpdate(
         req.params.id,
         req.body,
@@ -150,10 +142,6 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     permissions("pushNotificationsAllowed"),
     (req, res) => {
-      if (req.body.authKey !== process.env.AUTH_KEY) {
-        res.status(403).send({ error: "bad auth key" });
-        return;
-      }
       Notifications.findByIdAndRemove(req.params.id, error => {
         error
           ? res.status(501).send({ error })

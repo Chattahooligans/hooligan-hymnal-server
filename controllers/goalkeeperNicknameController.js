@@ -72,10 +72,6 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
       // console.log('entering post for gk nickname push');
-      // if (req.body.authKey !== process.env.AUTH_KEY) {
-      //   res.status(403).send({ error: 'bad auth key' });
-      //   return;
-      // }
       var newGoalkeeperNickname = GoalkeeperNickname(req.body);
       newGoalkeeperNickname.save((error, gkMessage) => {
         if (error) {
