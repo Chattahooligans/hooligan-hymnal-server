@@ -6,7 +6,7 @@ const permission = require("../middleware/PermissionsMiddleware");
 var roster_cache = {
   data: null,
   last_refresh: 0,
-  force_reload: function(res) {
+  force_reload: function(res, activeOnly) {
     var that = this;
     Roster.find((error, roster) => {
       if (error) {
@@ -16,7 +16,13 @@ var roster_cache = {
       }
       that.data = roster;
       that.last_refresh = Date.now();
-      if (res != null) res.send(that.data);
+      if (res != null) {
+        if(activeOnly) {
+          res.send(this.get_active_rosters(this.data));
+        } else {
+          res.send(that.data);
+        }
+      }
     });
   },
   send_data: function(res) {
@@ -25,6 +31,20 @@ var roster_cache = {
     } else {
       res.send(this.data);
     }
+  },
+  send_active: function(res) {    
+    if (this.last_refresh + config.cache_timeout < Date.now()) {
+      this.force_reload(res, true);
+    } else {
+      res.send(this.get_active_rosters(this.data));
+    }
+  },
+  get_active_rosters(data) {
+    var active = [];
+    for(let i = 0; i < data.length; i++) {
+      if(data[i].active) active.push(data);
+    }
+    return active;
   }
 };
 
@@ -32,6 +52,10 @@ module.exports = app => {
   // returns rosters
   app.get("/api/roster", (req, res) => {
     roster_cache.send_data(res);
+  });
+
+  app.get("/api/roster/active", (req, res) => {
+    roster_cache.send_active(res);
   });
 
   // creates roster

@@ -40,7 +40,6 @@ module.exports = app => {
   app.get("/api/players/:id", (req, res) => {
     Players.findById(req.params.id, (error, player) => {
       res.send(player);
-      players_cache.force_reload();
     });
   });
 
