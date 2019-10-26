@@ -42,7 +42,7 @@ var roster_cache = {
   get_active_rosters(data) {
     var active = [];
     for(let i = 0; i < data.length; i++) {
-      if(data[i].active) active.push(data);
+      if(data[i].active) active.push(data[i]);
     }
     return active;
   }
