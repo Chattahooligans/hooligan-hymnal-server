@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 
 module.exports = new mongoose.Schema({
   pushToken: String,
+  expoExperience: String,
   lastUsed: String,
   platform: String,
   platformVersion: String,
