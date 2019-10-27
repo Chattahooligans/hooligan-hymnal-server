@@ -182,6 +182,7 @@
 </template>
 
 <script>
+// TODO: Enable active and default for roster
 import BaseInput from "@/components/BaseInput";
 import { mapGetters } from "vuex";
 import axios from "axios";
