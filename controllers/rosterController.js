@@ -65,6 +65,9 @@ module.exports = app => {
         return res.status(400).send(err);
       }
       return res.send(roster);
+    }).populate({
+      path: "players",
+      select: "name position flag squadNumber"
     });
   });
 
@@ -74,10 +77,12 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     permission("rosterAllowed"),
     (req, res) => {
-      var newRoster = Roster(req.body);
-      newRoster.save((error, roster) => {
-        error ? res.status(501).send({ error }) : res.send(roster);
+      Roster.create(req.body, (err, roster) => {
+        if (err) {
+          return res.status(401).send(err);
+        }
         roster_cache.force_reload();
+        return res.send(roster);
       });
     }
   );
@@ -101,12 +106,21 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     permission("rosterAllowed"),
     (req, res) => {
-      Roster.findByIdAndRemove(req.params.id, error => {
-        error
-          ? res.status(501).send({ error })
-          : res.send({ message: "Deleted" + req.params.id });
+      const { id } = req.params;
+      Roster.findByIdAndRemove(id, (err, roster) => {
+        if (err) {
+          return res.status(401).send(err);
+        }
         roster_cache.force_reload();
-      });
+        return res.status(200).send({ message: "Succefully deleted" });
+      })
+      // Roster.findByIdAndRemove(req.params.id, error => {
+      //   error
+      //     ? res.status(501).send({ error })
+      //     : res.send({ message: "Deleted" + req.params.id });
+      //   roster_cache.force_reload();
+      //   return;
+      // });
     }
   );
 };

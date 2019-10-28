@@ -5,9 +5,21 @@ module.exports = new mongoose.Schema(
   {
     rosterTitle: String,
     season: String,
-    players: [{ _id: String, hint: String }],
-    active: Boolean,
-    default: Boolean
+    players: [
+      {
+        type: ObjectId,
+        ref: "players"
+      }
+    ],
+    // players: [{ _id: String, hint: String }],
+    active: {
+      type: Boolean,
+      default: true
+    },
+    default: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: {

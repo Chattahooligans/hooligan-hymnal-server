@@ -49,5 +49,24 @@ export default [
         next();
       });
     }
+  },
+  {
+    path: "/rosters/:id/edit",
+    name: "edit-roster",
+    component: () => import('@/views/rosters/edit.vue'),
+    meta: {
+      requiresAuth: true,
+      rosterAllowed: true
+    },
+    beforeEnter(to, from, next) {
+      const { id } = to.params;
+      NProgress.start();
+      store.dispatch("fetchRoster", id).then(() => {
+        store.dispatch("fetchPlayers").then(() => {
+          NProgress.done();
+          next();
+        });
+      });
+    }
   }
 ];
