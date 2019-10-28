@@ -1,6 +1,7 @@
-var Foes = require('../models/foes');
-var bodyParser = require('body-parser');
-var config = require("../config.js");
+const Foes = require("../models/foes");
+const config = require("../config.js");
+const passport = require("passport");
+const permissions = require("../middleware/PermissionsMiddleware");
 
 var foes_cache = {
   data: null,
@@ -11,37 +12,30 @@ var foes_cache = {
       if (error) {
         that.data = null;
         that.last_refresh = 0;
-        if(res != null) res.send(error);
+        if (res != null) res.send(error);
       }
       that.data = foes;
       that.last_refresh = Date.now();
-      if(res != null) res.send(that.data);
+      if (res != null) res.send(that.data);
     });
   },
   send_data: function(res) {
-    if(this.last_refresh + config.cache_timeout < Date.now()) {
+    if (this.last_refresh + config.cache_timeout < Date.now()) {
       this.force_reload(res);
     } else {
       res.send(this.data);
     }
   }
-}
+};
 
 module.exports = app => {
-  app.use(bodyParser.json());
-  app.use(
-    bodyParser.urlencoded({
-      extended: true
-    })
-  );
-
   // returns all players
-  app.get('/api/foes', (req, res) => {
+  app.get("/api/foes", (req, res) => {
     foes_cache.send_data(res);
   });
 
   // returns single player by _id
-  app.get('/api/foes/:id', (req, res) => {
+  app.get("/api/foes/:id", (req, res) => {
     Foes.findById(req.params.id, (error, foe) => {
       res.send(foe);
       foes_cache.force_reload();
@@ -49,41 +43,44 @@ module.exports = app => {
   });
 
   // creates player
-  app.post('/api/foes', (req, res) => {
-    if(req.body.authKey !== process.env.AUTH_KEY) {
-      res.status(403).send( {'error' : "bad auth key"});
-      return;
+  app.post(
+    "/api/foes",
+    passport.authenticate("jwt", { session: false }),
+    permissions("foesAllowed"),
+    (req, res) => {
+      var newFoe = Foes(req.body);
+      newFoe.save((error, foe) => {
+        error ? res.status(501).send({ error }) : res.send(foe);
+        foes_cache.force_reload();
+      });
     }
-    var newFoe = Foes(req.body);
-    newFoe.save((error, foe) => {
-      error ? res.status(501).send({ error }) : res.send(foe);
-      foes_cache.force_reload();
-    });
-  });
+  );
 
   // updates player
-  app.put('/api/players/:id', (req, res) => {
-    if(req.body.authKey !== process.env.AUTH_KEY) {
-      res.status(403).send( {'error' : "bad auth key"});
-      return;
+  app.put(
+    "/api/foes/:id",
+    passport.authenticate("jwt", { session: false }),
+    permissions("foesAllowed"),
+    (req, res) => {
+      Foes.findByIdAndUpdate(req.params.id, req.body, (error, foe) => {
+        error ? res.status(501).send({ error }) : res.send(foe);
+        foes_cache.force_reload();
+      });
     }
-    Foes.findByIdAndUpdate(req.params.id, req.body, (error, foe) => {
-      error ? res.status(501).send({ error }) : res.send(foe);
-      foes_cache.force_reload();
-    });
-  });
+  );
 
   //deletes player
-  app.delete('/api/players/:id', (req, res) => {
-    if(req.body.authKey !== process.env.AUTH_KEY) {
-      res.status(403).send( {'error' : "bad auth key"});
-      return;
+  app.delete(
+    "/api/foes/:id",
+    passport.authenticate("jwt", { session: false }),
+    permissions("foesAllowed"),
+    (req, res) => {
+      Foes.findByIdAndRemove(req.params.id, error => {
+        error
+          ? res.status(501).send({ error })
+          : res.send({ message: "Deleted" + req.params.id });
+        foes_cache.force_reload();
+      });
     }
-    Foes.findByIdAndRemove(req.params.id, error => {
-      error
-        ? res.status(501).send({ error })
-        : res.send({ message: 'Deleted' + req.params.id });
-      foes_cache.force_reload();
-    });
-  });
+  );
 };

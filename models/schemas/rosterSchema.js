@@ -5,12 +5,21 @@ module.exports = new mongoose.Schema(
   {
     rosterTitle: String,
     season: String,
-    squads: [
+    players: [
       {
-        squadTitle: String,
-        players: [{ _id: String, hint: String }]
+        type: ObjectId,
+        ref: "players"
       }
-    ]
+    ],
+    // players: [{ _id: String, hint: String }],
+    active: {
+      type: Boolean,
+      default: true
+    },
+    default: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: {

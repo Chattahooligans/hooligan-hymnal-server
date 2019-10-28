@@ -1,0 +1,61 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+#nprogress .spinner {
+  display: none;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply mb-3 font-semibold;
+}
+h1 {
+  @apply text-5xl;
+}
+
+h2 {
+  @apply text-4xl;
+}
+
+h3 {
+  @apply text-3xl;
+}
+
+h4 {
+  @apply text-2xl;
+}
+
+h5 {
+  @apply text-xl;
+}
+
+h6 {
+  @apply text-base;
+}
+
+p {
+  @apply mb-3;
+}
+
+ol {
+  @apply list-decimal ml-4 mb-3;
+}
+
+ol li,
+ul li {
+  @apply mb-2;
+}
+
+ul {
+  @apply list-disc ml-4 mb-3;
+}
+
+.btn {
+  @apply px-3 py-2 rounded inline-block;
+}
