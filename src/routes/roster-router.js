@@ -29,8 +29,25 @@ export default [
       NProgress.start();
       store.dispatch("fetchPlayers").then(() => {
         NProgress.done();
+        next();
       });
-      next();
+    }
+  },
+  {
+    path: "/rosters/:id",
+    name: "view-roster",
+    component: () => import("@/views/rosters/_id.vue"),
+    meta: {
+      requiresAuth: true,
+      rosterAllowed: true
+    },
+    beforeEnter(to, from, next) {
+      const { id } = to.params;
+      NProgress.start();
+      store.dispatch("fetchRoster", id).then(() => {
+        NProgress.done();
+        next();
+      });
     }
   }
 ];

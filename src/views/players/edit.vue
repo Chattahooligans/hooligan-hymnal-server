@@ -34,12 +34,18 @@
         />
       </div>
       <div class="mb-3 flex flex-col">
-        <BaseInput
-          type="string"
-          name="position"
+        <BaseSelect
+          :value="player.position"
           label="Position"
-          placeholder="Position"
-          arPlaceholder="Enter Player Position"
+          :options="[
+            'Forward',
+            'Defender',
+            'Midfielder',
+            'Goalkeeper',
+            'Head Coach',
+            'Associate Head Coach',
+            'Goalkeeper Coach'
+          ]"
           v-model="player.position"
         />
       </div>

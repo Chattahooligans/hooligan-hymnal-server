@@ -17,7 +17,7 @@ var roster_cache = {
       that.data = roster;
       that.last_refresh = Date.now();
       if (res != null) {
-        if(activeOnly) {
+        if (activeOnly) {
           res.send(this.get_active_rosters(this.data));
         } else {
           res.send(that.data);
@@ -32,7 +32,7 @@ var roster_cache = {
       res.send(this.data);
     }
   },
-  send_active: function(res) {    
+  send_active: function(res) {
     if (this.last_refresh + config.cache_timeout < Date.now()) {
       this.force_reload(res, true);
     } else {
@@ -41,8 +41,8 @@ var roster_cache = {
   },
   get_active_rosters(data) {
     var active = [];
-    for(let i = 0; i < data.length; i++) {
-      if(data[i].active) active.push(data[i]);
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].active) active.push(data[i]);
     }
     return active;
   }
@@ -56,6 +56,16 @@ module.exports = app => {
 
   app.get("/api/roster/active", (req, res) => {
     roster_cache.send_active(res);
+  });
+
+  app.get("/api/roster/:id", (req, res) => {
+    const { id } = req.params;
+    Roster.findById(id, (err, roster) => {
+      if (err) {
+        return res.status(400).send(err);
+      }
+      return res.send(roster);
+    });
   });
 
   // creates roster

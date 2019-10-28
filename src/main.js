@@ -32,6 +32,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import Layout from "@/layouts/Layout";
 import BaseInput from "@/components/BaseInput";
 import BaseRichText from "@/components/BaseRichText";
+import BaseSelect from "@/components/BaseSelect";
 
 Vue.config.productionTip = false;
 
@@ -61,6 +62,7 @@ Vue.component("multiselect", Multiselect);
 Vue.component("BaseInput", BaseInput);
 Vue.component("base-rich-text", BaseRichText);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
+Vue.component("BaseSelect", BaseSelect);
 Vue.use(VueFormGenerator);
 Vue.use(VueMeta);
 

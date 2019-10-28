@@ -74,6 +74,9 @@ const store = new Vuex.Store({
     SET_ALL_ROSTERS(state, data) {
       state.rosters = data;
     },
+    SET_ROSTER(state, data) {
+      state.roster = data;
+    },
     SET_ALL_GOALKEEPERS_NICKNAMES(state, data) {
       state.goalkeepersnicknames = data;
     },
@@ -160,6 +163,11 @@ const store = new Vuex.Store({
         commit("SET_ALL_ROSTERS", data);
       });
     },
+    fetchRoster({ commit }, id) {
+      return axios.get(`/api/roster/${id}`).then(({ data }) => {
+        commit("SET_ROSTER", data);
+      });
+    },
     fetchGoalkeepersNicknames({ commit }) {
       return axios.get(`/api/goalkeeperNicknames`).then(({ data }) => {
         commit("SET_ALL_GOALKEEPERS_NICKNAMES", data);
@@ -239,6 +247,8 @@ const store = new Vuex.Store({
     goalkeepers(state) {
       return state.goalkeepersnicknames;
     },
+    rosters: state => state.rosters,
+    roster: state => state.roster,
     users(state) {
       return state.users;
     }
