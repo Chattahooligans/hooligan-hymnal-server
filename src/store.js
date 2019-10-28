@@ -234,24 +234,29 @@ const store = new Vuex.Store({
     // player(state) {
     //   return state.player;
     // },
-    songs(state) {
-      return state.songs;
-    },
-    song(state) {
-      return state.song;
-    },
-    songbooks(state) {
-      return state.songbooks;
-    },
+    songs: state => state.songs,
+    // songs(state) {
+    //   return state.songs;
+    // },
+    song: state => state.song,
+    // song(state) {
+    //   return state.song;
+    // },
+    songbooks: state => state.songbooks,
+    // songbooks(state) {
+    //   return state.songbooks;
+    // },
     songbook: state => state.songbook,
-    goalkeepers(state) {
-      return state.goalkeepersnicknames;
-    },
+    goalkeepers: state => state.goalkeepersnicknames,
+    // goalkeepers(state) {
+    //   return state.goalkeepersnicknames;
+    // },
     rosters: state => state.rosters,
     roster: state => state.roster,
-    users(state) {
-      return state.users;
-    }
+    users: state => state.users
+    // users(state) {
+    //   return state.users;
+    // }
   }
 });
 if (process.env.NODE_ENV !== "production") {
