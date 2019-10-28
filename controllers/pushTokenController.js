@@ -2,7 +2,6 @@ const PushTokens = require("../models/pushTokens");
 const passport = require("passport");
 
 module.exports = app => {
-  // returns all push tokens
   app.get(
     "/api/pushToken",
     passport.authenticate("jwt", { session: false }),
@@ -15,7 +14,6 @@ module.exports = app => {
       });
     }
   );
-
   // creates new push token
   app.post(
     "/api/pushToken",
@@ -25,7 +23,7 @@ module.exports = app => {
         .toISOString()
         .replace(/T/, " ") // replace T with a space
         .replace(/\..+/, "");
-      var tokenData = Object.assign({}, req.body, { lastUsed: now });
+      var tokenData = Object.assign({}, req.body, { lastUsed: now, $inc: {checkinCount: 1} });
 
       PushTokens.findOneAndUpdate(
         { pushToken: tokenData.pushToken },
