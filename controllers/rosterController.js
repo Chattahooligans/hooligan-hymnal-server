@@ -50,15 +50,15 @@ var roster_cache = {
 
 module.exports = app => {
   // returns rosters
-  app.get("/api/roster", (req, res) => {
+  app.get("/api/rosters", (req, res) => {
     roster_cache.send_data(res);
   });
 
-  app.get("/api/roster/active", (req, res) => {
+  app.get("/api/rosters/active", (req, res) => {
     roster_cache.send_active(res);
   });
 
-  app.get("/api/roster/:id", (req, res) => {
+  app.get("/api/rosters/:id", (req, res) => {
     const { id } = req.params;
     Roster.findById(id, (err, roster) => {
       if (err) {
@@ -73,7 +73,7 @@ module.exports = app => {
 
   // creates roster
   app.post(
-    "/api/roster",
+    "/api/rosters",
     passport.authenticate("jwt", { session: false }),
     permission("rosterAllowed"),
     (req, res) => {
@@ -89,7 +89,7 @@ module.exports = app => {
 
   // updates roster
   app.put(
-    "/api/roster/:id",
+    "/api/rosters/:id",
     passport.authenticate("jwt", { session: false }),
     permission("rosterAllowed"),
     (req, res) => {
@@ -102,7 +102,7 @@ module.exports = app => {
 
   // deletes roster
   app.delete(
-    "/api/roster/:id",
+    "/api/rosters/:id",
     passport.authenticate("jwt", { session: false }),
     permission("rosterAllowed"),
     (req, res) => {

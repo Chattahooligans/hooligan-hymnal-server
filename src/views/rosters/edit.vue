@@ -69,7 +69,7 @@ import { mapGetters } from "vuex";
 export default {
   methods: {
     updateRoster() {
-      axios.put(`/api/roster/${this.roster._id}`, this.roster).then(({ data }) => {
+      axios.put(`/api/rosters/${this.roster._id}`, this.roster).then(({ data }) => {
         this.$router.push({ name: "view-roster", params: this.roster._id })
       }).catch((data) => {
         console.log(data);

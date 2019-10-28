@@ -30,7 +30,7 @@ import axios from "axios"
 export default {
   methods: {
     deleteRoster() {
-      axios.delete(`/api/roster/${this.roster._id}`).then(({ data }) => {
+      axios.delete(`/api/rosters/${this.roster._id}`).then(({ data }) => {
         console.log(data)
         this.$swal({
           title: `${this.roster.rosterTitle} was successfully deleted`,

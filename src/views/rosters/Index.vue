@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     deleteRoster(id) {
-      axios.delete(`/api/roster/${id}`).then((res) => {
+      axios.delete(`/api/rosters/${id}`).then((res) => {
         console.log(res)
       }).catch(err => console.log(err))
     }

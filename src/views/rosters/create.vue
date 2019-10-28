@@ -85,7 +85,7 @@ export default {
   methods: {
     addRoster() {
       axios
-        .post(`/api/roster`, this.roster)
+        .post(`/api/rosters`, this.roster)
         .then(({data}) => {
           this.$swal({
             title: `${data.rosterTitle} succesfully created`,

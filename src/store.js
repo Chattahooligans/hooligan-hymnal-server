@@ -159,12 +159,12 @@ const store = new Vuex.Store({
       });
     },
     fetchRosters({ commit }) {
-      return axios.get(`/api/roster`).then(({ data }) => {
+      return axios.get(`/api/rosters`).then(({ data }) => {
         commit("SET_ALL_ROSTERS", data);
       });
     },
     fetchRoster({ commit }, id) {
-      return axios.get(`/api/roster/${id}`).then(({ data }) => {
+      return axios.get(`/api/rosters/${id}`).then(({ data }) => {
         commit("SET_ROSTER", data);
       });
     },
