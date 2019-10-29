@@ -17,7 +17,6 @@ module.exports = app => {
   // creates new push token
   app.post(
     "/api/pushToken",
-    passport.authenticate("jwt", { session: false }),
     (req, res) => {
       var now = new Date()
         .toISOString()
