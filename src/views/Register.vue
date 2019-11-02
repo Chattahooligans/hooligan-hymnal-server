@@ -129,9 +129,17 @@ export default {
               type: "success"
             });
             this.$router.push("/login");
+          })
+          .catch(({ response }) => {
+            this.$swal({
+              title: `${response.data.message}`,
+              type: "warning"
+            }).then(() => {
+              this.user.password = "";
+              this.user.passwordConfirm = "";
+            });
           });
       } else {
-        // alert("The passwords did not match");
         this.$swal({
           title: "Your passwords did not match",
           type: "error",
