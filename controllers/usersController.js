@@ -10,7 +10,8 @@ let tokenList = {};
 
 module.exports = app => {
   app.post("/api/users/register", (req, res) => {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    email = email.toLowerCase();
     const newUser = new User({
       email,
       password
@@ -28,7 +29,8 @@ module.exports = app => {
   });
 
   app.post("/api/users/login", (req, res) => {
-    const { email, password, rememberMe } = req.body;
+    let { email, password, rememberMe } = req.body;
+    email = email.toLowerCase();
     User.findOne({ email: email }, "+password", (err, user) => {
       if (!user) {
         return res.status(404).json({
