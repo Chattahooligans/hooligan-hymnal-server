@@ -54,7 +54,7 @@
       </div>
       <div class="flex flex-col mb-3">
         <BaseInput
-          type="url"
+          type="text"
           label="Reference Title"
           name="reference_title"
           placeholder="Reference Title"
@@ -117,7 +117,7 @@
           class="px-3 py-2 rounded bg-blue-700 text-white mr-3"
           type="submit"
         >
-          Add {{ song.title ? song.title : "New Song" }}
+          Update {{ song.title ? song.title : "New Song" }}
         </button>
         <button
           class="px-3 py-2 rounded bg-red-700 text-white"

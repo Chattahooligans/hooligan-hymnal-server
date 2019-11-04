@@ -1,68 +1,81 @@
 <template>
   <Layout>
     <h2>Create User</h2>
-    <form>
-      <div class="flex flex-col mb-3">
+    <form ref="userForm" method="POST" @submit.prevent="addUser">
+      <div class="mb-3 flex flex-col">
         <BaseInput
           type="email"
           label="Email"
+          name="email"
           placeholder="email@email.com"
-          arPlaceholder="Enter new user email address"
+          arPlaceholder="New User email address"
           :required="true"
           v-model="user.email"
         />
       </div>
-      <div class="flex mb-3">
-        <div class="flex flex-col md:w-1/2">
-          <BaseInput
-            type="checkbox"
-            name="songbookAllowed"
-            label="Songs & Song Books"
-            v-model="user.sonbookAllowed"
-          />
-        </div>
-        <div class="flex flex-col md:w-1/2">
-          <BaseInput
-            type="checkbox"
-            name="rosterAllowed"
-            label="Players &
-          Rosters"
-            v-model="user.rosterAllowed"
-          />
-        </div>
+      <div class="mb-3 flex flex-col">
+        <BaseInput
+          type="password"
+          name="password"
+          label="Password"
+          placeholder="******"
+          :required="true"
+          v-model="user.password"
+        />
       </div>
-      <div class="flex mb-3">
-        <div class="flex flex-col mb:w-1/2">
-          <BaseInput
-            type="checkbox"
-            name="foesAllowed"
-            label="Foes Allowed"
-            v-model="user.foesAllowed"
-          />
-        </div>
-        <div class="flex flex-col mb:w-1/2">
-          <BaseInput
-            type="checkbox"
-            name="pushNotificationsAllowed"
-            label="Push
-          Notifications"
-            v-model="user.pushNotificationsAllowed"
-          />
-        </div>
+      <div class="mb-3 flex flex-col">
+        <BaseInput
+          type="password"
+          name="confirm-password"
+          label="Confirm Password"
+          placeholder="******"
+          :required="true"
+          v-model="confirmPassword"
+        />
       </div>
-      <div>
-        <button class="rounded px-3 py-2 bg-blue-700 text-white" type="submit">
+      <div class="mb-3 flex flex-col">
+        <BaseInput
+          type="checkbox"
+          name="songbook"
+          label="Songbook and Songs Allowed"
+          v-model="user.songbookAllowed"
+        />
+      </div>
+      <div class="mb-3 flex flex-col">
+        <BaseInput
+          type="checkbox"
+          name="rosters"
+          label="Rosters & Players"
+          v-model="user.rosterAllowed"
+        />
+      </div>
+      <div class="mb-3 flex flex-col">
+        <BaseInput
+          type="checkbox"
+          name="push-notificataions"
+          label="Push Notifications"
+          v-model="user.pushNotificationsAllowed"
+        />
+      </div>
+      <div class="mb-3 flex flex-col">
+        <BaseInput
+          type="checkbox"
+          name="users-allowed"
+          label="Users Allowed"
+          v-model="user.usersAllowed"
+        />
+      </div>
+      <div class="mb-3">
+        <button class="btn bg-blue-700 text-white" type="submit">
           Add User
         </button>
       </div>
     </form>
-    <UserForm :user="user" :formMethod="addUser" :cancel="cancel" />
   </Layout>
 </template>
 
 <script>
 import Layout from "@/layouts/Layout";
-import UserForm from "@/forms/UserForm";
 import BaseInput from "@/components/BaseInput";
 import axios from "axios";
 export default {
@@ -76,22 +89,43 @@ export default {
         foesAllowed: false,
         pushNotificationsAllowed: false,
         usersAllowed: false
-      }
+      },
+      confirmPassword: ""
     };
   },
   components: {
     Layout,
-    UserForm,
     BaseInput
   },
   methods: {
     addUser() {
-      axios
-        .post(`/api/users`, this.user)
-        .then(({ data }) => {
-          console.log(data);
-        })
-        .catch(err => console.log(err.response));
+      if (this.user.password === this.confirmPassword) {
+        axios
+          .post(`/api/users`, this.user)
+          .then(() => {
+            this.$swal({
+              title: `${this.user.email} created succesfully!`,
+              type: "success"
+            }).then(() => {
+              this.router.push({ name: "all-users" });
+            });
+          })
+          .catch(({ response }) => {
+            this.$swal({
+              title: `${response}`
+            }).then(() => {
+              this.$refs.userForm.reset;
+            });
+          });
+      } else {
+        // console.log(this.$refs);
+        this.$swal({
+          title: "Please verify password match"
+        }).then(() => {
+          this.user.password = "";
+          this.confirmPassword = "";
+        });
+      }
     },
     cancel() {
       this.user = {

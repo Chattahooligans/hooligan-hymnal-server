@@ -35,7 +35,7 @@
 <script>
 export default {
   props: {
-    value: [String, Number],
+    value: [String, Number, Boolean],
     name: {
       type: String,
       required: true

@@ -54,7 +54,7 @@
       </div>
       <div class="flex flex-col mb-3">
         <BaseInput
-          type="url"
+          type="text"
           label="Reference Title"
           name="reference_title"
           placeholder="Reference Title"
