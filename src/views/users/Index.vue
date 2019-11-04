@@ -4,13 +4,49 @@
     <router-link class="text-green-700" to="/users/create"
       >Add User</router-link
     >
-    <div>
-      <ul v-if="users.length">
-        <li v-for="user in users" :key="user._id">
-          <router-link :to="`/users/${user._id}`">{{ user.email }}</router-link>
-        </li>
-      </ul>
-      <h3 v-else>No other users</h3>
+    <div class="mx-auto container">
+      <table v-if="users.length > 0" class="table-auto border w-full my-3">
+        <thead>
+          <tr class="border-b">
+            <th class="px-4 py-2 border-r">User</th>
+            <th class="px-4 py-2 border-r">Push Notifications</th>
+            <th class="px-4 py-2 border-r">Roster Allowed</th>
+            <th class="px-4 py-2 border-r">Songbook Allowed</th>
+            <th class="px-4 py-2 border-r">Users Allowed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="user in users"
+            class="bg-white border-b odd:bg-gray-200"
+            :key="user._id"
+          >
+            <td class="px-4 py-2 border-r">
+              <router-link
+                :to="{ name: 'view-user', params: { id: user._id } }"
+                >{{ user.email }}</router-link
+              >
+            </td>
+            <td class="px-4 py-2 border-r text-center">
+              <input
+                type="checkbox"
+                v-model="user.pushNotificationsAllowed"
+                disabled
+              />
+            </td>
+            <td class="px-4 py-2 border-r text-center">
+              <input type="checkbox" v-model="user.rosterAllowed" disabled />
+            </td>
+            <td class="px-4 py-2 border-r text-center">
+              <input type="checkbox" v-model="user.songbookAllowed" disabled />
+            </td>
+            <td class="px-4 py-2 border-r text-center">
+              <input type="checkbox" v-model="user.usersAllowed" disabled />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 v-else>No Users</h3>
     </div>
   </Layout>
 </template>

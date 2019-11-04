@@ -145,7 +145,7 @@ module.exports = app => {
     permissionsMiddleware("usersAllowed"),
     (req, res) => {
       const { email } = req.user;
-      User.find({ email: { $ne: email } }, "email", (err, users) => {
+      User.find({ email: { $ne: email } }, "-__v", (err, users) => {
         if (err) {
           res.json({ message: "Something happend" });
         }
