@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import axios from "axios";
+import "./registerServiceWorker";
 import VueMeta from "vue-meta";
 import VueSweetalert2 from "vue-sweetalert2";
 import { Plugin } from "vue-fragment";
@@ -36,6 +37,7 @@ Vue.config.productionTip = false;
 
 import "sweetalert2/dist/sweetalert2.all";
 import "@/assets/css/tailwind.css";
+import './registerServiceWorker'
 
 library.add(
   faBold,

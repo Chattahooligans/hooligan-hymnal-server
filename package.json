@@ -2,15 +2,16 @@
   "name": "hymnal-server",
   "version": "1.0.0",
   "description": "Serving those diss tracks like we're the Paul brothers",
-  "main": "index.js",
+  "author": "",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js & vue-cli-service serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "heroku-postbuild": "npm install --only=dev --no-shrinkwrap && npm run build"
+    "dev": "nodemon app.js & vue-cli-service serve",
+    "heroku-postbuild": "npm install --only=dev --no-shrinkwrap && npm run build",
+    "start": "node app.js"
   },
+  "main": "index.js",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.25",
     "@fortawesome/free-brands-svg-icons": "^5.11.2",
@@ -59,7 +60,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.12.0",
     "@vue/cli-plugin-eslint": "^3.12.0",
-    "@vue/cli-plugin-pwa": "^3.12.0",
+    "@vue/cli-plugin-pwa": "^3.12.1",
     "@vue/cli-service": "^3.12.0",
     "@vue/eslint-config-prettier": "^5.0.0",
     "autoprefixer": "^9.6.5",
@@ -73,14 +74,13 @@
     "tailwindcss": "^1.1.2",
     "vue-template-compiler": "^2.6.10"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Chattahooligans/hymnal-server.git"
-  },
-  "author": "",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/Chattahooligans/hymnal-server/issues"
   },
-  "homepage": "https://github.com/Chattahooligans/hymnal-server#readme"
+  "homepage": "https://github.com/Chattahooligans/hymnal-server#readme",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chattahooligans/hymnal-server.git"
+  }
 }
