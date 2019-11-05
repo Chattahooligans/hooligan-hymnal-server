@@ -37,6 +37,7 @@ Vue.config.productionTip = false;
 
 import "sweetalert2/dist/sweetalert2.all";
 import "@/assets/css/tailwind.css";
+import './registerServiceWorker'
 
 library.add(
   faBold,

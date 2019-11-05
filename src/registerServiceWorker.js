@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
 
 import { register } from "register-service-worker";
+
 if (process.env.NODE_ENV === "production") {
-  register(`${process.env.BASE_URL}service-worker.js`, {
+  register(`./service-worker.js`, {
     ready() {
       console.log(
         "App is being served from cache by a service worker.\n" +
@@ -10,23 +11,25 @@ if (process.env.NODE_ENV === "production") {
       );
     },
     registered() {
-      console.log("Service worker has been registred.");
+      console.log("Service worker has been registered.");
     },
     cached() {
       console.log("Content has been cached for offline use.");
     },
     updatefound() {
-      console.log("New content is downloading");
+      console.log("New content is downloading.");
     },
     updated() {
-      console.log("New content is available; Refresh...");
+      alert(
+        "New content is avaliable; You might be logged out if you are logged in."
+      );
       setTimeout(() => {
         window.location.reload(true);
-      }, 1000);
+      });
     },
     offline() {
       console.log(
-        "No internet connection found. App is running in ofline mode."
+        "No internet connection found. App is running in offline mode."
       );
     },
     error(error) {

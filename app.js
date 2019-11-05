@@ -12,7 +12,7 @@ var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 var serveStatic = require("serve-static");
 var User = require("./models/users");
-var APIMiddleware = require("./middleware/ApiKeyMiddleware");
+// var APIMiddleware = require("./middleware/ApiKeyMiddleware");
 var helmet = require("helmet");
 var fileUpload = require("express-fileupload");
 
@@ -28,6 +28,8 @@ const PORT = process.env.PORT || 3000;
 var MONGO_URI = process.env.MONGO_URI;
 
 app.use("/assets", express.static(__dirname + "/public"));
+app.use("/", express.static("/service-worker.js"));
+// app.use("/", express.static(__dirname + "/public"));
 app.use(morgan("combined"));
 app.use(bodyParser.json());
 app.use(cors());
