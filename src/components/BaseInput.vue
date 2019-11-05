@@ -23,7 +23,7 @@
         :placeholder="placeholder"
         :aria-placeholder="arplaceholder"
         class="border flex-auto rounded p-2 shadow resize-none"
-        height="80"
+        height="280"
         width="100"
         :value="value"
         @input="updateValue"
