@@ -10,9 +10,11 @@ let tokenList = {};
 
 module.exports = app => {
   app.post("/api/users/register", (req, res) => {
-    let { email, password } = req.body;
+    let { email, password, firstName, lastName } = req.body;
     email = email.toLowerCase();
     const newUser = new User({
+      firstName,
+      lastName,
       email,
       password
     });
@@ -31,7 +33,8 @@ module.exports = app => {
   app.post("/api/users/login", (req, res) => {
     let { email, password, rememberMe } = req.body;
     email = email.toLowerCase();
-    User.findOne({ email: email }, "+password", (err, user) => {
+    let loginTime = Date.now();
+    User.findOne({ email: email }, "+password",(err, user) => {
       if (!user) {
         return res.status(404).json({
           message: "User not found"
@@ -64,6 +67,13 @@ module.exports = app => {
             if (rememberMe) {
               token = refreshToken;
             }
+            User.findOneAndUpdate({ id: user._id }, { lastLogin: loginTime }, (err, user) => {
+              if (err) {
+                return res.status(400).send(err);
+              }
+              return;
+              // return res.status(200).send({ token, user, rememberMe });
+            })
             return res.status(200).send({ token, user, rememberMe });
           } else {
             return res
@@ -85,6 +95,8 @@ module.exports = app => {
     (req, res) => {
       const {
         email,
+        firstName,
+        lastName,
         foesAllowed,
         songbookAllowed,
         rosterAllowed,
@@ -94,6 +106,8 @@ module.exports = app => {
       res.json({
         user: {
           email,
+          firstName,
+          lastName,
           foesAllowed,
           songbookAllowed,
           rosterAllowed,
@@ -161,6 +175,8 @@ module.exports = app => {
     (req, res) => {
       const {
         email,
+        firstName,
+        lastName,
         password,
         songbookAllowed,
         rosterAllowed,
@@ -170,6 +186,8 @@ module.exports = app => {
       } = req.body;
       const newUser = new User({
         email,
+        firstName,
+        lastName,
         password
       });
       newUser.songbookAllowed = songbookAllowed;

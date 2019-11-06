@@ -7,6 +7,31 @@
         </div>
         <div class="p-3">
           <form method="POST" @submit.prevent="register">
+            <div class="mb-3 flex flex-col">
+              <BaseInput
+                type="text"
+                label="First Name"
+                name="first-name"
+                placeholder="First Name"
+                arPlaceholder="Enter your first name"
+                :required="true"
+                :autofocus="true"
+                :autocomplete="true"
+                v-model="user.firstName"
+              />
+            </div>
+            <div class="mb-3 flex flex-col">
+              <BaseInput
+                type="text"
+                label="Last Name"
+                name="last-name"
+                placeholder="Last Name"
+                arPlaceholder="Enter your last name"
+                :required="true"
+                :autocomplete="true"
+                v-model="user.lastName"
+              />
+            </div>
             <div class="flex flex-col mb-3">
               <BaseInput
                 type="email"
@@ -15,7 +40,6 @@
                 placeholder="email@email.com"
                 arplaceholder="Enter your email address"
                 :required="true"
-                :autofocus="true"
                 :autocomplete="true"
                 v-model="user.email"
               />
@@ -99,6 +123,8 @@ export default {
   data() {
     return {
       user: {
+        firstName: "",
+        lastName: "",
         email: "",
         password: "",
         passwordConfirm: ""
@@ -119,6 +145,8 @@ export default {
       if (this.isMatch) {
         this.$store
           .dispatch("register", {
+            firstName: this.user.firstName,
+            lastName: this.user.lastName,
             email: this.user.email,
             password: this.user.password
           })

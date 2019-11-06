@@ -9,12 +9,36 @@
     <div v-else>
       <h2>Edit {{ user.email }}</h2>
       <button @click="deleteUser">Delete {{ user.email }}</button>
-      <UserForm
-        :user="user"
-        :edit="true"
-        :formMethod="updateUser"
-        :cancel="back"
-      />
+      <h3>Update Name</h3>
+      <form method="POST" @submit.prevent="">
+        <div class="mb-3 flex flex-col">
+          <BaseInput
+            type="text"
+            name="first-name"
+            label="First Name"
+            placeholder="First Name"
+            arPlaceholder="Users first name"
+            :required="true"
+            v-model="user.firstName"
+          />
+        </div>
+        <div class="mb-3 flex flex-col">
+          <BaseInput
+            type="text"
+            name="last-name"
+            label="Last Name"
+            placeholder="Last Name"
+            arPlaceholder="Users last name"
+            :required="true"
+            v-model="user.lastName"
+          />
+        </div>
+        <div class="mb-3">
+          <button type="submit" class="btn bg-blue-700 text-white">
+            Update Name
+          </button>
+        </div>
+      </form>
       <h3>Update Password</h3>
       <form @submit.prevent="updatePassword">
         <div>

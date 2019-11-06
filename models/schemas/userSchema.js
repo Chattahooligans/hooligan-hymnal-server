@@ -7,6 +7,14 @@ module.exports = new mongoose.Schema({
       unique: true
     }
   },
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
   hash: String,
   pushNotificationsAllowed: {
     type: Boolean,
@@ -23,5 +31,9 @@ module.exports = new mongoose.Schema({
   foesAllowed: {
     type: Boolean,
     default: false
+  },
+  lastLogin: {
+    type: Date,
+    default: Date.now
   }
 });
