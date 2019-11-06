@@ -10,6 +10,14 @@ const UserSchema = new Schema({
       unique: true
     }
   },
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
   password: {
     type: String,
     required: true,
@@ -34,6 +42,11 @@ const UserSchema = new Schema({
   usersAllowed: {
     type: Boolean,
     default: false
+  },
+  lastLogin: {
+    type: Date,
+    required: true,
+    default: null
   }
 });
 
