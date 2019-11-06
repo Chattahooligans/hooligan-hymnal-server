@@ -11,7 +11,7 @@ var feedItem = new Schema(
         text: { locale: String, text: String },
         images: [{url: String}],
         attachments: [{type: String, id: ObjectId, data: null}],
-        active_or_deleted: Boolean
+        active: Boolean
     },
     {
         timestamps: true
