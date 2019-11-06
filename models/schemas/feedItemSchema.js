@@ -8,12 +8,13 @@ var feedItem = new Schema(
         unpublishAt: Date,
         pinnedAt: Date,
         push: Boolean,
-        text: { locale: String, text: String },
+        text: String || { locale: String, text: String },
         images: [{url: String}],
         attachments: [{type: String, id: ObjectId, data: null}],
         active: Boolean
     },
     {
+        strict: false,
         timestamps: true
     }
 );
