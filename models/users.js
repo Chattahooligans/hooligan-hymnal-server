@@ -18,6 +18,13 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
+  displayName: {
+    type: String,
+    required: true,
+    index: {
+      unique: true
+    }
+  },
   password: {
     type: String,
     required: true,

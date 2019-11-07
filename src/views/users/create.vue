@@ -3,10 +3,26 @@
     <h2>Create User</h2>
     <form ref="userForm" method="POST" @submit.prevent="addUser">
       <div class="mb-3 flex flex-col">
-        <BaseInput type="text" name="firstName" label="First Name" placeholder="First Name" arPlaceholder="First Name" :required="true" v-model="user.firstName" />
+        <BaseInput
+          type="text"
+          name="firstName"
+          label="First Name"
+          placeholder="First Name"
+          arPlaceholder="First Name"
+          :required="true"
+          v-model="user.firstName"
+        />
       </div>
       <div class="mb-3 flex flex-col">
-        <BaseInput type="text" name="lastName" label="Last Name" placeholder="Last Name" arPlaceholder="Last Name" :required="true" v-model="user.lastName" />
+        <BaseInput
+          type="text"
+          name="lastName"
+          label="Last Name"
+          placeholder="Last Name"
+          arPlaceholder="Last Name"
+          :required="true"
+          v-model="user.lastName"
+        />
       </div>
       <div class="mb-3 flex flex-col">
         <BaseInput

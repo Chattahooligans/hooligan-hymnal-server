@@ -27,6 +27,7 @@ import {
   faRedo
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import VueCompositionApi from "@vue/composition-api";
 
 import Layout from "@/layouts/Layout";
 import BaseInput from "@/components/BaseInput";
@@ -37,7 +38,7 @@ Vue.config.productionTip = false;
 
 import "sweetalert2/dist/sweetalert2.all";
 import "@/assets/css/tailwind.css";
-import './registerServiceWorker'
+import "./registerServiceWorker";
 
 library.add(
   faBold,
@@ -55,6 +56,7 @@ library.add(
   faRedo
 );
 
+Vue.use(VueCompositionApi);
 Vue.use(VueSweetalert2);
 Vue.use(Plugin);
 Vue.component("Layout", Layout);
