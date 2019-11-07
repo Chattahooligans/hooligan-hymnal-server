@@ -45,7 +45,6 @@ const UserSchema = new Schema({
   },
   lastLogin: {
     type: Date,
-    required: true,
     default: null
   }
 });

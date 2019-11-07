@@ -34,121 +34,63 @@ module.exports = app => {
     let { email, password, rememberMe } = req.body;
     email = email.toLowerCase();
     let loginTime = Date.now();
-    // let token = "";
-    // let user = await User.findOne({ email: email }).select("+password");
-    // if (!user) {
-    //   return res.status(400).send({ message: "Something happend" });
-    // }
-    // if (password) {
-    //   await bcryptjs.compareSync(
-    //     password,
-    //     user.password,
-    //     async (err, isMatch) => {
-    //       if (isMatch) {
-    //         const payload = { id: user._id };
-    //         const secretOrKey = process.env.SECRET_KEY;
-    //         const tokenExpires = `${process.env.TOKEN_EXPIRES}` || "1h";
-    //         const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
-    //         const refreshExpires =
-    //           `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
-    //         token = await jwt.sign(payload, secretOrKey, {
-    //           expiresIn: tokenExpires
-    //         });
-    //         const refreshToken = await jwt.sign(payload, refreshSecretOrKey, {
-    //           expiresIn: refreshExpires
-    //         });
-    //         user = {
-    //           id: user.id,
-    //           email: user.email,
-    //           foesAllowed: user.foesAllowed,
-    //           pushNotificationsAllowed: user.pushNotificationsAllowed,
-    //           rosterAllowed: user.rosterAllowed,
-    //           songbookAllowed: user.songbookAllowed,
-    //           usersAllowed: user.usersAllowed
-    //         };
-    //         if (rememberMe) {
-    //           token = refreshToken;
-    //         }
-    //       } else {
-    //         return res
-    //           .status(400)
-    //           .send({ message: "Incorrect Password. Please try again." });
-    //       }
-    //     }
-    //   );
-    // } else {
-    //   return res
-    //     .send(422)
-    //     .json({ message: "Password was incorrect or wasn't provided" });
-    // }
-    // const updatedUser = await User.findByIdAndUpdate(
-    //   user._id,
-    //   {
-    //     lastLogin: loginTime
-    //   },
-    //   { upsert: true }
-    // );
-    // if (!updatedUser) {
-    //   return res.send("Something happened");
-    // }
-    // return res.send({ token, user });
-    User.findOne({ email: email }, "+password", (err, user) => {
-      if (!user) {
-        return res.status(404).json({
-          message: "User not found"
-        });
+    let user = await User.findOneAndUpdate(
+      { email: email },
+      {
+        $set: {
+          lastLogin: loginTime
+        }
       }
-      if (password) {
-        bcryptjs.compare(password, user.password, (err, isMatch) => {
-          if (isMatch) {
-            const payload = { id: user._id };
-            const secretOrKey = process.env.SECRET_KEY;
-            const tokenExpires = `${process.env.TOKEN_EXPIRES}` || "1h";
-            const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
-            const refreshExpires =
-              `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
-            let token = jwt.sign(payload, secretOrKey, {
-              expiresIn: tokenExpires
-            });
-            const refreshToken = jwt.sign(payload, refreshSecretOrKey, {
-              expiresIn: refreshExpires
-            });
-            user = {
-              id: user.id,
-              email: user.email,
-              foesAllowed: user.foesAllowed,
-              pushNotificationsAllowed: user.pushNotificationsAllowed,
-              rosterAllowed: user.rosterAllowed,
-              songbookAllowed: user.songbookAllowed,
-              usersAllowed: user.usersAllowed
-            };
-            if (rememberMe) {
-              token = refreshToken;
-            }
-            User.findOneAndUpdate(
-              { id: user._id },
-              { lastLogin: loginTime },
-              (err, user) => {
-                if (err) {
-                  return res.status(400).send(err);
-                }
-                return user;
-                // return res.status(200).send({ token, user, rememberMe });
-              }
-            );
-            return res.status(200).send({ token, user, rememberMe });
-          } else {
-            return res
-              .status(400)
-              .send({ message: "Incorrect Password. Please try again." });
+    )
+      .select("+password")
+      .exec();
+    if (!user) {
+      return res.status(400).send({ message: "Something happend." });
+    }
+    if (password) {
+      bcryptjs.compare(password, user.password, (err, isMatch) => {
+        if (isMatch) {
+          const payload = {
+            id: user._id
+          };
+          const secretOrKey = process.env.SECRET_KEY;
+          const tokenExpires = `${process.env.TOKEN_EXPIRES}` || "1h";
+          const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
+          const refreshExpires = `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
+          let token = jwt.sign(payload, secretOrKey, {
+            expiresIn: tokenExpires
+          });
+          const refreshToken = jwt.sign(payload, refreshSecretOrKey, {
+            expiresIn: refreshExpires
+          });
+          user = {
+            id: user.id,
+            email: user.email,
+            foesAllowed: user.foesAllowed,
+            pushNotificationsAllowed: user.pushNotificationsAllowed,
+            rosterAllowed: user.rosterAllowed,
+            songbookAllowed: user.songbookAllowed,
+            usersAllowed: user.usersAllowed
+          };
+          if (rememberMe) {
+            token = refreshToken;
           }
-        });
-      } else {
-        return res
-          .send(422)
-          .json({ message: "Password was incorrect or wasn't provided" });
-      }
-    });
+          return res.status(200).send({
+            token,
+            user,
+            rememberMe
+          });
+        } else {
+          return res
+            .status(400)
+            .send({ message: "Incorrect Password. Please try again." });
+        }
+      });
+    } else {
+      return res
+        .send(422)
+        .json({ message: "Password was incorrect or wasn't provided" });
+    }
   });
 
   app.get(
@@ -221,7 +163,7 @@ module.exports = app => {
     permissionsMiddleware("usersAllowed"),
     (req, res) => {
       const { email } = req.user;
-      User.find({ email: { $ne: email } }, "-__v", (err, users) => {
+      User.find({ email: { $ne: email } }, "-__v +lastLogin", (err, users) => {
         if (err) {
           res.json({ message: "Something happend" });
         }

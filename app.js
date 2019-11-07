@@ -97,6 +97,7 @@ mongoose
     console.log(`App starting error:`, err.stack);
     process.exit(1);
   });
+mongoose.set("useFindAndModify", false);
 
 // Autoloads all controllers in directory
 fs.readdirSync("controllers").forEach(function(file) {
