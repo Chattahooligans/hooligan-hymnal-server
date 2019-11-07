@@ -9,8 +9,13 @@ var feedItem = new Schema(
         unpublishAt: Date,
         pinnedAt: Date,
         push: Boolean,
-        text: { locale: String, text: String },
-        images: [{url: String, credit: String, default: Boolean}],
+        text: [{locale: String, text: String }],
+        images: [
+            {
+                locale: String, 
+                images: [{url: String, credit: String, default: Boolean}]
+            }
+        ],
         attachments: [{type: String, id: ObjectId, data: null}],
         active: Boolean
     },
