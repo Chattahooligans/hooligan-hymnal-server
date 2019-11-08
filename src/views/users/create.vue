@@ -5,12 +5,12 @@
       <div class="mb-3 flex flex-col">
         <BaseInput
           type="text"
-          name="firstName"
+          name="name"
           label="First Name"
           placeholder="First Name"
           arPlaceholder="First Name"
           :required="true"
-          v-model="user.firstName"
+          v-model="user.name"
         />
       </div>
       <div class="mb-3 flex flex-col">
@@ -21,7 +21,7 @@
           placeholder="Last Name"
           arPlaceholder="Last Name"
           :required="true"
-          v-model="user.lastName"
+          v-model="user.familyName"
         />
       </div>
       <div class="mb-3 flex flex-col">
@@ -33,6 +33,16 @@
           arPlaceholder="New User email address"
           :required="true"
           v-model="user.email"
+        />
+      </div>
+      <div class="mb-3 flex flex-col">
+        <BaseInput
+          type="text"
+          label="Display Name"
+          name="display-name"
+          placeholder="display-name"
+          :required="true"
+          v-model="user.displayName"
         />
       </div>
       <div class="mb-3 flex flex-col">
@@ -104,9 +114,10 @@ export default {
   data() {
     return {
       user: {
-        firstName: "",
-        lastName: "",
+        name: "",
+        familyName: "",
         email: "",
+        displayName: "",
         password: "",
         songbookAllowed: false,
         rosterAllowed: false,
@@ -136,7 +147,7 @@ export default {
           })
           .catch(({ response }) => {
             this.$swal({
-              title: `${response}`
+              title: `${response.message}`
             }).then(() => {
               this.$refs.userForm.reset;
             });

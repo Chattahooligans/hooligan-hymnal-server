@@ -9,10 +9,12 @@
         <thead>
           <tr class="border-b">
             <th class="px-4 py-2 border-r">User</th>
+            <th class="px-4 py-2 border-r">Display Name</th>
             <th class="px-4 py-2 border-r">Push Notifications</th>
             <th class="px-4 py-2 border-r">Roster Allowed</th>
             <th class="px-4 py-2 border-r">Songbook Allowed</th>
             <th class="px-4 py-2 border-r">Users Allowed</th>
+            <th class="px-4 py-2 border-r">Last Login</th>
           </tr>
         </thead>
         <tbody>
@@ -21,11 +23,14 @@
             class="bg-white border-b odd:bg-gray-200"
             :key="user._id"
           >
-            <td class="px-4 py-2 border-r">
+            <td class="px-4 py-2 border-r text-center">
               <router-link
                 :to="{ name: 'view-user', params: { id: user._id } }"
-                >{{ user.email }}</router-link
+                >{{ `${user.name} ${user.familyName}` }}</router-link
               >
+            </td>
+            <td class="px-4 py-2 border-r text-center">
+              {{ user.displayName }}
             </td>
             <td class="px-4 py-2 border-r text-center">
               <input
@@ -43,6 +48,9 @@
             <td class="px-4 py-2 border-r text-center">
               <input type="checkbox" v-model="user.usersAllowed" disabled />
             </td>
+            <td class="px-4 py-2 border-r text-center">
+              {{ user.lastLogin ? user.lastLogin : "Hasn't logged in yet" }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -56,6 +64,9 @@ import { mapGetters } from "vuex";
 export default {
   computed: {
     ...mapGetters(["users"])
+    // fullName(user) {
+    //   return `${user.name} ${user.familyName}`;
+    // }
   }
 };
 </script>

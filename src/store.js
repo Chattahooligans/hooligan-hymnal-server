@@ -103,6 +103,9 @@ const store = new Vuex.Store({
     },
     SET_ALL_USERS(state, data) {
       state.users = data;
+    },
+    SET_SINGLE_USER(state, data) {
+      state.single_user = data;
     }
   },
   actions: {
@@ -206,6 +209,11 @@ const store = new Vuex.Store({
         commit("SET_ALL_USERS", data);
       });
     },
+    fetchUser({ commit }, id) {
+      return axios.get(`/api/users/${id}`).then(({ data }) => {
+        commit("SET_SINGLE_USER", data);
+      });
+    },
     authCheck() {
       return axios.get(`/api/users/me`).then(() => {
         return true;
@@ -253,7 +261,8 @@ const store = new Vuex.Store({
     // },
     rosters: state => state.rosters,
     roster: state => state.roster,
-    users: state => state.users
+    users: state => state.users,
+    single_user: state => state.single_user
     // users(state) {
     //   return state.users;
     // }

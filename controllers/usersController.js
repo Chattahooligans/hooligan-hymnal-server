@@ -10,10 +10,10 @@ let tokenList = {};
 
 module.exports = app => {
   app.post("/api/users/register", (req, res) => {
-    let { email, password, firstName, lastName, displayName } = req.body;
+    let { email, password, name, familyName, displayName } = req.body;
     const newUser = new User({
-      firstName,
-      lastName,
+      name,
+      familyName,
       displayName,
       email,
       password
@@ -77,8 +77,7 @@ module.exports = app => {
           }
           return res.status(200).send({
             token,
-            user,
-            rememberMe
+            user
           });
         } else {
           return res
@@ -99,8 +98,8 @@ module.exports = app => {
     (req, res) => {
       const {
         email,
-        firstName,
-        lastName,
+        name,
+        familyName,
         foesAllowed,
         songbookAllowed,
         rosterAllowed,
@@ -110,8 +109,8 @@ module.exports = app => {
       res.json({
         user: {
           email,
-          firstName,
-          lastName,
+          name,
+          familyName,
           foesAllowed,
           songbookAllowed,
           rosterAllowed,
@@ -179,8 +178,9 @@ module.exports = app => {
     (req, res) => {
       const {
         email,
-        firstName,
-        lastName,
+        name,
+        familyName,
+        displayName,
         password,
         songbookAllowed,
         rosterAllowed,
@@ -190,8 +190,9 @@ module.exports = app => {
       } = req.body;
       const newUser = new User({
         email,
-        firstName,
-        lastName,
+        name,
+        familyName,
+        displayName,
         password
       });
       newUser.songbookAllowed = songbookAllowed;
@@ -202,7 +203,8 @@ module.exports = app => {
 
       User.createUser(newUser, (error, user) => {
         if (error) {
-          res.status(422).json({
+          return res.status(422).json({
+            // error
             message: `Something happened... Please verify they don't already have an account: ${email}`
           });
         }
@@ -218,9 +220,9 @@ module.exports = app => {
           },
           (err, user) => {
             if (err) {
-              res.status(422).json({ message: err });
+              return res.status(422).json({ message: err });
             }
-            res.json(user);
+            return res.json(user);
           }
         );
       });
