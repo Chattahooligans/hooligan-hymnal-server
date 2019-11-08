@@ -48,6 +48,7 @@
     "tiptap-extensions": "^1.28.3",
     "uuid": "^3.3.3",
     "vue": "^2.6.10",
+    "vue-ads-table-tree": "^2.3.7",
     "vue-form-generator": "^2.3.4",
     "vue-fragment": "^1.5.1",
     "vue-meta": "^2.3.1",
@@ -59,6 +60,7 @@
     "yarn": "^1.19.1"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.11.2",
     "@vue/cli-plugin-babel": "^3.12.0",
     "@vue/cli-plugin-eslint": "^3.12.0",
     "@vue/cli-plugin-pwa": "^3.12.1",
