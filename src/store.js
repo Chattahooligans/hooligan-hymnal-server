@@ -214,6 +214,17 @@ const store = new Vuex.Store({
         commit("SET_SINGLE_USER", data);
       });
     },
+    fetchFilterUsers({ commit }, event) {
+      const role = event.target.value;
+      if (role !== "") {
+        return axios.get(`/api/users?role=${role}`).then(({ data }) => {
+          commit("SET_ALL_USERS", data);
+        });
+      }
+      new Promise(() => {
+        this.dispatch("fetchUsers");
+      });
+    },
     authCheck() {
       return axios.get(`/api/users/me`).then(() => {
         return true;
@@ -222,50 +233,23 @@ const store = new Vuex.Store({
   },
   getters: {
     loggedIn: state => !!state.user,
-    // loggedIn(state) {
-    //   return !!state.user;
-    // },
     user(state) {
       if (state.user) {
         return state.user.user;
       }
     },
     getMessage: state => state.global_message,
-    // getMessage(state) {
-    //   return state.global_message;
-    // },
     players: state => state.players,
-    // players(state) {
-    //   return state.players;
-    // },
     player: state => state.player,
-    // player(state) {
-    //   return state.player;
-    // },
     songs: state => state.songs,
-    // songs(state) {
-    //   return state.songs;
-    // },
     song: state => state.song,
-    // song(state) {
-    //   return state.song;
-    // },
     songbooks: state => state.songbooks,
-    // songbooks(state) {
-    //   return state.songbooks;
-    // },
     songbook: state => state.songbook,
     goalkeepers: state => state.goalkeepersnicknames,
-    // goalkeepers(state) {
-    //   return state.goalkeepersnicknames;
-    // },
     rosters: state => state.rosters,
     roster: state => state.roster,
     users: state => state.users,
     single_user: state => state.single_user
-    // users(state) {
-    //   return state.users;
-    // }
   }
 });
 if (process.env.NODE_ENV !== "production") {

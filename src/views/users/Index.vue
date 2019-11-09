@@ -1,17 +1,39 @@
 <template>
   <Layout>
-    <h2 class="text-2xl font-bold mb-3">All Users</h2>
-    <router-link class="text-green-700" to="/users/create"
-      >Add User</router-link
-    >
     <div class="mx-auto container">
-      <BaseInput
-        type="search"
-        label="Filter"
-        name="filter"
-        placeholder="Filter"
-        v-model="filter"
-      />
+      <header class="mb-3">
+        <h2 class="text-2xl font-bold mb-3">All Users</h2>
+        <router-link class="btn bg-green-700 text-white" to="/users/create"
+          >Add User</router-link
+        >
+      </header>
+      <div class="flex justify-between">
+        <div class="flex-grow-0 flex flex-col">
+          <BaseInput
+            type="search"
+            label="Search Users"
+            name="search"
+            placeholder="Search"
+            v-model="filter"
+          />
+        </div>
+        <div class="flex-group-0 flex flex-col">
+          <label for="filter">Filter by Role</label>
+          <select
+            @change.prevent="filterUsers"
+            class="bg-white h-12 py-2 border rounded"
+          >
+            <option value=""></option>
+            <option
+              v-for="(filter, i) in filterOptions"
+              :key="i"
+              :value="filter"
+            >
+              {{ filter }}
+            </option>
+          </select>
+        </div>
+      </div>
       <vue-ads-table-tree
         :columns="columns"
         :rows="users"
@@ -69,16 +91,19 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
+import NProgress from "nprogress";
 export default {
   data() {
     return {
       filter: "",
+      filterOptions: [
+        "pushNotificationsAllowed",
+        "rosterAllowed",
+        "songbookAllowed",
+        "usersAllowed"
+      ],
       columns: [
-        // {
-        //   property: "_id",
-        //   title: "ID"
-        // },
         {
           property: "email",
           title: "Email",
@@ -96,22 +121,6 @@ export default {
           title: "Display Name",
           filterable: true,
           collapseIcon: false
-        },
-        {
-          property: "pushNotificationsAllowed",
-          title: "Push Notifications"
-        },
-        {
-          property: "rosterAllowed",
-          title: "Roster Allowed"
-        },
-        {
-          property: "songbookAllowed",
-          title: "Songbook Allowed"
-        },
-        {
-          property: "usersAllowed",
-          title: "Users Allowed"
         },
         {
           property: "lastLogin",
@@ -166,13 +175,17 @@ export default {
   methods: {
     filterChange(filter) {
       this.filter = filter;
-    }
+    },
+    filterUsers(event) {
+      NProgress.start();
+      this.fetchFilterUsers(event).then(() => {
+        NProgress.done();
+      });
+    },
+    ...mapActions(["fetchFilterUsers"])
   },
   computed: {
     ...mapGetters(["users"])
-    // fullName(user) {
-    //   return `${user.name} ${user.familyName}`;
-    // }
   }
 };
 </script>

@@ -160,13 +160,20 @@ module.exports = app => {
     "/api/users",
     passport.authenticate("jwt", { session: false }),
     permissionsMiddleware("usersAllowed"),
-    (req, res) => {
+    async (req, res) => {
       const { email } = req.user;
-      User.find({ email: { $ne: "" } }, "-__v +lastLogin", (err, users) => {
+      const { role } = req.query;
+      const users = User.find({}, "-__v +lastLogin").where({
+        email: { $ne: email }
+      });
+      if (role) {
+        users.where(role, true);
+      }
+      users.exec((err, users) => {
         if (err) {
-          res.json({ message: "Something happend" });
+          return res.json({ message: err });
         }
-        res.json(users);
+        return res.send(users);
       });
     }
   );
