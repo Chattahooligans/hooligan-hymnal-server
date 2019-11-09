@@ -94,7 +94,7 @@ export default {
         {
           property: "displayName",
           title: "Display Name",
-          filterable: false,
+          filterable: true,
           collapseIcon: false
         },
         {
