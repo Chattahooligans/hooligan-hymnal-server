@@ -24,9 +24,13 @@ import {
   faQuoteLeft,
   faRulerHorizontal,
   faUndo,
-  faRedo
+  faRedo,
+  faSort
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import "@fortawesome/fontawesome-free/css/all.css";
+import VueCompositionApi from "@vue/composition-api";
+import { VueAdsTable } from "vue-ads-table-tree";
 
 import Layout from "@/layouts/Layout";
 import BaseInput from "@/components/BaseInput";
@@ -37,7 +41,7 @@ Vue.config.productionTip = false;
 
 import "sweetalert2/dist/sweetalert2.all";
 import "@/assets/css/tailwind.css";
-import './registerServiceWorker'
+import "./registerServiceWorker";
 
 library.add(
   faBold,
@@ -52,9 +56,12 @@ library.add(
   faQuoteLeft,
   faRulerHorizontal,
   faUndo,
-  faRedo
+  faRedo,
+  faSort
 );
+import VueMoment from "vue-moment";
 
+Vue.use(VueCompositionApi);
 Vue.use(VueSweetalert2);
 Vue.use(Plugin);
 Vue.component("Layout", Layout);
@@ -65,6 +72,8 @@ Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.component("BaseSelect", BaseSelect);
 Vue.use(VueFormGenerator);
 Vue.use(VueMeta);
+Vue.component("vue-ads-table-tree", VueAdsTable);
+Vue.use(VueMoment);
 
 new Vue({
   created() {

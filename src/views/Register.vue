@@ -7,6 +7,31 @@
         </div>
         <div class="p-3">
           <form method="POST" @submit.prevent="register">
+            <div class="mb-3 flex flex-col">
+              <BaseInput
+                type="text"
+                label="First Name"
+                name="first-name"
+                placeholder="First Name"
+                arPlaceholder="Enter your first name"
+                :required="true"
+                :autofocus="true"
+                :autocomplete="true"
+                v-model="user.name"
+              />
+            </div>
+            <div class="mb-3 flex flex-col">
+              <BaseInput
+                type="text"
+                label="Last Name"
+                name="last-name"
+                placeholder="Last Name"
+                arPlaceholder="Enter your last name"
+                :required="true"
+                :autocomplete="true"
+                v-model="user.familyName"
+              />
+            </div>
             <div class="flex flex-col mb-3">
               <BaseInput
                 type="email"
@@ -15,9 +40,19 @@
                 placeholder="email@email.com"
                 arplaceholder="Enter your email address"
                 :required="true"
-                :autofocus="true"
                 :autocomplete="true"
                 v-model="user.email"
+              />
+            </div>
+            <div class="mb-3 flex flex-col">
+              <BaseInput
+                type="text"
+                name="displayName"
+                label="Display Name"
+                placeholder="display-name"
+                arPlaceholder="Enter your display name"
+                :required="true"
+                v-model="user.displayName"
               />
             </div>
             <!-- <div class="flex flex-col mb-3">
@@ -37,7 +72,7 @@
                 name="password"
                 label="Password"
                 placeholder="******"
-                arplaceholder="Enter your password"
+                arPlaceholder="Enter your password"
                 :required="true"
                 v-model="user.password"
               />
@@ -99,7 +134,10 @@ export default {
   data() {
     return {
       user: {
+        name: "",
+        familyName: "",
         email: "",
+        displayName: "",
         password: "",
         passwordConfirm: ""
       },
@@ -119,7 +157,10 @@ export default {
       if (this.isMatch) {
         this.$store
           .dispatch("register", {
+            name: this.user.name,
+            familyName: this.user.familyName,
             email: this.user.email,
+            displayName: this.user.displayName,
             password: this.user.password
           })
           .then(() => {

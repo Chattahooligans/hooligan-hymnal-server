@@ -1,20 +1,48 @@
 <template>
   <Layout>
-    <div v-if="loading">
-      Loading...
-    </div>
-    <div v-else-if="message">
-      {{ message }}
-    </div>
-    <div v-else>
-      <h2>Edit {{ user.email }}</h2>
-      <button @click="deleteUser">Delete {{ user.email }}</button>
-      <UserForm
-        :user="user"
-        :edit="true"
-        :formMethod="updateUser"
-        :cancel="back"
-      />
+    <div>
+      <h2>Edit {{ single_user.email }}</h2>
+      <button @click="deleteUser">Delete {{ single_user.email }}</button>
+      <h3>Update Name</h3>
+      <form method="POST" @submit.prevent="">
+        <div class="mb-3 flex flex-col">
+          <BaseInput
+            type="text"
+            name="first-name"
+            label="First Name"
+            placeholder="First Name"
+            arPlaceholder="Users first name"
+            :required="true"
+            v-model="single_user.name"
+          />
+        </div>
+        <div class="mb-3 flex flex-col">
+          <BaseInput
+            type="text"
+            name="last-name"
+            label="Last Name"
+            placeholder="Last Name"
+            arPlaceholder="Users last name"
+            :required="true"
+            v-model="single_user.familyName"
+          />
+        </div>
+        <div class="mb-3 flex flex-col">
+          <BaseInput
+            type="text"
+            label="Display Name"
+            name="displayName"
+            placeholder="Display Name"
+            :required="true"
+            v-model="single_user.displayName"
+          />
+        </div>
+        <div class="mb-3">
+          <button type="submit" class="btn bg-blue-700 text-white">
+            Update Name
+          </button>
+        </div>
+      </form>
       <h3>Update Password</h3>
       <form @submit.prevent="updatePassword">
         <div>
@@ -53,48 +81,26 @@
 </template>
 
 <script>
-import Layout from "@/layouts/Layout";
-import UserForm from "@/forms/UserForm";
+import { mapGetters } from "vuex";
 import axios from "axios";
 export default {
-  components: {
-    Layout,
-    UserForm
-  },
   data() {
     return {
-      loading: false,
-      message: "",
-      user: {},
       password: "",
       newPassword: "",
       confirmNewPassword: ""
     };
   },
-  mounted() {
-    this.getUser();
-  },
   methods: {
-    getUser() {
-      const { id } = this.$route.params;
-      axios
-        .get(`/api/users/${id}`)
-        .then(({ data }) => {
-          this.user = data;
-        })
-        .catch(error => {
-          console.log(error.response);
-        });
-    },
     updateUser() {
       axios
-        .put(`/api/users/${this.user._id}`, this.user)
+        .put(`/api/users/${this.single_user._id}`, this.user)
         .then(() => {
           this.$swal({
-            title: `${this.user.email} permissions updated successfully`,
+            title: `${this.single_user.email} permissions updated successfully`,
             icon: "success"
           }).then(() => {
-            this.$router.push(`/users/${this.user._id}`);
+            this.$router.push(`/users/${this.single_user._id}`);
           });
         })
         .catch(err => {
@@ -107,7 +113,7 @@ export default {
     deleteUser() {
       const { _id } = this.user;
       this.$swal({
-        title: `Are you sure you want to delete ${this.user.email}`,
+        title: `Are you sure you want to delete ${this.single_user.email}`,
         type: "warning",
         showCancelButton: true
       }).then(result => {
@@ -143,6 +149,9 @@ export default {
         })
         .catch(err => console.log(err.response));
     }
+  },
+  computed: {
+    ...mapGetters(["single_user"])
   }
 };
 </script>

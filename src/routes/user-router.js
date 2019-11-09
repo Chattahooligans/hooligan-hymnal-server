@@ -24,6 +24,11 @@ export default [
     meta: {
       requiresAuth: true,
       usersAllowed: true
+    },
+    beforeEnter(routeTo, routeFrom, next) {
+      NProgress.start();
+      NProgress.done();
+      next();
     }
   },
   {
@@ -33,6 +38,14 @@ export default [
     meta: {
       requiresAuth: true,
       usersAllowed: true
+    },
+    beforeEnter(routeTo, routeFrom, next) {
+      NProgress.start();
+      const { id } = routeTo.params;
+      store.dispatch("fetchUser", id).then(() => {
+        NProgress.done();
+        next();
+      });
     }
   },
   {
@@ -42,6 +55,14 @@ export default [
     meta: {
       requiresAuth: true,
       usersAllowed: true
+    },
+    beforeEnter(routeTo, routeFrom, next) {
+      NProgress.start();
+      const { id } = routeTo.params;
+      store.dispatch("fetchUser", id).then(() => {
+        NProgress.done();
+        next();
+      });
     }
   },
   {

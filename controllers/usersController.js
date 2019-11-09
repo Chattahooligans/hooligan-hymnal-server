@@ -10,9 +10,11 @@ let tokenList = {};
 
 module.exports = app => {
   app.post("/api/users/register", (req, res) => {
-    let { email, password } = req.body;
-    email = email.toLowerCase();
+    let { email, password, name, familyName, displayName } = req.body;
     const newUser = new User({
+      name,
+      familyName,
+      displayName,
       email,
       password
     });
@@ -28,55 +30,66 @@ module.exports = app => {
     });
   });
 
-  app.post("/api/users/login", (req, res) => {
+  app.post("/api/users/login", async (req, res) => {
     let { email, password, rememberMe } = req.body;
     email = email.toLowerCase();
-    User.findOne({ email: email }, "+password", (err, user) => {
-      if (!user) {
-        return res.status(404).json({
-          message: "User not found"
-        });
+    let loginTime = Date.now();
+    let user = await User.findOneAndUpdate(
+      { email: email },
+      {
+        $set: {
+          lastLogin: loginTime
+        }
       }
-      if (password) {
-        bcryptjs.compare(password, user.password, (err, isMatch) => {
-          if (isMatch) {
-            const payload = { id: user._id };
-            const secretOrKey = process.env.SECRET_KEY;
-            const tokenExpires = `${process.env.TOKEN_EXPIRES}` || "1h";
-            const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
-            const refreshExpires =
-              `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
-            let token = jwt.sign(payload, secretOrKey, {
-              expiresIn: tokenExpires
-            });
-            const refreshToken = jwt.sign(payload, refreshSecretOrKey, {
-              expiresIn: refreshExpires
-            });
-            user = {
-              id: user.id,
-              email: user.email,
-              foesAllowed: user.foesAllowed,
-              pushNotificationsAllowed: user.pushNotificationsAllowed,
-              rosterAllowed: user.rosterAllowed,
-              songbookAllowed: user.songbookAllowed,
-              usersAllowed: user.usersAllowed
-            };
-            if (rememberMe) {
-              token = refreshToken;
-            }
-            return res.status(200).send({ token, user, rememberMe });
-          } else {
-            return res
-              .status(400)
-              .send({ message: "Incorrect Password. Please try again." });
+    )
+      .select("+password")
+      .exec();
+    if (!user) {
+      return res.status(400).send({ message: "Something happend." });
+    }
+    if (password) {
+      bcryptjs.compare(password, user.password, (err, isMatch) => {
+        if (isMatch) {
+          const payload = {
+            id: user._id
+          };
+          const secretOrKey = process.env.SECRET_KEY;
+          const tokenExpires = `${process.env.TOKEN_EXPIRES}` || "1h";
+          const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
+          const refreshExpires = `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
+          let token = jwt.sign(payload, secretOrKey, {
+            expiresIn: tokenExpires
+          });
+          const refreshToken = jwt.sign(payload, refreshSecretOrKey, {
+            expiresIn: refreshExpires
+          });
+          user = {
+            id: user.id,
+            email: user.email,
+            foesAllowed: user.foesAllowed,
+            pushNotificationsAllowed: user.pushNotificationsAllowed,
+            rosterAllowed: user.rosterAllowed,
+            songbookAllowed: user.songbookAllowed,
+            usersAllowed: user.usersAllowed
+          };
+          if (rememberMe) {
+            token = refreshToken;
           }
-        });
-      } else {
-        return res
-          .send(422)
-          .json({ message: "Password was incorrect or wasn't provided" });
-      }
-    });
+          return res.status(200).send({
+            token,
+            user
+          });
+        } else {
+          return res
+            .status(400)
+            .send({ message: "Incorrect Password. Please try again." });
+        }
+      });
+    } else {
+      return res
+        .send(422)
+        .json({ message: "Password was incorrect or wasn't provided" });
+    }
   });
 
   app.get(
@@ -85,6 +98,8 @@ module.exports = app => {
     (req, res) => {
       const {
         email,
+        name,
+        familyName,
         foesAllowed,
         songbookAllowed,
         rosterAllowed,
@@ -94,6 +109,8 @@ module.exports = app => {
       res.json({
         user: {
           email,
+          name,
+          familyName,
           foesAllowed,
           songbookAllowed,
           rosterAllowed,
@@ -143,13 +160,20 @@ module.exports = app => {
     "/api/users",
     passport.authenticate("jwt", { session: false }),
     permissionsMiddleware("usersAllowed"),
-    (req, res) => {
+    async (req, res) => {
       const { email } = req.user;
-      User.find({ email: { $ne: email } }, "-__v", (err, users) => {
+      const { role } = req.query;
+      const users = User.find({}, "-__v +lastLogin").where({
+        email: { $ne: email }
+      });
+      if (role) {
+        users.where(role, true);
+      }
+      users.exec((err, users) => {
         if (err) {
-          res.json({ message: "Something happend" });
+          return res.json({ message: err });
         }
-        res.json(users);
+        return res.send(users);
       });
     }
   );
@@ -161,6 +185,9 @@ module.exports = app => {
     (req, res) => {
       const {
         email,
+        name,
+        familyName,
+        displayName,
         password,
         songbookAllowed,
         rosterAllowed,
@@ -170,6 +197,9 @@ module.exports = app => {
       } = req.body;
       const newUser = new User({
         email,
+        name,
+        familyName,
+        displayName,
         password
       });
       newUser.songbookAllowed = songbookAllowed;
@@ -180,7 +210,8 @@ module.exports = app => {
 
       User.createUser(newUser, (error, user) => {
         if (error) {
-          res.status(422).json({
+          return res.status(422).json({
+            // error
             message: `Something happened... Please verify they don't already have an account: ${email}`
           });
         }
@@ -196,9 +227,9 @@ module.exports = app => {
           },
           (err, user) => {
             if (err) {
-              res.status(422).json({ message: err });
+              return res.status(422).json({ message: err });
             }
-            res.json(user);
+            return res.json(user);
           }
         );
       });
