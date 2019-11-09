@@ -59,6 +59,7 @@ library.add(
   faRedo,
   faSort
 );
+import VueMoment from "vue-moment";
 
 Vue.use(VueCompositionApi);
 Vue.use(VueSweetalert2);
@@ -72,6 +73,7 @@ Vue.component("BaseSelect", BaseSelect);
 Vue.use(VueFormGenerator);
 Vue.use(VueMeta);
 Vue.component("vue-ads-table-tree", VueAdsTable);
+Vue.use(VueMoment);
 
 new Vue({
   created() {
