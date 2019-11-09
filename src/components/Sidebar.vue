@@ -1,6 +1,6 @@
 <template>
   <aside
-    class="bg-gray-300 -mx-3 px-3 py-4 md:w-64 sm:w-100 md:block"
+    class="bg-gray-300 px-3 py-4 md:w-64 sm:w-100 md:block"
     v-if="loggedIn"
   >
     <nav class="flex flex-col -mx-3 md:block hidden">

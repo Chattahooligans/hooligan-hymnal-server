@@ -275,6 +275,5 @@ if (userString) {
   store.commit("SET_USER_DATA", userData);
   store.dispatch("authCheck");
 }
-axios.defaults.headers.common["x-api-key"] = process.env.VUE_APP_API_KEY;
 
 export default store;

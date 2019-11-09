@@ -26,6 +26,7 @@
         height="280"
         width="100"
         :value="value"
+        :autocomplete="autocomplete"
         @input="updateValue"
       ></textarea>
     </fragment>
@@ -58,7 +59,7 @@ export default {
       type: String
     },
     autocomplete: {
-      type: Boolean
+      type: [String, Boolean]
     },
     autofocus: {
       type: Boolean
