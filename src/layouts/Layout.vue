@@ -8,7 +8,7 @@
       >
         Skip To Content
       </button>
-      <div class="mx-3 flex flex-row justify-between">
+      <div class="px-3 flex flex-row justify-between">
         <router-link to="/">Hymnal Server</router-link>
         <nav>
           <template v-if="loggedIn">
@@ -23,9 +23,9 @@
         </nav>
       </div>
     </header>
-    <section class="mx-3 flex flex-col md:flex-row min-h-screen h-full">
+    <section class="flex flex-col md:flex-row min-h-screen h-full">
       <Sidebar />
-      <main id="main" :class="{ 'ml-6': loggedIn }" class="w-full">
+      <main id="main" :class="{ 'md:ml-6 px-3': loggedIn }" class="w-full">
         <slot />
       </main>
     </section>

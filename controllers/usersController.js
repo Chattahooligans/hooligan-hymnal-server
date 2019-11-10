@@ -30,6 +30,12 @@ module.exports = app => {
     });
   });
 
+  const generateToken = (payload, key, expires) => {
+    return jwt.sign(payload, key, {
+      expiresIn: expires
+    });
+  };
+
   app.post("/api/users/login", async (req, res) => {
     let { email, password, rememberMe } = req.body;
     email = email.toLowerCase();
@@ -57,12 +63,12 @@ module.exports = app => {
           const tokenExpires = `${process.env.TOKEN_EXPIRES}` || "1h";
           const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
           const refreshExpires = `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
-          let token = jwt.sign(payload, secretOrKey, {
-            expiresIn: tokenExpires
-          });
-          const refreshToken = jwt.sign(payload, refreshSecretOrKey, {
-            expiresIn: refreshExpires
-          });
+          let token = generateToken(payload, secretOrKey, tokenExpires);
+          let refreshToken = generateToken(
+            payload,
+            refreshSecretOrKey,
+            refreshExpires
+          );
           user = {
             id: user.id,
             email: user.email,
@@ -74,9 +80,15 @@ module.exports = app => {
           };
           if (rememberMe) {
             token = refreshToken;
+            refreshToken = generateToken(
+              payload,
+              refreshSecretOrKey,
+              refreshExpires
+            );
           }
           return res.status(200).send({
             token,
+            refreshToken,
             user
           });
         } else {
@@ -195,7 +207,7 @@ module.exports = app => {
         usersAllowed,
         pushNotificationsAllowed
       } = req.body;
-      const newUser = new User({
+      let newUser = new User({
         email,
         name,
         familyName,
@@ -208,31 +220,25 @@ module.exports = app => {
       newUser.usersAllowed = usersAllowed;
       newUser.pushNotificationsAllowed = pushNotificationsAllowed;
 
-      User.createUser(newUser, (error, user) => {
-        if (error) {
-          return res.status(422).json({
-            // error
-            message: `Something happened... Please verify they don't already have an account: ${email}`
-          });
-        }
-        User.findByIdAndUpdate(
-          user.id,
-          {
-            ...user,
+      User.create(newUser)
+        .then(user => {
+          User.findByIdAndUpdate(user._id, {
             songbookAllowed,
             rosterAllowed,
             foesAllowed,
             usersAllowed,
             pushNotificationsAllowed
-          },
-          (err, user) => {
-            if (err) {
-              return res.status(422).json({ message: err });
-            }
-            return res.json(user);
-          }
-        );
-      });
+          })
+            .then(user => {
+              return res.send(user);
+            })
+            .catch(err => {
+              return res.status(422).send(err);
+            });
+        })
+        .catch(err => {
+          return res.status(422).send(err);
+        });
     }
   );
 
@@ -242,7 +248,7 @@ module.exports = app => {
     permissionsMiddleware("usersAllowed"),
     (req, res) => {
       const { id } = req.params;
-      User.findOne({ _id: id }, (err, user) => {
+      User.findOne({ _id: id }, "+password", (err, user) => {
         if (!user) {
           res.status(404).send({ message: "User doesn't exist" });
         }
@@ -303,7 +309,7 @@ module.exports = app => {
               if (err) {
                 return res.send(err);
               }
-              user.passport = hash;
+              user.password = hash;
               user.save(res.send({ message: "Password succefully updated!" }));
             });
           });

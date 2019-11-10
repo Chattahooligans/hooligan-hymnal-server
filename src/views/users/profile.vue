@@ -4,7 +4,7 @@
     <div>
       <h3 class="font-semibold text-xl pb-2 mb-3 border-b">Update Password</h3>
       <div class="rounded shadow p-3">
-        <form @submit.prevent="updatePassword">
+        <form ref="passwordForm" @submit.prevent="updatePassword">
           <div class="flex flex-col mb-3">
             <BaseInput
               type="password"
@@ -89,9 +89,14 @@ export default {
           newPassword: this.newPassword,
           confirmNewPassword: this.confirmNewPassword
         })
-        .then(res => {
+        .then(() => {
           NProgress.done();
-          console.log(res);
+          this.$swal({
+            title: "Password successfully updated!",
+            type: "success"
+          }).then(() => {
+            this.$refs.passwordForm.reset();
+          });
         })
         .catch(err => {
           NProgress.done();
