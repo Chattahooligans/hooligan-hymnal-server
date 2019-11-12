@@ -64,11 +64,11 @@ module.exports = app => {
           const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
           const refreshExpires = `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
           let token = generateToken(payload, secretOrKey, tokenExpires);
-          let refreshToken = generateToken(
-            payload,
-            refreshSecretOrKey,
-            refreshExpires
-          );
+          // let refreshToken = generateToken(
+          //   payload,
+          //   refreshSecretOrKey,
+          //   refreshExpires
+          // );
           user = {
             id: user.id,
             email: user.email,
@@ -79,16 +79,10 @@ module.exports = app => {
             usersAllowed: user.usersAllowed
           };
           if (rememberMe) {
-            token = refreshToken;
-            refreshToken = generateToken(
-              payload,
-              refreshSecretOrKey,
-              refreshExpires
-            );
+            token = generateToken(payload, secretOrKey, refreshExpires);
           }
           return res.status(200).send({
             token,
-            refreshToken,
             user
           });
         } else {
