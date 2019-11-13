@@ -8,12 +8,10 @@ module.exports = new mongoose.Schema(
     squadNumber: String,
     position: String,
     team: String,
-    bio: String,
-    // TODO: WIll update this in the morning.
-    // bio: {
-    //   type: Map,
-    //   of: String
-    // },
+    bio: {
+      type: Map,
+      of: String
+    },
     thumbnail: String,
     image: String,
     twitter: String,

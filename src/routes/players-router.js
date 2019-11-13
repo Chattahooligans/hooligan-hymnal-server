@@ -28,8 +28,10 @@ export default [
     },
     beforeEnter(to, from, next) {
       NProgress.start();
-      NProgress.done();
-      next();
+      store.dispatch("fetchInputLanguges").then(() => {
+        NProgress.done();
+        next();
+      });
     }
   },
   {

@@ -62,11 +62,26 @@
         />
       </div>
       <div class="mb-3 flex flex-col">
+        <ul class="m-0 p-0 list-none flex">
+          <li
+            class="p-0 block flex-1 flex"
+            v-for="(lang, i) in input_languages"
+            :key="i"
+          >
+            <button
+              class="block flex-1"
+              type="button"
+              @click="selectLang(lang)"
+            >
+              {{ lang }}
+            </button>
+          </li>
+        </ul>
         <BaseInput
           type="textarea"
-          label="Bio"
+          :label="`Bio ${selectedLang.toUpperCase()}`"
           name="bio"
-          v-model="player.bio"
+          v-model="player.bio[selectedLang]"
         />
         <!-- <base-rich-text label="Bio" v-model="player.bio" /> -->
       </div>
@@ -153,6 +168,40 @@
           v-model="player.instagram"
         />
       </div>
+      <!-- <div class="mb-3 flex flex-col"> -->
+      <!-- <label for="Bios">Bios</label> -->
+      <!-- <template v-if="bios">
+          <ul>
+            <li v-for="(lang, index) in input_languages" :key="index">
+              <button type="button" @click="selectLang(lang)">
+                {{ lang }}
+              </button>
+            </li>
+          </ul>
+          <div>
+            <textarea
+              v-if="selectedLang"
+              v-model="bios[selectedLang]"
+            ></textarea>
+          </div>
+        </template> -->
+      <!-- <textarea></textarea> -->
+      <!-- </div>
+      <div class="mb-3 flex flex-col">
+        <div>
+          <button
+            @click="addLanguage"
+            class="btn bg-orange-700 text-white"
+            type="button"
+          >
+            Add Language
+          </button>
+        </div>
+        <div v-show="toggleLang">
+          <input type="text" placeholder="Lang" v-model="lang" />
+          <button type="button" @click="updateLang">Update Lang</button>
+        </div>
+      </div> -->
       <div class="mb-3">
         <button class="px-3 py-2 bg-blue-700 text-white rounded mr-3">
           Add {{ player.name ? player.name : "Player" }}
@@ -172,6 +221,7 @@
 <script>
 import axios from "axios";
 import NProgress from "nprogress";
+import { mapGetters } from "vuex";
 
 export default {
   data() {
@@ -182,12 +232,16 @@ export default {
         squadNumber: "",
         position: "",
         team: "",
-        bio: "",
+        bio: {},
         thumbnail: null,
         image: "",
         twitter: "",
         instagram: ""
       },
+      toggleLang: false,
+      lang: "",
+      // bios: {},
+      selectedLang: "",
       uploading: false,
       thumbnail_public_id: null,
       thumbnail: null,
@@ -195,7 +249,21 @@ export default {
       image_public_id: null
     };
   },
+  mounted() {
+    this.selectedLang = this.input_languages[0];
+  },
   methods: {
+    addLanguage() {
+      this.toggleLang = !this.toggleLang;
+    },
+    updateLang() {
+      this.bios[this.lang] = "";
+      this.toggleLang = false;
+      this.lang = "";
+    },
+    selectLang(lang) {
+      this.selectedLang = lang;
+    },
     addPlayer() {
       axios
         .post(`/api/players`, this.player)
@@ -211,7 +279,7 @@ export default {
         squadNumber: "",
         position: "",
         team: "",
-        bio: "",
+        bio: {},
         thumbnail: "",
         image: "",
         twitter: "",
@@ -275,6 +343,14 @@ export default {
           this.uploading = false;
           console.log(err.response);
         });
+    }
+  },
+  computed: {
+    ...mapGetters(["input_languages"])
+  },
+  watch: {
+    bios: function() {
+      return this.bios.length;
     }
   }
 };
