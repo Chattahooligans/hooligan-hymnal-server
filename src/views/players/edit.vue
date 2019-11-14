@@ -60,13 +60,29 @@
         />
       </div>
       <div class="mb-3 flex flex-col">
+        <fragment v-if="input_languages.length >= 1">
+          <ul class="m-0 p-0 list-none flex">
+            <li
+              class="flex-1 flex"
+              v-for="(lang, i) in input_languages"
+              :key="i"
+            >
+              <button
+                type="button"
+                @click="selectLanguage(lang)"
+                class="block flex-1"
+              >
+                {{ lang }}
+              </button>
+            </li>
+          </ul>
+        </fragment>
         <BaseInput
           type="textarea"
           name="bio"
-          label="Bio"
-          v-model="player.bio"
+          :label="`Bio ${selectedLanguage.toUpperCase()}`"
+          v-model="player.bio[selectedLanguage]"
         />
-        <!-- <base-rich-text label="Bio" v-model="player.bio" /> -->
       </div>
       <div class="mb-3 flex flex-col">
         <label for="image" class="font-semibold mb-3">Thumbnail</label>
@@ -95,14 +111,6 @@
             Upload Thumbnail
           </button>
         </div>
-        <!-- <BaseInput
-          type="url"
-          name="thumbnail"
-          label="Thumbnail"
-          placeholder="Thumbnail URL"
-          arPlaceholder="Player Thumbnail URL"
-          v-model="player.thumbnail"
-        /> -->
       </div>
       <div class="mb-3 flex flex-col">
         <label for="image">Image</label>
@@ -130,14 +138,6 @@
             Upload Image
           </button>
         </div>
-        <!-- <BaseInput
-          type="url"
-          name="image"
-          label="Image"
-          placeholder="Image URL"
-          arPlaceholder="Player full image url"
-          v-model="player.image"
-        /> -->
       </div>
       <div class="mb-3 flex flex-col">
         <BaseInput
@@ -188,10 +188,14 @@ export default {
     return {
       thumbnail: null,
       uploading: false,
-      image: null
+      image: null,
+      selectedLanguage: "en"
     };
   },
   methods: {
+    selectLanguage(lang) {
+      this.selectedLanguage = lang;
+    },
     updatePlayer() {
       axios
         .put(`/api/players/${this.player._id}`, this.player)
@@ -266,7 +270,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["player"]),
+    ...mapGetters(["player", "input_languages"]),
     thumbnail_public_id() {
       if (this.player.thumbnail) {
         return this.player.thumbnail.split("/").reverse()[1];

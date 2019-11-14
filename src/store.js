@@ -33,7 +33,8 @@ const store = new Vuex.Store({
     notifications: null,
     notification: null,
     latestNotification: null,
-    profile: null
+    profile: null,
+    input_languages: null
   },
   mutations: {
     SET_API_KEY(state, key) {
@@ -106,6 +107,9 @@ const store = new Vuex.Store({
     },
     SET_SINGLE_USER(state, data) {
       state.single_user = data;
+    },
+    SET_INPUT_LANGUAGES(state, data) {
+      state.input_languages = data;
     }
   },
   actions: {
@@ -229,6 +233,11 @@ const store = new Vuex.Store({
       return axios.get(`/api/users/me`).then(() => {
         return true;
       });
+    },
+    fetchInputLanguges({ commit }) {
+      return axios.get(`/api/i18n-settings`).then(({ data }) => {
+        commit("SET_INPUT_LANGUAGES", data);
+      });
     }
   },
   getters: {
@@ -249,7 +258,8 @@ const store = new Vuex.Store({
     rosters: state => state.rosters,
     roster: state => state.roster,
     users: state => state.users,
-    single_user: state => state.single_user
+    single_user: state => state.single_user,
+    input_languages: state => state.input_languages
   }
 });
 if (process.env.NODE_ENV !== "production") {

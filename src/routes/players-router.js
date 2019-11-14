@@ -28,8 +28,10 @@ export default [
     },
     beforeEnter(to, from, next) {
       NProgress.start();
-      NProgress.done();
-      next();
+      store.dispatch("fetchInputLanguges").then(() => {
+        NProgress.done();
+        next();
+      });
     }
   },
   {
@@ -44,8 +46,12 @@ export default [
       const { id } = to.params;
       NProgress.start();
       store.dispatch("fetchPlayer", id).then(() => {
-        NProgress.done();
-        next();
+        store.dispatch("fetchInputLanguges").then(() => {
+          NProgress.done();
+          next();
+        });
+        // NProgress.done();
+        // next();
       });
     }
   },
@@ -61,8 +67,10 @@ export default [
       NProgress.start();
       const { id } = to.params;
       store.dispatch("fetchPlayer", id).then(() => {
-        NProgress.done();
-        next();
+        store.dispatch("fetchInputLanguges").then(() => {
+          NProgress.done();
+          next();
+        });
       });
     }
   }
