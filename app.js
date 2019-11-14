@@ -16,6 +16,8 @@ var User = require("./models/users");
 var helmet = require("helmet");
 var fileUpload = require("express-fileupload");
 
+var Player = require("./models/players");
+
 env.config();
 
 var secretOrKey = process.env.SECRET_KEY || "NOTsoSECRETkey";
@@ -98,6 +100,35 @@ mongoose
     process.exit(1);
   });
 mongoose.set("useFindAndModify", false);
+
+function updateBios() {
+  Player.find((err, players) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+      return;
+    }
+    players.forEach(function(player) {
+      if (!player.bio.get("en")) {
+        let string = "";
+        player.bio.forEach(function(el) {
+          string = string + el;
+        });
+        player.bio = { en: string };
+        player.updateOne(player, (err, player) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+          return;
+        });
+      }
+      return;
+    });
+  });
+}
+// Uncomment this to update playersBios
+// updateBios();
 
 // Autoloads all controllers in directory
 fs.readdirSync("controllers").forEach(function(file) {

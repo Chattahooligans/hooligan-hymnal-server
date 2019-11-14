@@ -21,10 +21,38 @@
     </div>
     <div>
       <h3>Bio</h3>
-      <div v-html="player.bio" />
+      <fragment v-if="input_languages.length > 1">
+        <ul class="m-0 p-0 list-none flex">
+          <li
+            class="p-0 flex flex-1"
+            v-for="(lang, i) in input_languages"
+            :key="i"
+          >
+            <button type="button" @click="selectLang(lang)">
+              {{ lang }}
+            </button>
+          </li>
+        </ul>
+      </fragment>
+      <div>
+        {{
+          player.bio[selectedLang]
+            ? player.bio[selectedLang]
+            : "No bio in selected lang"
+        }}
+      </div>
+      <!-- <div
+        v-html="
+          player.bio[selectedLang].length
+            ? player.bio[selectedLang]
+            : 'No bio in selected lang'
+        "
+      /> -->
     </div>
-    <div>
-      <button @click="deletePlayer">Delete {{ player.name }}</button>
+    <div class="mt-3 mb-3">
+      <button class="btn bg-red-700 text-white" @click="deletePlayer">
+        Delete {{ player.name }}
+      </button>
     </div>
   </Layout>
 </template>
@@ -34,15 +62,21 @@ import { mapGetters } from "vuex";
 import axios from "axios";
 
 export default {
+  data() {
+    return {
+      selectedLang: "en"
+    };
+  },
   methods: {
+    selectLang(lang) {
+      this.selectedLang = lang;
+    },
     deletePlayer() {
       const { id } = this.$route.params;
       this.$swal({
         title: `Are you sure you want to delete?`,
         text: `${this.player.name}`,
-        icon: "warning",
-        buttons: true,
-        dangerMode: true
+        type: "warning"
       }).then(willDelete => {
         if (willDelete) {
           axios.delete(`/api/players/${id}`).then(res => {
@@ -52,14 +86,12 @@ export default {
             // //   title: `${this.player.name} was deleted succesfully`
             // // });
           });
-        } else {
-          console.log("cancel");
         }
       });
     }
   },
   computed: {
-    ...mapGetters(["player"])
+    ...mapGetters(["player", "input_languages"])
   }
 };
 </script>
