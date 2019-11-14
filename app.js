@@ -101,6 +101,7 @@ mongoose
   });
 mongoose.set("useFindAndModify", false);
 
+// TODO: REMOVE THIS ONCE ALL MIGRATED!!
 function updateBios() {
   Player.find((err, players) => {
     if (err) {
@@ -128,7 +129,8 @@ function updateBios() {
   });
 }
 // Uncomment this to update playersBios
-// updateBios();
+updateBios();
+// TODO: REMOVE THIS ONCE ALL MIGRATED!!
 
 // Autoloads all controllers in directory
 fs.readdirSync("controllers").forEach(function(file) {
