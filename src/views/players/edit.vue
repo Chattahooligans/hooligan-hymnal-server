@@ -141,7 +141,7 @@
       </div>
       <div class="mb-3 flex flex-col">
         <BaseInput
-          type="url"
+          type="text"
           name="twitter"
           label="Twitter"
           placeholder="Twitter URL"
@@ -151,7 +151,7 @@
       </div>
       <div class="mb-3 flex flex-col">
         <BaseInput
-          type="url"
+          type="text"
           name="instagram"
           label="Instagram"
           placeholder="Instagram URL"
