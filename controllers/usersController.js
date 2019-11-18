@@ -11,6 +11,7 @@ let tokenList = {};
 module.exports = app => {
   app.post("/api/users/register", (req, res) => {
     let { email, password, name, familyName, displayName } = req.body;
+    email = email.toLowerCase();
     const newUser = new User({
       name,
       familyName,
