@@ -3,33 +3,97 @@ const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcrypt");
 const passport = require("passport");
 const permissionsMiddleware = require("../middleware/PermissionsMiddleware");
-const { check, validationResult } = require("express-validator");
+const { body, check, validationResult } = require("express-validator");
 
 // Might need to implement a redis setup eventually...
 let tokenList = {};
 
 module.exports = app => {
-  app.post("/api/users/register", (req, res) => {
-    let { email, password, name, familyName, displayName } = req.body;
-    email = email.toLowerCase();
-    const newUser = new User({
-      name,
-      familyName,
-      displayName,
-      email,
-      password
-    });
-
-    User.createUser(newUser, (error, user) => {
-      if (error) {
-        return res.status(422).json({
-          message:
-            "Something happened... please check that you don't already have an account otherwise try again later"
-        });
+  app.post(
+    "/api/users/register",
+    [
+      check("email")
+        .trim()
+        .not()
+        .isEmpty()
+        .withMessage("Please provide an email address")
+        .isEmail()
+        .withMessage("Please provide a valid email address")
+        .normalizeEmail()
+        .custom(value => {
+          return User.findOne({ email: value }).then(user => {
+            if (user) {
+              return Promise.reject("Email is already in uses");
+            }
+          });
+        }),
+      check("password")
+        .trim()
+        .not()
+        .isEmpty()
+        .withMessage("Please provide a password")
+        .isLength({ min: 6, max: 255 })
+        .withMessage(
+          "Please make sure your password is between 6 and 255 charaters"
+        ),
+      check("passwordConfirm")
+        .not()
+        .isEmpty()
+        .trim()
+        .custom((value, { req }) => {
+          if (value !== req.body.password) {
+            throw new Error("Password confirmation does not match password");
+          }
+          return true;
+        }),
+      check("name")
+        .not()
+        .isEmpty()
+        .trim()
+        .withMessage("Please provide a first name"),
+      check("familyName")
+        .not()
+        .isEmpty()
+        .trim()
+        .withMessage("Please provide a last name"),
+      check("displayName")
+        .not()
+        .isEmpty()
+        .trim()
+        .withMessage("Please provide a display name")
+        .custom(value => {
+          return User.findOne({ displayName: value }).then(user => {
+            if (user) {
+              return Promise.reject("Display name already in uses");
+            }
+          });
+        })
+    ],
+    (req, res) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(422).send({ errors: errors.array() });
       }
-      return res.json({ message: "User created please login", user });
-    });
-  });
+      let { email, password, name, familyName, displayName } = req.body;
+      const newUser = new User({
+        name,
+        familyName,
+        displayName,
+        email,
+        password
+      });
+
+      User.createUser(newUser, (error, user) => {
+        if (error) {
+          return res.status(422).json({
+            message:
+              "Something happened... please check that you don't already have an account otherwise try again later"
+          });
+        }
+        return res.json({ message: "User created please login", user });
+      });
+    }
+  );
 
   const generateToken = (payload, key, expires) => {
     return jwt.sign(payload, key, {
@@ -37,67 +101,85 @@ module.exports = app => {
     });
   };
 
-  app.post("/api/users/login", async (req, res) => {
-    let { email, password, rememberMe } = req.body;
-    email = email.toLowerCase();
-    let loginTime = Date.now();
-    let user = await User.findOneAndUpdate(
-      { email: email },
-      {
-        $set: {
-          lastLogin: loginTime
-        }
+  app.post(
+    "/api/users/login",
+    [
+      check("email")
+        .not()
+        .isEmpty()
+        .withMessage("Email is required to login")
+        .trim()
+        .isEmail()
+        .withMessage("Please provide a valid email address")
+        .normalizeEmail(),
+      check("password")
+        .not()
+        .isEmpty()
+        .withMessage("Password required to login")
+        .trim()
+    ],
+    async (req, res) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(422).send({
+          errors: errors.array()
+        });
       }
-    )
-      .select("+password")
-      .exec();
-    if (!user) {
-      return res.status(400).send({ message: "Something happend." });
-    }
-    if (password) {
-      bcryptjs.compare(password, user.password, (err, isMatch) => {
-        if (isMatch) {
-          const payload = {
-            id: user._id
-          };
-          const secretOrKey = process.env.SECRET_KEY;
-          const tokenExpires = `${process.env.TOKEN_EXPIRES}` || "1h";
-          const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
-          const refreshExpires = `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
-          let token = generateToken(payload, secretOrKey, tokenExpires);
-          // let refreshToken = generateToken(
-          //   payload,
-          //   refreshSecretOrKey,
-          //   refreshExpires
-          // );
-          user = {
-            id: user.id,
-            email: user.email,
-            foesAllowed: user.foesAllowed,
-            pushNotificationsAllowed: user.pushNotificationsAllowed,
-            rosterAllowed: user.rosterAllowed,
-            songbookAllowed: user.songbookAllowed,
-            usersAllowed: user.usersAllowed
-          };
-          if (rememberMe) {
-            token = generateToken(payload, secretOrKey, refreshExpires);
+      let { email, password, rememberMe } = req.body;
+      let loginTime = Date.now();
+      let user = await User.findOneAndUpdate(
+        { email: email },
+        {
+          $set: {
+            lastLogin: loginTime
           }
-          return res.status(200).send({
-            token,
-            user
-          });
-        } else {
-          return res
-            .status(400)
-            .send({ message: "Incorrect Password. Please try again." });
         }
-      });
-    } else {
-      return res
-        .send(422)
-        .json({ message: "Password was incorrect or wasn't provided" });
+      )
+        .select("+password")
+        .exec();
+      if (!user) {
+        return res.status(400).send({ message: "Something happend." });
+      }
+      if (password) {
+        bcryptjs.compare(password, user.password, (err, isMatch) => {
+          if (isMatch) {
+            const payload = {
+              id: user._id
+            };
+            const secretOrKey = process.env.SECRET_KEY;
+            const tokenExpires = `${process.env.TOKEN_EXPIRES}` || "1h";
+            const refreshExpires =
+              `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
+            let token = generateToken(payload, secretOrKey, tokenExpires);
+            user = {
+              id: user.id,
+              email: user.email,
+              foesAllowed: user.foesAllowed,
+              pushNotificationsAllowed: user.pushNotificationsAllowed,
+              rosterAllowed: user.rosterAllowed,
+              songbookAllowed: user.songbookAllowed,
+              usersAllowed: user.usersAllowed
+            };
+            if (rememberMe) {
+              token = generateToken(payload, secretOrKey, refreshExpires);
+            }
+            return res.status(200).send({
+              token,
+              user
+            });
+          } else {
+            return res
+              .status(400)
+              .send({ message: "Incorrect Password. Please try again." });
+          }
+        });
+      } else {
+        return res
+          .send(422)
+          .json({ message: "Password was incorrect or wasn't provided" });
+      }
     }
-  });
+  );
 
   app.get(
     "/api/users/me",
@@ -127,32 +209,6 @@ module.exports = app => {
       });
     }
   );
-
-  // app.post("/api/users/refresh", (req, res) => {
-  //   const { refreshToken } = req.body;
-  //   if (refreshToken && refreshToken in tokenList) {
-  //     const refToken = jwt.decode(refreshToken);
-  //     User.findById(refToken.id, (err, user) => {
-  //       if (user) {
-  //         const payload = { id: user.id };
-  //         const secretOrKey = process.env.SECRET_KEY || "NOTsoSECRETkey";
-  //         const tokenExpires = process.env.TOKEN_EXPIRES || "1h";
-
-  //         const token = jwt.sign(payload, secretOrKey, {
-  //           expiresIn: tokenExpires
-  //         });
-
-  //         const response = {
-  //           token: token
-  //         };
-  //         tokenList[refreshToken].token = token;
-  //         res.status(200).json(response);
-  //       }
-  //     });
-  //   } else {
-  //     res.status(404).send("Invalid please log back in");
-  //   }
-  // });
 
   app.post(
     "/api/users/logout",
@@ -284,10 +340,26 @@ module.exports = app => {
 
   app.put(
     "/api/users/:id/reset-password",
+    [
+      check("password")
+        .not()
+        .isEmpty()
+        .withMessage("Please provide a password")
+        .trim(),
+      check("newPassword")
+        .not()
+        .isEmpty()
+        .withMessage("Please provide a new password")
+        .trim()
+    ],
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
       const { id } = req.user;
       const { password, newPassword } = req.body;
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(422).send({ errors: errors.array() });
+      }
       User.findById(id, "+password", (err, user) => {
         if (err) {
           return res.send(err);

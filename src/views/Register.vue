@@ -161,7 +161,8 @@ export default {
             familyName: this.user.familyName,
             email: this.user.email,
             displayName: this.user.displayName,
-            password: this.user.password
+            password: this.user.password,
+            passwordConfirm: this.user.passwordConfirm
           })
           .then(() => {
             this.$swal({
