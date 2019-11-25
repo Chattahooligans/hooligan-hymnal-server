@@ -106,15 +106,19 @@ module.exports = app => {
                 );
               }
             }
-            var tokenMatcher = new RegExp("ExponentPushToken\[.*\]");
+            var tokenMatcher = new RegExp("ExponentPushToken");
             receipts.forEach(receipt => {
               if(receipt.status == "error") {
                 console.log(receipt);
                 //run regex to retrieve token from it
-                let token = tokenMatcher.exec(receipt.message);
-                console.log(token);
-                //if token found, find and delete
-                PushTokens.findOneAndDelete({"pushToken": token});
+                let matches = tokenMatcher.exec(receipt.message);
+                console.log(matches);
+                if(matches.length > 0) {
+                  let i = matches[0].index;
+                  var token = receipt.message.substring(i, i+41);
+                  //if token found, find and delete
+                  PushTokens.findOneAndDelete({"pushToken": token});
+                }
               }
             });
             res.send({
