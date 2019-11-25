@@ -106,11 +106,6 @@ module.exports = app => {
                 );
               }
             }
-            res.send({
-              errors: errors,
-              receipts: receipts,
-              notification: notification
-            });
             var tokenMatcher = new RegExp("ExponentPushToken\[.*\]");
             receipts.forEach(receipt => {
               if(receipt.status == "error") {
@@ -121,7 +116,12 @@ module.exports = app => {
                 //if token found, find and delete
                 PushTokens.findOneAndDelete({"pushToken": token});
               }
-            })
+            });
+            res.send({
+              errors: errors,
+              receipts: receipts,
+              notification: notification
+            });
           });
         } else {
           //no push notification
