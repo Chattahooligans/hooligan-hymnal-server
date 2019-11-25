@@ -116,8 +116,9 @@ module.exports = app => {
                 if(matches.length > 0) {
                   let i = matches[0].index;
                   var token = receipt.message.substring(i, i+41);
+                  console.log(token);
                   //if token found, find and delete
-                  PushTokens.findOneAndDelete({"pushToken": token});
+                  console.log(PushTokens.deleteOne({"pushToken": token}));
                 }
               }
             });
