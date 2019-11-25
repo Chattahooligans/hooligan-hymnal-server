@@ -114,7 +114,7 @@ module.exports = app => {
                 let matches = tokenMatcher.exec(receipt.message);
                 console.log(matches);
                 if(matches.length > 0) {
-                  let i = matches[0].index;
+                  let i = matches.index;
                   var token = receipt.message.substring(i, i+41);
                   console.log(token);
                   //if token found, find and delete
