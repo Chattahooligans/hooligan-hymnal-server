@@ -6,8 +6,9 @@
           <h1 class="text-2xl font-bold mb-3">Login</h1>
         </div>
         <div class="p-3">
-          <form @submit.prevent="login">
-            <div class="flex flex-col mb-3">
+          <ValidationObserver ref="form" v-slot="{ passes }">
+            <form @submit.prevent="login">
+              <!-- <div class="flex flex-col mb-3"> -->
               <BaseInput
                 type="email"
                 name="email"
@@ -17,10 +18,11 @@
                 :autocomplete="true"
                 :autofocus="true"
                 :required="true"
+                :rules="'required|email'"
                 v-model="email"
               />
-            </div>
-            <div class="flex flex-col mb-3">
+              <!-- </div> -->
+              <!-- <div class="flex flex-col mb-3"> -->
               <BaseInput
                 :type="showPassword ? 'text' : 'password'"
                 name="password"
@@ -30,44 +32,45 @@
                 :required="true"
                 v-model="password"
               />
-            </div>
-            <div class="mb-3">
-              <label for="rememberMe"
-                >Remember Me
-                <input
-                  class="ml-2"
-                  type="checkbox"
-                  name="rememberMe"
-                  id="rememberMe"
-                  v-model="rememberMe"
-              /></label>
-            </div>
-            <!-- <div class="mb-3">
-              <label for="showPassword">
-                Show Password
-                <input
-                  type="checkbox"
-                  name="showPassword"
-                  id="showPassword"
-                  class="ml-1"
-                  v-model="showPassword"
-                  @click="
-                    {
-                      showPassword = !!showPassword;
-                    }
-                  "
-                />
-              </label>
-            </div> -->
-            <div>
-              <button
-                class="bg-blue-700 text-white py-2 px-3 rounded"
-                type="submit"
-              >
-                Login
-              </button>
-            </div>
-          </form>
+              <!-- </div> -->
+              <div class="mb-3">
+                <label for="rememberMe"
+                  >Remember Me
+                  <input
+                    class="ml-2"
+                    type="checkbox"
+                    name="rememberMe"
+                    id="rememberMe"
+                    v-model="rememberMe"
+                /></label>
+              </div>
+              <!-- <div class="mb-3">
+                <label for="showPassword">
+                  Show Password
+                  <input
+                    type="checkbox"
+                    name="showPassword"
+                    id="showPassword"
+                    class="ml-1"
+                    v-model="showPassword"
+                    @click="
+                      {
+                        showPassword = !!showPassword;
+                      }
+                    "
+                  />
+                </label>
+              </div> -->
+              <div>
+                <button
+                  class="bg-blue-700 text-white py-2 px-3 rounded"
+                  type="submit"
+                >
+                  Login
+                </button>
+              </div>
+            </form>
+          </ValidationObserver>
           <div class="text-center my-2">
             <router-link class="hover:underline" to="/register"
               >Don't have an account. Register for one here</router-link
@@ -111,12 +114,19 @@ export default {
           this.$router.push("/");
         })
         .catch(err => {
-          this.$swal({
-            title: `${err.response.data.message}`
-          }).then(() => {
-            this.password = "";
-            setTimeout(() => document.getElementById("password").focus(), 500);
-          });
+          if (err.response.data.errors) {
+            this.$refs.form.setErrors(err.response.data.errors);
+          } else {
+            this.$swal({
+              title: `${err.response.data.message}`
+            }).then(() => {
+              this.password = "";
+              setTimeout(
+                () => document.getElementById("password").focus(),
+                500
+              );
+            });
+          }
         });
     }
   }

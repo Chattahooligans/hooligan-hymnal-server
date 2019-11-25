@@ -11,66 +11,38 @@ const { normalizeEmail } = require("validator");
 let tokenList = {};
 
 module.exports = app => {
-  app.post(
-    "/api/users/register",
-    [
-      check("email")
-        .isEmail()
-        .normalizeEmail()
-        .custom(value => {
-          return User.findOne({ email: value }).then(user => {
-            if (user) {
-              return Promise.reject("Email is already in uses");
-            }
-          });
-        }),
-      check("displayName")
-        .trim()
-        .custom(value => {
-          return User.findOne({ displayName: value }).then(user => {
-            if (user) {
-              return Promise.reject("Display name already in uses");
-            }
-          });
-        })
-    ],
-    (req, res) => {
-      const _errors = validationResult(req);
-      if (!_errors.isEmpty()) {
-        return res.status(422).send({ errors: _errors.array() });
-      }
-      const validData = new Validator(req.body, {
-        email: "required|email",
-        password: "required|min:6|max:255|confirmed",
-        password_confirmation: "required",
-        name: "required|alpha",
-        familyName: "required|alpha",
-        displayName: "required"
-      });
-
-      if (validData.fails()) {
-        return res.status(422).send(validData.errors);
-      }
-      let { email, password, name, familyName, displayName } = req.body;
-      const newUser = new User({
-        name,
-        familyName,
-        displayName,
-        email,
-        password
-      });
-
-      User.createUser(newUser, (error, user) => {
-        if (error) {
-          return res.status(422).json({
-            message:
-              "Something happened... please check that you don't already have an account otherwise try again later"
-          });
-        }
-        return res.json({ message: "User created please login", user });
-      });
+  app.post("/api/users/register", (req, res) => {
+    const errors = new Validator(req.body, {
+      email: "required|email",
+      password: "required|confirmed",
+      password_confirmed: "required",
+      name: "required",
+      familyName: "required",
+      displayName: "required"
+    });
+    if (errors.fails()) {
+      return res.status(422).send(errors.errors);
     }
-  );
+    let email = normalizeEmail(req.body.email);
+    let { password, name, familyName, displayName } = req.body;
+    const newUser = new User({
+      name,
+      familyName,
+      displayName,
+      email,
+      password
+    });
+
+    User.createUser(newUser, (error, user) => {
+      if (error) {
+        return res.status(422).json({
+          message:
+            "Something happened... please check that you don't already have an account otherwise try again later"
+        });
+      }
+      return res.json({ message: "User created please login", user });
+    });
+  });
 
   const generateToken = (payload, key, expires) => {
     return jwt.sign(payload, key, {
@@ -78,88 +50,69 @@ module.exports = app => {
     });
   };
 
-  app.post(
-    "/api/users/login",
-    // [
-    //   check("email")
-    //     .not()
-    //     .isEmpty()
-    //     .withMessage("Email is required to login")
-    //     .trim()
-    //     .isEmail()
-    //     .withMessage("Please provide a valid email address")
-    //     .normalizeEmail(),
-    //   check("password")
-    //     .not()
-    //     .isEmpty()
-    //     .withMessage("Password required to login")
-    //     .trim()
-    // ],
-    async (req, res) => {
-      let errors = new Validator(req.body, {
-        email: "required|email",
-        password: "required",
-        rememberMe: "boolean"
-      });
-      if (errors.fails()) {
-        return res.status(422).send(errors.errors);
-      }
-      let { email, password, rememberMe } = req.body;
-      email = normalizeEmail(email);
-      let loginTime = Date.now();
-      let user = await User.findOneAndUpdate(
-        { email: email },
-        {
-          $set: {
-            lastLogin: loginTime
-          }
-        }
-      )
-        .select("+password")
-        .exec();
-      if (!user) {
-        return res.status(400).send({ message: "Something happend." });
-      }
-      if (password) {
-        bcryptjs.compare(password, user.password, (err, isMatch) => {
-          if (isMatch) {
-            const payload = {
-              id: user._id
-            };
-            const secretOrKey = process.env.SECRET_KEY;
-            const tokenExpires = `${process.env.TOKEN_EXPIRES}` || "1h";
-            const refreshExpires =
-              `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
-            let token = generateToken(payload, secretOrKey, tokenExpires);
-            user = {
-              id: user.id,
-              email: user.email,
-              foesAllowed: user.foesAllowed,
-              pushNotificationsAllowed: user.pushNotificationsAllowed,
-              rosterAllowed: user.rosterAllowed,
-              songbookAllowed: user.songbookAllowed,
-              usersAllowed: user.usersAllowed
-            };
-            if (rememberMe) {
-              token = generateToken(payload, secretOrKey, refreshExpires);
-            }
-            return res.status(200).send({
-              token,
-              user
-            });
-          } else {
-            return res
-              .status(400)
-              .send({ message: "Incorrect Password. Please try again." });
-          }
-        });
-      } else {
-        return res
-          .send(422)
-          .json({ message: "Password was incorrect or wasn't provided" });
-      }
+  app.post("/api/users/login", async (req, res) => {
+    let errors = new Validator(req.body, {
+      email: "required|email",
+      password: "required",
+      rememberMe: "boolean"
+    });
+    if (errors.fails()) {
+      return res.status(422).send(errors.errors);
     }
-  );
+    let email = normalizeEmail(req.body.email);
+    let { password, rememberMe } = req.body;
+    let loginTime = Date.now();
+    let user = await User.findOneAndUpdate(
+      { email: email },
+      {
+        $set: {
+          lastLogin: loginTime
+        }
+      }
+    )
+      .select("+password")
+      .exec();
+    if (!user) {
+      return res.status(400).send({ message: "Something happend." });
+    }
+    if (password) {
+      bcryptjs.compare(password, user.password, (err, isMatch) => {
+        if (isMatch) {
+          const payload = {
+            id: user._id
+          };
+          const secretOrKey = process.env.SECRET_KEY;
+          const tokenExpires = `${process.env.TOKEN_EXPIRES}` || "1h";
+          const refreshExpires = `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
+          let token = generateToken(payload, secretOrKey, tokenExpires);
+          user = {
+            id: user.id,
+            email: user.email,
+            foesAllowed: user.foesAllowed,
+            pushNotificationsAllowed: user.pushNotificationsAllowed,
+            rosterAllowed: user.rosterAllowed,
+            songbookAllowed: user.songbookAllowed,
+            usersAllowed: user.usersAllowed
+          };
+          if (rememberMe) {
+            token = generateToken(payload, secretOrKey, refreshExpires);
+          }
+          return res.status(200).send({
+            token,
+            user
+          });
+        } else {
+          return res
+            .status(400)
+            .send({ message: "Incorrect Password. Please try again." });
+        }
+      });
+    } else {
+      return res
+        .send(422)
+        .json({ message: "Password was incorrect or wasn't provided" });
+    }
+  });
 
   app.get(
     "/api/users/me",

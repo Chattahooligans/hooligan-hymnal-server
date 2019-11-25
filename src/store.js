@@ -122,6 +122,7 @@ const store = new Vuex.Store({
       });
     },
     login({ commit }, credentials) {
+      console.log(credentials);
       return axios.post("/api/users/login", credentials).then(({ data }) => {
         commit("SET_USER_DATA", data);
       });

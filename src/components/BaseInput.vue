@@ -21,9 +21,10 @@
           :autofocus="autofocus"
           class="border flex-auto rounded p-2 shadow"
           :class="{ 'border-red-700': errors.length }"
-          v-model="currentValue"
+          :value="value"
+          @input="updateValue"
         />
-        <span>{{ errors[0] }}</span>
+        <small class="text-red-700">{{ errors[0] }}</small>
       </validation-provider>
     </fragment>
     <fragment v-else>
@@ -93,8 +94,9 @@ export default {
     ValidationProvider
   },
   methods: {
-    updateValue(val) {
-      this.$emit("input", val);
+    updateValue(event) {
+      // console.log(event.target.value);
+      this.$emit("input", event.target.value);
     }
   }
 };
