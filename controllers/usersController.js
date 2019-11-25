@@ -4,6 +4,8 @@ const bcryptjs = require("bcrypt");
 const passport = require("passport");
 const permissionsMiddleware = require("../middleware/PermissionsMiddleware");
 const { body, check, validationResult } = require("express-validator");
+const Validator = require("validatorjs");
+const { normalizeEmail } = require("validator");
 
 // Might need to implement a redis setup eventually...
 let tokenList = {};
@@ -13,12 +15,7 @@ module.exports = app => {
     "/api/users/register",
     [
       check("email")
-        .trim()
-        .not()
-        .isEmpty()
-        .withMessage("Please provide an email address")
         .isEmail()
-        .withMessage("Please provide a valid email address")
         .normalizeEmail()
         .custom(value => {
           return User.findOne({ email: value }).then(user => {
@@ -27,40 +24,8 @@ module.exports = app => {
             }
           });
         }),
-      check("password")
-        .trim()
-        .not()
-        .isEmpty()
-        .withMessage("Please provide a password")
-        .isLength({ min: 6, max: 255 })
-        .withMessage(
-          "Please make sure your password is between 6 and 255 charaters"
-        ),
-      check("passwordConfirm")
-        .not()
-        .isEmpty()
-        .trim()
-        .custom((value, { req }) => {
-          if (value !== req.body.password) {
-            throw new Error("Password confirmation does not match password");
-          }
-          return true;
-        }),
-      check("name")
-        .not()
-        .isEmpty()
-        .trim()
-        .withMessage("Please provide a first name"),
-      check("familyName")
-        .not()
-        .isEmpty()
-        .trim()
-        .withMessage("Please provide a last name"),
       check("displayName")
-        .not()
-        .isEmpty()
         .trim()
-        .withMessage("Please provide a display name")
         .custom(value => {
           return User.findOne({ displayName: value }).then(user => {
             if (user) {
@@ -70,9 +35,21 @@ module.exports = app => {
         })
     ],
     (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(422).send({ errors: errors.array() });
+      const _errors = validationResult(req);
+      if (!_errors.isEmpty()) {
+        return res.status(422).send({ errors: _errors.array() });
+      }
+      const validData = new Validator(req.body, {
+        email: "required|email",
+        password: "required|min:6|max:255|confirmed",
+        password_confirmation: "required",
+        name: "required|alpha",
+        familyName: "required|alpha",
+        displayName: "required"
+      });
+
+      if (validData.fails()) {
+        return res.status(422).send(validData.errors);
       }
       let { email, password, name, familyName, displayName } = req.body;
       const newUser = new User({
@@ -103,29 +80,32 @@ module.exports = app => {
 
   app.post(
     "/api/users/login",
-    [
-      check("email")
-        .not()
-        .isEmpty()
-        .withMessage("Email is required to login")
-        .trim()
-        .isEmail()
-        .withMessage("Please provide a valid email address")
-        .normalizeEmail(),
-      check("password")
-        .not()
-        .isEmpty()
-        .withMessage("Password required to login")
-        .trim()
-    ],
+    // [
+    //   check("email")
+    //     .not()
+    //     .isEmpty()
+    //     .withMessage("Email is required to login")
+    //     .trim()
+    //     .isEmail()
+    //     .withMessage("Please provide a valid email address")
+    //     .normalizeEmail(),
+    //   check("password")
+    //     .not()
+    //     .isEmpty()
+    //     .withMessage("Password required to login")
+    //     .trim()
+    // ],
     async (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(422).send({
-          errors: errors.array()
-        });
+      let errors = new Validator(req.body, {
+        email: "required|email",
+        password: "required",
+        rememberMe: "boolean"
+      });
+      if (errors.fails()) {
+        return res.status(422).send(errors.errors);
       }
       let { email, password, rememberMe } = req.body;
+      email = normalizeEmail(email);
       let loginTime = Date.now();
       let user = await User.findOneAndUpdate(
         { email: email },

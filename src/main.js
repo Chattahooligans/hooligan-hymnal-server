@@ -60,6 +60,14 @@ library.add(
   faSort
 );
 import VueMoment from "vue-moment";
+import {
+  ValidationObserver,
+  ValidationProvider,
+  extend,
+  localize
+} from "vee-validate";
+import en from "vee-validate/dist/locale/en.json";
+import * as rules from "vee-validate/dist/rules";
 
 Vue.use(VueCompositionApi);
 Vue.use(VueSweetalert2);
@@ -73,7 +81,15 @@ Vue.component("BaseSelect", BaseSelect);
 Vue.use(VueFormGenerator);
 Vue.use(VueMeta);
 Vue.component("vue-ads-table-tree", VueAdsTable);
+Vue.component("ValidationObserver", ValidationObserver);
+Vue.component("ValidationProvider", ValidationProvider);
 Vue.use(VueMoment);
+
+Object.keys(rules).forEach(rule => {
+  extend(rule, rules[rule]);
+});
+
+localize("en", en);
 
 new Vue({
   created() {
