@@ -3,15 +3,28 @@ const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcrypt");
 const passport = require("passport");
 const permissionsMiddleware = require("../middleware/PermissionsMiddleware");
-const { check, validationResult } = require("express-validator");
+const { body, check, validationResult } = require("express-validator");
+const Validator = require("validatorjs");
+const { normalizeEmail } = require("validator");
 
 // Might need to implement a redis setup eventually...
 let tokenList = {};
 
 module.exports = app => {
   app.post("/api/users/register", (req, res) => {
-    let { email, password, name, familyName, displayName } = req.body;
-    email = email.toLowerCase();
+    const errors = new Validator(req.body, {
+      email: "required|email",
+      password: "required|confirmed",
+      password_confirmed: "required",
+      name: "required",
+      familyName: "required",
+      displayName: "required"
+    });
+    if (errors.fails()) {
+      return res.status(422).send(errors.errors);
+    }
+    let email = normalizeEmail(req.body.email);
+    let { password, name, familyName, displayName } = req.body;
     const newUser = new User({
       name,
       familyName,
@@ -38,8 +51,16 @@ module.exports = app => {
   };
 
   app.post("/api/users/login", async (req, res) => {
-    let { email, password, rememberMe } = req.body;
-    email = email.toLowerCase();
+    let errors = new Validator(req.body, {
+      email: "required|email",
+      password: "required",
+      rememberMe: "boolean"
+    });
+    if (errors.fails()) {
+      return res.status(422).send(errors.errors);
+    }
+    let email = normalizeEmail(req.body.email);
+    let { password, rememberMe } = req.body;
     let loginTime = Date.now();
     let user = await User.findOneAndUpdate(
       { email: email },
@@ -62,14 +83,8 @@ module.exports = app => {
           };
           const secretOrKey = process.env.SECRET_KEY;
           const tokenExpires = `${process.env.TOKEN_EXPIRES}` || "1h";
-          const refreshSecretOrKey = process.env.REFRESH_SECRET_KEY;
           const refreshExpires = `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
           let token = generateToken(payload, secretOrKey, tokenExpires);
-          // let refreshToken = generateToken(
-          //   payload,
-          //   refreshSecretOrKey,
-          //   refreshExpires
-          // );
           user = {
             id: user.id,
             email: user.email,
@@ -127,32 +142,6 @@ module.exports = app => {
       });
     }
   );
-
-  // app.post("/api/users/refresh", (req, res) => {
-  //   const { refreshToken } = req.body;
-  //   if (refreshToken && refreshToken in tokenList) {
-  //     const refToken = jwt.decode(refreshToken);
-  //     User.findById(refToken.id, (err, user) => {
-  //       if (user) {
-  //         const payload = { id: user.id };
-  //         const secretOrKey = process.env.SECRET_KEY || "NOTsoSECRETkey";
-  //         const tokenExpires = process.env.TOKEN_EXPIRES || "1h";
-
-  //         const token = jwt.sign(payload, secretOrKey, {
-  //           expiresIn: tokenExpires
-  //         });
-
-  //         const response = {
-  //           token: token
-  //         };
-  //         tokenList[refreshToken].token = token;
-  //         res.status(200).json(response);
-  //       }
-  //     });
-  //   } else {
-  //     res.status(404).send("Invalid please log back in");
-  //   }
-  // });
 
   app.post(
     "/api/users/logout",
@@ -284,10 +273,26 @@ module.exports = app => {
 
   app.put(
     "/api/users/:id/reset-password",
+    [
+      check("password")
+        .not()
+        .isEmpty()
+        .withMessage("Please provide a password")
+        .trim(),
+      check("newPassword")
+        .not()
+        .isEmpty()
+        .withMessage("Please provide a new password")
+        .trim()
+    ],
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
       const { id } = req.user;
       const { password, newPassword } = req.body;
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(422).send({ errors: errors.array() });
+      }
       User.findById(id, "+password", (err, user) => {
         if (err) {
           return res.send(err);

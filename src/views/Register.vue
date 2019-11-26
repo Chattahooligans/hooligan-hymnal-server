@@ -6,21 +6,20 @@
           <h1 class="text-2xl font-bold mb-3">Register</h1>
         </div>
         <div class="p-3">
-          <form method="POST" @submit.prevent="register">
-            <div class="mb-3 flex flex-col">
+          <ValidationObserver v-slot="{ handleSubmit }">
+            <form method="POST" @submit.prevent="handleSubmit(register)">
               <BaseInput
                 type="text"
                 label="First Name"
                 name="first-name"
                 placeholder="First Name"
                 arPlaceholder="Enter your first name"
-                :required="true"
                 :autofocus="true"
                 :autocomplete="true"
                 v-model="user.name"
+                rules="required"
               />
-            </div>
-            <div class="mb-3 flex flex-col">
+              <!-- <div class="mb-3 flex flex-col"> -->
               <BaseInput
                 type="text"
                 label="Last Name"
@@ -31,8 +30,8 @@
                 :autocomplete="true"
                 v-model="user.familyName"
               />
-            </div>
-            <div class="flex flex-col mb-3">
+              <!-- </div> -->
+              <!-- <div class="flex flex-col mb-3"> -->
               <BaseInput
                 type="email"
                 label="Email"
@@ -43,8 +42,8 @@
                 :autocomplete="true"
                 v-model="user.email"
               />
-            </div>
-            <div class="mb-3 flex flex-col">
+              <!-- </div> -->
+              <!-- <div class="mb-3 flex flex-col"> -->
               <BaseInput
                 type="text"
                 name="displayName"
@@ -54,8 +53,8 @@
                 :required="true"
                 v-model="user.displayName"
               />
-            </div>
-            <!-- <div class="flex flex-col mb-3">
+              <!-- </div> -->
+              <!-- <div class="flex flex-col mb-3">
               <BaseInput
                 type="email"
                 name="email_confirm"
@@ -66,7 +65,7 @@
                 v-model="user.email_confirm"
               />
             </div> -->
-            <div class="flex flex-col mb-3">
+              <!-- <div class="flex flex-col mb-3"> -->
               <BaseInput
                 :type="showPassword ? 'text' : 'password'"
                 name="password"
@@ -76,8 +75,8 @@
                 :required="true"
                 v-model="user.password"
               />
-            </div>
-            <div class="flex flex-col mb-3">
+              <!-- </div> -->
+              <!-- <div class="flex flex-col mb-3"> -->
               <BaseInput
                 :type="showPassword ? 'text' : 'password'"
                 name="confirmPassword"
@@ -89,33 +88,36 @@
                 :required="true"
                 v-model="user.passwordConfirm"
               />
-            </div>
-            <div class="mb-3">
-              <label for="show-password">
-                Show Password
-                <input
-                  class="ml-2"
-                  type="checkbox"
-                  name="show-password"
-                  id="show-password"
-                  v-model="showPassword"
-                  @click="
-                    {
-                      showPassword = !!showPassword;
-                    }
-                  "
-                />
-              </label>
-            </div>
-            <div class="mb-3">
-              <button
-                class="px-3 py-2 bg-blue-600 text-white rounded"
-                type="submit"
-              >
-                Register
-              </button>
-            </div>
-          </form>
+              <!-- </div> -->
+              <div class="mb-3">
+                <label for="show-password">
+                  Show Password
+                  <input
+                    class="ml-2"
+                    type="checkbox"
+                    name="show-password"
+                    id="show-password"
+                    v-model="showPassword"
+                    @click="
+                      {
+                        showPassword = !!showPassword;
+                      }
+                    "
+                  />
+                </label>
+              </div>
+              <div class="mb-3">
+                <!-- :disabled="invalid"
+                  :class="{ 'opacity-50': invalid }" -->
+                <button
+                  class="px-3 py-2 bg-blue-600 text-white rounded"
+                  type="submit"
+                >
+                  Register
+                </button>
+              </div>
+            </form>
+          </ValidationObserver>
           <div class="text-center mb-3">
             <router-link to="/login"
               >Already have an account, please login</router-link
@@ -129,10 +131,10 @@
 
 <script>
 import BaseInput from "@/components/BaseInput";
-import axios from "axios";
 export default {
   data() {
     return {
+      name: "",
       user: {
         name: "",
         familyName: "",
@@ -161,7 +163,8 @@ export default {
             familyName: this.user.familyName,
             email: this.user.email,
             displayName: this.user.displayName,
-            password: this.user.password
+            password: this.user.password,
+            passwordConfirm: this.user.passwordConfirm
           })
           .then(() => {
             this.$swal({
