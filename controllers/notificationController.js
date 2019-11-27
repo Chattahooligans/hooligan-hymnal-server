@@ -83,7 +83,7 @@ module.exports = app => {
             let errors = [];
             let receipts = [];
             let chunks = expo.chunkPushNotifications(tokens);
-            for (chunk of chunks) {
+            for (let chunk of chunks) {
               let notifications = chunk.map(token => {
                 console.log(
                   "trying to send notification to token: ",
@@ -119,22 +119,24 @@ module.exports = app => {
             }
             var tokenMatcher = new RegExp("ExponentPushToken");
             receipts.forEach(receipt => {
-              if(receipt.status == "error") {
+              if (receipt.status == "error") {
                 console.log(receipt);
                 //run regex to retrieve token from it
                 let matches = tokenMatcher.exec(receipt.message);
                 console.log(matches);
-                if(matches.length > 0) {
+                if (matches.length > 0) {
                   let i = matches.index;
-                  var token = receipt.message.substring(i, i+41);
+                  var token = receipt.message.substring(i, i + 41);
                   console.log(token);
-                  PushTokens.find({"pushToken": token}).then(findResult => {
+                  PushTokens.find({ pushToken: token }).then(findResult => {
                     console.log(findResult);
-                  });;
+                  });
                   //if token found, find and delete
-                  PushTokens.deleteOne({"pushToken": token}).then(deleteResult => {
-                    console.log(deleteResult);
-                  });;
+                  PushTokens.deleteOne({ pushToken: token }).then(
+                    deleteResult => {
+                      console.log(deleteResult);
+                    }
+                  );
                 }
               }
             });
