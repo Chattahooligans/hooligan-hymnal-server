@@ -68,7 +68,7 @@ module.exports = app => {
                 .send({ error: `Error fetching push tokens: ${error}` });
               return;
             }
-            for (let pushToken of pushTokens) {
+            for (let pushToken of tokens) {
               if (!Expo.isExpoPushToken(pushToken.pushToken)) {
                 console.error("Not valid push token: " + pushToken);
                 PushTokens.deleteOne({ _id: pushToken._id }, (err, res) => {
