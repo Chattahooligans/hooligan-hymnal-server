@@ -78,6 +78,7 @@ module.exports = app => {
                   console.log(res);
                 });
               }
+            }
 
             let errors = [];
             let receipts = [];
