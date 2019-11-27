@@ -68,6 +68,16 @@ module.exports = app => {
                 .send({ error: `Error fetching push tokens: ${error}` });
               return;
             }
+            for (let pushToken of pushTokens) {
+              if (!Expo.isExpoPushToken(pushToken.pushToken)) {
+                console.error("Not valid push token: " + pushToken);
+                PushTokens.deleteOne({ _id: pushToken._id }, (err, res) => {
+                  if (err) {
+                    console.error(err);
+                  }
+                  console.log(res);
+                });
+              }
 
             let errors = [];
             let receipts = [];
@@ -117,8 +127,13 @@ module.exports = app => {
                   let i = matches.index;
                   var token = receipt.message.substring(i, i+41);
                   console.log(token);
+                  PushTokens.find({"pushToken": token}).then(findResult => {
+                    console.log(findResult);
+                  });;
                   //if token found, find and delete
-                  console.log(PushTokens.deleteOne({"pushToken": token}));
+                  PushTokens.deleteOne({"pushToken": token}).then(deleteResult => {
+                    console.log(deleteResult);
+                  });;
                 }
               }
             });
