@@ -49,7 +49,9 @@ module.exports = app => {
     permissions("pushNotificationsAllowed"),
     (req, res) => {
       console.log("entering post for notification push");
+      console.log(req.body);
       var newNotification = Notifications(req.body);
+      console.log("retrieved notification from body");
       newNotification.save((error, notification) => {
         if (error) {
           console.log("error: ", error);
@@ -60,27 +62,17 @@ module.exports = app => {
           console.log("no error, pushing forward");
           PushTokens.find(async (error, tokens) => {
             if (error) {
+              console.log("error 2: ", error);
               res
                 .status(501)
                 .send({ error: `Error fetching push tokens: ${error}` });
               return;
             }
-            for (let pushToken of tokens) {
-              if (!Expo.isExpoPushToken(pushToken.pushToken)) {
-                console.error("Not valid push token: " + pushToken);
-                PushTokens.deleteOne({ _id: pushToken._id }, (err, res) => {
-                  if (err) {
-                    console.error(err);
-                  }
-                  console.log(res);
-                });
-              }
-            }
 
             let errors = [];
             let receipts = [];
             let chunks = expo.chunkPushNotifications(tokens);
-            for (let chunk of chunks) {
+            for (chunk of chunks) {
               let notifications = chunk.map(token => {
                 console.log(
                   "trying to send notification to token: ",
@@ -114,23 +106,6 @@ module.exports = app => {
                 );
               }
             }
-            var tokenMatcher = new RegExp("ExponentPushToken");
-            receipts.forEach(receipt => {
-              if (receipt.status == "error") {
-                //run regex to retrieve token from it
-                let matches = tokenMatcher.exec(receipt.message);
-                if (matches.length > 0) {
-                  let i = matches.index;
-                  var token = receipt.message.substring(i, i + 41);
-                  //if token found, find and delete
-                  PushTokens.deleteOne({ pushToken: token }).then(
-                    deleteResult => {
-                      console.log(deleteResult);
-                    }
-                  );
-                }
-              }
-            });
             res.send({
               errors: errors,
               receipts: receipts,
