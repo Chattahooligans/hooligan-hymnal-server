@@ -156,7 +156,7 @@ module.exports = app => {
     "/api/users",
     passport.authenticate("jwt", { session: false }),
     permissionsMiddleware("usersAllowed"),
-    async (req, res) => {
+    (req, res) => {
       const { email } = req.user;
       const { role } = req.query;
       const users = User.find({}, "-__v +lastLogin").where({
