@@ -1,0 +1,29 @@
+{
+    "builders": [
+      {
+        "type": "googlecompute",
+        "account_file": "/home/tacoman/gcp/packer-hello.json",
+        "project_id": "upheld-fold-260614",
+        "source_image": "ubuntu-minimal-1804-bionic-v20191113",
+        "ssh_username": "packer",
+        "zone": "us-central1-a",
+        "disk_size": 20,
+        "image_name": "hooligan-hymnal-{{timestamp}}"
+      }
+    ],
+    "provisioners": [{
+        "type": "file",
+        "source": "/tmp/build.zip",
+        "destination": "/tmp/build.zip"
+    },
+    {
+        "type": "file",
+        "source": "/vagrant/deploy/nginx-sites-available.conf",
+        "destination": "/tmp/nginx-sites-available.conf"
+    },
+    {
+        "type": "shell",
+        "script": "remote-provision.sh"
+    }]
+  }
+  
