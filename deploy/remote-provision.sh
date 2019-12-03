@@ -11,5 +11,5 @@ rm build.zip
 pm2 start app.js
 #output from this configures pm2 to run at startup
 pm2 startup systemd | tail -1 | source /dev/stdin
-mv /tmp/nginx-sites-available.conf /etc/nginx/sites-available/default
+sudo mv /tmp/nginx-sites-available.conf /etc/nginx/sites-available/default
 sudo systemctl restart nginx
