@@ -11,15 +11,11 @@
         "image_name": "hooligan-hymnal-{{timestamp}}"
       }
     ],
-    "provisioners": [{
-        "type": "file",
-        "source": "build.zip",
-        "destination": "/tmp/build.zip"
-    },
+    "provisioners": [
     {
         "type": "file",
-        "source": "nginx-sites-available.conf",
-        "destination": "/tmp/nginx-sites-available.conf"
+        "source": "nginx-sites-enabled.conf",
+        "destination": "/tmp/nginx-sites-enabled.conf"
     },
     {
         "type": "shell",
