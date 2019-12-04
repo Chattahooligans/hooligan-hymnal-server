@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # install node and nginx
-sudo apt-get update
 #sudo apt-get install -y curl apt-transport-https ca-certificates &&
 #  curl --fail -ssL -o setup-nodejs https://deb.nodesource.com/setup_6.x &&
 #  sudo bash setup-nodejs &&
 #  sudo apt-get install -y nodejs zip unzip nginx build-essential git npm
 curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+sudo apt-get update
+sudo apt-get upgrade
 sudo apt-get install -y zip unzip nginx build-essential git nodejs
+sudo npm install -g @vue/cli@latest
 
 # install Passenger to manage node
 # install Passenger PGP key, add HTTPS support to apt
@@ -45,10 +47,10 @@ sudo sh -c "chmod 600 ~hymnal/.ssh/*"
 # add github to trusted hosts
 sudo -u hymnal -H bash -l
 cd /var/www/hymnal/
-git clone https://github.com/Chattahooligans/hooligan-hymnal-server.git code
+sudo -H -u hymnal bash -c 'git clone https://github.com/Chattahooligans/hooligan-hymnal-server.git code'
 cd /var/www/hymnal/code
-npm install
-npm run-script build
+sudo -H -u hymnal bash -c 'npm install'
+sudo -H -u hymnal bash -c 'npm run-script build'
 exit
 
 sudo mv /tmp/nginx-sites-enabled.conf /etc/nginx/sites-enabled/hymnal.conf
