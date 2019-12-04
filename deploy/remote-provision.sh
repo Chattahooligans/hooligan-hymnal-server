@@ -45,13 +45,11 @@ sudo chown hymnal /home/hymnal
 sudo sh -c "chmod 600 ~hymnal/.ssh/*"
 
 # add github to trusted hosts
-sudo -u hymnal -H bash -l
 cd /var/www/hymnal/
 sudo -H -u hymnal bash -c 'git clone https://github.com/Chattahooligans/hooligan-hymnal-server.git code'
 cd /var/www/hymnal/code
 sudo -H -u hymnal bash -c 'npm install'
 sudo -H -u hymnal bash -c 'npm run-script build'
-exit
 
 sudo mv /tmp/nginx-sites-enabled.conf /etc/nginx/sites-enabled/hymnal.conf
 sudo systemctl restart nginx
