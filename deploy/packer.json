@@ -18,8 +18,9 @@
         "destination": "/tmp/nginx-sites-enabled.conf"
     },
     {
-        "type": "shell",
-        "script": "remote-provision-private.sh"
+        "type": "file",
+        "source": "nginx.conf",
+        "destination": "/tmp/nginx.conf"
     },
     {
         "type": "shell",

@@ -4,7 +4,7 @@
 #  curl --fail -ssL -o setup-nodejs https://deb.nodesource.com/setup_6.x &&
 #  sudo bash setup-nodejs &&
 #  sudo apt-get install -y nodejs zip unzip nginx build-essential git npm
-curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get install -y zip unzip nginx build-essential git nodejs
@@ -52,4 +52,5 @@ sudo -H -u hymnal bash -c 'npm install'
 sudo -H -u hymnal bash -c 'npm run-script build'
 
 sudo mv /tmp/nginx-sites-enabled.conf /etc/nginx/sites-enabled/hymnal.conf
+sudo mv /tmp/nginx.conf /etc/nginx/nginx.conf
 sudo systemctl restart nginx
