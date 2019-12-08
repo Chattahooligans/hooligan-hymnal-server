@@ -13,7 +13,7 @@ module.exports = new mongoose.Schema(
       }
     ],
     */
-   players: [{ _id: String, hint: String, overridePosition: String, overrideSquadNumber: String }],
+   players: [{ _id: String, hint: String, overrideName: String, overridePosition: String, overrideSquadNumber: String }],
     active: {
       type: Boolean,
       default: true
