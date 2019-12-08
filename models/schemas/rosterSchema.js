@@ -13,7 +13,7 @@ module.exports = new mongoose.Schema(
       }
     ],
     */
-    players: [{ _id: String, hint: String }],
+   players: [{ _id: String, hint: String, position: String, squadNumber: String }],
     active: {
       type: Boolean,
       default: true
