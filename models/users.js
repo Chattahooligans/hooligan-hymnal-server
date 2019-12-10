@@ -2,58 +2,76 @@ var mongoose = require("mongoose");
 // var userSchema = require("./schemas/userSchema");
 const Schema = mongoose.Schema;
 const bcryptjs = require("bcrypt");
+const md5 = require("md5");
 
-const UserSchema = new Schema({
-  email: {
-    type: String,
-    index: {
-      unique: true
+const UserSchema = new Schema(
+  {
+    email: {
+      type: String,
+      lowercase: true,
+      trim: true,
+      index: {
+        unique: true
+      }
+    },
+    name: {
+      type: String,
+      required: true
+    },
+    familyName: {
+      type: String,
+      required: true
+    },
+    displayName: {
+      type: String,
+      required: true,
+      index: {
+        unique: true
+      }
+    },
+    password: {
+      type: String,
+      required: true,
+      select: false
+    },
+    pushNotificationsAllowed: {
+      type: Boolean,
+      default: false
+    },
+    rosterAllowed: {
+      type: Boolean,
+      default: false
+    },
+    songbookAllowed: {
+      type: Boolean,
+      default: false
+    },
+    foesAllowed: {
+      type: Boolean,
+      default: false
+    },
+    usersAllowed: {
+      type: Boolean,
+      default: false
+    },
+    lastLogin: {
+      type: Date,
+      default: null
     }
   },
-  name: {
-    type: String,
-    required: true
-  },
-  familyName: {
-    type: String,
-    required: true
-  },
-  displayName: {
-    type: String,
-    required: true,
-    index: {
-      unique: true
+  {
+    toJSON: {
+      virtuals: true
+    },
+    toObject: {
+      virtuals: true
     }
-  },
-  password: {
-    type: String,
-    required: true,
-    select: false
-  },
-  pushNotificationsAllowed: {
-    type: Boolean,
-    default: false
-  },
-  rosterAllowed: {
-    type: Boolean,
-    default: false
-  },
-  songbookAllowed: {
-    type: Boolean,
-    default: false
-  },
-  foesAllowed: {
-    type: Boolean,
-    default: false
-  },
-  usersAllowed: {
-    type: Boolean,
-    default: false
-  },
-  lastLogin: {
-    type: Date,
-    default: null
   }
+);
+
+UserSchema.virtual("gravitar").get(function() {
+  const hash = md5(this.email);
+  return `https://gravatar.com/avatar/${hash}?s=200`;
 });
 
 const User = mongoose.model("User", UserSchema);
