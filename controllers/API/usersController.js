@@ -1,8 +1,8 @@
-const User = require("../models/users");
+const User = require("../../models/users");
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcrypt");
 const passport = require("passport");
-const permissionsMiddleware = require("../middleware/PermissionsMiddleware");
+const permissionsMiddleware = require("../../middleware/PermissionsMiddleware");
 const { body, check, validationResult } = require("express-validator");
 const Validator = require("validatorjs");
 const { normalizeEmail } = require("validator");

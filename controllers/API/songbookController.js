@@ -1,7 +1,7 @@
-const Songbook = require("../models/songbook");
-const config = require("../config.js");
+const Songbook = require("../../models/songbook");
+const config = require("../../config.js");
 const passport = require("passport");
-const permissions = require("../middleware/PermissionsMiddleware");
+const permissions = require("../../middleware/PermissionsMiddleware");
 
 var songbook_cache = {
   data: null,

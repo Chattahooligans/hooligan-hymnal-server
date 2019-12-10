@@ -1,7 +1,7 @@
-const Foes = require("../models/foes");
-const config = require("../config.js");
+const Foes = require("../../models/foes");
+const config = require("../../config.js");
 const passport = require("passport");
-const permissions = require("../middleware/PermissionsMiddleware");
+const permissions = require("../../middleware/PermissionsMiddleware");
 
 var foes_cache = {
   data: null,

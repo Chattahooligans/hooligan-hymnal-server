@@ -1,6 +1,8 @@
 var express = require("express");
 var app = express();
 var mongoose = require("mongoose");
+var session = require("express-session");
+var MongoStore = require("connect-mongo")(session);
 var env = require("dotenv");
 var bodyParser = require("body-parser");
 var fs = require("fs");
@@ -15,8 +17,7 @@ var User = require("./models/users");
 // var APIMiddleware = require("./middleware/ApiKeyMiddleware");
 var helmet = require("helmet");
 var fileUpload = require("express-fileupload");
-
-var Player = require("./models/players");
+var errorHandlers = require("./handlers/errorHandlers");
 
 env.config();
 
@@ -43,7 +44,6 @@ app.use(
     tempFileDir: "/tmp/"
   })
 );
-app.use(passport.initialize());
 
 passport.use(
   new JwtStrategy(JWTOptions, function(jwt_payload, done) {
@@ -104,53 +104,82 @@ mongoose
   });
 mongoose.set("useFindAndModify", false);
 
-// TODO: REMOVE THIS ONCE ALL MIGRATED!!
-function updateBios() {
-  Player.find((err, players) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-      return;
-    }
-    players.forEach(function(player) {
-      if (!player.bio.get("en")) {
-        let string = "";
-        player.bio.forEach(function(el) {
-          string = string + el;
-        });
-        player.bio = { en: string };
-        player.updateOne(player, (err, player) => {
-          if (err) {
-            console.error(err);
-            return;
-          }
-          return;
-        });
-      }
-      return;
-    });
-  });
-}
-// Uncomment this to update playersBios
-// updateBios();
-// TODO: REMOVE THIS ONCE ALL MIGRATED!!
+// // TODO: REMOVE THIS ONCE ALL MIGRATED!!
+// function updateBios() {
+//   Player.find((err, players) => {
+//     if (err) {
+//       console.error(err);
+//       process.exit(1);
+//       return;
+//     }
+//     players.forEach(function(player) {
+//       if (!player.bio.get("en")) {
+//         let string = "";
+//         player.bio.forEach(function(el) {
+//           string = string + el;
+//         });
+//         player.bio = { en: string };
+//         player.updateOne(player, (err, player) => {
+//           if (err) {
+//             console.error(err);
+//             return;
+//           }
+//           return;
+//         });
+//       }
+//       return;
+//     });
+//   });
+// }
+// // Uncomment this to update playersBios
+// // updateBios();
+// // TODO: REMOVE THIS ONCE ALL MIGRATED!!
+
+app.use(
+  session({
+    secret: process.env.SECRET_KEY,
+    key: process.env.KEY,
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({ mongooseConnection: mongoose.connection })
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
+});
 
 // Autoloads all controllers in directory
-// fs.readdirSync("controllers").forEach(function(file) {
-//   if (file.substr(-3) === ".js") {
-//     const controller = require(`./controllers/${file}`);
-//     controller(app);
-//   }
-// });
+fs.readdirSync("controllers/API/").forEach(function(file) {
+  if (file.substr(-3) === ".js") {
+    const controller = require(`./controllers/API/${file}`);
+    if (typeof controller === "function") {
+      controller(app);
+    }
+  }
+});
 app.use(serveStatic(__dirname + "/dist"));
 const web = require("./routes/web");
 app.use("/", web);
 // app.use(history("index.html", `${__dirname}/dist/`));
-app.all("*", (req, res) => {
-  res.sendFile(`${__dirname}/dist/index.html`);
-});
+// app.all("*", (req, res) => {
+//   res.sendFile(`${__dirname}/dist/index.html`);
+// });
 
 // app.all("/api/*", APIMiddleware());
+
+app.use(errorHandlers.notFound);
+
+app.use(errorHandlers.flashValidationErrors);
+if (app.get("env") === "development") {
+  app.use(errorHandlers.developmentErrors);
+}
+
+app.search(errorHandlers.productionErrors);
 
 app.listen(PORT, function() {
   console.log(`app listening on http://localhost:${PORT}`);

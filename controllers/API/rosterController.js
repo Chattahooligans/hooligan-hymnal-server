@@ -1,7 +1,7 @@
-const Roster = require("../models/roster");
-const config = require("../config.js");
+const Roster = require("../../models/roster");
+const config = require("../../config.js");
 const passport = require("passport");
-const permission = require("../middleware/PermissionsMiddleware");
+const permission = require("../../middleware/PermissionsMiddleware");
 
 var roster_cache = {
   data: null,
@@ -113,7 +113,7 @@ module.exports = app => {
         }
         roster_cache.force_reload();
         return res.status(200).send({ message: "Succefully deleted" });
-      })
+      });
       // Roster.findByIdAndRemove(req.params.id, error => {
       //   error
       //     ? res.status(501).send({ error })

@@ -1,9 +1,9 @@
 let Expo = require("expo-server-sdk");
-let Notifications = require("../models/notifications");
-let PushTokens = require("../models/pushTokens");
+let Notifications = require("../../models/notifications");
+let PushTokens = require("../../models/pushTokens");
 let expo = new Expo();
 const passport = require("passport");
-const permissions = require("../middleware/PermissionsMiddleware");
+const permissions = require("../../middleware/PermissionsMiddleware");
 
 module.exports = app => {
   // // Return something for bare URL just so we can be sure the server is running

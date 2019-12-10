@@ -1,7 +1,7 @@
-const Songs = require("../models/songs");
+const Songs = require("../../models/songs");
 const passport = require("passport");
-const permissions = require("../middleware/PermissionsMiddleware");
-const config = require("../config.js");
+const permissions = require("../../middleware/PermissionsMiddleware");
+const config = require("../../config.js");
 
 const song_cache = {
   data: null,

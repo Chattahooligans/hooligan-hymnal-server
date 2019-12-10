@@ -1,10 +1,10 @@
 const Expo = require("expo-server-sdk");
-const GoalkeeperNickname = require("../models/goalkeeperNickname");
-let config = require("../config.js");
-const PushTokens = require("../models/pushTokens");
+const GoalkeeperNickname = require("../../models/goalkeeperNickname");
+let config = require("../../config.js");
+const PushTokens = require("../../models/pushTokens");
 let expo = new Expo();
 const passport = require("passport");
-const permissions = require("../middleware/PermissionsMiddleware");
+const permissions = require("../../middleware/PermissionsMiddleware");
 
 var goalkeepers_nickname_cache = {
   data: null,

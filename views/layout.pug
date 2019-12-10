@@ -1,0 +1,32 @@
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    meta(http-equiv="X-UA-Compatible", content="ie=edge")
+    link(rel="stylesheet", href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css")
+    title #{title} | Hooligan Server
+  body.overflow-hidden
+    header.bg-gray-800.text-white.py-3
+      button#skip(type="button" class="btn absolute -top-16 -left-16 bg-black") Skip To Content
+      .px-3.flex.flex-row.justify-between
+        a(href="/") Hooligan Server
+        nav
+          if user
+            a(href="/profile") #{user.email}
+          else
+            a(href="/login") Login
+    section(class="flex flex-col md:flex-row min-h-screen h-full")
+      if user
+        aside(class="bg-gray-300 px-3 py-4 md:w-64 sm:w-100 md:block")
+        nav(class="flex flex-col -mx-3 md:block hidden")
+          a(href="/push-tokens" class="block p-3 hover:bg-gray-600 hover:text-white") Push Tokens
+          a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Notifications
+          a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Songs
+          a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Songbooks
+          a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Players
+          a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
+          a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Users
+      main#main(class=`w-full ${user ? 'md:ml-6 px-3' : ''}`)
+        block content
+    footer(class="text-center bg-gray-800 text-white py-3")
+      p &copy; Hooligan Hymnal
