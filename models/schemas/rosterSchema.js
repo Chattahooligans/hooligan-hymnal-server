@@ -7,6 +7,7 @@ module.exports = new mongoose.Schema(
     season: String,
     defaultThumbnail: String,
     defaultImage: String,
+    showPlayerSongs: Boolean,
     /*
     players: [
       {
