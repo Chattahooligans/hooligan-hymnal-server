@@ -5,6 +5,8 @@ module.exports = new mongoose.Schema(
   {
     rosterTitle: String,
     season: String,
+    defaultThumbnail: String,
+    defaultImage: String,
     /*
     players: [
       {
