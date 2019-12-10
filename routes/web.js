@@ -9,5 +9,6 @@ const { isLoggedIn } = require("../middleware/authMiddleware");
 router.get("/", homeController.homePage);
 router.get("/login", authController.loginForm);
 router.post("/login", authController.login);
+router.post("/logout", isLoggedIn, authController.logout);
 
 module.exports = router;
