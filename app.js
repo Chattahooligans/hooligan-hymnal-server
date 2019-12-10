@@ -61,6 +61,9 @@ passport.use(
   })
 );
 
+app.set("view engine", "pug");
+app.set("views", "views");
+
 // Add headers
 // app.use(function(req, res, next) {
 //   // Website you wish to allow to connect
@@ -133,13 +136,15 @@ function updateBios() {
 // TODO: REMOVE THIS ONCE ALL MIGRATED!!
 
 // Autoloads all controllers in directory
-fs.readdirSync("controllers").forEach(function(file) {
-  if (file.substr(-3) === ".js") {
-    const controller = require(`./controllers/${file}`);
-    controller(app);
-  }
-});
+// fs.readdirSync("controllers").forEach(function(file) {
+//   if (file.substr(-3) === ".js") {
+//     const controller = require(`./controllers/${file}`);
+//     controller(app);
+//   }
+// });
 app.use(serveStatic(__dirname + "/dist"));
+const web = require("./routes/web");
+app.use("/", web);
 // app.use(history("index.html", `${__dirname}/dist/`));
 app.all("*", (req, res) => {
   res.sendFile(`${__dirname}/dist/index.html`);
