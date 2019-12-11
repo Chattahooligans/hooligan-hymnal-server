@@ -12,7 +12,8 @@ html(lang="en")
         a(href="/") Hooligan Server
         nav
           if user
-            a(href="/profile") #{user.email}
+            a(href="/profile")
+              img(src=`${user.gravatar}` class="h-55 rounded-full" width="55px")
             form(method="POST" action="/logout")
               button(type="submit") Logout
           else
