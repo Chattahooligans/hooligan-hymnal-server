@@ -13,19 +13,29 @@ html(lang="en")
         nav
           if user
             a(href="/profile") #{user.email}
+            form(method="POST" action="/logout")
+              button(type="submit") Logout
           else
-            a(href="/login") Login
+            a.mr-3(href="/login") Login
+            a(href="/register") Register
     section(class="flex flex-col md:flex-row min-h-screen h-full")
+      if locals.flashes
+        - const categories = Object.keys(locals.flashes)
+        each category in categories
+          each message in flashes[category]
+            .flash(class=`flash--${category}`)
+              p.flash__text!= message
+              button.flash__remove(onClick="this.parentElement.remove()") &times;
       if user
         aside(class="bg-gray-300 px-3 py-4 md:w-64 sm:w-100 md:block")
-        nav(class="flex flex-col -mx-3 md:block hidden")
-          a(href="/push-tokens" class="block p-3 hover:bg-gray-600 hover:text-white") Push Tokens
-          a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Notifications
-          a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Songs
-          a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Songbooks
-          a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Players
-          a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
-          a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Users
+          nav(class="flex flex-col -mx-3 md:block hidden")
+            a(href="/push-tokens" class="block p-3 hover:bg-gray-600 hover:text-white") Push Tokens
+            a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Notifications
+            a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Songs
+            a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Songbooks
+            a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Players
+            a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
+            a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Users
       main#main(class=`w-full ${user ? 'md:ml-6 px-3' : ''}`)
         block content
     footer(class="text-center bg-gray-800 text-white py-3")

@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+  .container.mx-auto
+    div(class="shadow-2xl w-2/3 mx-auto mt-6 rounded overflow-hidden")
+      header(class="bg-gray-300 p-3 border-b border-gray-500")
+        h1(class="text-2xl font-bold mb-3") Register
+      div(class="p-3")
+        form(method="POST" action="/register")
+          .flex.flex-col.mb-3
+            label(class="font-semibold flex-1" for="name") First Name
+            input(type="text" class="border flex-auto rounded p-2 shadow" name="name" id="name" placeholder="First Name" required)
+          .flex.flex-col.mb-3
+            label(class="font-semibold flex-1" for="familyName") Last Name
+            input(type="text" class="border flex-auto rounded p-2 shadow" name="familyName" id="familyName" placeholder="Last Name" required)
+          .flex.flex-col.mb-3
+            label(class="font-semibold flex-1" for="email") Email
+            input(type="email" class="border flex-auto rounded p-2 shadow" name="email" id="email" placeholder="Email" required)
+          .flex.flex-col.mb-3
+            label(class="font-semibold flex-1" for="displayName") Display Name
+            input(type="text" class="border flex-auto rounded p-2 shadow" name="displayName" id="displayName" placeholder="Display Name" required)
+          .flex.flex-col.mb-3
+            label(class="font-semibold flex-1" for="password") Password
+            input(type="password" class="border flex-auto rounded p-2 shadow" name="password" id="password" placeholder="Password" required)
+          .flex.flex-col.mb-3
+            label(class="font-semibold flex-1" for="passwordConfirm") Password Confirm
+            input(type="password" class="border flex-auto rounded p-2 shadow" name="passwordConfirm" id="passwordConfirm" placeholder="Confirm Password" required)
+          .mb-3
+            button(type="submit" class="px-3 py-2 bg-blue-600 text-white rounded") Register
