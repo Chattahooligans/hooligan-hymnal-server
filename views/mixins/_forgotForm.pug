@@ -1,0 +1,7 @@
+mixin forgotForm()
+  form(method="POST" action="/forgot")
+    .flex.flex-col.mb-3
+      label(for="email") Email Address
+      input(type="email" name="email" id="email" class="border flex-auto rounded p-2 shadow" required="true" placeholder="Your email address")
+    .mb-3
+      button(type="submit" class="bg-blue-700 text-white py-2 px-3 rounded") Submit

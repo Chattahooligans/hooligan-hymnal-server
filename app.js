@@ -10,7 +10,7 @@ var morgan = require("morgan");
 var cors = require("cors");
 var passport = require("passport");
 var helmet = require("helmet");
-var promisify = require("es6-promisify");
+var { promisify } = require("es6-promisify");
 var cookieParser = require("cookie-parser");
 var flash = require("connect-flash");
 var fileUpload = require("express-fileupload");
@@ -86,10 +86,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use((req, res, next) => {
-//   req.login = promisify(req.login, req);
-//   next();
-// });
+app.use((req, res, next) => {
+  req.login = promisify(req.login, req);
+  next();
+});
 
 // Autoloads all controllers in directory
 fs.readdirSync("controllers/API/").forEach(function(file) {
