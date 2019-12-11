@@ -49,3 +49,9 @@ exports.update = async (req, res) => {
   );
   res.redirect("/");
 };
+
+exports.account = (req, res) => {
+  res.render("auth/account", {
+    title: "Your account"
+  });
+};

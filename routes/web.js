@@ -22,6 +22,7 @@ router.post(
 );
 
 router.post("/forgot", catchErrors(forgotController.forgot));
+router.get("/account", isLoggedIn, userController.account);
 router.get("/account/reset/:token", catchErrors(userController.reset));
 router.post(
   "/account/reset/:token",
