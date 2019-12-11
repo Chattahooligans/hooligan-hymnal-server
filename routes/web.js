@@ -12,7 +12,7 @@ const { catchErrors } = require("../handlers/errorHandlers");
 router.get("/", homeController.homePage);
 router.get("/login", authController.loginForm);
 router.post("/login", authController.login);
-router.post("/logout", isLoggedIn, authController.logout);
+router.post("/logout", authController.logout);
 router.get("/register", authController.registerForm);
 router.post(
   "/register",

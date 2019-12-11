@@ -76,20 +76,22 @@ exports.register = async (req, res, next) => {
     familyName: req.body.familyName,
     displayName: req.body.displayName
   });
-  const users = User.find({});
-  if (users.length < 1) {
+  const users = await User.find({});
+  if (users.length === 0) {
+    console.log();
     user.pushNotificationsAllowed = true;
     user.rosterAllowed = true;
     user.songbookAllowed = true;
     user.foesAllowed = true;
     user.usersAllowed = true;
   }
+  // res.send("Users");
   await User.register(user, req.body.password);
   next();
 };
 
 exports.logout = (req, res) => {
   req.logout();
-  req.flash("success", "You have been logged out!");
+  req.flash("success", "You are now logged out! 👋");
   res.redirect("/");
 };
