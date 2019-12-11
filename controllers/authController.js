@@ -9,12 +9,22 @@ exports.loginForm = (req, res) => {
   });
 };
 
-exports.login = passport.authenticate("local", {
-  failureRedirect: "/login",
-  failureFlash: "Failed Login!",
-  successRedirect: "/",
-  successFlash: "You are now logged in!"
-});
+exports.login = (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.redirect("/login");
+    }
+    req.logIn(user, err => {
+      if (err) return next(err);
+      user.lastLogin = Date.now();
+      user.save();
+      return res.redirect("/");
+    });
+  })(req, res, next);
+};
 
 exports.registerForm = (req, res) => {
   res.render("auth/register", {
@@ -78,14 +88,12 @@ exports.register = async (req, res, next) => {
   });
   const users = await User.find({});
   if (users.length === 0) {
-    console.log();
     user.pushNotificationsAllowed = true;
     user.rosterAllowed = true;
     user.songbookAllowed = true;
     user.foesAllowed = true;
     user.usersAllowed = true;
   }
-  // res.send("Users");
   await User.register(user, req.body.password);
   next();
 };
