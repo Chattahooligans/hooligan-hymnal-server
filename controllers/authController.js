@@ -21,7 +21,10 @@ exports.login = (req, res, next) => {
       if (err) return next(err);
       user.lastLogin = Date.now();
       user.save();
-      return res.redirect("/");
+      var redirectTo = req.session.redirectTo || "/";
+      // TODO: Add a check with query params??
+      delete req.session.redirectTo;
+      return res.redirect(`${redirectTo}`);
     });
   })(req, res, next);
 };

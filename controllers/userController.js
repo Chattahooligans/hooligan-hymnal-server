@@ -55,3 +55,25 @@ exports.account = (req, res) => {
     title: "Your account"
   });
 };
+
+exports.updateAccountForm = (req, res) => {
+  res.render("auth/updateAccount", {
+    title: "Update your account"
+  });
+};
+
+exports.updateAccount = async (req, res) => {
+  const updates = {
+    name: req.body.name,
+    familyName: req.body.familyName,
+    email: req.body.email,
+    displayName: req.body.displayName
+  };
+  const user = await User.findOneAndUpdate(
+    { _id: req.user._id },
+    { $set: updates },
+    { new: true, runValidators: true, context: "query" }
+  );
+  req.flash("success", "Updated your profile!");
+  res.redirect("/account");
+};

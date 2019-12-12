@@ -29,5 +29,11 @@ router.post(
   userController.confirmPassword,
   catchErrors(userController.update)
 );
+router.get("/account/update", isLoggedIn, userController.updateAccountForm);
+router.post(
+  "/account/update",
+  isLoggedIn,
+  catchErrors(userController.updateAccount)
+);
 
 module.exports = router;

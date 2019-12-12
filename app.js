@@ -15,6 +15,7 @@ var cookieParser = require("cookie-parser");
 var flash = require("connect-flash");
 var fileUpload = require("express-fileupload");
 var errorHandlers = require("./handlers/errorHandlers");
+var helpers = require("./helpers");
 
 env.config();
 
@@ -81,6 +82,7 @@ require("./handlers/passport");
 app.use(flash());
 
 app.use((req, res, next) => {
+  res.locals.h = helpers;
   res.locals.user = req.user || null;
   res.locals.flashes = req.flash();
   next();

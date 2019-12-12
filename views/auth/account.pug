@@ -1,5 +1,22 @@
 extends ../layout
 
 block content
-  .container.mx-auto
-    h2 #{user.name}
+  .container.mx-auto.pt-4
+    h2.text-2xl.font-bold.mb-3 #{user.fullname}
+    div(class="shadow-lg rounded p-3 lg:w-1/2 mb-3")
+      header.flex.flex-row.pb-2.border-b.border-gray-400.mb-2
+        h3.flex-1.text-xl Your info
+        div
+          a(href="/account/update" class="py-1 px-2 rounded bg-green-600 text-white inline-block") Update
+      p.mb-2 Email: #{user.email}
+      p.mb-2 First Name: #{user.name}&nbsp;Last Name: #{user.familyName}
+      p.mb-2 Display Name: #{user.displayName}
+    div(class="shadow-lg rounded p-3 lg:w-1/2")
+      header.flex.border-b.border-gray-400.mb-2
+        h3 Your Rolls
+      p "pushNotificationsAllowed": #{user.pushNotificationsAllowed}
+      p  "rosterAllowed": #{user.rosterAllowed}
+      p  "songbookAllowed": #{user.songbookAllowed}
+      p  "foesAllowed": #{user.foesAllowed}
+      if user.usersAllowed
+        p  "usersAllowed": #{user.usersAllowed}

@@ -74,6 +74,10 @@ UserSchema.virtual("gravatar").get(function() {
   return `https://gravatar.com/avatar/${hash}?s=200`;
 });
 
+UserSchema.virtual("fullname").get(function() {
+  return `${this.name} ${this.familyName}`;
+});
+
 UserSchema.plugin(passportLocalMongoose, { usernameField: "email" });
 UserSchema.plugin(mongodbErrorHandler);
 
