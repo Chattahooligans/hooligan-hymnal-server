@@ -83,7 +83,7 @@ app.use(flash());
 
 app.use((req, res, next) => {
   res.locals.h = helpers;
-  res.locals.user = req.user || null;
+  res.locals.currentUser = req.user || null;
   res.locals.flashes = req.flash();
   next();
 });

@@ -2,7 +2,9 @@ const User = require("../../models/users");
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcrypt");
 const passport = require("passport");
-const permissionsMiddleware = require("../../middleware/PermissionsMiddleware");
+const {
+  apiCheckPermission
+} = require("../../middleware/PermissionsMiddleware");
 const { body, check, validationResult } = require("express-validator");
 const Validator = require("validatorjs");
 const { normalizeEmail } = require("validator");
@@ -155,7 +157,7 @@ module.exports = app => {
   app.get(
     "/api/users",
     passport.authenticate("jwt", { session: false }),
-    permissionsMiddleware("usersAllowed"),
+    apiCheckPermission("usersAllowed"),
     (req, res) => {
       const { email } = req.user;
       const { role } = req.query;
@@ -177,7 +179,7 @@ module.exports = app => {
   app.post(
     "/api/users",
     passport.authenticate("jwt", { session: false }),
-    permissionsMiddleware("usersAllowed"),
+    apiCheckPermission("usersAllowed"),
     (req, res) => {
       const {
         email,
@@ -229,7 +231,7 @@ module.exports = app => {
   app.get(
     "/api/users/:id",
     passport.authenticate("jwt", { session: false }),
-    permissionsMiddleware("usersAllowed"),
+    apiCheckPermission("usersAllowed"),
     (req, res) => {
       const { id } = req.params;
       User.findOne({ _id: id }, "+password", (err, user) => {
@@ -244,7 +246,7 @@ module.exports = app => {
   app.put(
     "/api/users/:id",
     passport.authenticate("jwt", { session: false }),
-    permissionsMiddleware("usersAllowed"),
+    apiCheckPermission("usersAllowed"),
     (req, res) => {
       const { id } = req.params;
       User.findByIdAndUpdate(id, req.body, (error, user) => {
@@ -259,7 +261,7 @@ module.exports = app => {
   app.delete(
     "/api/users/:id",
     passport.authenticate("jwt", { session: false }),
-    permissionsMiddleware("usersAllowed"),
+    apiCheckPermission("usersAllowed"),
     (req, res) => {
       const { id } = req.params;
       User.findByIdAndRemove(id, error => {

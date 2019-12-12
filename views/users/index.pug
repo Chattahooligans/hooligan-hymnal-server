@@ -1,0 +1,13 @@
+extends ../layout
+
+block content
+  .mx-auto.container
+    h2 #{title}
+    a(href="/users/create") Add User
+    if users.length
+      ul
+        each user in users
+          li
+            a(href=`/users/${user._id}`) #{user.fullname}
+    else
+      h3 No Other Users

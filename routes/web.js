@@ -5,9 +5,11 @@ const homeController = require("../controllers/homeController");
 const authController = require("../controllers/authController");
 const forgotController = require("../controllers/forgotController");
 const userController = require("../controllers/userController");
+const usersController = require("../controllers/usersController");
 
 const { isLoggedIn } = require("../middleware/authMiddleware");
 const { catchErrors } = require("../handlers/errorHandlers");
+const { checkPermission } = require("../middleware/PermissionsMiddleware");
 
 router.get("/", homeController.homePage);
 router.get("/login", authController.loginForm);
@@ -34,6 +36,57 @@ router.post(
   "/account/update",
   isLoggedIn,
   catchErrors(userController.updateAccount)
+);
+
+// Users routes
+router.get(
+  "/users",
+  isLoggedIn,
+  checkPermission("usersAllowed"),
+  catchErrors(usersController.allUsers)
+);
+router.get(
+  "/users/create",
+  isLoggedIn,
+  checkPermission("usersAllowed"),
+  usersController.newUserForm
+);
+router.post(
+  "/users/create",
+  isLoggedIn,
+  checkPermission("usersAllowed"),
+  usersController.validateRegister,
+  catchErrors(usersController.register)
+);
+router.get(
+  "/users/:id",
+  isLoggedIn,
+  checkPermission("usersAllowed"),
+  catchErrors(usersController.singleUser)
+);
+router.get(
+  "/users/:id/edit",
+  isLoggedIn,
+  checkPermission("usersAllowed"),
+  catchErrors(usersController.editForm)
+);
+router.post(
+  "/users/:id/edit",
+  isLoggedIn,
+  checkPermission("usersAllowed"),
+  catchErrors(usersController.updateUser)
+);
+router.get(
+  "/users/:id/delete",
+  isLoggedIn,
+  checkPermission("usersAllowed"),
+  catchErrors(usersController.deleteConfirm)
+);
+router.post(
+  "/users/:id/delete",
+  isLoggedIn,
+  checkPermission("usersAllowed"),
+  catchErrors(usersController.delete)
 );
 
 module.exports = router;

@@ -3,7 +3,9 @@ let Notifications = require("../../models/notifications");
 let PushTokens = require("../../models/pushTokens");
 let expo = new Expo();
 const passport = require("passport");
-const permissions = require("../../middleware/PermissionsMiddleware");
+const {
+  apiCheckPermission
+} = require("../../middleware/PermissionsMiddleware");
 
 module.exports = app => {
   // // Return something for bare URL just so we can be sure the server is running
@@ -46,7 +48,7 @@ module.exports = app => {
   app.post(
     "/api/notification",
     passport.authenticate("jwt", { session: false }),
-    permissions("pushNotificationsAllowed"),
+    apiCheckPermission("pushNotificationsAllowed"),
     (req, res) => {
       console.log("entering post for notification push");
       var newNotification = Notifications(req.body);
@@ -149,7 +151,7 @@ module.exports = app => {
   app.put(
     "/api/notification/:id",
     passport.authenticate("jwt", { session: false }),
-    permissions("pushNotificationsAllowed"),
+    apiCheckPermission("pushNotificationsAllowed"),
     (req, res) => {
       Notifications.findByIdAndUpdate(
         req.params.id,
@@ -165,7 +167,7 @@ module.exports = app => {
   app.delete(
     "/api/notification/:id",
     passport.authenticate("jwt", { session: false }),
-    permissions("pushNotificationsAllowed"),
+    apiCheckPermission("pushNotificationsAllowed"),
     (req, res) => {
       Notifications.findByIdAndRemove(req.params.id, error => {
         error

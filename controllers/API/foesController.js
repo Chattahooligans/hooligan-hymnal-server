@@ -1,7 +1,9 @@
 const Foes = require("../../models/foes");
 const config = require("../../config.js");
 const passport = require("passport");
-const permissions = require("../../middleware/PermissionsMiddleware");
+const {
+  apiCheckPermission
+} = require("../../middleware/PermissionsMiddleware");
 
 var foes_cache = {
   data: null,
@@ -46,7 +48,7 @@ module.exports = app => {
   app.post(
     "/api/foes",
     passport.authenticate("jwt", { session: false }),
-    permissions("foesAllowed"),
+    apiCheckPermission("foesAllowed"),
     (req, res) => {
       var newFoe = Foes(req.body);
       newFoe.save((error, foe) => {
@@ -60,7 +62,7 @@ module.exports = app => {
   app.put(
     "/api/foes/:id",
     passport.authenticate("jwt", { session: false }),
-    permissions("foesAllowed"),
+    apiCheckPermission("foesAllowed"),
     (req, res) => {
       Foes.findByIdAndUpdate(req.params.id, req.body, (error, foe) => {
         error ? res.status(501).send({ error }) : res.send(foe);
@@ -73,7 +75,7 @@ module.exports = app => {
   app.delete(
     "/api/foes/:id",
     passport.authenticate("jwt", { session: false }),
-    permissions("foesAllowed"),
+    apiCheckPermission("foesAllowed"),
     (req, res) => {
       Foes.findByIdAndRemove(req.params.id, error => {
         error

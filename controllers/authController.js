@@ -67,7 +67,7 @@ exports.validateRegister = (req, res, next) => {
     .withMessage("Confirmed Password cannot be blank");
   check("passwordConfirm")
     .equals(req.body.password)
-    .withMessage("Opps Your passwords do not match");
+    .withMessage("Oops Your passwords do not match");
 
   const errors = validationResult(req.body);
   if (errors.length) {

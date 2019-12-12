@@ -1,7 +1,9 @@
 let Players = require("../../models/players");
 let config = require("../../config.js");
 const passport = require("passport");
-const permissions = require("../../middleware/PermissionsMiddleware");
+const {
+  apiCheckPermission
+} = require("../../middleware/PermissionsMiddleware");
 // const apiMiddleware = require("../middleware/ApiKeyMiddleware");
 const cloudinary = require("cloudinary").v2;
 
@@ -47,7 +49,7 @@ module.exports = app => {
   app.post(
     "/api/players/thumbnail-upload",
     passport.authenticate("jwt", { session: false }),
-    permissions("rosterAllowed"),
+    apiCheckPermission("rosterAllowed"),
     (req, res) => {
       if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).send("No files were uploaded");
@@ -86,7 +88,7 @@ module.exports = app => {
   app.post(
     "/api/players/full-image",
     passport.authenticate("jwt", { session: false }),
-    permissions("rosterAllowed"),
+    apiCheckPermission("rosterAllowed"),
     (req, res) => {
       if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).send("No files were uploaded");
@@ -121,7 +123,7 @@ module.exports = app => {
   app.post(
     "/api/players",
     passport.authenticate("jwt", { session: false }),
-    permissions("rosterAllowed"),
+    apiCheckPermission("rosterAllowed"),
     (req, res) => {
       var newPlayer = Players(req.body);
       newPlayer.save((error, player) => {
@@ -135,7 +137,7 @@ module.exports = app => {
   app.put(
     "/api/players/:id",
     passport.authenticate("jwt", { session: false }),
-    permissions("rosterAllowed"),
+    apiCheckPermission("rosterAllowed"),
     (req, res) => {
       Players.findByIdAndUpdate(req.params.id, req.body, (error, player) => {
         error ? res.status(501).send({ error }) : res.send(player);
@@ -148,7 +150,7 @@ module.exports = app => {
   app.delete(
     "/api/players/:id",
     passport.authenticate("jwt", { session: false }),
-    permissions("rosterAllowed"),
+    apiCheckPermission("rosterAllowed"),
     (req, res) => {
       Players.findByIdAndRemove(req.params.id, error => {
         error

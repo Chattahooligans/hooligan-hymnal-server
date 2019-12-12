@@ -5,15 +5,15 @@ block content
     form(method="POST")
       .flex.flex-col.mb-3
         label(for="name" class="flex-1 font-semibold") First Name
-        input(type="text" name="name" id="name" value=user.name class="border flex-auto rounded p-2 shadow")
+        input(type="text" name="name" id="name" value=currentUser.name class="border flex-auto rounded p-2 shadow")
       .flex.flex-col.mb-3
         label(for="familyName" class="flex-1 font-semibold") Last Name
-        input(type="text" name="familyName" id="familyName" value=user.familyName class="border flex-auto rounded p-2 shadow")
+        input(type="text" name="familyName" id="familyName" value=currentUser.familyName class="border flex-auto rounded p-2 shadow")
       .flex.flex-col.mb-3
         label(for="displayName" class="flex-1 font-semibold") Display Name
-        input(type="text" name="displayName" id="displayName" value=user.displayName class="border flex-auto rounded p-2 shadow")
+        input(type="text" name="displayName" id="displayName" value=currentUser.displayName class="border flex-auto rounded p-2 shadow")
       .flex.flex-col.mb-3
         label(for="email" class="flex-1 font-semibold") Email
-        input(type="email" name="email" id="email" value=user.email class="border flex-auto rounded p-2 shadow")
+        input(type="email" name="email" id="email" value=currentUser.email class="border flex-auto rounded p-2 shadow")
       .mb-3
         button(type="submit" class="px-3 py-2 rounded bg-blue-700 text-white") Update

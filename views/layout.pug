@@ -11,9 +11,9 @@ html(lang="en")
       .px-3.flex.flex-row.justify-between
         a(href="/") Hooligan Server
         nav
-          if user
+          if currentUser
             a(href="/account")
-              img(src=`${user.gravatar}` class="h-55 rounded-full" width="55px")
+              img(src=`${currentUser.gravatar}` class="h-55 rounded-full" width="55px")
             form(method="POST" action="/logout")
               button(type="submit") Logout
           else
@@ -27,21 +27,22 @@ html(lang="en")
             .flash(class=`flash--${category}`)
               p.flash__text!= message
               button.flash__remove(onClick="this.parentElement.remove()") &times;
-      if user
+      if currentUser
         aside(class="bg-gray-300 px-3 py-4 md:w-64 sm:w-100 md:block")
+          button#menuToggle(type="button" class="md:hidden block") Menu
           nav(class="flex flex-col -mx-3 md:block hidden")
-            if user.pushNotificationsAllowed
+            if currentUser.pushNotificationsAllowed
               a(href="/push-tokens" class="block p-3 hover:bg-gray-600 hover:text-white") Push Tokens
               a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Notifications
-            if user.songbookAllowed
+            if currentUser.songbookAllowed
               a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Songs
               a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Songbooks
-            if user.rosterAllowed
+            if currentUser.rosterAllowed
               a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Players
               a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
-            if user.usersAllowed
-              a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Users
-      main#main(class=`w-full ${user ? 'md:ml-6 px-3' : ''}`)
+            if currentUser.usersAllowed
+              a(href="/users" class="block p-3 hover:bg-gray-600 hover:text-white") Users
+      main#main(class=`w-full ${currentUser ? 'md:ml-6 px-3' : ''}`)
         block content
     footer(class="text-center bg-gray-800 text-white py-3")
       p &copy; Hooligan Hymnal

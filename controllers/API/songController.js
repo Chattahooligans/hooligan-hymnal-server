@@ -1,6 +1,8 @@
 const Songs = require("../../models/songs");
 const passport = require("passport");
-const permissions = require("../../middleware/PermissionsMiddleware");
+const {
+  apiCheckPermission
+} = require("../../middleware/PermissionsMiddleware");
 const config = require("../../config.js");
 
 const song_cache = {
@@ -45,7 +47,7 @@ module.exports = app => {
   app.post(
     "/api/song",
     passport.authenticate("jwt", { session: false }),
-    permissions("songbookAllowed"),
+    apiCheckPermission("songbookAllowed"),
     (req, res) => {
       var newSong = Songs(req.body);
       newSong.save((error, song) => {
@@ -59,7 +61,7 @@ module.exports = app => {
   app.put(
     "/api/song/:id",
     passport.authenticate("jwt", { session: false }),
-    permissions("songbookAllowed"),
+    apiCheckPermission("songbookAllowed"),
     (req, res) => {
       Songs.findByIdAndUpdate(req.params.id, req.body, (error, song) => {
         error ? res.status(501).send({ error }) : res.send(song);
@@ -72,7 +74,7 @@ module.exports = app => {
   app.delete(
     "/api/song/:id",
     passport.authenticate("jwt", { session: false }),
-    permissions("songbookAllowed"),
+    apiCheckPermission("songbookAllowed"),
     (req, res) => {
       Songs.findByIdAndRemove(req.params.id, error => {
         error

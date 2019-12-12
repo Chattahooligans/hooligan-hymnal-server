@@ -1,7 +1,9 @@
 const Roster = require("../../models/roster");
 const config = require("../../config.js");
 const passport = require("passport");
-const permission = require("../../middleware/PermissionsMiddleware");
+const {
+  apiCheckPermission
+} = require("../../middleware/PermissionsMiddleware");
 
 var roster_cache = {
   data: null,
@@ -75,7 +77,7 @@ module.exports = app => {
   app.post(
     "/api/rosters",
     passport.authenticate("jwt", { session: false }),
-    permission("rosterAllowed"),
+    apiCheckPermission("rosterAllowed"),
     (req, res) => {
       Roster.create(req.body, (err, roster) => {
         if (err) {
@@ -91,7 +93,7 @@ module.exports = app => {
   app.put(
     "/api/rosters/:id",
     passport.authenticate("jwt", { session: false }),
-    permission("rosterAllowed"),
+    apiCheckPermission("rosterAllowed"),
     (req, res) => {
       Roster.findByIdAndUpdate(req.params.id, req.body, (error, roster) => {
         error ? res.status(501).send({ error }) : res.send(roster);
@@ -104,7 +106,7 @@ module.exports = app => {
   app.delete(
     "/api/rosters/:id",
     passport.authenticate("jwt", { session: false }),
-    permission("rosterAllowed"),
+    apiCheckPermission("rosterAllowed"),
     (req, res) => {
       const { id } = req.params;
       Roster.findByIdAndRemove(id, (err, roster) => {
