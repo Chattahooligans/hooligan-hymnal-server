@@ -104,7 +104,25 @@ exports.editForm = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-  // TODO: Implement this tomorrow
+  let updates = {
+    name: req.body.name,
+    familyName: req.body.familyName,
+    email: req.body.email,
+    displayName: req.body.displayName
+  };
+  // TODO: Need to implement a better check for permissions
+  if (req.body.permissions) {
+    req.body.permissions.map(permission => {
+      updates[permission] = true;
+    });
+  }
+  const user = await User.findOneAndUpdate(
+    { _id: req.params.id },
+    { $set: updates },
+    { new: true, runValidators: true, context: "query" }
+  );
+  req.flash("success", `${user.fullname} has been updated!`);
+  res.redirect("back");
 };
 
 exports.deleteConfirm = async (req, res) => {
