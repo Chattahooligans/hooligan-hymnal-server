@@ -39,7 +39,7 @@ html(lang="en")
               a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Songbooks
             if currentUser.rosterAllowed
               a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Players
-              a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
+              a(href="/rosters" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
             if currentUser.usersAllowed
               a(href="/users" class="block p-3 hover:bg-gray-600 hover:text-white") Users
       main#main(class=`w-full ${currentUser ? 'md:ml-6 px-3' : ''}`)

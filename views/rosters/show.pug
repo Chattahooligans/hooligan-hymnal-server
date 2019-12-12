@@ -1,0 +1,8 @@
+extends ../layout
+
+block content
+  h2 #{title}
+
+  a(href=`/rosters/${roster._id}/edit`) Edit #{roster.rosterTitle}
+  br
+  a(href=`/rosters/${roster._id}/delete`) Delete #{roster.rosterTitle}

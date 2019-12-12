@@ -6,6 +6,7 @@ const authController = require("../controllers/authController");
 const forgotController = require("../controllers/forgotController");
 const userController = require("../controllers/userController");
 const usersController = require("../controllers/usersController");
+const rostersController = require("../controllers/rostersController");
 
 const { isLoggedIn } = require("../middleware/authMiddleware");
 const { catchErrors } = require("../handlers/errorHandlers");
@@ -87,6 +88,49 @@ router.post(
   isLoggedIn,
   checkPermission("usersAllowed"),
   catchErrors(usersController.delete)
+);
+// Rosters
+router.get(
+  "/rosters",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  catchErrors(rostersController.index)
+);
+router.get(
+  "/rosters/create",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  rostersController.create
+);
+router.post(
+  "/rosters/create",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  rostersController.store
+);
+router.get(
+  "/rosters/:id",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  catchErrors(rostersController.show)
+);
+router.get(
+  "/rosters/:id/edit",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  catchErrors(rostersController.edit)
+);
+router.post(
+  "/rosters/:id/edit",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  rostersController.update
+);
+router.get(
+  "/rosters/:id/delete",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  rostersController.delete
 );
 
 module.exports = router;
