@@ -1,0 +1,13 @@
+extends ../layout
+
+block content
+  .mx-auto.container
+    h2 #{title}
+    a(href="/players/create") Create Player
+    if players.length
+      ul
+        each player in players
+          li
+            a(href=`/players/${player._id}`) #{player.name}
+    else
+      h3 No Players

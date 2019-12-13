@@ -85,6 +85,8 @@ app.use((req, res, next) => {
   res.locals.h = helpers;
   res.locals.currentUser = req.user || null;
   res.locals.flashes = req.flash();
+  res.locals.langs =
+    JSON.parse(process.env.INPUT_LANGUAGES) || JSON.parse(["en"]);
   next();
 });
 

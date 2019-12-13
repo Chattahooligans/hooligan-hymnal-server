@@ -1,0 +1,8 @@
+extends ../layout
+
+block content
+  .mx-auto.container
+    h2 #{title}
+    a(href=`/players/${player._id}/edit`) Edit #{player.name}
+    br
+    a(href=`/players/${player._id}/delete`) Delete #{player.name}
