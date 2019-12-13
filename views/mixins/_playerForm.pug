@@ -1,0 +1,34 @@
+include ../mixins/_baseInput
+
+mixin playerForm(player = {})
+  form(method="POST")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Name", "name", player.name, "Name")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Flag", "flag", player.flag, "Flag Emoji")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Squad Number", "squadNumber", player.squadNumber, "Squad Number")
+    .flex.flex-col.mb-3
+      - const options = ['Forward','Defender','Midfielder', 'Goalkeeper', 'Head Coach', 'Associate Head Coach', 'Goalkeeper Coach']
+      label(for="position") Position
+      select(name="position" id="position" value=player.position)
+        each option in options
+          option(value=option)= option
+    .flex.flex-col.mb-3
+      +baseInput("text", "Team", "team", player.team, "Team")
+    .flex.flex-col.mb-3
+      h3.font-semibold Bios
+      div.ml-2.flex.flex-col
+        each lang in langs
+          label(for=lang class="flex-1 font-semibold") #{lang}
+          textarea(name=lang id=lang class="border flex-auto rounded p-2 shadow") #{player.bio[lang]}
+    .flex.flex-col.mb-3
+      +baseInput("file", "Thumbnail", "thumbnail", player.thumbnail, "")
+    .flex.flex-col.mb-3
+      +baseInput("file", "Image", "image", player.image, "")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Twitter", "twitter", player.twitter, "twitter")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Instagram", "instagram", player.instagram, "instagram")
+    .mb-3
+      button(type="submit" class="py-3 px-2 rounded bg-blue-700 text-white") Save Player
