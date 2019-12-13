@@ -50,9 +50,44 @@ exports.edit = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  res.send("Need to implement update");
+  let updates = {
+    rosterTitle: req.body.rosterTitle,
+    season: req.body.season,
+    active: false,
+    default: false
+  };
+  if (req.body.active) {
+    updates.active = true;
+  }
+  if (req.body.default) {
+    updates.default = true;
+  }
+  const roster = await Roster.findOneAndUpdate(
+    {
+      _id: req.params.id
+    },
+    {
+      $set: updates
+    },
+    {
+      new: true,
+      runValidators: true,
+      context: "query"
+    }
+  );
+  req.flash("success", `${roster.rosterTitle} has been updated!`);
+  res.redirect(`/rosters/${roster._id}`);
+};
+
+exports.deleteConfirm = async (req, res) => {
+  const roster = await Roster.findById(req.params.id);
+  res.render("rosters/delete", {
+    title: `${roster.rosterTitle} Delete`
+  });
 };
 
 exports.delete = async (req, res) => {
-  res.send("Need to implement delete");
+  const roster = await Roster.findByIdAndDelete(req.params.id);
+  req.flash("success", `${roster.rosterTitle} has been deleted!`);
+  res.redirect("/rosters");
 };

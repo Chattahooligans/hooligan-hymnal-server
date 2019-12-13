@@ -7,9 +7,14 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "dev": "nodemon app.js",
     "heroku-postbuild": "npm install --only=dev --no-shrinkwrap && npm run build",
-    "start": "node app.js"
+    "start": "node app.js",
+    "watch": "nodemon ./app.js --ignore public/",
+    "dev": "concurrently \"npm run watch\" \"npm run development\" --names \"💻,📦\" --prefix name",
+    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "prod": "npm run production",
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "main": "index.js",
   "dependencies": {
@@ -81,6 +86,8 @@
     "@vue/eslint-config-prettier": "^5.0.0",
     "autoprefixer": "^9.6.5",
     "babel-eslint": "^10.0.1",
+    "concurrently": "^5.0.1",
+    "cross-env": "^6.0.3",
     "eslint": "^5.16.0",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-vue": "^5.0.0",

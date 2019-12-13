@@ -1,24 +1,19 @@
+include ./_baseInput
 mixin usersForm(user = {}, edit = false)
   form(method="POST")
     .flex.flex-col.mb-3
-      label(for="name") First Name
-      input(type="text" name="name" id="name" class="border flex-auto rounded p-2 shadow" required value=`${user.name ? user.name : ''}`)
+      +baseInput("text", "First Name", "name", user.name, "First Name", true)
     .flex.flex-col.mb-3
-      label(for="familyName") Last Name
-      input(type="text" name="familyName" id="familyName" class="border flex-auto rounded p-2 shadow" required value=`${user.familyName ? user.familyName : ''}`)
+      +baseInput("text", "Last Name", "familyName", user.familyName, "Last Name", true)
     .flex.flex-col.mb-3
-      label(for="email") Email
-      input(type="email" name="email" id="email" class="border flex-auto rounded p-2 shadow" required value=`${user.email ? user.email : ''}`)
+      +baseInput("email", "Email", "email", user.email, "email@email.com", true)
     .flex.flex-col.mb-3
-      label(for="displayName") Display Name
-      input(type="text" name="displayName" id="displayName" class="border flex-auto rounded p-2 shadow" required value=`${user.displayName ? user.displayName : ''}`)
+      +baseInput("text", "Display Name", "displayName", user.displayName, "Display Name", true)
     if !edit
       .flex.flex-col.mb-3
-        label(for="password") Password
-        input(type="password" name="password" id="password" class="border flex-auto rounded p-2 shadow" required)
+        +baseInput("password", "Password", "password", "", "******")
       .flex.flex-col.mb-3
-        label(for="password-confirm") Confirm Password
-        input(type="password" name="passwordConfirm" id="password-confirm" class="border flex-auto rounded p-2 shadow")
+        +baseInput("password", "Confirm Password", "passwordConfirm", "", "Confirm ******")
     .flex.flex-col.mb-3
       - var options = ['pushNotificationsAllowed', 'songbookAllowed', 'rosterAllowed', 'usersAllowed']
       //- TODO: Create a better select.. to[] from[]

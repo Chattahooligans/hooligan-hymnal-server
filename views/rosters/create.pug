@@ -1,21 +1,7 @@
 extends ../layout
 
+include ../mixins/_rosterForm
+
 block content
   h2 #{title}
-  form(method="POST")
-    .flex.flex-col.mb-3
-      label(for="" class="flex-1 font-semibold") Roster Title
-      input(type="text" name="rosterTitle" id="rosterTitle" placeholder="Roster Title" class="border flex-auto rounded p-2 shadow" required)
-    .flex.flex-col.mb-3
-      label(for="season" class="flex-1 font-semibold") Season
-      input(type="text" name="season" id="season" placeholder="Season" class="border flex-auto rounded p-2 shadow" required)
-    h3 Add Players input
-    .flex.flex-wrap.mb-3
-      div(class="md:w-1/2 w-full")
-        label(for="active" class="flex-1 font-semibold") Active
-          input(type="checkbox" name="active" id="active" class="ml-2")
-      div(class="md:w-1/2 w-full")
-        label(for="default" class="flex-1 font-semibold") Default
-          input(type="checkbox" name="default" id="default" class="ml-2")
-    .mb-3
-      button(type="submit" class="px-2 py-3 rounded bg-blue-700 text-white") Save Roster
+  +rosterForm()

@@ -130,6 +130,12 @@ router.get(
   "/rosters/:id/delete",
   isLoggedIn,
   checkPermission("rosterAllowed"),
+  rostersController.deleteConfirm
+);
+router.post(
+  "/rosters/:id/delete",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
   rostersController.delete
 );
 
