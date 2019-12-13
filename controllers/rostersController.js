@@ -27,8 +27,6 @@ exports.store = async (req, res) => {
     values.default = true;
   }
   const roster = await new Roster(values).save();
-
-  // await roster.save();
   req.flash("success", `${roster.rosterTitle} created!`);
   res.redirect("/rosters");
 };

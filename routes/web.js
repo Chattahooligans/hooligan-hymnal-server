@@ -106,7 +106,7 @@ router.post(
   "/rosters/create",
   isLoggedIn,
   checkPermission("rosterAllowed"),
-  rostersController.store
+  catchErrors(rostersController.store)
 );
 router.get(
   "/rosters/:id",
@@ -124,19 +124,19 @@ router.post(
   "/rosters/:id/edit",
   isLoggedIn,
   checkPermission("rosterAllowed"),
-  rostersController.update
+  catchErrors(rostersController.update)
 );
 router.get(
   "/rosters/:id/delete",
   isLoggedIn,
   checkPermission("rosterAllowed"),
-  rostersController.deleteConfirm
+  catchErrors(rostersController.deleteConfirm)
 );
 router.post(
   "/rosters/:id/delete",
   isLoggedIn,
   checkPermission("rosterAllowed"),
-  rostersController.delete
+  catchErrors(rostersController.delete)
 );
 
 module.exports = router;
