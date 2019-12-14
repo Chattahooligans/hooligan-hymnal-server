@@ -13,17 +13,23 @@ exports.create = (req, res) => {
     title: "Create Songbook"
   });
 };
+exports.store = async (req, res) => {
+  const songbook = new Songbook(req.body);
+  await songbook.save();
+  req.flash("success", `${songbook.title} was created`);
+  res.redirect("/songbooks");
+};
 exports.show = async (req, res) => {
   const songbook = await Songbook.findById(req.params.id);
   res.render("songbooks/show", {
-    title: `${songbook.title}`,
+    title: `${songbook.songbook_title}`,
     songbook
   });
 };
 exports.edit = async (req, res) => {
-  const songbook = Songbook.findById(req.params.id);
+  const songbook = await Songbook.findById(req.params.id);
   res.render("songbooks/edit", {
-    title: `Edit ${songbook.title}`,
+    title: `Edit ${songbook.songbook_title}`,
     songbook
   });
 };
@@ -42,18 +48,18 @@ exports.update = async (req, res) => {
       context: "query"
     }
   );
-  req.flash("success", `${songbook.title} was updated!`);
+  req.flash("success", `${songbook.songbook_title} was updated!`);
   res.redirect("back");
 };
 exports.deleteConfirm = async (req, res) => {
   const songbook = await Songbook.findById(req.params.id);
   res.render("songbooks/delete", {
-    title: `Delete ${songbook.title}`,
+    title: `Delete ${songbook.songbook_title}`,
     songbook
   });
 };
 exports.delete = async (req, res) => {
   const songbook = await Songbook.findByIdAndDelete(req.params.id);
-  req.flash("success", `${songbook.title} was deleted!`);
+  req.flash("success", `${songbook.songbook_title} was deleted!`);
   res.redirect("/songbooks");
 };

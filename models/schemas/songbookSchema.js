@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+mongoose.Promise = global.Promise;
 var ObjectId = mongoose.Schema.Types.ObjectId;
 
 module.exports = new mongoose.Schema(
