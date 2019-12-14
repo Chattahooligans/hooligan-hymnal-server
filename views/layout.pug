@@ -7,7 +7,7 @@ html(lang="en")
     link(rel="stylesheet" href="/css/app.css")
     script(src='/js/app.js' defer)
     title #{title} | Hooligan Server
-  body.h-full
+  body.flex.flex-col
     header.bg-gray-800.text-white.py-3
       button#skip(type="button" class="btn absolute top-0 left-0 hidden focus:block bg-black") Skip To Content
       .px-3.flex.flex-row.justify-between
@@ -21,7 +21,7 @@ html(lang="en")
           else
             a.mr-3(href="/login") Login
             a(href="/register") Register
-    section(class="flex flex-col md:flex-row h-full")
+    section(class="flex flex-col md:flex-row flex-1")
       if locals.flashes
         - const categories = Object.keys(locals.flashes)
         each category in categories
@@ -44,7 +44,7 @@ html(lang="en")
               a(href="/rosters" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
             if currentUser.usersAllowed
               a(href="/users" class="block p-3 hover:bg-gray-600 hover:text-white") Users
-      main#main(class=`w-full ${currentUser ? 'md:ml-6 px-3' : ''}`)
+      main#main(class=`w-full flex-1 ${currentUser ? 'md:ml-6 px-3' : ''}`)
         block content
     footer(class="text-center bg-gray-800 text-white py-3")
       p &copy; Hooligan Hymnal

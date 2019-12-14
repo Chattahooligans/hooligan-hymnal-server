@@ -23,10 +23,14 @@ mixin playerForm(player = {})
         each lang in langs
           label(for=lang class="flex-1 font-semibold") #{lang}
           textarea(name=`bio[${lang}]` id=lang class="border flex-auto rounded p-2 shadow") #{bios[lang]}
-    //- .flex.flex-col.mb-3
-    //-   +baseInput("file", "Thumbnail", "thumbnail", player.thumbnail, "")
-    //- .flex.flex-col.mb-3
-    //-   +baseInput("file", "Image", "image", player.image, "")
+    .flex.flex-col.mb-3
+      button#player-thumbnail-uploader(type="button" class="px-3 py-2 bg-blue-700 text-white rounded mb-3") Upload Thumbnail
+      img(src=player.thumbnail id="thumbnail-img" height="50" width="50" class=`rounded-full ${player.thumbnail ? "block mb-2" : "hidden"}`)
+      input(type="text" name="thumbnail" id="thumbnail" class="border flex-auto rounded p-2 shadow bg-gray-200 cursor-not-allowed pointer-events-none text-gray-700" placeholder="Player Thumbnail" value=player.thumbnail)
+    .flex.flex-col.mb-3
+      button#player-image(type="button" class="px-3 py-2 bg-blue-700 text-white rounded mb-3") Upload Image
+      img(src=player.image id="image-img" class=`${player.image ? 'block mb-2' : 'hidden'}`)
+      input(type="text" name="image" id="image" class="border flex-auto rounded p-2 shadow bg-gray-200 cursor-not-allowed pointer-events-none text-gray-700" placeholder="Player Image" value=player.image)
     .flex.flex-col.mb-3
       +baseInput("text", "Twitter", "twitter", player.twitter, "twitter")
     .flex.flex-col.mb-3
