@@ -1,6 +1,11 @@
 extends ../layout
 
+include ../mixins/_baseInput
+include ../mixins/_songbookForm
+
 block content
   .container.mx-auto
     h2 #{title}
-    p Insert form here
+    +songbookForm()
+
+block scripts

@@ -3,6 +3,19 @@ extends ../layout
 block content
   .container.mx-auto
     h2 #{title}
+    p Organization: #{songbook.organization}
+    div #{songbook.description}
+    p
+      if songbook.front_cover
+        img(src=`${songbook.front_cover}` alt=`${songbook.songbook_title} front cover`)
+    p
+      if songbook.back_cover
+        img(src=`${songbook.back_cover}` alt=`${songbook.back_cover} back cover`)
+    h3 Chapters
+    each chapter in songbook.chapters
+      strong #{chapter.chapter_title}
+      p Song Count: #{chapter.songs.length}
+    br
     a(href=`/songbooks/${songbook._id}/edit`) Edit #{songbook.songbook_title}
     br
     a(href=`/songbooks/${songbook._id}/delete`) Delete #{songbook.songbook_title}

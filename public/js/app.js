@@ -12576,8 +12576,10 @@ new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
 
       if (this.toggled) {
         nav.style.display = "block";
+        this.$el.innerText = "Close Menu";
       } else {
         nav.style.display = "none";
+        this.$el.innerText = "Open Menu";
       }
     }
   }

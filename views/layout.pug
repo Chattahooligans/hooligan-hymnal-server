@@ -31,7 +31,7 @@ html(lang="en")
               button.flash__remove(onClick="this.parentElement.remove()") &times;
       if currentUser
         aside(class="bg-gray-300 px-3 py-4 md:w-64 sm:w-100 md:block")
-          button#menuToggle(type="button" class="md:hidden block w-full text-left" v-on:click="toggleMenu") Menu
+          button#menuToggle(type="button" class="md:hidden block w-full text-left" v-on:click="toggleMenu") Open Menu
           nav(class="flex flex-col -mx-3 md:block hidden")
             if currentUser.pushNotificationsAllowed
               a(href="/push-tokens" class="block p-3 hover:bg-gray-600 hover:text-white") Push Tokens

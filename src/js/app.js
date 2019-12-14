@@ -13,8 +13,10 @@ new Vue({
       let nav = this.$el.nextSibling;
       if (this.toggled) {
         nav.style.display = "block";
+        this.$el.innerText = "Close Menu";
       } else {
         nav.style.display = "none";
+        this.$el.innerText = "Open Menu";
       }
     }
   }
