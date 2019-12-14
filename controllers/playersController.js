@@ -53,7 +53,7 @@ exports.update = async (req, res) => {
     }
   );
   req.flash("success", `${player.name} was updated`);
-  res.redirect("back");
+  res.redirect(`/players/${player._id}`);
 };
 
 exports.deleteConfirm = async (req, res) => {

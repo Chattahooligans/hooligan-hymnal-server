@@ -1,37 +1,10 @@
 extends ../layout
 
 include ../mixins/_baseInput
+include ../mixins/_playerForm
 
 block content
   .mx-auto.container.py-3
-    form(method="POST")
-      .flex.flex-col.mb-3
-        +baseInput("text", "Name", "name", "", "Name")
-      .flex.flex-col.mb-3
-        +baseInput("text", "Flag", "flag", "", "Flag Emoji")
-      .flex.flex-col.mb-3
-        +baseInput("text", "Squad Number", "squadNumber", "", "Squad Number")
-      .flex.flex-col.mb-3
-        - const options = ['Forward','Defender','Midfielder', 'Goalkeeper', 'Head Coach', 'Associate Head Coach', 'Goalkeeper Coach']
-        label(for="position") Position
-        select(name="position" id="position")
-          each option in options
-            option(value=option)= option
-      .flex.flex-col.mb-3
-        +baseInput("text", "Team", "team", "", "Team")
-      .flex.flex-col.mb-3
-        h3.font-semibold Bios
-        div.ml-2.flex.flex-col
-          each lang in langs
-            label(for=lang class="flex-1 font-semibold") #{lang}
-            textarea(name=lang id=lang class="border flex-auto rounded p-2 shadow")
-      .flex.flex-col.mb-3
-        +baseInput("file", "Thumbnail", "thumbnail", "", "")
-      .flex.flex-col.mb-3
-        +baseInput("file", "Image", "image", "", "")
-      .flex.flex-col.mb-3
-        +baseInput("text", "Twitter", "twitter", "", "twitter")
-      .flex.flex-col.mb-3
-        +baseInput("text", "Instagram", "instagram", "", "instagram")
-      .mb-3
-        button(type="submit" class="py-3 px-2 rounded bg-blue-700 text-white") Save Player
+    +playerForm()
+block scripts
+  script(src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript")

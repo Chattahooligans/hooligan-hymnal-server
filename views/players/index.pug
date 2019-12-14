@@ -4,10 +4,11 @@ block content
   .mx-auto.container
     h2 #{title}
     a(href="/players/create") Create Player
-    if players.length
-      ul
         each player in players
-          li
-            a(href=`/players/${player._id}`) #{player.name}
-    else
-      h3 No Players
+          div
+            a(href=`/players/${player._id}`)
+              if player.thumbnail
+                img(src=`${player.thumbnail}` alt=`${player.name} thumbnail` height="55" width="55" class="rounded-full")
+              span #{player.name}
+        else
+          h3 No Players
