@@ -35,10 +35,10 @@ html(lang="en")
           nav(class="flex flex-col -mx-3 md:block hidden")
             if currentUser.pushNotificationsAllowed
               a(href="/push-tokens" class="block p-3 hover:bg-gray-600 hover:text-white") Push Tokens
-              a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Notifications
+              a(href="/notifications" class="block p-3 hover:bg-gray-600 hover:text-white") Notifications
             if currentUser.songbookAllowed
-              a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Songs
-              a(href="#" class="block p-3 hover:bg-gray-600 hover:text-white") Songbooks
+              a(href="/songs" class="block p-3 hover:bg-gray-600 hover:text-white") Songs
+              a(href="/songbooks" class="block p-3 hover:bg-gray-600 hover:text-white") Songbooks
             if currentUser.rosterAllowed
               a(href="/players" class="block p-3 hover:bg-gray-600 hover:text-white") Players
               a(href="/rosters" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
