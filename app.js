@@ -12,6 +12,7 @@ var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 var serveStatic = require("serve-static");
 var User = require("./models/users");
+var Scheduler = require("./models/scheduledTasks");
 // var APIMiddleware = require("./middleware/ApiKeyMiddleware");
 var helmet = require("helmet");
 var fileUpload = require("express-fileupload");
@@ -101,37 +102,6 @@ mongoose
   });
 mongoose.set("useFindAndModify", false);
 
-// TODO: REMOVE THIS ONCE ALL MIGRATED!!
-function updateBios() {
-  Player.find((err, players) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-      return;
-    }
-    players.forEach(function(player) {
-      if (!player.bio.get("en")) {
-        let string = "";
-        player.bio.forEach(function(el) {
-          string = string + el;
-        });
-        player.bio = { en: string };
-        player.updateOne(player, (err, player) => {
-          if (err) {
-            console.error(err);
-            return;
-          }
-          return;
-        });
-      }
-      return;
-    });
-  });
-}
-// Uncomment this to update playersBios
-// updateBios();
-// TODO: REMOVE THIS ONCE ALL MIGRATED!!
-
 // Autoloads all controllers in directory
 fs.readdirSync("controllers").forEach(function(file) {
   if (file.substr(-3) === ".js") {
@@ -144,6 +114,14 @@ app.use(serveStatic(__dirname + "/dist"));
 app.all("*", (req, res) => {
   res.sendFile(`${__dirname}/dist/index.html`);
 });
+
+Scheduler.loadAllScheduledTasks();
+//sample task creation:
+//var task = {};
+//task.creator = "maxgene@gmail.com";
+//task.triggerAt = new Date(2019, 11, 14, 14, 41, 0);
+//task.data = { "foo": "bar" };
+//Scheduler.scheduleNewsPost(task);
 
 // app.all("/api/*", APIMiddleware());
 
