@@ -1,4 +1,5 @@
-var mongoose = require('mongoose');
-var songSchema = require('./schemas/songSchema');
+var mongoose = require("mongoose");
+mongoose.Promise = global.Promise;
+var songSchema = require("./schemas/songSchema");
 
-module.exports = mongoose.model('song', songSchema);
+module.exports = mongoose.model("song", songSchema);

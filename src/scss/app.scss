@@ -3,3 +3,11 @@
 @tailwind components;
 
 @tailwind utilities;
+
+.flash--success {
+  @apply .bg-green-600
+}
+
+.flash--error {
+  @apply .bg-red-600
+}

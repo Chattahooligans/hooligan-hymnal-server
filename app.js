@@ -27,6 +27,7 @@ app.use("/assets", express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/public"));
 app.use(morgan("dev"));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet());
 app.disable("x-powered-by");
@@ -98,14 +99,14 @@ app.use((req, res, next) => {
 });
 
 // Autoloads all controllers in directory
-fs.readdirSync("controllers/API/").forEach(function(file) {
-  if (file.substr(-3) === ".js") {
-    const controller = require(`./controllers/API/${file}`);
-    if (typeof controller === "function") {
-      controller(app);
-    }
-  }
-});
+// fs.readdirSync("controllers/API/").forEach(function(file) {
+//   if (file.substr(-3) === ".js") {
+//     const controller = require(`./controllers/API/${file}`);
+//     if (typeof controller === "function") {
+//       controller(app);
+//     }
+//   }
+// });
 // app.use(serveStatic(__dirname + "/dist"));
 const web = require("./routes/web");
 app.use("/", web);
@@ -122,7 +123,7 @@ if (app.get("env") === "development") {
   app.use(errorHandlers.developmentErrors);
 }
 
-app.search(errorHandlers.productionErrors);
+app.use(errorHandlers.productionErrors);
 
 app.listen(PORT, function() {
   console.log(`app listening on http://localhost:${PORT}`);

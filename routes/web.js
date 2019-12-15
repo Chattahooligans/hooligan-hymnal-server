@@ -9,6 +9,7 @@ const usersController = require("../controllers/usersController");
 const rostersController = require("../controllers/rostersController");
 const playersController = require("../controllers/playersController");
 const songbooksController = require("../controllers/songbooksController");
+const songsController = require("../controllers/songsController");
 
 const { isLoggedIn } = require("../middleware/authMiddleware");
 const { catchErrors } = require("../handlers/errorHandlers");
@@ -241,7 +242,54 @@ router.post(
 );
 
 // Songs
-
+router.get(
+  "/songs",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songsController.index)
+);
+router.get(
+  "/songs/create",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  songsController.create
+);
+router.post(
+  "/songs/create",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songsController.store)
+);
+router.get(
+  "/songs/:id",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songsController.show)
+);
+router.get(
+  "/songs/:id/edit",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songsController.edit)
+);
+router.post(
+  "/songs/:id/edit",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songsController.update)
+);
+router.get(
+  "/songs/:id/delete",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songsController.deleteConfirm)
+);
+router.post(
+  "/songs/:id/delete",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songsController.delete)
+);
 // Notifications??
 
 // Push tokens

@@ -3,7 +3,10 @@ var ObjectId = mongoose.Schema.Types.ObjectId;
 
 module.exports = new mongoose.Schema(
   {
-    rosterTitle: String,
+    rosterTitle: {
+      type: String,
+      required: "Title is required"
+    },
     season: String,
     /*
     players: [

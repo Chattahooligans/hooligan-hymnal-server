@@ -3,6 +3,9 @@ module.exports = {
     extend: {
       inset: {
         "-16": "-4em"
+      },
+      zIndex: {
+        "-1": "-1"
       }
     }
   },

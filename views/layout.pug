@@ -8,8 +8,8 @@ html(lang="en")
     script(src='/js/app.js' defer)
     title #{title} | Hooligan Server
   body.flex.flex-col
-    header.bg-gray-800.text-white.py-3
-      button#skip(type="button" class="btn absolute top-0 left-0 hidden focus:block bg-black") Skip To Content
+    header.bg-gray-800.text-white.py-3.relative
+      //- button#skip(type="button" class="btn absolute -top-16 -left-16 focus:top-0 focus:left-0 bg-black text-white") Skip To Content
       .px-3.flex.flex-row.justify-between
         a(href="/") Hooligan Server
         nav
@@ -21,16 +21,18 @@ html(lang="en")
           else
             a.mr-3(href="/login") Login
             a(href="/register") Register
-    section(class="flex flex-col md:flex-row flex-1")
+    section(class="flex flex-col md:flex-row flex-1 relative z-auto")
       if locals.flashes
-        - const categories = Object.keys(locals.flashes)
-        each category in categories
-          each message in flashes[category]
-            .flash(class=`flash--${category}`)
-              p.flash__text!= message
-              button.flash__remove(onClick="this.parentElement.remove()") &times;
+        div(class="absolute inset-0")
+          - const categories = Object.keys(locals.flashes)
+          each category in categories
+            each message in flashes[category]
+              .z-20.bg-white.text-black.p-3.rounded.shadow-xl.flex.justify-between.m-3.overflow-hidden.relative
+                div(class=`flash--${category} h-3 w-full left-0 top-0 absolute`)
+                p.flash__text.block!= message
+                button.text-xl(onClick="this.parentElement.remove()" class="self-end") &times;
       if currentUser
-        aside(class="bg-gray-300 px-3 py-4 md:w-64 sm:w-100 md:block")
+        aside(class="bg-gray-300 px-3 py-4 md:w-64 sm:w-100 md:block z-10")
           button#menuToggle(type="button" class="md:hidden block w-full text-left" v-on:click="toggleMenu") Open Menu
           nav(class="flex flex-col -mx-3 md:block hidden")
             if currentUser.pushNotificationsAllowed
@@ -44,7 +46,7 @@ html(lang="en")
               a(href="/rosters" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
             if currentUser.usersAllowed
               a(href="/users" class="block p-3 hover:bg-gray-600 hover:text-white") Users
-      main#main(class=`w-full flex-1 ${currentUser ? 'md:ml-6 px-3' : ''}`)
+      main#main(class=`w-full flex-1 relative z-10 ${currentUser ? 'md:ml-6 px-3' : ''}`)
         block content
     footer(class="text-center bg-gray-800 text-white py-3")
       p &copy; Hooligan Hymnal

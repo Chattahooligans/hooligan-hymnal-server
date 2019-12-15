@@ -4,7 +4,10 @@ var ObjectId = mongoose.Schema.Types.ObjectId;
 
 module.exports = new mongoose.Schema(
   {
-    songbook_title: String,
+    songbook_title: {
+      type: String,
+      required: "Title is required"
+    },
     organization: String,
     description: String,
     front_cover: String,

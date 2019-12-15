@@ -11515,6 +11515,18 @@ video {
   z-index: auto;
 }
 
+.-z-1 {
+  z-index: -1;
+}
+
+.flash--success {
+  background-color: #38a169;
+}
+
+.flash--error {
+  background-color: #e53e3e;
+}
+
 @media (min-width: 640px) {
   .sm\:sr-only {
     position: absolute;
@@ -22397,6 +22409,10 @@ video {
 
   .sm\:z-auto {
     z-index: auto;
+  }
+
+  .sm\:-z-1 {
+    z-index: -1;
   }
 }
 
@@ -33283,6 +33299,10 @@ video {
   .md\:z-auto {
     z-index: auto;
   }
+
+  .md\:-z-1 {
+    z-index: -1;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -44168,6 +44188,10 @@ video {
   .lg\:z-auto {
     z-index: auto;
   }
+
+  .lg\:-z-1 {
+    z-index: -1;
+  }
 }
 
 @media (min-width: 1280px) {
@@ -55052,5 +55076,9 @@ video {
 
   .xl\:z-auto {
     z-index: auto;
+  }
+
+  .xl\:-z-1 {
+    z-index: -1;
   }
 }
