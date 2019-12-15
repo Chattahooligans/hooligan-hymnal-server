@@ -110,6 +110,10 @@ app.use((req, res, next) => {
 // app.use(serveStatic(__dirname + "/dist"));
 const web = require("./routes/web");
 app.use("/", web);
+const api = require("./routes/api");
+app.use("/api", api);
+const apiUsersController = require("./controllers/API/usersController");
+apiUsersController(app);
 // app.use(history("index.html", `${__dirname}/dist/`));
 // app.all("*", (req, res) => {
 //   res.sendFile(`${__dirname}/dist/index.html`);

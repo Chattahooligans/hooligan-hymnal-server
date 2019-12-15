@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+mongoose.Promise = global.Promise;
 var ObjectId = mongoose.Schema.Types.ObjectId;
 
 module.exports = new mongoose.Schema(
@@ -7,9 +8,11 @@ module.exports = new mongoose.Schema(
     competition: String,
     logo: String,
     backgroundColor: String,
-    accentColor: String, 
+    accentColor: String,
     textColor: String,
-    players: [{ _id: String, name: String, squadNumber: String, position: String }]
+    players: [
+      { _id: String, name: String, squadNumber: String, position: String }
+    ]
   },
   {
     timestamps: {

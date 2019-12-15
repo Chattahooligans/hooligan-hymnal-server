@@ -71,7 +71,10 @@ exports.validateRegister = (req, res, next) => {
 
   const errors = validationResult(req.body);
   if (errors.length) {
-    req.flash("error", errors.map(err => err.msg));
+    req.flash(
+      "error",
+      errors.map(err => err.msg)
+    );
     res.render("auth/register", {
       title: "Register",
       body: req.body,
