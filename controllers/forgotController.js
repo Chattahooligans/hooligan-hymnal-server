@@ -15,7 +15,7 @@ exports.forgot = async (req, res) => {
   user.name = "a";
   await user.save();
   const resetURL = `http://${req.headers.host}/account/reset/${user.resetPasswordToken}`;
-  console.log(resetURL);
   req.flash("success", "You have been emailed a reset link.");
+  req.flash("info", `<a href="${resetURL}">${resetURL}</a>`);
   res.redirect("/login");
 };

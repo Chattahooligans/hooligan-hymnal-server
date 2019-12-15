@@ -11527,6 +11527,10 @@ video {
   background-color: #e53e3e;
 }
 
+.flash--info {
+  background-color: #dd6b20;
+}
+
 @media (min-width: 640px) {
   .sm\:sr-only {
     position: absolute;
