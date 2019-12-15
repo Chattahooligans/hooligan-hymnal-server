@@ -10,6 +10,8 @@ const rostersController = require("../controllers/rostersController");
 const playersController = require("../controllers/playersController");
 const songbooksController = require("../controllers/songbooksController");
 const songsController = require("../controllers/songsController");
+const notificationsController = require("../controllers/notificationsController");
+const pushTokensController = require("../controllers/pushTokensController");
 
 const { isLoggedIn } = require("../middleware/authMiddleware");
 const { catchErrors } = require("../handlers/errorHandlers");
@@ -291,7 +293,105 @@ router.post(
   catchErrors(songsController.delete)
 );
 // Notifications??
+router.get(
+  "/notifications",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  catchErrors(notificationsController.index)
+);
+router.get(
+  "/notifications/create",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  notificationsController.create
+);
+router.post(
+  "/notifications/create",
+  isLoggedIn,
+  checkPermission(
+    "pushNotificationsAllowed",
+    catchErrors(notificationsController.store)
+  )
+);
+router.get(
+  "/notifications/:id",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  catchErrors(notificationsController.show)
+);
+router.get(
+  "/notifications/:id/edit",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  catchErrors(notificationsController.edit)
+);
+router.post(
+  "/notifications/:id/edit",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  catchErrors(notificationsController.update)
+);
+router.get(
+  "/notifications/:id/delete",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  catchErrors(notificationsController.deleteConfirm)
+);
+router.post(
+  "/notifications/:id/delete",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  catchErrors(notificationsController.delete)
+);
 
 // Push tokens
+router.get(
+  "/push-tokens",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  catchErrors(pushTokensController.index)
+);
+router.get(
+  "/push-tokens/create",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  pushTokensController.create
+);
+router.post(
+  "/push-tokens/create",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  catchErrors(pushTokensController.store)
+);
+router.get(
+  "/push-tokens/:id",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  catchErrors(pushTokensController.show)
+);
+router.get(
+  "/push-tokens/:id/edit",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  catchErrors(pushTokensController.edit)
+);
+router.post(
+  "/push-tokens/:id/edit",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  catchErrors(pushTokensController.update)
+);
+router.get(
+  "/push-tokens/:id/delete",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  catchErrors(pushTokensController.deleteConfirm)
+);
+router.post(
+  "/push-tokens/:id/delete",
+  isLoggedIn,
+  checkPermission("pushNotificationsAllowed"),
+  catchErrors(pushTokensController.delete)
+);
 
 module.exports = router;

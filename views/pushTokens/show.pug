@@ -1,0 +1,7 @@
+extends ../layout
+
+block content
+  h2 #{title}
+  pre= h.dump(pushToken)
+  br
+  a(href=`/push-tokens/${pushToken._id}/delete`) Delete Push Token
