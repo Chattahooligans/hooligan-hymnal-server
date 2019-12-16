@@ -9,6 +9,7 @@ const notificationsController = require("../controllers/API/notificationControll
 const playersController = require("../controllers/API/playersController");
 const rostersController = require("../controllers/API/rosterController");
 const songbooksController = require("../controllers/API/songbookController");
+const songsController = require("../controllers/API/songbookController");
 
 const { catchErrors } = require("../handlers/errorHandlers");
 const { apiLoggedIn } = require("../middleware/authMiddleware");
@@ -51,5 +52,8 @@ router.get("/rosters/:id", catchErrors(rostersController.show));
 // Songbooks
 router.get("/songbooks", catchErrors(songbooksController.index));
 router.get("/songbooks/:id", catchErrors(songbooksController.show));
+// Songs
+router.get("/songs", catchErrors(songsController.index));
+router.get("/song/:id", catchErrors(songsController.show));
 
 module.exports = router;
