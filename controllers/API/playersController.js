@@ -26,7 +26,7 @@ exports.index = async (req, res) => {
 };
 
 exports.show = async (req, res) => {
-  const player = await (await Players.findById(req.params.id)).populated(
+  const player = await (await Players.findById(req.params.id)).populate(
     "players"
   );
   res.json(player);
