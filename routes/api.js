@@ -7,6 +7,7 @@ const goalkeeperNicknameController = require("../controllers/API/goalkeeperNickn
 const userController = require("../controllers/API/usersController");
 const notificationsController = require("../controllers/API/notificationController");
 const playersController = require("../controllers/API/playersController");
+const rostersController = require("../controllers/API/rosterController");
 
 const { catchErrors } = require("../handlers/errorHandlers");
 const { apiLoggedIn } = require("../middleware/authMiddleware");
@@ -42,4 +43,9 @@ router.post(
 // Players
 router.get("/players", catchErrors(playersController.index));
 router.get("/players/:id", catchErrors(playersController.show));
+// Roster
+router.get("/rosters", catchErrors(rostersController.index));
+router.get("/rosters/active", catchErrors(rostersController.active));
+router.get("/rosters/:id", catchErrors(rostersController.show));
+
 module.exports = router;

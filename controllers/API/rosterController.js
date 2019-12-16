@@ -1,42 +1,31 @@
-const Roster = require("../../models/roster");
+// const Roster = require("../../models/roster");
+const mongoose = require("mongoose");
+const Roster = mongoose.model("roster");
 const config = require("../../config.js");
-const passport = require("passport");
-const {
-  apiCheckPermission
-} = require("../../middleware/PermissionsMiddleware");
-
 var roster_cache = {
   data: null,
   last_refresh: 0,
-  force_reload: function(res, activeOnly) {
+  force_reload: async function(res, activeOnly) {
     var that = this;
-    Roster.find((error, roster) => {
-      if (error) {
-        that.data = null;
-        that.last_refresh = 0;
-        if (res != null) res.send(error);
-      }
-      that.data = roster;
-      that.last_refresh = Date.now();
-      if (res != null) {
-        if (activeOnly) {
-          res.send(this.get_active_rosters(this.data));
-        } else {
-          res.send(that.data);
-        }
-      }
-    });
+    const roster = await Roster.find({});
+    that.data = roster;
+    that.last_refresh = Date.now();
+    if (activeOnly) {
+      res.json(this.get_active_rosters(this.data));
+    } else {
+      res.json(that.data);
+    }
   },
-  send_data: function(res) {
+  send_data: async function(res) {
     if (this.last_refresh + config.cache_timeout < Date.now()) {
-      this.force_reload(res);
+      await this.force_reload(res);
     } else {
       res.send(this.data);
     }
   },
-  send_active: function(res) {
+  send_active: async function(res) {
     if (this.last_refresh + config.cache_timeout < Date.now()) {
-      this.force_reload(res, true);
+      await this.force_reload(res, true);
     } else {
       res.send(this.get_active_rosters(this.data));
     }
@@ -50,79 +39,18 @@ var roster_cache = {
   }
 };
 
-module.exports = app => {
-  // returns rosters
-  app.get("/api/rosters", (req, res) => {
-    roster_cache.send_data(res);
+exports.index = async (req, res) => {
+  await roster_cache.send_data(res);
+};
+
+exports.active = async (req, res) => {
+  await roster_cache.send_active(res);
+};
+
+exports.show = async (req, res) => {
+  const roster = await Roster.findById(req.params.id).populate({
+    path: "players",
+    select: "name position flag squadNumber"
   });
-
-  app.get("/api/rosters/active", (req, res) => {
-    roster_cache.send_active(res);
-  });
-
-  app.get("/api/rosters/:id", (req, res) => {
-    const { id } = req.params;
-    Roster.findById(id, (err, roster) => {
-      if (err) {
-        return res.status(400).send(err);
-      }
-      return res.send(roster);
-    }).populate({
-      path: "players",
-      select: "name position flag squadNumber"
-    });
-  });
-
-  // creates roster
-  app.post(
-    "/api/rosters",
-    passport.authenticate("jwt", { session: false }),
-    apiCheckPermission("rosterAllowed"),
-    (req, res) => {
-      Roster.create(req.body, (err, roster) => {
-        if (err) {
-          return res.status(401).send(err);
-        }
-        roster_cache.force_reload();
-        return res.send(roster);
-      });
-    }
-  );
-
-  // updates roster
-  app.put(
-    "/api/rosters/:id",
-    passport.authenticate("jwt", { session: false }),
-    apiCheckPermission("rosterAllowed"),
-    (req, res) => {
-      Roster.findByIdAndUpdate(req.params.id, req.body, (error, roster) => {
-        error ? res.status(501).send({ error }) : res.send(roster);
-        roster_cache.force_reload();
-      });
-    }
-  );
-
-  // deletes roster
-  app.delete(
-    "/api/rosters/:id",
-    passport.authenticate("jwt", { session: false }),
-    apiCheckPermission("rosterAllowed"),
-    (req, res) => {
-      const { id } = req.params;
-      Roster.findByIdAndRemove(id, (err, roster) => {
-        if (err) {
-          return res.status(401).send(err);
-        }
-        roster_cache.force_reload();
-        return res.status(200).send({ message: "Succefully deleted" });
-      });
-      // Roster.findByIdAndRemove(req.params.id, error => {
-      //   error
-      //     ? res.status(501).send({ error })
-      //     : res.send({ message: "Deleted" + req.params.id });
-      //   roster_cache.force_reload();
-      //   return;
-      // });
-    }
-  );
+  res.json(roster);
 };
