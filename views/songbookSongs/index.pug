@@ -1,0 +1,12 @@
+extends ../layout
+
+block content
+  .mx-auto.container
+    h2 #{title}
+    each song in songs
+      div
+        a(href="#") #{song.title}
+    else
+      h3 No Songs in Database
+      h4 Please add a song
+        a(href="/songs/create") Add Song
