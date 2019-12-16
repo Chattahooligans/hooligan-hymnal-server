@@ -5,6 +5,7 @@ const langController = require("../controllers/API/langController");
 const foesController = require("../controllers/API/foesController");
 const goalkeeperNicknameController = require("../controllers/API/goalkeeperNicknameController");
 const userController = require("../controllers/API/usersController");
+const notificationsController = require("../controllers/API/notificationController");
 
 const { catchErrors } = require("../handlers/errorHandlers");
 const { apiLoggedIn } = require("../middleware/authMiddleware");
@@ -30,4 +31,12 @@ router.get(
 router.post("/users/login", userController.login);
 router.get("/users/me", userController.me);
 
+// Notifications
+router.get("/notifications/last", catchErrors(notificationsController.last));
+router.post(
+  "/notification",
+  apiLoggedIn,
+  catchErrors(notificationsController.store)
+);
+//
 module.exports = router;
