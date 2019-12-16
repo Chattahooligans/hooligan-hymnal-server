@@ -4,7 +4,7 @@
   "description": "Serving those diss tracks like we're the Paul brothers",
   "author": "",
   "scripts": {
-    "heroku-postbuild": "npm install --only=dev --no-shrinkwrap && npm run build",
+    "heroku-postbuild": "npm run prod",
     "start": "node app.js",
     "watch": "nodemon ./app.js --ignore ./public",
     "dev": "concurrently \"npm run watch\" \"npm run hot\" --names \"💻,📦\" --prefix name",
