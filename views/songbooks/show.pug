@@ -16,6 +16,8 @@ block content
       strong #{chapter.chapter_title}
       p Song Count: #{chapter.songs.length}
     br
+    a(href=`/songbooks/${songbook._id}/songs`) Add Songs
+    br
     a(href=`/songbooks/${songbook._id}/edit`) Edit #{songbook.songbook_title}
     br
     a(href=`/songbooks/${songbook._id}/delete`) Delete #{songbook.songbook_title}

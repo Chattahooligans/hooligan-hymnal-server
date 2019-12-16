@@ -10,6 +10,7 @@ const rostersController = require("../controllers/rostersController");
 const playersController = require("../controllers/playersController");
 const songbooksController = require("../controllers/songbooksController");
 const songsController = require("../controllers/songsController");
+const songbookSongsController = require("../controllers/songbookSongsController");
 const notificationsController = require("../controllers/notificationsController");
 const pushTokensController = require("../controllers/pushTokensController");
 
@@ -241,6 +242,14 @@ router.post(
   "/songbooks/:id/delete",
   isLoggedIn,
   checkPermission("songbookAllowed", catchErrors(songbooksController.delete))
+);
+
+// Songs and Songbook
+router.get(
+  "/songbooks/:songbookId/songs",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songbookSongsController.allSongs)
 );
 
 // Songs

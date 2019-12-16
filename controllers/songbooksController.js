@@ -63,3 +63,4 @@ exports.delete = async (req, res) => {
   req.flash("success", `${songbook.songbook_title} was deleted!`);
   res.redirect("/songbooks");
 };
+
