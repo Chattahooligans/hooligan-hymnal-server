@@ -15,6 +15,7 @@ exports.login = (req, res, next) => {
       return next(err);
     }
     if (!user) {
+      req.flash("error", "Incorrect Email or Password");
       return res.redirect("/login");
     }
     req.logIn(user, err => {
