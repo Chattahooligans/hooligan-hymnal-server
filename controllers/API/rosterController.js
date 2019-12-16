@@ -48,9 +48,6 @@ exports.active = async (req, res) => {
 };
 
 exports.show = async (req, res) => {
-  const roster = await Roster.findById(req.params.id).populate({
-    path: "players",
-    select: "name position flag squadNumber"
-  });
+  const roster = await Roster.findById(req.params.id).populate("players");
   res.json(roster);
 };
