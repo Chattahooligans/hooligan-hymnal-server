@@ -58,7 +58,8 @@ module.exports = app => {
         next(err);
       }
       if (!user) {
-        res.send("No User with that info");
+        res.json("Incorrect email or password");
+        return;
       }
       req.logIn(user, err => {
         if (err) return next(err);
@@ -81,7 +82,7 @@ module.exports = app => {
         if (req.rememberMe) {
           token = generateToken(payload, secretOrKey, refreshExpires);
         }
-        return res.send({
+        return res.json({
           token,
           user
         });
