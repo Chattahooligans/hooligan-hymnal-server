@@ -1,90 +1,36 @@
-const Songbook = require("../../models/songbook");
+const mongoose = require("mongoose");
+const Songbook = mongoose.model("songbook");
 const config = require("../../config.js");
-const passport = require("passport");
-const {
-  apiCheckPermission
-} = require("../../middleware/PermissionsMiddleware");
 
 var songbook_cache = {
   data: null,
   last_refresh: 0,
-  force_reload: function(res) {
+  force_reload: async function(res) {
     var that = this;
-    Songbook.find((error, songbook) => {
-      if (error) {
-        that.data = null;
-        that.last_refresh = 0;
-        if (res != null) res.send(error);
-      }
-      that.data = songbook;
-      that.last_refresh = Date.now();
-      if (res != null) res.send(that.data);
-    });
+    const songbooks = await Songbook.find();
+    if (!songbooks.length) {
+      that.data = null;
+      that.last_refresh = 0;
+      res.json(songbooks);
+    }
+    that.data = songbooks;
+    that.last_refresh = Date.now();
+    res.json(songbooks);
   },
-  send_data: function(res) {
+  send_data: async function(res) {
     if (this.last_refresh + config.cache_timeout < Date.now()) {
-      this.force_reload(res);
+      await this.force_reload(res);
     } else {
       res.send(this.data);
     }
   }
 };
 
-module.exports = app => {
-  // returns songbooks
-  app.get("/api/songbooks", (req, res) => {
-    songbook_cache.send_data(res);
-  });
+exports.index = async (req, res) => {
+  await songbook_cache.send_data(res);
+};
 
-  app.get("/api/songbooks/:id", async (req, res) => {
-    const { id } = req.params;
-    await Songbook.findById(id, (err, songbook) => {
-      if (err) {
-        return res.send(404).json({ message: "Songbook Not Found" });
-      }
-      return res.send(songbook);
-    });
-  });
-
-  // creates songbook
-  app.post(
-    "/api/songbooks",
-    passport.authenticate("jwt", { session: false }),
-    apiCheckPermission("songbookAllowed"),
-    (req, res) => {
-      var newSongbook = Songbook(req.body);
-      newSongbook.save((error, songbook) => {
-        error ? res.status(501).send({ error }) : res.send(songbook);
-        songbook_cache.force_reload();
-      });
-    }
-  );
-
-  // updates songbook
-  app.put(
-    "/api/songbooks/:id",
-    passport.authenticate("jwt", { session: false }),
-    apiCheckPermission("songbookAllowed"),
-    (req, res) => {
-      Songbook.findByIdAndUpdate(req.params.id, req.body, (error, songbook) => {
-        error ? res.status(501).send({ error }) : res.send(songbook);
-        songbook_cache.force_reload();
-      });
-    }
-  );
-
-  // deletes songbook
-  app.delete(
-    "/api/songbooks/:id",
-    passport.authenticate("jwt", { session: false }),
-    apiCheckPermission("songbookAllowed"),
-    (req, res) => {
-      Songbook.findByIdAndRemove(req.params.id, error => {
-        error
-          ? res.status(501).send({ error })
-          : res.send({ message: "Deleted" + req.params.id });
-        songbook_cache.force_reload();
-      });
-    }
-  );
+exports.show = async (req, res) => {
+  const songbook = await Songbook.findById(req.params.id);
+  res.json(songbook);
 };
