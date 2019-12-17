@@ -64,6 +64,7 @@ exports.removeSongFromChapterConfirm = async (req, res) => {
   const songbookPromise = Songbook.findById(req.params.songbookId);
   const [song, songbook] = await Promise.all([songPromise, songbookPromise]);
   const chapter = await songbook.chapters.id(req.params.chapterId);
+  await chapter.songs.remove(req.params.songId);
   await songbook.save();
   req.flash(
     "success",

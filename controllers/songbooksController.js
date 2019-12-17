@@ -16,7 +16,7 @@ exports.create = (req, res) => {
 exports.store = async (req, res) => {
   const songbook = new Songbook(req.body);
   await songbook.save();
-  req.flash("success", `${songbook.title} was created`);
+  req.flash("success", `${songbook.songbook_title} was created`);
   res.redirect("/songbooks");
 };
 exports.show = async (req, res) => {
@@ -80,18 +80,6 @@ exports.saveChapter = async (req, res) => {
   const songbook = await Songbook.findById(req.params.id);
   songbook.chapters.push(newChapter);
   await songbook.save();
-  // songbook.chapters = [...songbook.chapters, newChapter];
-  // const updatedSongbook = await Songbook.findOneAndUpdate(
-  //   { _id: songbook._id },
-  //   {
-  //     $set: songbook
-  //   },
-  //   {
-  //     new: true,
-  //     runValidators: true,
-  //     context: "query"
-  //   }
-  // );
   req.flash(
     "success",
     `${newChapter.chapter_title} was added to ${songbook.songbook_title}`

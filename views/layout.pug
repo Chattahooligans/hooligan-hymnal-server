@@ -11,13 +11,14 @@ html(lang="en")
     header.bg-gray-800.text-white.py-3.relative
       //- button#skip(type="button" class="btn absolute -top-16 -left-16 focus:top-0 focus:left-0 bg-black text-white") Skip To Content
       .px-3.flex.flex-row.justify-between
-        a(href="/") Hooligan Server
-        nav
+        nav.flex.items-center
+          a(href="/" class="block") Hooligan Server
+        nav(class="flex md:flex-row sm:flex-col")
           if currentUser
             a(href="/account")
-              img(src=`${currentUser.gravatar}` class="h-55 rounded-full" width="55px")
-            form(method="POST" action="/logout")
-              button(type="submit") Logout
+              img(src=`${currentUser.gravatar}` class="h-12 w-12 rounded-full")
+            form(method="POST" action="/logout" class="m-0 flex align-middle md:ml-3")
+              button(type="submit" class="block") Logout
           else
             a.mr-3(href="/login") Login
             a(href="/register") Register
