@@ -3,9 +3,10 @@ extends ../layout
 block content
   .mx-auto.container
     h2 #{title}
+
     each song in songs
-      div
-        a(href="#") #{song.title}
+      div #{song.title} - &nbsp;
+        a(href=`/songbooks/${songbook._id}/chapters/${chapter._id}/add-song/${song._id}`) Add to #{chapter.chapter_title}
     else
       h3 No Songs in Database
       h4 Please add a song

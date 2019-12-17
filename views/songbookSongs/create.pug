@@ -1,0 +1,12 @@
+extends ../layout
+
+include ../mixins/_baseInput
+
+block content
+  .container.mx-auto
+    h2 #{title}
+    form(method="POST")
+      .flex.flex-col.mb-3
+        +baseInput("text", "Song Hint", "hint", "", "Song Hint", true)
+      .mb-3
+        button(type="submit" class="px-3 py-2 rounded bg-blue-700 text-white") Save #{song.title} to #{chapter.chapter_title}

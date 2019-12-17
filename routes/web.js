@@ -241,15 +241,76 @@ router.get(
 router.post(
   "/songbooks/:id/delete",
   isLoggedIn,
-  checkPermission("songbookAllowed", catchErrors(songbooksController.delete))
+  checkPermission("songbookAllowed"),
+  catchErrors(songbooksController.delete)
 );
 
-// Songs and Songbook
+// Songbook Chapters
 router.get(
-  "/songbooks/:songbookId/songs",
+  "/songbooks/:id/add-chapter",
   isLoggedIn,
   checkPermission("songbookAllowed"),
-  catchErrors(songbookSongsController.allSongs)
+  catchErrors(songbooksController.addChapter)
+);
+router.post(
+  "/songbooks/:id/add-chapter",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songbooksController.saveChapter)
+);
+
+router.get(
+  "/songbooks/:songbookId/chapters/:chapterId/delete",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songbooksController.removeChapterConfirm)
+);
+
+router.post(
+  "/songbooks/:songbookId/chapters/:chapterId/delete",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songbooksController.removeChapter)
+);
+
+router.get(
+  "/songbooks/:songbookId/chapters/:chapterId",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songbookSongsController.songbookChapter)
+);
+
+router.get(
+  "/songbooks/:songbookId/chapters/:chapterId/add-song/:songId",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songbookSongsController.addSongToChapterForm)
+);
+
+router.post(
+  "/songbooks/:songbookId/chapters/:chapterId/add-song/:songId",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songbookSongsController.saveSongToChapter)
+);
+
+router.get(
+  "/songbooks/:songbookId/chapters/:chapterId/songs",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songbookSongsController.showSongbookChapter)
+);
+router.get(
+  "/songbooks/:songbookId/chapters/:chapterId/remove-song/:songId",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songbookSongsController.removeSongFromChapterConfirm)
+);
+router.post(
+  "/songbooks/:songbookId/chapters/:chapterId/remove-song/:songId",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songbookSongsController.removeSongFromChapter)
 );
 
 // Songs

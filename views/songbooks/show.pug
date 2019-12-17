@@ -13,10 +13,12 @@ block content
         img(src=`${songbook.back_cover}` alt=`${songbook.back_cover} back cover`)
     h3 Chapters
     each chapter in songbook.chapters
-      strong #{chapter.chapter_title}
+      strong
+        a(href=`/songbooks/${songbook._id}/chapters/${chapter._id}/songs`) #{chapter.chapter_title} - &nbsp;
+        a(href=`/songbooks/${songbook._id}/chapters/${chapter._id}`) Add Song to #{chapter.chapter_title}
       p Song Count: #{chapter.songs.length}
     br
-    a(href=`/songbooks/${songbook._id}/songs`) Add Song To #{songbook.songbook_title}
+    a(href=`/songbooks/${songbook._id}/add-chapter`) Add Chapter To #{songbook.songbook_title}
     br
     a(href=`/songbooks/${songbook._id}/edit`) Edit #{songbook.songbook_title}
     br
