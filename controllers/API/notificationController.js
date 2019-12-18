@@ -8,7 +8,7 @@ exports.last = async (req, res) => {
   const notification = await Notifications.where({
     send_time: -1
   }).limit(1);
-  res.send(notification[0]);
+  res.json(notification[0]);
 };
 
 exports.store = async (req, res) => {

@@ -3,17 +3,16 @@ html(lang="en")
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     meta(http-equiv="X-UA-Compatible", content="ie=edge")
-    //- link(rel="stylesheet", href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css")
     link(rel="stylesheet" href="/css/app.css")
     script(src='/js/app.js' defer)
     title #{title} | #{h.siteName}
   body.flex.flex-col
     header.bg-gray-800.text-white.py-3.relative
-      //- button#skip(type="button" class="btn absolute -top-16 -left-16 focus:top-0 focus:left-0 bg-black text-white") Skip To Content
-      .px-3.flex.flex-row.justify-between
+      button#skip(type="button" class="btn absolute p-3 bg-black text-white") Skip To Content
+      .px-3.flex.flex-row.justify-between.container.mx-auto
         nav.flex.items-center
           a(href="/" class="block") Hooligan Server
-        nav(class="flex md:flex-row sm:flex-col")
+        nav(class="flex md:flex-row flex-col")
           if currentUser
             a(href="/account")
               img(src=`${currentUser.gravatar}` class="h-12 w-12 rounded-full")
@@ -48,8 +47,16 @@ html(lang="en")
             if currentUser.usersAllowed
               a(href="/users" class="block p-3 hover:bg-gray-600 hover:text-white") Users
       main#main(class=`w-full flex-1 relative z-10 ${currentUser ? 'md:ml-6 px-3' : ''}`)
-        div.mx-auto.container
+        div.mx-auto.container.p-3
           block content
     footer(class="text-center bg-gray-800 text-white py-3")
       p &copy; Hooligan Hymnal
+    script.
+      const skip = document.getElementById('skip');
+      skip.addEventListener('click', () => {
+        let main = document.getElementById('main');
+        main.setAttribute('tabindex', '-1');
+        main.focus();
+        main.removeAttribute('tabindex');
+      });
     block scripts
