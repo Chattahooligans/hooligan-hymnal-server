@@ -2,6 +2,18 @@ extends ../layout
 
 block content
   h2 #{title}
+  p Season: #{roster.season}
+  p Players - &nbsp;
+    a(href=`/rosters/${roster._id}/view-players`) Add Player to #{roster.rosterTitle}
+  each player in roster.players
+    div #{player.hint} - &nbsp;
+      a(href=`/rosters/${roster._id}/players/${player._id}/edit`) Edit - &nbsp;
+      a(href=`/rosters/${roster._id}/players/${player._id}/delete`) Delete
+  else
+    h3 No Players in Roster
+  br
+  p Active: #{roster.active}
+  p Default: #{roster.default}
 
   a(href=`/rosters/${roster._id}/edit`) Edit #{roster.rosterTitle}
   br

@@ -8,6 +8,7 @@ const userController = require("../controllers/userController");
 const usersController = require("../controllers/usersController");
 const rostersController = require("../controllers/rostersController");
 const playersController = require("../controllers/playersController");
+const rostersPlayersController = require("../controllers/rostersPlayersController");
 const songbooksController = require("../controllers/songbooksController");
 const songsController = require("../controllers/songsController");
 const songbookSongsController = require("../controllers/songbookSongsController");
@@ -193,6 +194,50 @@ router.post(
   isLoggedIn,
   checkPermission("rosterAllowed"),
   catchErrors(playersController.delete)
+);
+
+// Roster and Players
+router.get(
+  "/rosters/:id/view-players",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  catchErrors(rostersPlayersController.index)
+);
+router.get(
+  "/rosters/:rosterId/add-player/:playerId",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  catchErrors(rostersPlayersController.create)
+);
+router.post(
+  "/rosters/:rosterId/add-player/:playerId",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  catchErrors(rostersPlayersController.store)
+);
+router.get(
+  "/rosters/:rosterId/players/:playerId/edit",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  catchErrors(rostersPlayersController.edit)
+);
+router.post(
+  "/rosters/:rosterId/players/:playerId/edit",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  catchErrors(rostersPlayersController.update)
+);
+router.get(
+  "/rosters/:rosterId/players/:playerId/delete",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  catchErrors(rostersPlayersController.deleteConfirm)
+);
+router.post(
+  "/rosters/:rosterId/players/:playerId/delete",
+  isLoggedIn,
+  checkPermission("rosterAllowed"),
+  catchErrors(rostersPlayersController.delete)
 );
 
 // Songbooks
