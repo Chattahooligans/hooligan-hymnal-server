@@ -59,18 +59,48 @@ exports.showSongbookChapter = async (req, res) => {
   });
 };
 
-exports.removeSongFromChapterConfirm = async (req, res) => {
-  const songPromise = Song.findById(req.params.songId);
-  const songbookPromise = Songbook.findById(req.params.songbookId);
-  const [song, songbook] = await Promise.all([songPromise, songbookPromise]);
+exports.editSongInChapter = async (req, res) => {
+  const songbook = await Songbook.findById(req.params.songbookId);
   const chapter = await songbook.chapters.id(req.params.chapterId);
-  await chapter.songs.remove(req.params.songId);
+  const song = await chapter.songs.id(req.params.songId);
+  res.render("songbookSongs/edit", {
+    title: `Edit ${song.hint} in ${chapter.chapter_title}`,
+    song
+  });
+};
+
+exports.updateSongInChapter = async (req, res) => {
+  const songbook = await Songbook.findById(req.params.songbookId);
+  const chapter = await songbook.chapters.id(req.params.chapterId);
+  let song = await chapter.songs.id(req.params.songId);
+  song.hint = req.body.hint;
+  song.featured = req.body.featured == "on" ? true : false;
+  await songbook.save();
+  req.flash("success", `${song.hint} was Updated`);
+  res.redirect(`/songbooks/${songbook.id}`);
+};
+
+exports.removeSongFromChapterConfirm = async (req, res) => {
+  const songbook = await Songbook.findById(req.params.songbookId);
+  const chapter = await songbook.chapters.id(req.params.chapterId);
+  const song = await chapter.songs.id(req.params.songId);
+  res.render("songbookSongs/delete", {
+    title: `Remove ${song.hint} from ${chapter.chapter_title}`,
+    songbook,
+    chapter,
+    song
+  });
+};
+
+exports.removeSongFromChapter = async (req, res) => {
+  const songbook = await Songbook.findById(req.params.songbookId);
+  const chapter = await songbook.chapters.id(req.params.chapterId);
+  const song = await chapter.songs.id(req.params.songId);
+  await chapter.songs.remove(song._id);
   await songbook.save();
   req.flash(
     "success",
-    `${song.title} was successfully deleted from ${chapter.chapter_title}`
+    `${song.hint} was successfully deleted from ${chapter.chapter_title}`
   );
   res.redirect(`/songbooks/${songbook._id}/chapters/${chapter._id}/songs`);
 };
-
-exports.removeSongFromChapter = async (req, res) => {};

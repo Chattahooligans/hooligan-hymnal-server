@@ -346,6 +346,18 @@ router.get(
   catchErrors(songbookSongsController.showSongbookChapter)
 );
 router.get(
+  "/songbooks/:songbookId/chapters/:chapterId/edit-song/:songId",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songbookSongsController.editSongInChapter)
+);
+router.post(
+  "/songbooks/:songbookId/chapters/:chapterId/edit-song/:songId",
+  isLoggedIn,
+  checkPermission("songbookAllowed"),
+  catchErrors(songbookSongsController.updateSongInChapter)
+);
+router.get(
   "/songbooks/:songbookId/chapters/:chapterId/remove-song/:songId",
   isLoggedIn,
   checkPermission("songbookAllowed"),

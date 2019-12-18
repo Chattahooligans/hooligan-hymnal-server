@@ -3,6 +3,5 @@ extends ../layout
 include ../mixins/_songbookSongForm
 
 block content
-  .container.mx-auto
-    h2 #{title}
-    +songbookSongForm()
+  h2 #{title}
+  +songbookSongForm(song)

@@ -6,7 +6,8 @@ block content
     each song in chapter.songs
       div
         a(href=`/songs/${song._id}`) #{song.hint} - &nbsp;
-        a(href=`/songbooks/${songbook._id}/chapters/${chapter._id}/remove-song/${song._id}`) Remove #{song.title}
+        a(href=`/songbooks/${songbook._id}/chapters/${chapter._id}/edit-song/${song._id}`) Edit Hint - &nbsp;
+        a(href=`/songbooks/${songbook._id}/chapters/${chapter._id}/remove-song/${song._id}`) Delete Hint
     else
       h3 No Songs in #{chapter.chapter_title}
     br
