@@ -22,8 +22,6 @@ env.config();
 const PORT = process.env.PORT || 3000;
 var MONGO_URI = process.env.MONGO_URI;
 
-app.use("/assets", express.static(__dirname + "/public"));
-// app.use("/", express.static("/service-worker.js"));
 app.use(express.static(__dirname + "/public"));
 app.use(morgan("dev"));
 app.use(bodyParser.json());
@@ -98,24 +96,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Autoloads all controllers in directory
-// fs.readdirSync("controllers/API/").forEach(function(file) {
-//   if (file.substr(-3) === ".js") {
-//     const controller = require(`./controllers/API/${file}`);
-//     if (typeof controller === "function") {
-//       controller(app);
-//     }
-//   }
-// });
-// app.use(serveStatic(__dirname + "/dist"));
 const web = require("./routes/web");
 app.use("/", web);
 const api = require("./routes/api");
 app.use("/api", api);
-// app.use(history("index.html", `${__dirname}/dist/`));
-// app.all("*", (req, res) => {
-//   res.sendFile(`${__dirname}/dist/index.html`);
-// });
 
 app.use(errorHandlers.notFound);
 
@@ -128,5 +112,9 @@ if (app.get("env") === "development") {
 app.use(errorHandlers.productionErrors);
 
 app.listen(PORT, function() {
-  console.log(`app listening on http://localhost:${PORT}`);
+  if (app.get("env") === "development") {
+    console.log(`app listening on http://localhost:${PORT}`);
+  } else {
+    console.log(`Express app is running`);
+  }
 });
