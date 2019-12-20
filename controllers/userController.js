@@ -38,7 +38,8 @@ exports.update = async (req, res) => {
     req.flash("error", "Password reset is invalid or expired");
     return res.redirect("/login");
   }
-  await user.setPassword(req.body.password);
+
+  user.password = req.body.password;
   user.resetPasswordToken = undefined;
   user.resetPasswordExpires = undefined;
   const updatedUser = await user.save();

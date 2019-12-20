@@ -56,6 +56,7 @@ const UserSchema = new Schema(
       type: Date,
       default: null
     },
+    password: String,
     resetPasswordToken: String,
     resetPasswordExpires: Date
   },
@@ -78,8 +79,34 @@ UserSchema.virtual("fullname").get(function() {
   return `${this.name} ${this.familyName}`;
 });
 
-UserSchema.plugin(passportLocalMongoose, { usernameField: "email" });
+// UserSchema.plugin(passportLocalMongoose, { usernameField: "email" });
 UserSchema.plugin(mongodbErrorHandler);
+
+UserSchema.pre("save", function save(next) {
+  const user = this;
+  if (!user.isModified("password")) {
+    return next();
+  }
+  bcryptjs.genSalt(10, (err, salt) => {
+    if (err) {
+      return next(err);
+    }
+    bcryptjs.hash(user.password, salt, (err, hash) => {
+      if (err) return next(err);
+      user.password = hash;
+      next();
+    });
+  });
+});
+
+UserSchema.methods.comparePassword = function comparePassword(
+  candidatePassword,
+  cb
+) {
+  bcryptjs.comparePassword(candidatePassword, this.password, (err, isMatch) => {
+    cb(err, isMatch);
+  });
+};
 
 const User = mongoose.model("User", UserSchema);
 module.exports = User;
