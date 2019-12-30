@@ -3,7 +3,6 @@ var ObjectId = mongoose.Schema.Types.ObjectId
 
 var feedItem = new Schema(
     {
-        _id: ObjectId,
         sender: { user: ObjectId, pushToken: String },
         voice: ObjectId,
         publishAt: Date,
