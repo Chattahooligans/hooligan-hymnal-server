@@ -42,6 +42,8 @@ module.exports = app => {
   });
   */
 
+  /*
+  // TODO: require admin user credentials
   // creates voice
   app.post(
     "/api/sgVoices",
@@ -53,4 +55,5 @@ module.exports = app => {
       });
     }
   );
+  */
 }
