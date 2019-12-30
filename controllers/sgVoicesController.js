@@ -30,7 +30,7 @@ var sgVoices_cache = {
 
 module.exports = app => {
   app.get("/api/sgVoices", (req, res) => {
-    players_cache.send_data(res);
+    sgVoices_cache.send_data(res);
     // TODO: only return where .active=true
   });
 
@@ -41,4 +41,16 @@ module.exports = app => {
     // return where .active=true or .active=false
   });
   */
+
+  // creates voice
+  app.post(
+    "/api/sgVoices",
+    (req, res) => {
+      var sgVoice = sgVoices(req.body);
+      sgVoice.save((error, voice) => {
+        error ? res.status(501).send({ error }) : res.send(voice);
+        sgVoices_cache.force_reload();
+      });
+    }
+  );
 }
