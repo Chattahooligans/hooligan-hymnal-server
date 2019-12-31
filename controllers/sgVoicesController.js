@@ -42,7 +42,7 @@ module.exports = app => {
   });
   */
 
-  
+  /*
   // TODO: require admin user credentials
   // creates voice
   app.post(
@@ -55,5 +55,5 @@ module.exports = app => {
       });
     }
   );
-  
+  */
 }
