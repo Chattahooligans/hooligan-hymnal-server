@@ -7,7 +7,7 @@ module.exports = new mongoose.Schema(
         publishAt: Date,
         unpublishAt: Date,
         push: Boolean,
-        voice: ObjectId,
+        channel: ObjectId,
         locale: String,
         text: String,
         images: [{ url: String, caption: String, credit: String, default: Boolean }],
