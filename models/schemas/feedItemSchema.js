@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 var ObjectId = mongoose.Schema.Types.ObjectId
 
-var feedItem = new Schema(
+module.exports = new mongoose.Schema(
     {
         sender: { user: ObjectId, pushToken: String },
         voice: ObjectId,
@@ -19,7 +19,7 @@ var feedItem = new Schema(
                 { url: String, credit: String, default: Boolean }
             ]
         },
-        attachments: [{type: String, id: ObjectId, data: null}],
+        attachments: [{ type: String, id: ObjectId, data: null }],
         active: Boolean
     },
     {
