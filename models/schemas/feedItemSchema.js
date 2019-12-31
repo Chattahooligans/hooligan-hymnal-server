@@ -4,21 +4,13 @@ var ObjectId = mongoose.Schema.Types.ObjectId
 module.exports = new mongoose.Schema(
     {
         sender: { user: ObjectId, pushToken: String },
-        voice: ObjectId,
         publishAt: Date,
         unpublishAt: Date,
-        pinnedAt: Date,
         push: Boolean,
-        text: {
-            type: Map,
-            of: { text: String, apiTranslated: Boolean }
-        },
-        images: {
-            type: Map,
-            of: [
-                { url: String, credit: String, default: Boolean }
-            ]
-        },
+        voice: ObjectId,
+        locale: String,
+        text: String,
+        images: [{ url: String, caption: String, credit: String, default: Boolean }],
         attachments: [{ type: String, id: ObjectId, data: null }],
         active: Boolean
     },
@@ -28,3 +20,7 @@ module.exports = new mongoose.Schema(
     }
 );
 // timestamps: true adds createdAt and updatedAt automagically
+
+// TODO: Figure out future publish/unpublish times using publishedAt/unpublishedAt
+// For now, just set publishedAt to the same as createdAt
+// TODO: Figure out how we want pinned posts to work
