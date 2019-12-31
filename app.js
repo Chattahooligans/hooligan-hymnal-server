@@ -79,6 +79,7 @@ app.use(passport.session());
 require("./handlers/passport");
 
 app.use(flash());
+const { CLOUDINARY_API_KEY, CLOUDINARY_CLOUDNAME } = require("./config");
 
 app.use((req, res, next) => {
   res.locals.h = helpers;
@@ -86,8 +87,8 @@ app.use((req, res, next) => {
   res.locals.flashes = req.flash();
   res.locals.langs =
     JSON.parse(process.env.INPUT_LANGUAGES) || JSON.parse(["en"]);
-  res.locals.cloudinary_key = process.env.CLOUDINARY_API_KEY;
-  res.locals.cloudinary_name = process.env.CLOUDINARY_CLOUDNAME;
+  res.locals.cloudinary_key = CLOUDINARY_API_KEY;
+  res.locals.cloudinary_name = CLOUDINARY_CLOUDNAME;
   next();
 });
 
