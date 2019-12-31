@@ -42,18 +42,18 @@ module.exports = app => {
   });
   */
 
-  /*
+
   // TODO: require admin user credentials
   // creates channel
   app.post(
     "/api/channels",
     (req, res) => {
       var channel = channels(req.body);
-      channel.save((error, voice) => {
+      channel.save((error, channel) => {
         error ? res.status(501).send({ error }) : res.send(channel);
         channels_cache.force_reload();
       });
     }
   );
-  */
+
 }
