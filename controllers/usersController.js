@@ -86,13 +86,15 @@ module.exports = app => {
           const refreshExpires = `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
           let token = generateToken(payload, secretOrKey, tokenExpires);
           user = {
+            _id: user._id,
             id: user.id,
             email: user.email,
             foesAllowed: user.foesAllowed,
             pushNotificationsAllowed: user.pushNotificationsAllowed,
             rosterAllowed: user.rosterAllowed,
             songbookAllowed: user.songbookAllowed,
-            usersAllowed: user.usersAllowed
+            usersAllowed: user.usersAllowed,
+            feedAllowed: user.feedAllowed
           };
           if (rememberMe) {
             token = generateToken(payload, secretOrKey, refreshExpires);
