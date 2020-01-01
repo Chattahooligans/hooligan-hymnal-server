@@ -14,7 +14,16 @@ module.exports = new mongoose.Schema(
         description: String,
         avatarUrl: String,
         follow: Boolean,
-        active: Boolean
+        active: Boolean,
+        users: [
+            {
+                _id: ObjectId, 
+                canCreate: Boolean,
+                canEdit: Boolean,
+                canDelete: Boolean,
+                canPush: Boolean,
+            }
+        ]
     },
     {
         strict: false,
