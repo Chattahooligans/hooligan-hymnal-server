@@ -37,7 +37,7 @@ module.exports = app => {
   // TODO: require admin user credentials
   // creates feed item
   app.post(
-    "/api/sgVoices",
+    "/api/feed",
     (req, res) => {
       var feedItem = feedItems(req.body);
       feedItem.save((error, item) => {
