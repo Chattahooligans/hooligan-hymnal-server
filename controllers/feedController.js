@@ -1,14 +1,14 @@
-const feedItems = require("../models/feed");
+const feeditems = require("../models/feeditems");
 const config = require("../config.js");
 const passport = require("passport");
 const permissions = require("../middleware/PermissionsMiddleware");
 
-var feed_cache = {
+var feeditems_cache = {
   data: null,
   last_refresh: 0,
   force_reload: function (res) {
     var that = this;
-    feedItems.find((error, feed) => {
+    feeditems.find((error, feed) => {
       if (error) {
         that.data = null;
         that.last_refresh = 0;
@@ -30,19 +30,19 @@ var feed_cache = {
 
 module.exports = app => {
   app.get("/api/feed", (req, res) => {
-    feed_cache.send_data(res);
+    feeditems_cache.send_data(res);
     // TODO: only return where .active=true
   });
 
-  // TODO: require admin user credentials
+  // TODO: require admin user credentials, feedAllowed permission, and channel.user.canCreate
   // creates feed item
   app.post(
     "/api/feed",
     (req, res) => {
-      var feedItem = feedItems(req.body);
+      var feedItem = feeditems(req.body);
       feedItem.save((error, item) => {
         error ? res.status(501).send({ error }) : res.send(item);
-        feed_cache.force_reload();
+        feeditems_cache.force_reload();
       });
     }
   );
