@@ -23,5 +23,9 @@ module.exports = new mongoose.Schema({
   foesAllowed: {
     type: Boolean,
     default: false
+  },
+  feedAllowed: {
+    type: Boolean,
+    default: false
   }
 });
