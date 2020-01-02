@@ -13,6 +13,7 @@ module.exports = new mongoose.Schema(
         defaultLocale: String,
         description: String,
         avatarUrl: String,
+        headerUrl: String,
         follow: Boolean,
         active: Boolean,
         users: [
