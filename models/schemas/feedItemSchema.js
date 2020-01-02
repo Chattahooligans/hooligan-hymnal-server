@@ -4,8 +4,8 @@ var ObjectId = mongoose.Schema.Types.ObjectId
 module.exports = new mongoose.Schema(
     {
         sender: { user: ObjectId, pushToken: String },
-        publishAt: Date,
-        unpublishAt: Date,
+        publishedAt: Date,
+        unpublishedAt: Date,
         push: Boolean,
         channel: ObjectId,
         locale: String,
