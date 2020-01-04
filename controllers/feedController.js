@@ -32,7 +32,12 @@ module.exports = app => {
   app.get("/api/feed", (req, res) => {
     feeditems_cache.send_data(res);
     // TODO: only return where .active=true
+    // And where the associated channel .active=true
   });
+
+  // TODO: get /api/feed/ and pass it a post _id
+
+  // TODO: get /api/feed/channel (or something) and pass it a channel _id
 
   // TODO: require admin user credentials, feedAllowed permission, and channel.user.canCreate
   // creates feed item
@@ -46,4 +51,8 @@ module.exports = app => {
       });
     }
   );
+
+  // TODO: API for a user to delete a post (set .active=false), from post _id and user permissions
+
+  // TODO: Research image upload to cloudinary for near-future use
 }
