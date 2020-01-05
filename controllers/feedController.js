@@ -61,13 +61,11 @@ var feeditems_cache = {
 
 module.exports = app => {
   app.get("/api/feed", (req, res) => {
-    feeditems_cache.send_data(res);
-    // And where the associated channel .active=true
+    feeditems_cache.send_active(res);
   });
 
-  app.get("/api/feed/active", (req, res) => {
-    feeditems_cache.send_active(res);
-    // And where the associated channel .active=true
+  app.get("/api/feed/all", (req, res) => {
+    feeditems_cache.send_data(res);
   });
 
   // returns single item by _id
@@ -92,7 +90,6 @@ module.exports = app => {
         if(error) {
           res.send(error);
         }
-        //TODO: need to get currentUserId for comparison. possibly ask Passport?
         var userHasPermission = channel.users.some((user) => user.canCreate && user._id === req.user._id);
         if(!userHasPermission) {
           res.status(401).send("You do not have permission to post to this news feed channel!");
@@ -106,6 +103,31 @@ module.exports = app => {
   );
 
   // TODO: API for a user to delete a post (set .active=false), from post _id and user permissions
+  app.delete(
+    "/api/notification/:id",
+    passport.authenticate("jwt", { session: false }),
+    permissions("feedAllowed"),
+    (req, res) => {
+      FeedItems.findById(req.params.id, (error, feedItem) => {
+        if(error) res.status(501).send({error});
+        
+        Channels.findById(feedItem.channel.Id), (error, channel) => {
+          if(error) {
+            res.send(error);
+          }
+          var userHasPermission = channel.users.some((user) => user.canDelete && user._id === req.user._id);
+          if(!userHasPermission) {
+            res.status(401).send("You do not have permission to delete from this news feed channel!");
+          }
+          FeedItems.findByIdAndRemove(req.params.id, error => {
+            error
+              ? res.status(501).send({ error })
+              : res.send({ message: "Deleted" + req.params.id });
+          });
+        }
+      });      
+    }
+  );
 
   // TODO: Research image upload to cloudinary for near-future use
 }

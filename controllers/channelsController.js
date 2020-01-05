@@ -6,7 +6,7 @@ const permissions = require("../middleware/PermissionsMiddleware");
 var channels_cache = {
   data: null,
   last_refresh: 0,
-  force_reload: function (res) {
+  force_reload: function (res, sendCallback) {
     var that = this;
     channels.find((error, channels) => {
       if (error) {
@@ -16,37 +16,52 @@ var channels_cache = {
       }
       that.data = channels;
       that.last_refresh = Date.now();
-      if (res != null) res.send(that.data);
+      if (res != null) {
+        sendCallback(that.data);
+      }
     });
   },
   send_data: function (res) {
     if (this.last_refresh + config.cache_timeout < Date.now()) {
-      this.force_reload(res);
+      this.force_reload(res, res.send);
     } else {
       res.send(this.data);
     }
-  }
+  },
+  send_active: function(res) {
+    if (this.last_refresh + config.cache_timeout < Date.now()) {
+      this.force_reload(res, (data) => res.send(this.get_active_items(data)));
+    } else {
+      res.send(this.get_active_items(this.data));
+    }
+  },
+  get_active_items(data) {
+    var active = [];
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].active) active.push(data[i]);
+    }
+    return active;
+  },
 };
 
 module.exports = app => {
   app.get("/api/channels", (req, res) => {
-    channels_cache.send_data(res);
-    // TODO: only return where .active=true
+    channels_cache.send_active(res);
   });
 
-  // TODO:
-  /*
-  app.get("/api/channels/all", (req, res) => {
-    // require admin user credentials
-    // return where .active=true or .active=false
-  });
-  */
+  app.get("/api/channels/all",
+    passport.authenticate("jwt", { session: false }),
+    permissions("channelsAllowed"),
+    (req, res) => {
+      channels_cache.send_data(res);
+    }
+  );
 
-
-  // TODO: require admin user credentials
   // creates channel
   app.post(
     "/api/channels",
+    passport.authenticate("jwt", { session: false }),
+    permissions("channelsAllowed"),
     (req, res) => {
       var channel = channels(req.body);
       channel.save((error, channel) => {
