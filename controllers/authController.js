@@ -87,11 +87,20 @@ exports.validateRegister = (req, res, next) => {
 };
 
 exports.register = async (req, res, next) => {
-  const user = new User({
+  let user = await User.findOne({
+    email: req.body.email
+  });
+  if (user) {
+    req.flash("error", "Account already exists");
+    res.redirect("back");
+    return;
+  }
+  user = new User({
     email: req.body.email,
     name: req.body.name,
     familyName: req.body.familyName,
-    displayName: req.body.displayName
+    displayName: req.body.displayName,
+    password: req.body.password
   });
   const users = await User.find({});
   if (users.length === 0) {
@@ -101,7 +110,7 @@ exports.register = async (req, res, next) => {
     user.foesAllowed = true;
     user.usersAllowed = true;
   }
-  await User.register(user, req.body.password);
+  await user.save();
   next();
 };
 
