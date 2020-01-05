@@ -64,7 +64,6 @@
     "validator": "^12.1.0",
     "validatorjs": "^3.17.1",
     "vee-validate": "^3.1.0",
-    "vue": "^2.6.10",
     "vue-ads-table-tree": "^2.3.7",
     "vue-form-generator": "^2.3.4",
     "vue-fragment": "^1.5.1",

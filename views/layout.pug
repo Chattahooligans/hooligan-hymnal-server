@@ -49,10 +49,6 @@ html(lang="en")
               a(href="/users" class="block p-3 hover:bg-gray-600 hover:text-white") Users
       main#main(class=`w-full flex-1 relative z-10 ${currentUser ? 'md:ml-6 px-3' : ''}`)
         div.mx-auto.container.p-3
-          //- div(x-data="{ open: false }")
-          //-   button(x-on:click="open = true" type="button") Open Dropdown
-          //-   ul(x-show="open" x-on:click.away="open = false")
-          //-     li Dropdown Body
           block content
     footer(class="text-center bg-gray-800 text-white py-3")
       p &copy; Hooligan Hymnal
