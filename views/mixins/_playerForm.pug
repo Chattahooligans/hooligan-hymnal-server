@@ -18,11 +18,16 @@ mixin playerForm(player = {})
       +baseInput("text", "Team", "team", player.team, "Team", true)
     .flex.flex-col.mb-3
       h3.font-semibold Bios
-      div.ml-2.flex.flex-col
-        - const bios = player.bio ? JSON.parse(JSON.stringify(player.bio)) : {};
-        each lang in langs
-          label(for=lang class="flex-1 font-semibold") #{lang}
-          textarea(name=`bio[${lang}]` id=lang class="border flex-auto rounded p-2 shadow") #{bios[lang]}
+      div.flex.flex-col
+        div(x-data="{ lang: '"+ langs[0] +"' }")
+          .flex
+            each lang in langs
+              button(x-on:click="lang = '" + lang +"'" type="button" class="uppercase flex-1 px-2 py-3 rounded-t" x-bind:class="{ 'bg-gray-800 text-white': lang === '" + lang + "' }") #{lang}
+          each lang in langs
+            - const bios = player.bio ? JSON.parse(JSON.stringify(player.bio)) : {};
+            div.flex.flex-col.border-2.p-3.rounded-b-lg(x-show="lang === '" + lang + "'")
+              label(for=lang class="flex-1 font-semibold capitalize") #{lang}
+              textarea(name=`bio[${lang}]` id=lang class="border flex-auto rounded p-2 shadow") #{bios[lang]}
     .flex.flex-col.mb-3
       button#player-thumbnail-uploader(type="button" class="px-3 py-2 bg-blue-700 text-white rounded mb-3") Upload Thumbnail
       img(src=player.thumbnail id="thumbnail-img" height="50" width="50" class=`rounded-full ${player.thumbnail ? "block mb-2" : "hidden"}`)
