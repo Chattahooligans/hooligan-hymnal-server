@@ -5,7 +5,7 @@ html(lang="en")
     meta(http-equiv="X-UA-Compatible", content="ie=edge")
     link(rel="stylesheet" href="/css/app.css")
     script(src="/js/app.js" defer)
-    script(src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.2.0/dist/alpine.js" defer)
+    //- script(src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.2.0/dist/alpine.js" defer)
     title #{title} | #{h.siteName}
   body.flex.flex-col
     header.bg-gray-800.text-white.py-3.relative
@@ -33,9 +33,9 @@ html(lang="en")
                 p.flash__text.block!= message
                 button.text-xl(onClick="this.parentElement.remove()" class="self-end") &times;
       if currentUser
-        aside(class="bg-gray-300 px-3 py-4 md:w-64 sm:w-100 md:block z-10")
-          button#menuToggle(type="button" class="md:hidden block w-full text-left" v-on:click="toggleMenu") Open Menu
-          nav(class="flex flex-col -mx-3 md:block hidden")
+        aside(class="bg-gray-300 px-3 py-4 md:w-64 sm:w-100 md:block z-10" x-data="{ open: false }")
+          button(type="button" class="md:hidden block w-full text-left" x-on:click="open = true") Open Menu
+          nav(class="flex flex-col -mx-3 md:block" x-bind:class="{ 'sm:hidden': open === false }" x-on:click.away="open = false")
             if currentUser.pushNotificationsAllowed
               a(href="/push-tokens" class="block p-3 hover:bg-gray-600 hover:text-white") Push Tokens
               a(href="/notifications" class="block p-3 hover:bg-gray-600 hover:text-white") Notifications
@@ -49,6 +49,10 @@ html(lang="en")
               a(href="/users" class="block p-3 hover:bg-gray-600 hover:text-white") Users
       main#main(class=`w-full flex-1 relative z-10 ${currentUser ? 'md:ml-6 px-3' : ''}`)
         div.mx-auto.container.p-3
+          //- div(x-data="{ open: false }")
+          //-   button(x-on:click="open = true" type="button") Open Dropdown
+          //-   ul(x-show="open" x-on:click.away="open = false")
+          //-     li Dropdown Body
           block content
     footer(class="text-center bg-gray-800 text-white py-3")
       p &copy; Hooligan Hymnal

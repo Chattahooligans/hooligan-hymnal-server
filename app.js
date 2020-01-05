@@ -30,47 +30,47 @@ app.use(cors());
 app.use(helmet());
 app.disable("x-powered-by");
 app.use(
-  fileUpload({
-    useTempFiles: true,
-    tempFileDir: "/tmp/"
-  })
+	fileUpload({
+		useTempFiles: true,
+		tempFileDir: "/tmp/"
+	})
 );
 
 app.set("view engine", "pug");
 app.set("views", "views");
 
 mongoose
-  .connect(
-    MONGO_URI,
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    },
-    function() {
-      console.log(`Connection has been made`);
-    }
-  )
-  .catch(function(err) {
-    console.log(`App starting error:`, err.stack);
-    process.exit(1);
-  });
+	.connect(
+		MONGO_URI,
+		{
+			useNewUrlParser: true,
+			useUnifiedTopology: true
+		},
+		function() {
+			console.log("Connection has been made");
+		}
+	)
+	.catch(function(err) {
+		console.log("App starting error:", err.stack);
+		process.exit(1);
+	});
 mongoose.set("useFindAndModify", false);
 
 app.use(cookieParser());
 
 app.use(
-  session({
-    secret: process.env.SECRET_KEY,
-    resave: false,
-    saveUninitialized: false,
-    store: new MongoStore({ mongooseConnection: mongoose.connection })
-  })
+	session({
+		secret: process.env.SECRET_KEY,
+		resave: false,
+		saveUninitialized: false,
+		store: new MongoStore({ mongooseConnection: mongoose.connection })
+	})
 );
 
 fs.readdirSync("models").forEach(file => {
-  if (file.substr(-3) === ".js") {
-    require(`./models/${file}`);
-  }
+	if (file.substr(-3) === ".js") {
+		require(`./models/${file}`);
+	}
 });
 
 app.use(passport.initialize());
@@ -81,19 +81,19 @@ app.use(flash());
 const { CLOUDINARY_API_KEY, CLOUDINARY_CLOUDNAME } = require("./config");
 
 app.use((req, res, next) => {
-  res.locals.h = helpers;
-  res.locals.currentUser = req.user || null;
-  res.locals.flashes = req.flash();
-  res.locals.langs =
+	res.locals.h = helpers;
+	res.locals.currentUser = req.user || null;
+	res.locals.flashes = req.flash();
+	res.locals.langs =
     JSON.parse(process.env.INPUT_LANGUAGES) || JSON.parse(["en"]);
-  res.locals.cloudinary_key = CLOUDINARY_API_KEY;
-  res.locals.cloudinary_name = CLOUDINARY_CLOUDNAME;
-  next();
+	res.locals.cloudinary_key = CLOUDINARY_API_KEY;
+	res.locals.cloudinary_name = CLOUDINARY_CLOUDNAME;
+	next();
 });
 
 app.use((req, res, next) => {
-  req.login = promisify(req.login, req);
-  next();
+	req.login = promisify(req.login, req);
+	next();
 });
 
 const web = require("./routes/web");
@@ -106,15 +106,15 @@ app.use(errorHandlers.notFound);
 app.use(errorHandlers.flashValidationErrors);
 
 if (app.get("env") === "development") {
-  app.use(errorHandlers.developmentErrors);
+	app.use(errorHandlers.developmentErrors);
 }
 
 app.use(errorHandlers.productionErrors);
 
 app.listen(PORT, function() {
-  if (app.get("env") === "development") {
-    console.log(`app listening on http://localhost:${PORT}`);
-  } else {
-    console.log(`Express app is running`);
-  }
+	if (app.get("env") === "development") {
+		console.log(`app listening on http://localhost:${PORT}`);
+	} else {
+		console.log("Express app is running");
+	}
 });
