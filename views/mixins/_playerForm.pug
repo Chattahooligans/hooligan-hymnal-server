@@ -26,11 +26,11 @@ mixin playerForm(player = {})
     .flex.flex-col.mb-3
       button#player-thumbnail-uploader(type="button" class="px-3 py-2 bg-blue-700 text-white rounded mb-3") Upload Thumbnail
       img(src=player.thumbnail id="thumbnail-img" height="50" width="50" class=`rounded-full ${player.thumbnail ? "block mb-2" : "hidden"}`)
-      input(type="text" name="thumbnail" id="thumbnail" class="border flex-auto rounded p-2 shadow bg-gray-200 cursor-not-allowed pointer-events-none text-gray-700" placeholder="Player Thumbnail" value=player.thumbnail)
+      input(type="text" name="thumbnail" id="thumbnail" class="border flex-auto rounded p-2 shadow bg-gray-200 cursor-not-allowed pointer-events-none text-gray-700" placeholder="Player Thumbnail" value=player.thumbnail tabindex="-1")
     .flex.flex-col.mb-3
       button#player-image(type="button" class="px-3 py-2 bg-blue-700 text-white rounded mb-3") Upload Image
       img(src=player.image id="image-img" class=`${player.image ? 'block mb-2' : 'hidden'}`)
-      input(type="text" name="image" id="image" class="border flex-auto rounded p-2 shadow bg-gray-200 cursor-not-allowed pointer-events-none text-gray-700" placeholder="Player Image" value=player.image)
+      input(type="text" name="image" id="image" class="border flex-auto rounded p-2 shadow bg-gray-200 cursor-not-allowed pointer-events-none text-gray-700" placeholder="Player Image" value=player.image tabindex="-1")
     .flex.flex-col.mb-3
       +baseInput("text", "Twitter", "twitter", player.twitter, "twitter")
     .flex.flex-col.mb-3
