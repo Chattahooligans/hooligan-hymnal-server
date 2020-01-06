@@ -3,37 +3,37 @@ const Songs = mongoose.model("song");
 const config = require("../../config.js");
 
 const song_cache = {
-  data: null,
-  last_refresh: 0,
-  force_reload: async function(res) {
-    const that = this;
-    const songs = await Songs.find();
-    if (!songs.length) {
-      that.data = null;
-      that.last_refresh = 0;
-      res.json(that.data);
-      return;
-    }
-    that.data = songs;
-    that.last_refresh = Date.now();
-    res.json(that.data);
-  },
-  send_data: async function(res) {
-    if (this.last_refresh + config.cache_timeout < Date.now()) {
-      await this.force_reload(res);
-    } else {
-      res.json(this.data);
-    }
-  }
+	data: null,
+	last_refresh: 0,
+	force_reload: async function(res) {
+		const that = this;
+		const songs = await Songs.find();
+		if (!songs.length) {
+			that.data = null;
+			that.last_refresh = 0;
+			res.json(that.data);
+			return;
+		}
+		that.data = songs;
+		that.last_refresh = Date.now();
+		res.json(that.data);
+	},
+	send_data: async function(res) {
+		if (this.last_refresh + config.cache_timeout < Date.now()) {
+			await this.force_reload(res);
+		} else {
+			res.json(this.data);
+		}
+	}
 };
 
 exports.index = async (req, res) => {
-  await song_cache.send_data(res);
+	await song_cache.send_data(res);
 };
 
 exports.show = async (req, res) => {
-  const song = await Songs.findById(req.params.id);
-  res.json(song);
+	const song = await Songs.findById(req.params.id);
+	res.json(song);
 };
 
 // module.exports = app => {

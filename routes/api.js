@@ -9,7 +9,7 @@ const notificationsController = require("../controllers/API/notificationControll
 const playersController = require("../controllers/API/playersController");
 const rostersController = require("../controllers/API/rosterController");
 const songbooksController = require("../controllers/API/songbookController");
-const songsController = require("../controllers/API/songbookController");
+const songsController = require("../controllers/API/songController");
 
 const { catchErrors } = require("../handlers/errorHandlers");
 const { apiLoggedIn } = require("../middleware/authMiddleware");
