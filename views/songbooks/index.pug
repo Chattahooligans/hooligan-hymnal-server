@@ -1,0 +1,10 @@
+extends ../layout
+
+block content
+  h2 #{title}
+  a(href="/songbooks/create") Add Songbook
+  each songbook in songbooks
+    div
+      a(href=`/songbooks/${songbook._id}`) #{songbook.songbook_title}
+  else
+    h3 No Songbooks

@@ -1,0 +1,8 @@
+include ./_baseInput
+
+mixin rosterPlayerForm(player = {})
+  form(method="POST")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Player Hint", "hint", player.hint, "Player Hint", true)
+    .mb-3
+      button(type="submit" class="px-3 py-2 rounded bg-blue-700 text-white") Save Player

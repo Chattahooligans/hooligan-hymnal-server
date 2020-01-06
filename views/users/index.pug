@@ -1,0 +1,22 @@
+extends ../layout
+
+block content
+  .mx-auto.container
+    h2 #{title}
+    a(href="/users/create") Add User
+    if users.length
+      table
+        thead
+          tr
+            th Full Name
+            th Email
+            th Last Login
+        tbody
+          each user in users
+            tr
+              td
+                a(href=`/users/${user._id}`) #{user.fullname}
+              td #{user.email}
+              td #{user.lastLogin ? h.moment(user.lastLogin).fromNow() : "Hasn't Logged in yet!"}
+    else
+      h3 No Other Users

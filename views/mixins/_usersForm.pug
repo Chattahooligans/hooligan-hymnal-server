@@ -1,0 +1,25 @@
+include ./_baseInput
+mixin usersForm(user = {}, edit = false)
+  form(method="POST")
+    .flex.flex-col.mb-3
+      +baseInput("text", "First Name", "name", user.name, "First Name", true)
+    .flex.flex-col.mb-3
+      +baseInput("text", "Last Name", "familyName", user.familyName, "Last Name", true)
+    .flex.flex-col.mb-3
+      +baseInput("email", "Email", "email", user.email, "email@email.com", true)
+    .flex.flex-col.mb-3
+      +baseInput("text", "Display Name", "displayName", user.displayName, "Display Name", true)
+    if !edit
+      .flex.flex-col.mb-3
+        +baseInput("password", "Password", "password", "", "******")
+      .flex.flex-col.mb-3
+        +baseInput("password", "Confirm Password", "passwordConfirm", "", "Confirm ******")
+    .flex.flex-col.mb-3
+      - var options = ['pushNotificationsAllowed', 'songbookAllowed', 'rosterAllowed', 'usersAllowed']
+      //- TODO: Create a better select.. to[] from[]
+      label(for="permissions") Permissions
+      select(name="permissions[]" id="permissions[]" multiple)
+        each option in options
+          option(value=option) #{option}
+    .mb-3
+      button(type="submit" class="px-3 py-2 bg-blue-700 text-white") Save User

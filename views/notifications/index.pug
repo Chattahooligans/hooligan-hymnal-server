@@ -1,0 +1,9 @@
+extends ../layout
+
+block content
+  h2 #{title}
+  each notification in notifications
+    div
+      a(href=`/notifications/${notification._id}`) #{notification._id}
+  else
+    h3 No notifications

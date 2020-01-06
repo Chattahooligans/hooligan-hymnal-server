@@ -1,0 +1,12 @@
+extends ../layout
+
+block content
+  h2 #{title}
+  a(href="/rosters/create") Add Roster
+  if rosters.length
+    ul
+    each roster in rosters
+      li
+        a(href=`/rosters/${roster._id}`) #{roster.rosterTitle} - #{roster.active}
+  else
+    h3 No Rosters

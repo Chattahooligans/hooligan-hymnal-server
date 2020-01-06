@@ -4,7 +4,10 @@ module.exports = new mongoose.Schema(
   {
     category: String,
     delete_local: String,
-    title: String,
+    title: {
+      type: String,
+      required: "Title is required"
+    },
     instructions: String,
     lyrics: String,
     reference_title: String,

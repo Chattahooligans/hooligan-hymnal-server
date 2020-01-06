@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+  .mx-auto.container
+    h2 #{title}
+    a(href="/players/create") Create Player
+        each player in players
+          div
+            a(href=`/players/${player._id}` class="block flex items-center")
+              if player.thumbnail
+                img(src=`${player.thumbnail}` alt=`${player.name} thumbnail` height="55" width="55" class="rounded-full mr-2")
+              span.block #{player.name}
+        else
+          h3 No Players

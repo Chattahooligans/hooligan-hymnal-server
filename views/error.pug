@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  .container.mx-auto
+    h2.text-6xl.font-bold= status
+    p.text-xl= message
+    pre.text-xs.error!= stackHighlighted

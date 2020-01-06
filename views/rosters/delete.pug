@@ -1,0 +1,8 @@
+extends ../layout
+
+block content
+  h2 #{title}
+  p
+    strong Are your sure you want to delete #{roster.rosterTitle}
+    form(method="POST")
+      button(type="submit" class="py-3 px-2 rounded bg-red-700 text-white") Delete

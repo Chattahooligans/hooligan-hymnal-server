@@ -1,0 +1,18 @@
+include ./_baseInput
+
+mixin rosterForm(roster = {})
+  form(method="POST")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Roster Title", "rosterTitle", roster.rosterTitle, "Title", true)
+    .flex.flex-col.mb-3
+      +baseInput("text", "Season", "season", roster.season, "Season", true)
+    h3 Add Players input
+    .flex.flex-wrap.mb-3
+      div(class="md:w-1/2 w-full")
+        label(for="active" class="flex-1 font-semibold") Active
+          input(type="checkbox" name="active" id="active" class="ml-2" checked=roster.active)
+      div(class="md:w-1/2 w-full")
+        label(for="default" class="flex-1 font-semibold") Default
+          input(type="checkbox" name="default" id="default" class="ml-2" checked=roster.default)
+    .mb-3
+      button(type="submit" class="px-2 py-3 rounded bg-blue-700 text-white") Save Roster

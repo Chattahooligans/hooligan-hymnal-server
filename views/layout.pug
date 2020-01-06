@@ -1,0 +1,63 @@
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    meta(http-equiv="X-UA-Compatible", content="ie=edge")
+    link(rel="stylesheet" href="/css/app.css")
+    script(src="/js/app.js" defer)
+    //- script(src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.2.0/dist/alpine.js" defer)
+    title #{title} | #{h.siteName}
+  body.flex.flex-col
+    header.bg-gray-800.text-white.py-3.relative
+      button#skip(type="button" class="btn absolute p-3 bg-black text-white") Skip To Content
+      .px-3.flex.flex-row.justify-between
+        nav.flex.items-center
+          a(href="/" class="block") Hooligan Server
+        nav(class="flex md:flex-row flex-col")
+          if currentUser
+            a(href="/account")
+              img(src=`${currentUser.gravatar}` class="h-12 w-12 rounded-full")
+            form(method="POST" action="/logout" class="m-0 flex align-middle md:ml-3")
+              button(type="submit" class="block") Logout
+          else
+            a.mr-3(href="/login") Login
+            a(href="/register") Register
+    section(class="flex flex-col md:flex-row flex-1 relative z-auto")
+      if locals.flashes
+        div(class="absolute inset-0")
+          - const categories = Object.keys(locals.flashes)
+          each category in categories
+            each message in flashes[category]
+              .z-20.bg-white.text-black.p-3.rounded.shadow-xl.flex.justify-between.m-3.overflow-hidden.relative
+                div(class=`flash--${category} h-3 w-full left-0 top-0 absolute`)
+                p.flash__text.block!= message
+                button.text-xl(onClick="this.parentElement.remove()" class="self-end") &times;
+      if currentUser
+        aside(class="bg-gray-300 px-3 py-4 md:w-64 sm:w-100 md:block z-10" x-data="{ open: false }")
+          button(type="button" class="md:hidden block w-full text-left" x-on:click="open = true") Open Menu
+          nav(class="flex flex-col -mx-3 md:block" x-bind:class="{ 'sm:hidden': open === false }" x-on:click.away="open = false")
+            if currentUser.pushNotificationsAllowed
+              a(href="/push-tokens" class="block p-3 hover:bg-gray-600 hover:text-white") Push Tokens
+              a(href="/notifications" class="block p-3 hover:bg-gray-600 hover:text-white") Notifications
+            if currentUser.songbookAllowed
+              a(href="/songs" class="block p-3 hover:bg-gray-600 hover:text-white") Songs
+              a(href="/songbooks" class="block p-3 hover:bg-gray-600 hover:text-white") Songbooks
+            if currentUser.rosterAllowed
+              a(href="/players" class="block p-3 hover:bg-gray-600 hover:text-white") Players
+              a(href="/rosters" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
+            if currentUser.usersAllowed
+              a(href="/users" class="block p-3 hover:bg-gray-600 hover:text-white") Users
+      main#main(class=`w-full flex-1 relative z-10 ${currentUser ? 'md:ml-6 px-3' : ''}`)
+        div.mx-auto.container.p-3
+          block content
+    footer(class="text-center bg-gray-800 text-white py-3")
+      p &copy; Hooligan Hymnal
+    script.
+      const skip = document.getElementById('skip');
+      skip.addEventListener('click', () => {
+        let main = document.getElementById('main');
+        main.setAttribute('tabindex', '-1');
+        main.focus();
+        main.removeAttribute('tabindex');
+      });
+    block scripts

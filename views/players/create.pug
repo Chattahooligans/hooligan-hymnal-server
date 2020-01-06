@@ -1,0 +1,52 @@
+extends ../layout
+
+include ../mixins/_baseInput
+include ../mixins/_playerForm
+
+block content
+  .mx-auto.container.py-3
+    +playerForm()
+block scripts
+  script(src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript")
+  script(type="text/javascript").
+    var thumbnailWidget = cloudinary.createUploadWidget({
+      cloudName: '#{cloudinary_name}',
+      apiKey: '#{locals.cloudinary_key}',
+      uploadPreset: 'thumbnail',
+      folder: 'players_thumbnail',
+      cropping: 'server',
+    }, (error, result) => {
+      if (error) {
+        console.error(error);
+      }
+      if (result.event === "success") {
+        var thumbnail = document.getElementById('thumbnail');
+        var thumbnailImg = document.getElementById('thumbnail-img');
+        thumbnailImg.src = result.info.url;
+        thumbnail.value = result.info.url;
+      }
+    });
+    document.getElementById('player-thumbnail-uploader').addEventListener("click", function() {
+      thumbnailWidget.open();
+    }, false);
+
+    var imageWidget = cloudinary.createUploadWidget({
+      cloudName: '#{cloudinary_name}',
+      apiKey: '#{locals.cloudinary_key}',
+      uploadPreset: 'base_image',
+      folder: 'players_images',
+      cropping: 'server',
+    }, (error, result) => {
+      if (error) {
+        console.error(error)
+      }
+      if (result.event === "success") {
+        var playerImg = document.getElementById("image-img");
+        var playerImgText = document.getElementById("image");
+        playerImg.src = result.info.url;
+        playerImgText.value = result.info.url;
+      }
+    });
+    document.getElementById("player-image").addEventListener("click", function() {
+      imageWidget.open();
+    });
