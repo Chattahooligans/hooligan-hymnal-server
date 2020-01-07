@@ -3,13 +3,15 @@ const Player = mongoose.model("players");
 
 exports.index = async (req, res) => {
 	const page = req.query.page || 1;
-	const limit = 1;
+	const limit = 10;
 	const skip = (page * limit) - limit;
+	const name = req.query.name || "";
+	console.log(name);
 
 	const playersPromise = Player
 		.find({
 			name: {
-				$regex: `${req.query.name || ""}`,
+				$regex: `.*${name}.*`,
 				$options: "i"
 			}
 		})
@@ -18,8 +20,14 @@ exports.index = async (req, res) => {
 		.sort({ "name": "asc" });
 
 	const countPromise = Player.count();
-	const [players, totalCount] = await Promise.all([playersPromise, countPromise]);
-	const pages = Math.ceil(totalCount / limit);
+	const searchCountPromise = Player.find({
+		name: {
+			$regex: `.*${name}.*`,
+			$options: "i"
+		}
+	}).count();
+	const [players, totalCount, searchCount] = await Promise.all([playersPromise, countPromise, searchCountPromise]);
+	const pages = Math.ceil((searchCount ? searchCount : totalCount) / limit);
 	if (!players.length && skip) {
 		req.flash("error", `Hey! You asked for page ${page}. But that dosen't exist. So I put you on page ${pages}`);
 		res.redirect(`/players?page=${pages}`);
@@ -29,17 +37,19 @@ exports.index = async (req, res) => {
 		title: "All Players",
 		players,
 		totalCount,
+		searchCount,
 		skip,
 		page,
-		pages
+		pages,
+		name
 	});
 };
 
 // TODO: Implement players search that returns div of players cards.
 exports.search = async (req, res) => {
-	const { name } = req.query;
+	const name = req.query.name || "";
 	const page = req.query.page || 1;
-	const limit = 1;
+	const limit = 10;
 	const skip = (page * limit) - limit;
 
 	const playersPromise = Player

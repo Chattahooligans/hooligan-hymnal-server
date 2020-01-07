@@ -8,12 +8,12 @@ mixin playersList(players = {}, totalCount = null, searchCount = null, page = nu
   else
     h3 No Players
 
-  //- if name
-  if page > 1
-    a(href=`/players?name=${name}&page=${page - 1}`) Prev
-    p Page #{page} of #{pages} - #{totalCount} total results
-    if page < pages
-      a(href=`/players?name=${name}&page=${parseFloat(page) + 1}`) Next
+  h3 Name #{name}
+  if pages > 1 && name !== ""
+      a(href=`/players?name=${name}&page=${page - 1}`) Prev
+      p Page #{page} of #{pages} - #{searchCount} total results
+      if page < pages
+        a(href=`/players?name=${name}&page=${parseFloat(page) + 1}`) Next
   else
     if page > 1
       a(href=`/players?page=${page - 1}`) Prev
