@@ -25,6 +25,7 @@ router.post("/login", authController.login);
 router.post("/logout", authController.logout);
 router.get("/register", authController.registerForm);
 router.post("/register", authController.validateRegister, catchErrors(authController.register), authController.login);
+router.get("/forgot", userController.resetForm);
 router.post("/forgot", catchErrors(forgotController.forgot));
 router.get("/account", isLoggedIn, userController.account);
 router.get("/account/reset/:token", catchErrors(userController.reset));

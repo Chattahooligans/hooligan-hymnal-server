@@ -6,6 +6,7 @@ const bcryptjs = require("bcrypt");
 const md5 = require("md5");
 const mongodbErrorHandler = require("mongoose-mongodb-errors");
 const passportLocalMongoose = require("passport-local-mongoose");
+const axios = require("axios");
 
 const UserSchema = new Schema(
 	{
