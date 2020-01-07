@@ -18,7 +18,9 @@ exports.search = async (req, res) => {
 			$options: "i"
 		}
 	});
-	res.render("mixins/_playersList");
+	res.render("players/_playersList", {
+    players
+  });
 };
 
 exports.create = (req, res) => {

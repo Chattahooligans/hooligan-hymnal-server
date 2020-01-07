@@ -110,7 +110,33 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/alpine.js");
 /* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(alpinejs__WEBPACK_IMPORTED_MODULE_0__);
-
+ // function debounced(delay, fn) {
+//   let timerId;
+//   return function (...args) {
+//     if (timerId) {
+//       clearTimeout(timerId);
+//     }
+//     timerId = setTimeout(() => {
+//       fn(...args);
+//       timerId = null;
+//     }, delay);
+//   }
+// }
+// const playersSearch = document.getElementById('playersSearch')
+// const playersList = (event) => {
+//   if (!event) return;
+//   const { value } = event.target;
+//   fetch(`/players-partial?q=${value}`)
+//     .then(res => res.text())
+//     .then(res => {
+//       const postsContainer = document.getElementById('playersList');
+//       postsContainer.innerHTML = res;
+//     });
+// }
+// const playerHandler = debounced(200, playersList);
+// if (playersSearch) {
+//   playersSearch.addEventListener("input", playerHandler);
+// }
 
 /***/ }),
 
