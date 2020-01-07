@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 const Player = mongoose.model("players");
 
 exports.index = async (req, res) => {
-	const players = await Player.find().sort("name");
+  const players = await Player
+    .find()
+    .sort({"name": "asc"});
 	res.render("players/index", {
 		title: "All Players",
 		players
@@ -17,7 +19,8 @@ exports.search = async (req, res) => {
 			$regex: `.*${q}.*`,
 			$options: "i"
 		}
-	});
+  })
+  .sort({"name": "asc"});
 	res.render("players/_playersList", {
     players
   });

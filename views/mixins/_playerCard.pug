@@ -1,7 +1,9 @@
 mixin playerCard(player = {})
-  a(href=`/players/${player._id}` class="block flex items-center rounded-lg shadow-md hover:shadow-inner hover:bg-gray-200 mt-3 ml-3 p-2")
+  a(href=`/players/${player._id}` class="block md:flex bg-white rounded-lg p-6 shadow-lg mb-3")
     if player.thumbnail
-      img(src=`${player.thumbnail}` alt=`${player.name} thumbnail` height="200" width="200" class="rounded-full mr-2")
+      img(src=`${player.thumbnail}` alt=`${player.name} thumbnail` class="rounded-full" style="height:50px;width:50p;max-width:50px;max-height:50px")
     else
-      div(style="height:200px;width:200px" class="rounded-full mr-2 bg-gray-800")
-    span.block #{player.name}
+      div(style="height:50px;width:50px;max-width:50px;max-height:50px" class="rounded-full bg-gray-800")
+    div
+      h2 #{player.name} - #{player.squadNumber}
+      div #{player.position}
