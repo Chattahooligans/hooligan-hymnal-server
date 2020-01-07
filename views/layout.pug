@@ -34,8 +34,10 @@ html(lang="en")
                 button.text-xl(onClick="this.parentElement.remove()" class="self-end") &times;
       if currentUser
         aside(class="bg-gray-300 px-3 py-4 md:w-64 sm:w-100 md:block z-10" x-data="{ open: false }")
-          button(type="button" class="md:hidden block w-full text-left" x-on:click="open = true") Open Menu
-          nav(class="flex flex-col -mx-3 md:block" x-bind:class="{ 'sm:hidden': open === false }" x-on:click.away="open = false")
+          button(type="button" class="md:hidden block w-full text-left" x-on:click="open = !open")
+            span(x-show="open") Close Menu
+            span(x-show="!open") Open Menu
+          nav(class="flex flex-col -mx-3 md:block" x-bind:class="{ 'hidden': open !== true }")
             if currentUser.pushNotificationsAllowed
               a(href="/push-tokens" class="block p-3 hover:bg-gray-600 hover:text-white") Push Tokens
               a(href="/notifications" class="block p-3 hover:bg-gray-600 hover:text-white") Notifications

@@ -53,6 +53,7 @@ router.post("/rosters/:id/delete", isLoggedIn, checkPermission("rosterAllowed"),
 
 // Players
 router.get("/players", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.index));
+router.get("/players-partial", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.search));
 router.get("/players/create", isLoggedIn, checkPermission("rosterAllowed"), playersController.create);
 router.post("/players/create", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.store));
 router.get("/players/:id", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.show));
