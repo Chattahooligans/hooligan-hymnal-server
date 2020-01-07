@@ -1,14 +1,27 @@
 extends ../layout
 
+include ../mixins/_playersList
+
 block content
   .mx-auto.container
-    h2 #{title}
-    a(href="/players/create") Create Player
-        each player in players
-          div
-            a(href=`/players/${player._id}` class="block flex items-center")
-              if player.thumbnail
-                img(src=`${player.thumbnail}` alt=`${player.name} thumbnail` height="55" width="55" class="rounded-full mr-2")
-              span.block #{player.name}
-        else
-          h3 No Players
+    div(class="mb-3")
+      h2(class="font-extrabold text-3xl mb-3") #{title}
+      a(href="/players/create" class="rounded bg-blue-700 text-white px-3 py-2") Create Player
+    div
+      input(type="text" name="playersSearch" id="playersSearch" class="border rounded bg-gray-200 mb-3" placeholder="Filter Player")
+    div#playersList(class="-mx-3")
+      +playersList(players)
+    if players
+      div #{players.length} in database
+
+block scripts
+  script.
+    var playersSearchInput = document.getElementById('playersSearch')
+    playersSearchInput.addEventListener('keypress', function(e) {
+      fetch(`/players-search?q=${e.target.value}`)
+        .then(res => res.text())
+        .then(html => {
+          var playersList = document.getElementById('playersList')
+          playersList.innerHTML = html;
+        });
+    });

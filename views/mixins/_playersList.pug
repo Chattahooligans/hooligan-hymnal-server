@@ -1,0 +1,7 @@
+include _playerCard
+
+mixin playersList(players = {})
+  each player in players
+    +playerCard(player)
+  else
+    h3 No Players

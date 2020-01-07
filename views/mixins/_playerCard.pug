@@ -1,0 +1,7 @@
+mixin playerCard(player = {})
+  a(href=`/players/${player._id}` class="block flex items-center rounded-lg shadow-md hover:shadow-inner hover:bg-gray-200 mt-3 ml-3 p-2")
+    if player.thumbnail
+      img(src=`${player.thumbnail}` alt=`${player.name} thumbnail` height="200" width="200" class="rounded-full mr-2")
+    else
+      div(style="height:200px;width:200px" class="rounded-full mr-2 bg-gray-800")
+    span.block #{player.name}
