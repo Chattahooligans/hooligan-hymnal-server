@@ -85,8 +85,11 @@ module.exports = app => {
     passport.authenticate("jwt", { session: false }),
     permissions("feedAllowed"),
     (req, res) => {
+      console.log(req.body);
       var feedItem = FeedItems(req.body);
+      console.log(feedItem);
       Channels.findById(feedItem.channel.Id), (error, channel) => {
+        console.log(channel);
         if(error) {
           res.send(error);
         }
