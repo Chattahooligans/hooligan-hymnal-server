@@ -88,7 +88,7 @@ module.exports = app => {
       console.log(req.body);
       var feedItem = FeedItems(req.body);
       console.log(feedItem);
-      Channels.findById(feedItem.channel.Id), (error, channel) => {
+      Channels.findById(feedItem.channel), (error, channel) => {
         console.log(channel);
         if(error) {
           res.send(error);
