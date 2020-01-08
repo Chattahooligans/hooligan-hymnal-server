@@ -73,6 +73,21 @@ fs.readdirSync("models").forEach(file => {
 	}
 });
 
+const Players = mongoose.model("players");
+async function updatePlayers() {
+	let players = await Players.find();
+	for (const player of players) {
+		const p = await Players.findOne({ _id: player._id });
+		if (p.images[0] !== p.image) {
+			p.images.push(p.image);
+		}
+		p.image = undefined;
+		p.team = undefined;
+		await p.save();
+	}
+}
+updatePlayers();
+
 app.use(passport.initialize());
 app.use(passport.session());
 require("./handlers/passport");

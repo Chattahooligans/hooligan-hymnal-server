@@ -29,20 +29,3 @@ exports.show = async (req, res) => {
 	const player = await Players.findById(req.params.id);
 	res.json(player);
 };
-
-exports.removeTeam = async (req, res) => {
-	let players = await Players.find();
-	for (const player of players) {
-		Players.findOneAndUpdate({_id: player._id}, {
-			$unset: {
-				team: undefined
-			}
-		}, (err, p) => {
-			if (err) res.send(err);
-		});
-		// const player = Players.findOne({_id: player._id});
-		// console.log(player);
-		// console.log(player._id);
-	}
-	res.send("done");
-};

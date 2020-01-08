@@ -9,12 +9,17 @@ module.exports = new mongoose.Schema(
 		flag: String,
 		squadNumber: String,
 		position: String,
+		team: String,
 		bio: {
 			type: Map,
 			of: String
 		},
 		thumbnail: String,
 		image: String,
+		images: {
+			type: Array,
+			of: String
+		},
 		twitter: String,
 		instagram: String
 	},
@@ -22,6 +27,9 @@ module.exports = new mongoose.Schema(
 		timestamps: {
 			createdAt: "create_time",
 			updatedAt: "update_time"
+		},
+		toObject: {
+			virtuals: true,
 		}
 	}
 );

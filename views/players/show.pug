@@ -2,19 +2,25 @@ extends ../layout
 
 block content
   .mx-auto.container
-    h2 #{title}
-    p Flag: #{player.flag}
-    p Squad Number: #{player.squadNumber}
-    p Position: #{player.position}
-    p Team: #{player.team}
-    h3 Bio(s)
-    - let bios = JSON.parse(JSON.stringify(player.bio));
-    each lang in langs
-      h4 #{lang}
-      p #{bios[lang]}
-    p Twitter: #{player.twitter}
-    P Instagram: #{player.instagram}
-    br
-    a(href=`/players/${player._id}/edit`) Edit #{player.name}
-    br
-    a(href=`/players/${player._id}/delete`) Delete #{player.name}
+    div(class="shadow border rounded-lg p-6")
+      img(src=`${player.thumbnail}` height="200" width="200" class="rounded-full ml-auto md:mx-auto md:mb-3")
+      h2(class="font-semibold text-2xl mb-3") #{title} - #{player.flag}
+      p Squad Number: #{player.squadNumber}
+      p Position: #{player.position}
+      h3 Bios
+        div(x-data="{ lang:'"+langs[0]+"'}")
+          .flex
+            each lang in langs
+              button(x-on:click="lang = '" + lang + "'" type="button" class="uppercase flex-1 px-2 py-3 rounded-t" x-bind:class="{'bg-gray-800 text-white': lang === '"+lang+"'}") #{lang}
+          each lang in langs
+            - let bios = player.bio ? JSON.parse(JSON.stringify(player.bio)) : {};
+            div(class="flex flex-col border-2 p-3 rounded-b-lg" x-show="lang === '"+ lang +"'").
+              #{bios[lang]}
+      p Twitter: #{player.twitter}
+      P Instagram: #{player.instagram}
+      div(class="border-t flex bg-gray-400 mt-3 -ml-6 -mr-6 -mb-6 p-6")
+        a(href=`/players/${player._id}/edit` class="px-3 py-2 rounded bg-green-600 text-white md:mr-3") Edit
+        //- #{player.name}
+        br
+        a(href=`/players/${player._id}/delete` class="bg-red-700 text-white rounded px-3 py-2") Delete
+        //- #{player.name}

@@ -45,7 +45,6 @@ exports.index = async (req, res) => {
 	});
 };
 
-// TODO: Implement players search that returns div of players cards.
 exports.search = async (req, res) => {
 	const name = req.query.name || "";
 	const page = req.query.page || 1;

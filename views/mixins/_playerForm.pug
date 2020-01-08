@@ -15,8 +15,6 @@ mixin playerForm(player = {})
         each option in options
           option(value=option)= option
     .flex.flex-col.mb-3
-      +baseInput("text", "Team", "team", player.team, "Team", true)
-    .flex.flex-col.mb-3
       h3.font-semibold Bios
       div.flex.flex-col
         div(x-data="{ lang: '"+ langs[0] +"' }")
