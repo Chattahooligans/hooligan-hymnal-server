@@ -1,0 +1,30 @@
+{
+    "builders": [
+      {
+        "type": "googlecompute",
+        "account_file": "account-file.json",
+        "project_id": "upheld-fold-260614",
+        "source_image": "ubuntu-minimal-1804-bionic-v20191113",
+        "ssh_username": "packer",
+        "zone": "us-central1-a",
+        "disk_size": 20,
+        "image_name": "hooligan-hymnal-{{timestamp}}"
+      }
+    ],
+    "provisioners": [
+    {
+        "type": "file",
+        "source": "nginx-sites-enabled.conf",
+        "destination": "/tmp/nginx-sites-enabled.conf"
+    },
+    {
+        "type": "file",
+        "source": "nginx.conf",
+        "destination": "/tmp/nginx.conf"
+    },
+    {
+        "type": "shell",
+        "script": "remote-provision.sh"
+    }]
+  }
+  
