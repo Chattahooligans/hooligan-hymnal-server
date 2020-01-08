@@ -34,6 +34,7 @@ router.get("/notifications/last", catchErrors(notificationsController.last));
 router.post("/notification", apiLoggedIn, catchErrors(notificationsController.store));
 // Players
 router.get("/players", catchErrors(playersController.index));
+router.get("/players/remove-teams", catchErrors(playersController.removeTeam));
 router.get("/players/:id", catchErrors(playersController.show));
 // Roster
 router.get("/rosters", catchErrors(rostersController.index));
