@@ -1,3 +1,5 @@
+require("dotenv").config();
+const cloudinary = require("cloudinary").v2;
 const mongoose = require("mongoose");
 const Player = mongoose.model("players");
 
@@ -141,4 +143,25 @@ exports.delete = async (req, res) => {
 	const player = await Player.findOneAndDelete(req.params.id);
 	req.flash("success", `${player.name} was deleted!`);
 	res.redirect("/players");
+};
+
+exports.uploadPage = (req, res) => {
+	res.render("players/uploadTest", {
+		title: "Upload Test"
+	});
+};
+
+exports.upload = async (req, res) => {
+	const options = {
+		width: 200,
+		height: 200,
+		crop: "scale",
+	};
+	// Check this later
+	const file = req.body.file;
+	const image = await cloudinary.uploader.upload(file, {
+		tags: "players_thumbnail",
+		eager: options
+	});
+	res.send(image);
 };

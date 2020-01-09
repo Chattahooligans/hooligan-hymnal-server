@@ -4,6 +4,8 @@ include ../mixins/_playersList
 
 block content
   .mx-auto.container
+    div
+      a(href="/players/upload-test") Upload Test
     div(class="mb-3")
       h2(class="font-extrabold text-3xl mb-3") #{title}
     div(x-data="{ input:'" + name +"' }")
