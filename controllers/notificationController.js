@@ -1,7 +1,5 @@
-let Expo = require("expo-server-sdk");
 let Notifications = require("../models/notifications");
-let PushTokens = require("../models/pushTokens");
-let expo = new Expo();
+let PushHandler = require("../models/pushHandler");
 const passport = require("passport");
 const permissions = require("../middleware/PermissionsMiddleware");
 
@@ -60,57 +58,18 @@ module.exports = app => {
             .send({ error: `Error saving notification: ${error}` });
         } else if (notification.push) {
           console.log("no error, pushing forward");
-          PushTokens.find(async (error, tokens) => {
-            if (error) {
-              console.log("error 2: ", error);
-              res
-                .status(501)
-                .send({ error: `Error fetching push tokens: ${error}` });
-              return;
-            }
-
-            let errors = [];
-            let receipts = [];
-            let chunks = expo.chunkPushNotifications(tokens);
-            for (chunk of chunks) {
-              let notifications = chunk.map(token => {
-                console.log(
-                  "trying to send notification to token: ",
-                  token.pushToken
-                );
-                return {
-                  to: token.pushToken,
-                  sound: "default",
-                  title: notification.song.title,
-                  body: notification.song.lyrics,
-                  data: { song: notification.song }
-                };
-              });
-              try {
-                console.log("trying to push");
-                receipts.push(
-                  ...(await expo.sendPushNotificationsAsync(notifications))
-                );
-              } catch (error) {
-                console.log("there was a problem with the push");
-                let tokenString = chunk
-                  .map(token => token.pushToken)
-                  .join(", ");
-                console.error(
-                  `Error notifying with tokens [${tokenString}]: ${error}`
-                );
-                errors.push(
-                  ...chunk.map(
-                    token => `Error notifying with token ${token}: ${error}`
-                  )
-                );
-              }
-            }
-            res.send({
-              errors: errors,
-              receipts: receipts,
-              notification: notification
-            });
+          //send push
+          PushHandler.sendNotification(notification)
+          .then(function(results) {
+            results.notification = notification;
+            res.send(results);
+          }).catch(function(error) {
+            //TODO: returning an error would be cleaner
+            console.log("error 2: ", error);
+            res
+              .status(501)
+              .send({ error: `Error fetching push tokens: ${error}` });
+            return;
           });
         } else {
           //no push notification

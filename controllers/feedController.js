@@ -3,6 +3,7 @@ const Channels = require("../models/channels");
 const config = require("../config.js");
 const passport = require("passport");
 const permissions = require("../middleware/PermissionsMiddleware");
+let PushHandler = require("../models/pushHandler");
 
 var feeditems_cache = {
   data: null,
@@ -99,6 +100,23 @@ module.exports = app => {
         }
         feedItem.save((error, item) => {
           error ? res.status(501).send({ error }) : res.send(item);
+          if(feedItem.push) {
+            //send a push notification here
+            //need to translate feedItem into a Notification object first
+            //TODO? currently, this means that the Notification form will be sent back, not the feedItem.
+            PushHandler.sendPost(notification)
+            .then(function(results) {
+              results.notification = notification;
+              res.send(results);
+            }).catch(function(error) {
+              //TODO: returning an error would be cleaner
+              console.log("error 2: ", error);
+              res
+                .status(501)
+                .send({ error: `Error fetching push tokens: ${error}` });
+              return;
+            });
+          }
           feeditems_cache.force_reload();
         });
       }
