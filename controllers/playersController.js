@@ -170,28 +170,22 @@ exports.uploads = (file, folder) => {
  * @param {Response} res
  */
 exports.upload = async (req, res) => {
-	const urls = [];
 	const files = req.files;
 	for (const file in files) {
 		if (files.hasOwnProperty(file)) {
 			const path = files[file].tempFilePath;
 			const image = await cloudinary.uploader.upload(path, {
-				eager: {
+				transformation: {
 					width: 200,
 					height: 200,
 					crop: "scale"
 				},
-				eager_async: true,
 				folder: "players_thumbnails"
 			});
 			res.json({
-				url: cloudinary.url(image.public_id),
+				url: image.url,
 				id: image.public_id
 			});
-			// urls.push({
-			// 	url: cloudinary.url(image.public_id),
-			// 	id: image.public_id
-			// });
 		}
 	}
 };
