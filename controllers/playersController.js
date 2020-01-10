@@ -151,17 +151,47 @@ exports.uploadPage = (req, res) => {
 	});
 };
 
-exports.upload = async (req, res) => {
-	const options = {
-		width: 200,
-		height: 200,
-		crop: "scale",
-	};
-	// Check this later
-	const file = req.body.file;
-	const image = await cloudinary.uploader.upload(file, {
-		tags: "players_thumbnail",
-		eager: options
+exports.uploads = (file, folder) => {
+	return new Promise(resolve => {
+		cloudinary.uploader.upload(file, result => {
+			resolve({
+				url: result.url,
+				id: result.public_id
+			}, {
+				resource_type: "auto",
+				folder: folder
+			});
+		});
 	});
-	res.send(image);
+};
+
+/**
+ * @param {Request} req
+ * @param {Response} res
+ */
+exports.upload = async (req, res) => {
+	const urls = [];
+	const files = req.files;
+	for (const file in files) {
+		if (files.hasOwnProperty(file)) {
+			const path = files[file].tempFilePath;
+			const image = await cloudinary.uploader.upload(path, {
+				eager: {
+					width: 200,
+					height: 200,
+					crop: "scale"
+				},
+				eager_async: true,
+				folder: "players_thumbnails"
+			});
+			res.json({
+				url: cloudinary.url(image.public_id),
+				id: image.public_id
+			});
+			// urls.push({
+			// 	url: cloudinary.url(image.public_id),
+			// 	id: image.public_id
+			// });
+		}
+	}
 };

@@ -1,30 +1,28 @@
 import Alpine from "alpinejs";
+// imporequire("dropzone");
+import Dropzone from "dropzone";
 
-// function debounced(delay, fn) {
-//   let timerId;
-//   return function (...args) {
-//     if (timerId) {
-//       clearTimeout(timerId);
-//     }
-//     timerId = setTimeout(() => {
-//       fn(...args);
-//       timerId = null;
-//     }, delay);
-//   }
-// }
+var previewNode = document.querySelector("#template");
+previewNode.id = "";
+var previewTemplate = previewNode.parentNode.innerHTML;
+var myDropzone = new Dropzone(document.getElementById("upload-section"), {
+  url: "/players/thumbnail",
+  previewTemplate: previewTemplate,
+  autoQueue: false,
+  previewsContainer: "#previews",
+})
 
-// const playersSearch = document.getElementById('playersSearch')
-// const playersList = (event) => {
-//   if (!event) return;
-//   const { value } = event.target;
-//   fetch(`/players-partial?q=${value}`)
-//     .then(res => res.text())
-//     .then(res => {
-//       const postsContainer = document.getElementById('playersList');
-//       postsContainer.innerHTML = res;
-//     });
-// }
-// const playerHandler = debounced(200, playersList);
-// if (playersSearch) {
-//   playersSearch.addEventListener("input", playerHandler);
-// }
+document.querySelector("#actions .upload").onclick = function () {
+  myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED))
+}
+myDropzone.on("success", (_, res) => {
+  console.log(res);
+  var target = document.querySelector("#target");
+  var input = document.createElement("input");
+  input.value = res.url;
+  input.setAttribute("data-id", res.id);
+  input.classList.add = "block";
+  input.setAttribute("name", "images[]");
+  target.appendChild(input);
+  // console.log(res);
+})
