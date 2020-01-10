@@ -142,7 +142,7 @@ exports.deleteConfirm = async (req, res) => {
 exports.delete = async (req, res) => {
 	const { name } = req.body;
 	if (!name) {
-		req.flash("error", "Please provide a name to delete");
+		req.flash("error", "Name not provided or names did not match");
 		return res.redirect("back");
 	}
 	const player = await Player.findById(req.params.id);
