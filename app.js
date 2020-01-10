@@ -78,7 +78,7 @@ async function updatePlayers() {
 	let players = await Players.find();
 	for (const player of players) {
 		const p = await Players.findOne({ _id: player._id });
-		if (p.images[0] !== p.image) {
+		if (p.images[0] !== p.image && p.image) {
 			p.images.push(p.image);
 		}
 		p.image = undefined;
@@ -86,7 +86,7 @@ async function updatePlayers() {
 		await p.save();
 	}
 }
-updatePlayers();
+// updatePlayers();
 
 app.use(passport.initialize());
 app.use(passport.session());

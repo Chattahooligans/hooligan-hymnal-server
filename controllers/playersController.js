@@ -140,7 +140,17 @@ exports.deleteConfirm = async (req, res) => {
 };
 
 exports.delete = async (req, res) => {
-	const player = await Player.findOneAndDelete(req.params.id);
+	const { name } = req.body;
+	if (!name) {
+		req.flash("error", "Please provide a name to delete");
+		return res.redirect("back");
+	}
+	const player = await Player.findById(req.params.id);
+	if (name !== player.name) {
+		req.flash("error", "The name didn't match please try again.");
+		return res.redirect("back");
+	}
+	await player.remove();
 	req.flash("success", `${player.name} was deleted!`);
 	res.redirect("/players");
 };
@@ -165,27 +175,23 @@ exports.uploads = (file, folder) => {
 	});
 };
 
+const { upload } = require("../handlers/imageUploader");
+
 /**
  * @param {Request} req
  * @param {Response} res
  */
 exports.upload = async (req, res) => {
-	const files = req.files;
-	for (const file in files) {
-		if (files.hasOwnProperty(file)) {
-			const path = files[file].tempFilePath;
-			const image = await cloudinary.uploader.upload(path, {
-				transformation: {
-					width: 200,
-					height: 200,
-					crop: "scale"
-				},
-				folder: "players_thumbnails"
-			});
-			res.json({
-				url: image.url,
-				id: image.public_id
-			});
-		}
-	}
+	const image = await upload(req, {
+		transformation: {
+			width: 200,
+			height: 200,
+			crop: "scale"
+		},
+		folder: "players_thumbnails"
+	});
+	res.json({
+		url: image.url,
+		id: image.public_id
+	});
 };
