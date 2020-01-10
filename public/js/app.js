@@ -3782,8 +3782,8 @@ dropzone("/players/thumbnail", "thumbnail-template", document.getElementById("th
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /vagrant/src/js/app.js */"./src/js/app.js");
-module.exports = __webpack_require__(/*! /vagrant/src/scss/app.scss */"./src/scss/app.scss");
+__webpack_require__(/*! /Users/collin/code/ngs/hooligan-hymnal-server/src/js/app.js */"./src/js/app.js");
+module.exports = __webpack_require__(/*! /Users/collin/code/ngs/hooligan-hymnal-server/src/scss/app.scss */"./src/scss/app.scss");
 
 
 /***/ })
