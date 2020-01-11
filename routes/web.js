@@ -62,6 +62,8 @@ router.post("/players/create", isLoggedIn, checkPermission("rosterAllowed"), cat
 router.get("/players/:id", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.show));
 router.get("/players/:id/edit", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.edit));
 router.post("/players/:id/edit", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.update));
+router.get("/players/:id/thumbnail", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.playersThumbnail));
+router.post("/players/:id/thumbnail/delete", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.playersRemoveThumbnail));
 router.get("/players/:id/delete", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.deleteConfirm));
 router.post("/players/:id/delete", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.delete));
 

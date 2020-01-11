@@ -74,19 +74,24 @@ fs.readdirSync("models").forEach(file => {
 });
 
 const Players = mongoose.model("players");
-async function updatePlayers() {
-	let players = await Players.find();
-	for (const player of players) {
-		const p = await Players.findOne({ _id: player._id });
-		if (p.images[0] !== p.image && p.image) {
-			p.images.push(p.image);
+async function changePlayerImages() {
+	const players = await Players.find();
+	for(const player of players) {
+		let imageId = null;
+		if (player.image) {
+			if (player.image.search("cloudinary") !== -1) {
+				imageId = player.image.match(/[\w\d]*\.jpg$/)[0].split(".jpg")[0];
+			}
+			player.images.push({
+				imageId,
+				url: player.image
+			});
+			player.image = undefined;
+			player.save();
 		}
-		p.image = undefined;
-		p.team = undefined;
-		await p.save();
 	}
 }
-// updatePlayers();
+changePlayerImages();
 
 app.use(passport.initialize());
 app.use(passport.session());

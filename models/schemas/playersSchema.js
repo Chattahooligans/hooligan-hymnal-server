@@ -18,7 +18,7 @@ module.exports = new mongoose.Schema(
 		image: String,
 		images: [
 			{
-				id: String,
+				imageId: String,
 				url: String
 			}
 		],

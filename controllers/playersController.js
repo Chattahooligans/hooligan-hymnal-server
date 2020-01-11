@@ -186,12 +186,30 @@ exports.upload = async (req, res) => {
 		transformation: {
 			width: 200,
 			height: 200,
-			crop: "scale"
+			crop: "thumb",
+			gravity: "face"
 		},
-		folder: "players_thumbnails"
+		folder: "players_thumbnails",
+		format: "jpg"
 	});
 	res.json({
 		url: image.url,
 		id: image.public_id
 	});
+};
+
+exports.playersThumbnail = async (req, res) => {
+	const player = await Player.findById(req.params.id);
+	res.send({
+		name: player.name,
+		thumbnail: player.thumbnail
+	});
+};
+
+const { removeFromCloudinary } = require("../handlers/cloudinaryDelete");
+
+exports.playersRemoveThumbnail = async (req, res) => {
+	const player = await Player.findById(req.params.id);
+	const response = await removeFromCloudinary("players_thumbnails", player.thumbnail);
+	res.send(response);
 };

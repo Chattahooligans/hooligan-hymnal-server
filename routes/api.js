@@ -46,4 +46,6 @@ router.get("/songbooks/:id", catchErrors(songbooksController.show));
 router.get("/songs", catchErrors(songsController.index));
 router.get("/song/:id", catchErrors(songsController.show));
 
+router.post("/delete-thumbnail", catchErrors(playersController.deleteThumbnail));
+
 module.exports = router;
