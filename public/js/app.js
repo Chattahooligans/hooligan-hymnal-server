@@ -5799,7 +5799,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 function dropzone(url, templateId, uploadSection, previewsContainer, target, text) {
-  var maxFiles = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
+  var maxFiles = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : null;
   var inputName = arguments.length > 7 ? arguments[7] : undefined;
   var initUrl = arguments.length > 8 ? arguments[8] : undefined;
   var previewNode = document.getElementById(templateId);
@@ -5810,7 +5810,6 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   var myDropzone = new dropzone__WEBPACK_IMPORTED_MODULE_1___default.a(uploadSection, {
     url: url,
     maxFiles: maxFiles,
-    uploadMultiple: false,
     previewTemplate: previewTemplate,
     autoQueue: false,
     previewsContainer: previewsContainer,
@@ -5821,11 +5820,46 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       playerId = document.getElementById("player-id");
 
       if (playerId) {
-        axios__WEBPACK_IMPORTED_MODULE_2___default.a.get("/players/".concat(playerId.innerText, "/thumbnail")).then(function (_ref) {
+        axios__WEBPACK_IMPORTED_MODULE_2___default.a.get("/players/images?playerId=".concat(playerId.innerText, "&type=").concat(inputName.toLowerCase())).then(function (_ref) {
           var data = _ref.data;
+          console.log(data);
 
-          if (Array.isArray(data)) {} else {
-            // console.log(data);
+          if (data.images) {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+              for (var _iterator = data.images[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var d = _step.value;
+                var mockFile = {
+                  name: "".concat(data.name, " image")
+                };
+                thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
+                thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, d);
+                var tEl = document.querySelector(target);
+                var input = document.createElement("input");
+                input.value = d;
+                input.setAttribute("data-id", "".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(data.name).toLowerCase(), "-image"));
+                input.classList.add = "hidden";
+                input.setAttribute("name", inputName);
+                tEl.appendChild(input);
+              }
+            } catch (err) {
+              _didIteratorError = true;
+              _iteratorError = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+                  _iterator["return"]();
+                }
+              } finally {
+                if (_didIteratorError) {
+                  throw _iteratorError;
+                }
+              }
+            }
+          } else {
             var mockFile = {
               name: "".concat(data.name, " thumbnail")
             };
@@ -5847,18 +5881,20 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   });
   var submitButton;
   myDropzone.on("addedfile", function (file, res) {
-    console.log(file, res);
     var form = document.querySelector("main form");
     submitButton = form.querySelector("button[type='submit']");
     submitButton.setAttribute("disabled", "disabled");
     submitButton.classList.add("cursor-disabled");
     submitButton.classList.add("opacity-75");
-    var smallAlert = document.createElement("small");
-    smallAlert.innerText = "Please upload ".concat(text, " to submit form");
-    smallAlert.id = text.toLowerCase();
-    smallAlert.classList.add("block");
-    smallAlert.classList.add("text-red-700");
-    submitButton.parentNode.appendChild(smallAlert);
+
+    if (!document.getElementById("small-".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(text.toLowerCase())))) {
+      var smallAlert = document.createElement("small");
+      smallAlert.innerText = "Please upload ".concat(text, " to submit form");
+      smallAlert.id = "small-" + slugify__WEBPACK_IMPORTED_MODULE_3___default()(text.toLowerCase());
+      smallAlert.classList.add("block");
+      smallAlert.classList.add("text-red-700");
+      submitButton.parentNode.appendChild(smallAlert);
+    }
   });
   myDropzone.on("success", function (_, res) {
     var tEl = document.querySelector(target);
@@ -5873,19 +5909,30 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     submitButton.removeAttribute("disabled");
     submitButton.classList.remove("cursor-disabled");
     submitButton.classList.remove("opacity-75");
-    document.querySelector("small[id=\"".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(text).toLowerCase(), "\"]")).remove();
+
+    if (document.querySelector("#small-".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(text).toLowerCase()))) {
+      document.querySelector("#small-".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(text).toLowerCase())).remove();
+    }
   });
   myDropzone.on("removedfile", function (_ref2) {
     var previewElement = _ref2.previewElement;
     var img = previewElement.querySelector("img");
 
     if (playerId) {
-      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post("/players/".concat(playerId.innerText, "/thumbnail/delete")).then(function (_ref3) {
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post("/players/remove-images?playerId=".concat(playerId.innerText, "&type=").concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(inputName.toLowerCase())), {
+        withCredentials: true,
+        img: img.src
+      }).then(function (_ref3) {
         var data = _ref3.data;
-        var innerHTML = document.querySelector("".concat(target)).childNodes;
-        innerHTML[0].value = "";
+        // if (data.result === "ok") {
+        var inputs = document.querySelectorAll("input[name=\"".concat(inputName.toLowerCase(), "\"]"));
+        inputs.forEach(function (input) {
+          if (input.value == img.src) {
+            input.remove();
+          }
+        }); // }
       })["catch"](function (err) {
-        console.log(err);
+        console.error(err);
       });
     }
 
@@ -5894,7 +5941,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     submitButton.removeAttribute("disabled");
     submitButton.classList.remove("cursor-disabled");
     submitButton.classList.remove("opacity-75");
-    var small = document.querySelector("small[id=\"".concat(text.toLowerCase(), "\"]"));
+    var small = document.querySelector("#small-".concat(text.toLowerCase()));
 
     if (small) {
       small.remove();
@@ -5903,48 +5950,25 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   myDropzone.on("maxfilesexceeded", function () {
     alert("Max files exceeded: ".concat(maxFiles));
   });
+  var uploadButton = document.querySelector("#".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(inputName.toLowerCase()), " .actions .upload"));
 
-  document.querySelector("#thumbnail #actions .upload").onclick = function () {
-    myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(dropzone__WEBPACK_IMPORTED_MODULE_1___default.a.ADDED));
-  };
+  if (uploadButton) {
+    uploadButton.onclick = function () {
+      myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(dropzone__WEBPACK_IMPORTED_MODULE_1___default.a.ADDED));
+    };
+  }
 
-  document.querySelector("#thumbnail #actions .cancel").onclick = function () {
-    myDropzone.removeAllFiles(myDropzone.getFilesWithStatus(dropzone__WEBPACK_IMPORTED_MODULE_1___default.a.ADDED));
-  };
+  var cancelButton = document.querySelector("#".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(inputName.toLowerCase()), " .actions .cancel"));
+
+  if (cancelButton) {
+    cancelButton.onclick = function () {
+      myDropzone.removeAllFiles(myDropzone.getFilesWithStatus(dropzone__WEBPACK_IMPORTED_MODULE_1___default.a.ADDED));
+    };
+  }
 }
 
-dropzone("/players/thumbnail", "thumbnail-template", document.getElementById("thumbnail-upload-section"), "#thumbnail-previews", "#thumbnail-target", "Thumbnail", 1, "thumbnail"); // dropzone(
-//   "/players/thumbnail",
-//   "thumbnail-template",
-//   document.getElementById("thumbnail-upload-section"),
-//   "#thumbnail-previews",
-//   "#thumbnail-target",
-//   "Thumbnail",
-//   1
-// )
-// var previewNode = document.querySelector("#template");
-// previewNode.id = "";
-// var previewTemplate = previewNode.parentNode.innerHTML;
-// var myDropzone = new Dropzone(document.getElementById("upload-section"), {
-//   url: "/players/thumbnail",
-//   previewTemplate: previewTemplate,
-//   autoQueue: false,
-//   previewsContainer: "#previews",
-// })
-// document.querySelector("#actions .upload").onclick = function () {
-//   myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED))
-// }
-// myDropzone.on("success", (_, res) => {
-//   console.log(res);
-//   var target = document.querySelector("#target");
-//   var input = document.createElement("input");
-//   input.value = res.url;
-//   input.setAttribute("data-id", res.id);
-//   input.classList.add = "block";
-//   input.setAttribute("name", "images[]");
-//   target.appendChild(input);
-//   // console.log(res);
-// })
+dropzone("/players/thumbnail", "thumbnail-template", document.getElementById("thumbnail-upload-section"), "#thumbnail-previews", "#thumbnail-target", "Thumbnail", 1, "thumbnail");
+dropzone("/players/images", "images-template", document.getElementById("images-upload-section"), "#images-previews", "#images-target", "Player Images", 10, "images");
 
 /***/ }),
 

@@ -2,6 +2,9 @@ require("dotenv").config();
 const cloudinary = require("cloudinary").v2;
 const mongoose = require("mongoose");
 const Player = mongoose.model("players");
+const {
+	removeFromCloudinary
+} = require("../handlers/cloudinaryDelete");
 
 exports.index = async (req, res) => {
 	const page = req.query.page || 1;
@@ -114,19 +117,23 @@ exports.edit = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-	const player = await Player.findOneAndUpdate(
-		{
-			_id: req.params.id
-		},
-		{
-			$set: req.body
-		},
-		{
-			new: true,
-			runValidators: true,
-			context: "query"
-		}
-	);
+	const player = await Player.findByIdAndUpdate(req.params.id, req.body, {
+		new: true,
+		runValidators: true,
+	});
+	// const player = await Player.findOneAndUpdate(
+	// 	{
+	// 		_id: req.params.id
+	// 	},
+	// 	{
+	// 		$set: req.body
+	// 	},
+	// 	{
+	// 		new: true,
+	// 		runValidators: true,
+	// 		context: "query"
+	// 	}
+	// );
 	req.flash("success", `${player.name} was updated`);
 	res.redirect(`/players/${player._id}`);
 };
@@ -177,11 +184,19 @@ exports.uploads = (file, folder) => {
 
 const { upload } = require("../handlers/imageUploader");
 
+exports.uploadImages = async (req, res) => {
+	const images = await upload(req, {
+		folder: "players_images",
+		format: "jpg"
+	});
+	res.send(images);
+};
+
 /**
  * @param {Request} req
  * @param {Response} res
  */
-exports.upload = async (req, res) => {
+exports.uploadThumbnail = async (req, res) => {
 	const image = await upload(req, {
 		transformation: {
 			width: 200,
@@ -198,6 +213,47 @@ exports.upload = async (req, res) => {
 	});
 };
 
+exports.getImages = async (req, res) => {
+	const {
+		playerId,
+		type
+	} = req.query;
+	if (!playerId.length) {
+		return res.send("Please provide a id");
+	}
+	if (!type) {
+		return res.send("Please provide the image field you are looking for");
+	}
+	const player = await Player.findById(playerId);
+	console.log();
+	res.send({
+		name: player.name,
+		[type]: player[type]
+	});
+};
+
+exports.removeImage = async (req, res) => {
+	const {
+		playerId,
+		type
+	} = req.query;
+	if (!playerId) {
+		return res.send("Please provide a id");
+	}
+	if (!type) {
+		return res.send("Please provide the image field you are looking for");
+	}
+	const player = await Player.findById(playerId);
+	let img;
+	if (Array.isArray(player[type])) {
+		img = player[type].filter(img => img === req.body.img)[0];
+	} else {
+		img = player[type];
+	}
+	const response = await removeFromCloudinary(`players_${type.toLowerCase()}`, img);
+	res.send(response);
+};
+
 exports.playersThumbnail = async (req, res) => {
 	const player = await Player.findById(req.params.id);
 	res.send({
@@ -205,8 +261,6 @@ exports.playersThumbnail = async (req, res) => {
 		thumbnail: player.thumbnail
 	});
 };
-
-const { removeFromCloudinary } = require("../handlers/cloudinaryDelete");
 
 exports.playersRemoveThumbnail = async (req, res) => {
 	const player = await Player.findById(req.params.id);

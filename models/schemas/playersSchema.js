@@ -17,10 +17,7 @@ module.exports = new mongoose.Schema(
 		thumbnail: String,
 		image: String,
 		images: [
-			{
-				imageId: String,
-				url: String
-			}
+			String
 		],
 		twitter: String,
 		instagram: String

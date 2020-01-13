@@ -12,6 +12,9 @@ block content
         p
           span(class="font-semibold mr-2") Position:
           span #{player.position}
+      h3 Images
+        each image in player.images
+          img(src=image)
       h3 Bios
         div(x-data="{ lang:'"+langs[0]+"'}")
           .flex

@@ -1,24 +1,21 @@
 include _playerCard
 
-//- players, totalCount, searchCount, page, pages
-
 mixin playersList(players = {}, totalCount = null, searchCount = null, page = null, pages = null, name = "")
   each player in players
     +playerCard(player)
   else
     h3 No Players
-
-  h3 Name #{name}
-  if pages > 1 && name !== ""
-      a(href=`/players?name=${name}&page=${page - 1}`) Prev
-      p Page #{page} of #{pages} - #{searchCount} total results
+  div(class="md:ml-3")
+    if pages > 1 && name !== ""
+        a(href=`/players?name=${name}&page=${page - 1}`) Prev
+        p Page #{page} of #{pages} - #{searchCount} total results
+        if page < pages
+          a(href=`/players?name=${name}&page=${parseFloat(page) + 1}`) Next
+    else
+      if page > 1
+        a(href=`/players?page=${page - 1}` class="bg-gray-700 text-white rounded border p-2 mr-2") Prev
+      p(class="inline-block") Page #{page} of #{pages} - #{totalCount} total results
       if page < pages
-        a(href=`/players?name=${name}&page=${parseFloat(page) + 1}`) Next
-  else
-    if page > 1
-      a(href=`/players?page=${page - 1}`) Prev
-    p Page #{page} of #{pages} - #{totalCount} total results
-    if page < pages
-      a(href=`/players?page=${parseFloat(page) + 1}`) Next
+        a(href=`/players?page=${parseFloat(page) + 1}` class="bg-gray-700 text-white border rounded border p-2 ml-2") Next
 
-  p #{totalCount} Players in Database
+    p(class="mt-3") #{totalCount} Players in Database

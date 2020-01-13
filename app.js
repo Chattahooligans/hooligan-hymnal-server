@@ -77,15 +77,11 @@ const Players = mongoose.model("players");
 async function changePlayerImages() {
 	const players = await Players.find();
 	for(const player of players) {
-		let imageId = null;
 		if (player.image) {
-			if (player.image.search("cloudinary") !== -1) {
-				imageId = player.image.match(/[\w\d]*\.jpg$/)[0].split(".jpg")[0];
-			}
-			player.images.push({
-				imageId,
-				url: player.image
-			});
+			// if (player.image.search("cloudinary") !== -1) {
+			// 	imageId = player.image.match(/[\w\d]*\.jpg$/)[0].split(".jpg")[0];
+			// }
+			player.images.push(player.image);
 			player.image = undefined;
 			player.save();
 		}

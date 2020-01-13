@@ -5,7 +5,7 @@ include ../mixins/_playerForm
 block content
   .mx-auto.container
     h2 #{title}
-    +playerForm(player)
+    +playerForm(player, true)
 
 //- block scripts
   script(src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript")
