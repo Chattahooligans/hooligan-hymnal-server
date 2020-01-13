@@ -3,7 +3,7 @@ extends ../layout
 block content
   .mx-auto.container
     div(class="shadow border rounded-lg p-6")
-      img(src=`${player.thumbnail}` height="200" width="200" class="rounded-full ml-auto md:mx-auto md:mb-3")
+      img(src=`${player.thumbnail}` height="200" width="200" class="rounded-full mr-auto md:mx-auto md:mb-3")
       h2(class="font-semibold text-2xl mb-3") #{title} - #{player.flag}
       div(class="flex")
         p(class="mr-2")
@@ -30,7 +30,5 @@ block content
         P Instagram: #{player.instagram}
       div(class="border-t flex bg-gray-400 mt-3 -ml-6 -mr-6 -mb-6 p-6")
         a(href=`/players/${player._id}/edit` class="px-3 py-2 rounded bg-green-600 text-white md:mr-3") Edit
-        //- #{player.name}
         br
         a(href=`/players/${player._id}/delete` class="bg-red-700 text-white rounded px-3 py-2") Delete
-        //- #{player.name}

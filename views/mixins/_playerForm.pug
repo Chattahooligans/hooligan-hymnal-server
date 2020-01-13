@@ -13,7 +13,7 @@ mixin playerForm(player = {}, edit = false)
     .flex.flex-col.mb-3
       - const options = ['Forward','Defender','Midfielder', 'Goalkeeper', 'Head Coach', 'Associate Head Coach', 'Goalkeeper Coach']
       label(for="position") Position
-      select(name="position" id="position" value=player.position required)
+      select(name="position" id="position" value=player.position required class="h-10 rounded-lg shadow border bg-white")
         each option in options
           option(value=option)= option
     .flex.flex-col.mb-3
@@ -48,7 +48,7 @@ mixin playerForm(player = {}, edit = false)
     .flex.flex-col.mb-3#images
       #images-template
         div(class="relative inline-block")
-          img(data-dz-thumbnail class="rounded-full mx-auto")
+          img(data-dz-thumbnail class="rounded-full mx-auto" style="width:120px;height:120px")
           p(class="" data-dz-name)
           div(class="dz-error-mark cursor-pointer absolute top-0 right-0" data-dz-remove)
             span &times;
@@ -62,9 +62,6 @@ mixin playerForm(player = {}, edit = false)
         if !edit
           button(class="rounded bg-red-700 text-white px-3 py-2 cancel" type="button") Clear
       #images-target.hidden
-      //- button#player-image(type="button" class="px-3 py-2 bg-blue-700 text-white rounded mb-3") Upload Image
-      //- img(src=player.image id="image-img" class=`${player.image ? 'block mb-2' : 'hidden'}`)
-      //- input(type="text" name="image" id="image" class="border flex-auto rounded p-2 shadow bg-gray-200 text-gray-700" placeholder="Player Image" value=player.image)
     .flex.flex-col.mb-3
       +baseInput("text", "Twitter", "twitter", player.twitter, "twitter")
     .flex.flex-col.mb-3

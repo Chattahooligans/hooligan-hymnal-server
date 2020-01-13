@@ -13,7 +13,6 @@ exports.upload = async (req, options) => {
 			const path = files[file].tempFilePath;
 			const image = await cloudinary.uploader.upload(path, options);
 			images.push(image);
-			// return image;
 		}
 	}
 	if (images.length === 1) {

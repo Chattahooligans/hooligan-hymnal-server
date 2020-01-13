@@ -5772,18 +5772,36 @@ module.exports = function(module) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/alpine.js");
-/* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(alpinejs__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! dropzone */ "./node_modules/dropzone/dist/dropzone.js");
-/* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(dropzone__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var slugify__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! slugify */ "./node_modules/slugify/slugify.js");
-/* harmony import */ var slugify__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(slugify__WEBPACK_IMPORTED_MODULE_3__);
- // imporequire("dropzone");
+/* harmony import */ var _modules_dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/dropzone */ "./src/js/modules/dropzone.js");
+// import Alpine from "alpinejs";
+__webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/alpine.js");
+
+
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/players/thumbnail", "thumbnail-template", document.getElementById("thumbnail-upload-section"), "#thumbnail-previews", "#thumbnail-target", "Thumbnail", 1, "thumbnail");
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/players/images", "images-template", document.getElementById("images-upload-section"), "#images-previews", "#images-target", "Player Images", 10, "images");
+
+/***/ }),
+
+/***/ "./src/js/modules/dropzone.js":
+/*!************************************!*\
+  !*** ./src/js/modules/dropzone.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dropzone */ "./node_modules/dropzone/dist/dropzone.js");
+/* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dropzone__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var slugify__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! slugify */ "./node_modules/slugify/slugify.js");
+/* harmony import */ var slugify__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(slugify__WEBPACK_IMPORTED_MODULE_2__);
+/* eslint-disable */
 
 
 
+/* eslint-enable */
 
 /**
  *
@@ -5807,7 +5825,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   previewNode.id = "";
   var previewTemplate = previewNode.parentNode.innerHTML;
   var playerId;
-  var myDropzone = new dropzone__WEBPACK_IMPORTED_MODULE_1___default.a(uploadSection, {
+  var myDropzone = new dropzone__WEBPACK_IMPORTED_MODULE_0___default.a(uploadSection, {
     url: url,
     maxFiles: maxFiles,
     previewTemplate: previewTemplate,
@@ -5820,7 +5838,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       playerId = document.getElementById("player-id");
 
       if (playerId) {
-        axios__WEBPACK_IMPORTED_MODULE_2___default.a.get("/players/images?playerId=".concat(playerId.innerText, "&type=").concat(inputName.toLowerCase())).then(function (_ref) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/players/images?playerId=".concat(playerId.innerText, "&type=").concat(inputName.toLowerCase())).then(function (_ref) {
           var data = _ref.data;
           console.log(data);
 
@@ -5840,7 +5858,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
                 var tEl = document.querySelector(target);
                 var input = document.createElement("input");
                 input.value = d;
-                input.setAttribute("data-id", "".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(data.name).toLowerCase(), "-image"));
+                input.setAttribute("data-id", "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-image"));
                 input.classList.add = "hidden";
                 input.setAttribute("name", inputName);
                 tEl.appendChild(input);
@@ -5859,7 +5877,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
                 }
               }
             }
-          } else {
+          } else if (data.thumbnail.length) {
             var mockFile = {
               name: "".concat(data.name, " thumbnail")
             };
@@ -5868,7 +5886,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
             var tEl = document.querySelector(target);
             var input = document.createElement("input");
             input.value = data.thumbnail;
-            input.setAttribute("data-id", "".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(data.name).toLowerCase(), "-thumbnail"));
+            input.setAttribute("data-id", "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-thumbnail"));
             input.classList.add = "hidden";
             input.setAttribute("name", inputName);
             tEl.appendChild(input);
@@ -5887,10 +5905,10 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     submitButton.classList.add("cursor-disabled");
     submitButton.classList.add("opacity-75");
 
-    if (!document.getElementById("small-".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(text.toLowerCase())))) {
+    if (!document.getElementById("small-".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(text.toLowerCase())))) {
       var smallAlert = document.createElement("small");
       smallAlert.innerText = "Please upload ".concat(text, " to submit form");
-      smallAlert.id = "small-" + slugify__WEBPACK_IMPORTED_MODULE_3___default()(text.toLowerCase());
+      smallAlert.id = "small-" + slugify__WEBPACK_IMPORTED_MODULE_2___default()(text.toLowerCase());
       smallAlert.classList.add("block");
       smallAlert.classList.add("text-red-700");
       submitButton.parentNode.appendChild(smallAlert);
@@ -5910,8 +5928,8 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     submitButton.classList.remove("cursor-disabled");
     submitButton.classList.remove("opacity-75");
 
-    if (document.querySelector("#small-".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(text).toLowerCase()))) {
-      document.querySelector("#small-".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(text).toLowerCase())).remove();
+    if (document.querySelector("#small-".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(text).toLowerCase()))) {
+      document.querySelector("#small-".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(text).toLowerCase())).remove();
     }
   });
   myDropzone.on("removedfile", function (_ref2) {
@@ -5919,18 +5937,16 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     var img = previewElement.querySelector("img");
 
     if (playerId) {
-      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post("/players/remove-images?playerId=".concat(playerId.innerText, "&type=").concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(inputName.toLowerCase())), {
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/players/remove-images?playerId=".concat(playerId.innerText, "&type=").concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase())), {
         withCredentials: true,
         img: img.src
-      }).then(function (_ref3) {
-        var data = _ref3.data;
-        // if (data.result === "ok") {
+      }).then(function () {
         var inputs = document.querySelectorAll("input[name=\"".concat(inputName.toLowerCase(), "\"]"));
         inputs.forEach(function (input) {
           if (input.value == img.src) {
             input.remove();
           }
-        }); // }
+        });
       })["catch"](function (err) {
         console.error(err);
       });
@@ -5950,25 +5966,24 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   myDropzone.on("maxfilesexceeded", function () {
     alert("Max files exceeded: ".concat(maxFiles));
   });
-  var uploadButton = document.querySelector("#".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(inputName.toLowerCase()), " .actions .upload"));
+  var uploadButton = document.querySelector("#".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase()), " .actions .upload"));
 
   if (uploadButton) {
     uploadButton.onclick = function () {
-      myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(dropzone__WEBPACK_IMPORTED_MODULE_1___default.a.ADDED));
+      myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(dropzone__WEBPACK_IMPORTED_MODULE_0___default.a.ADDED));
     };
   }
 
-  var cancelButton = document.querySelector("#".concat(slugify__WEBPACK_IMPORTED_MODULE_3___default()(inputName.toLowerCase()), " .actions .cancel"));
+  var cancelButton = document.querySelector("#".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase()), " .actions .cancel"));
 
   if (cancelButton) {
     cancelButton.onclick = function () {
-      myDropzone.removeAllFiles(myDropzone.getFilesWithStatus(dropzone__WEBPACK_IMPORTED_MODULE_1___default.a.ADDED));
+      myDropzone.removeAllFiles(myDropzone.getFilesWithStatus(dropzone__WEBPACK_IMPORTED_MODULE_0___default.a.ADDED));
     };
   }
 }
 
-dropzone("/players/thumbnail", "thumbnail-template", document.getElementById("thumbnail-upload-section"), "#thumbnail-previews", "#thumbnail-target", "Thumbnail", 1, "thumbnail");
-dropzone("/players/images", "images-template", document.getElementById("images-upload-section"), "#images-previews", "#images-target", "Player Images", 10, "images");
+/* harmony default export */ __webpack_exports__["default"] = (dropzone);
 
 /***/ }),
 

@@ -1,10 +1,10 @@
 require("dotenv").config();
-const cloudinary = require("cloudinary").v2;
 const mongoose = require("mongoose");
 const Player = mongoose.model("players");
 const {
 	removeFromCloudinary
 } = require("../handlers/cloudinaryDelete");
+const { upload } = require("../handlers/imageUploader");
 
 exports.index = async (req, res) => {
 	const page = req.query.page || 1;
@@ -117,23 +117,16 @@ exports.edit = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
+	if (!req.body.images) {
+		req.body.images = [];
+	}
+	if (!req.body.thumbnail) {
+		req.body.thumbnail = "";
+	}
 	const player = await Player.findByIdAndUpdate(req.params.id, req.body, {
 		new: true,
 		runValidators: true,
 	});
-	// const player = await Player.findOneAndUpdate(
-	// 	{
-	// 		_id: req.params.id
-	// 	},
-	// 	{
-	// 		$set: req.body
-	// 	},
-	// 	{
-	// 		new: true,
-	// 		runValidators: true,
-	// 		context: "query"
-	// 	}
-	// );
 	req.flash("success", `${player.name} was updated`);
 	res.redirect(`/players/${player._id}`);
 };
@@ -162,28 +155,6 @@ exports.delete = async (req, res) => {
 	res.redirect("/players");
 };
 
-exports.uploadPage = (req, res) => {
-	res.render("players/uploadTest", {
-		title: "Upload Test"
-	});
-};
-
-exports.uploads = (file, folder) => {
-	return new Promise(resolve => {
-		cloudinary.uploader.upload(file, result => {
-			resolve({
-				url: result.url,
-				id: result.public_id
-			}, {
-				resource_type: "auto",
-				folder: folder
-			});
-		});
-	});
-};
-
-const { upload } = require("../handlers/imageUploader");
-
 exports.uploadImages = async (req, res) => {
 	const images = await upload(req, {
 		folder: "players_images",
@@ -192,10 +163,6 @@ exports.uploadImages = async (req, res) => {
 	res.send(images);
 };
 
-/**
- * @param {Request} req
- * @param {Response} res
- */
 exports.uploadThumbnail = async (req, res) => {
 	const image = await upload(req, {
 		transformation: {
