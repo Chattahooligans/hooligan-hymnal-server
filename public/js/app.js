@@ -5838,9 +5838,10 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       playerId = document.getElementById("player-id");
 
       if (playerId) {
-        axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/players/images?playerId=".concat(playerId.innerText, "&type=").concat(inputName.toLowerCase())).then(function (_ref) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/players/images?playerId=".concat(playerId.innerText, "&type=").concat(inputName.toLowerCase()), {
+          withCredentials: true
+        }).then(function (_ref) {
           var data = _ref.data;
-          console.log(data);
 
           if (data.images) {
             var _iteratorNormalCompletion = true;
@@ -5965,6 +5966,10 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   });
   myDropzone.on("maxfilesexceeded", function () {
     alert("Max files exceeded: ".concat(maxFiles));
+  });
+  var progressBar = document.querySelector("#".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase()), " .progress-bar"));
+  myDropzone.on("totaluploadprogress", function (progress) {
+    progressBar.style.width = progress + "%";
   });
   var uploadButton = document.querySelector("#".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase()), " .actions .upload"));
 

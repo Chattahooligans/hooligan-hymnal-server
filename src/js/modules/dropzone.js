@@ -34,9 +34,10 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         const thisDropzone = this;
         playerId = document.getElementById("player-id");
         if (playerId) {
-          axios.get(`/players/images?playerId=${playerId.innerText}&type=${inputName.toLowerCase()}`)
+          axios.get(`/players/images?playerId=${playerId.innerText}&type=${inputName.toLowerCase()}`, {
+            withCredentials: true
+          })
             .then(({ data }) => {
-              console.log(data);
               if (data.images) {
                 for (const d of data.images) {
                   var mockFile = {
@@ -141,6 +142,11 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
 
   myDropzone.on("maxfilesexceeded", function () {
     alert(`Max files exceeded: ${maxFiles}`)
+  });
+
+  const progressBar = document.querySelector(`#${slugify(inputName.toLowerCase())} .progress-bar`)
+  myDropzone.on("totaluploadprogress", function (progress) {
+    progressBar.style.width = progress + "%";
   });
 
   const uploadButton = document.querySelector(`#${slugify(inputName.toLowerCase())} .actions .upload`)

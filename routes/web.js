@@ -53,14 +53,13 @@ router.get("/rosters/:id/delete", isLoggedIn, checkPermission("rosterAllowed"), 
 router.post("/rosters/:id/delete", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(rostersController.delete));
 
 // Players
-router.get("/players/upload-test", isLoggedIn, checkPermission("rosterAllowed"), playersController.uploadPage);
 router.post("/players/thumbnail", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.uploadThumbnail));
 router.post("/players/images", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.uploadImages));
 router.get("/players", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.index));
 router.get("/players-partial", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.search));
 router.get("/players/create", isLoggedIn, checkPermission("rosterAllowed"), playersController.create);
 router.post("/players/create", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.store));
-router.get("/players/images", catchErrors(playersController.getImages));
+router.get("/players/images", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.getImages));
 router.post("/players/remove-images", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.removeImage));
 router.get("/players/:id", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.show));
 router.get("/players/:id/edit", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.edit));

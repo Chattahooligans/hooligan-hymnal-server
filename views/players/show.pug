@@ -3,7 +3,8 @@ extends ../layout
 block content
   .mx-auto.container
     div(class="shadow border rounded-lg p-6")
-      img(src=`${player.thumbnail}` height="200" width="200" class="rounded-full mr-auto md:mx-auto md:mb-3")
+      if player.thumbnail
+        img(src=`${player.thumbnail}` height="200" width="200" class="rounded-full mr-auto md:mx-auto md:mb-3")
       h2(class="font-semibold text-2xl mb-3") #{title} - #{player.flag}
       div(class="flex")
         p(class="mr-2")

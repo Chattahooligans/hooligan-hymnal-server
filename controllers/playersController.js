@@ -220,17 +220,3 @@ exports.removeImage = async (req, res) => {
 	const response = await removeFromCloudinary(`players_${type.toLowerCase()}`, img);
 	res.send(response);
 };
-
-exports.playersThumbnail = async (req, res) => {
-	const player = await Player.findById(req.params.id);
-	res.send({
-		name: player.name,
-		thumbnail: player.thumbnail
-	});
-};
-
-exports.playersRemoveThumbnail = async (req, res) => {
-	const player = await Player.findById(req.params.id);
-	const response = await removeFromCloudinary("players_thumbnails", player.thumbnail);
-	res.send(response);
-};
