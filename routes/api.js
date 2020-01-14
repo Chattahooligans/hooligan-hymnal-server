@@ -27,7 +27,7 @@ router.get("/goalkeeperNicknames", catchErrors(goalkeeperNicknameController.inde
 
 // User Info
 router.post("/users/login", userController.login);
-router.get("/users/me", userController.me);
+router.get("/users/me", apiLoggedIn, userController.me);
 
 // Notifications
 router.get("/notifications/last", catchErrors(notificationsController.last));
