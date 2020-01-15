@@ -29,14 +29,3 @@ exports.show = async (req, res) => {
 	const player = await Players.findById(req.params.id);
 	res.json(player);
 };
-
-const cloudinary = require("cloudinary").v2;
-
-exports.deleteThumbnail = async (req, res) => {
-	const imageId = req.body.imageId;
-	if (!imageId) {
-		return res.send("No imageId");
-	}
-	const response = await cloudinary.uploader.destroy(`players_thumbnails/${imageId}`);
-	res.send(response);
-};
