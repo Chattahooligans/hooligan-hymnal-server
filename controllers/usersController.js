@@ -205,6 +205,7 @@ module.exports = app => {
       newUser.foesAllowed = foesAllowed;
       newUser.usersAllowed = usersAllowed;
       newUser.pushNotificationsAllowed = pushNotificationsAllowed;
+      newUser.feedAllowed = feedAllowed;
 
       User.create(newUser)
         .then(user => {
@@ -213,7 +214,8 @@ module.exports = app => {
             rosterAllowed,
             foesAllowed,
             usersAllowed,
-            pushNotificationsAllowed
+			pushNotificationsAllowed,
+			feedAllowed
           })
             .then(user => {
               return res.send(user);
