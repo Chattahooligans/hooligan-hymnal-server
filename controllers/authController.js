@@ -108,6 +108,7 @@ exports.register = async (req, res, next) => {
 		user.rosterAllowed = true;
 		user.songbookAllowed = true;
 		user.foesAllowed = true;
+		user.feedAllowed = true;
 		user.usersAllowed = true;
 	}
 	await user.save();

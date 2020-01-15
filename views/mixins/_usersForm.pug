@@ -15,7 +15,7 @@ mixin usersForm(user = {}, edit = false)
       .flex.flex-col.mb-3
         +baseInput("password", "Confirm Password", "passwordConfirm", "", "Confirm ******")
     .flex.flex-col.mb-3
-      - var options = ['pushNotificationsAllowed', 'songbookAllowed', 'rosterAllowed', 'usersAllowed']
+      - var options = ['pushNotificationsAllowed', 'songbookAllowed', 'rosterAllowed', 'feedAllowed', 'usersAllowed']
       //- TODO: Create a better select.. to[] from[]
       label(for="permissions") Permissions
       select(name="permissions[]" id="permissions[]" multiple)

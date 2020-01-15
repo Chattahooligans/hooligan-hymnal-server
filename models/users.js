@@ -49,6 +49,10 @@ const UserSchema = new Schema(
 			type: Boolean,
 			default: false
 		},
+		feedAllowed: {
+			type: Boolean,
+			default: false,
+		},
 		usersAllowed: {
 			type: Boolean,
 			default: false
