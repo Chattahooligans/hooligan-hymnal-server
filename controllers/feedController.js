@@ -87,9 +87,9 @@ module.exports = app => {
     permissions("feedAllowed"),
     (req, res) => {
       var feedItem = FeedItems(req.body);
-      console.log(feedItem);
+      console.log(feedItem.channel);
       console.log("about to find channel");
-      Channels.findById(feedItem.channel), (error, channel) => {
+      Channels.findById(feedItem.channel, (error, channel) => {
         console.log(channel);
         if(error) {
           res.send(error);
@@ -120,7 +120,7 @@ module.exports = app => {
           feeditems_cache.force_reload();
         });
       }
-    }
+      )}
   );
 
   // TODO: API for a user to delete a post (set .active=false), from post _id and user permissions
