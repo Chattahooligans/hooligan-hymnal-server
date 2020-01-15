@@ -87,16 +87,14 @@ module.exports = app => {
     permissions("feedAllowed"),
     (req, res) => {
       var feedItem = FeedItems(req.body);
-      console.log(feedItem.channel);
-      console.log("about to find channel");
       Channels.findById(feedItem.channel, (error, channel) => {
-        console.log(channel);
         if(error) {
           res.send(error);
         }
-        var userHasPermission = channel.users.some((user) => user.canCreate && user._id === req.user._id);
+        var userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) == String(req.user._id));
         if(!userHasPermission) {
           res.status(401).send("You do not have permission to post to this news feed channel!");
+          return;
         }
         feedItem.save((error, item) => {
           error ? res.status(501).send({ error }) : res.send(item);
