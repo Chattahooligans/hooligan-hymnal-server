@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+var ObjectId = mongoose.Schema.Types.ObjectId;
 const mongoDbErrors = require("mongoose-mongodb-errors");
 
 const channelSchema = new mongoose.Schema({
@@ -14,8 +15,7 @@ const channelSchema = new mongoose.Schema({
 	active: Boolean,
 	users: [
 		{
-			type: mongoose.Types.ObjectId,
-			refs: "User",
+			id: ObjectId,
 			canCreate: Boolean,
 			canEdit: Boolean,
 			canDelete: Boolean,

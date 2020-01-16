@@ -3,21 +3,11 @@ var ObjectId = mongoose.Schema.Types.ObjectId;
 
 module.exports = new mongoose.Schema(
 	{
-		// sender: { user: ObjectId, pushToken: String },
-		sender: {
-			user: {
-				type: mongoose.Types.ObjectId,
-				ref: "User"
-			},
-			pushToken: String
-		},
+		sender: { user: ObjectId, pushToken: String },
 		publishedAt: Date,
 		unpublishedAt: Date,
 		push: Boolean,
-		channel: {
-			type: mongoose.Types.ObjectId,
-			ref: "Channel"
-		},
+		channel: ObjectId,
 		locale: String,
 		text: String,
 		images: [
