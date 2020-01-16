@@ -6,9 +6,9 @@ html(lang="en")
     link(rel="stylesheet" href="/css/app.css")
     //- script(src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.2.0/dist/alpine.js" defer)
     title #{title} | #{h.siteName}
-  body.flex.flex-col
+  body.flex.flex-col(x-data="skipToContent()")
     header.bg-gray-800.text-white.py-3.relative
-      button#skip(type="button" class="btn absolute p-3 bg-black text-white") Skip To Content
+      button#skip(type="button" class="btn absolute p-3 bg-black text-white" @click="focus()") Skip To Content
       .px-3.flex.flex-row.justify-between
         nav.flex.items-center
           a(href="/" class="block") Hooligan Server
@@ -17,7 +17,7 @@ html(lang="en")
             div(x-data="{ isShown: false }" class="relative")
               a(href="#" @click.prevent="isShown = ! isShown")
                 img(src=`${currentUser.gravatar}` class="h-12 w-12 rounded-full")
-              ul(role="menu" class="absolute right-0 left-auto bg-white text-black rounded border z-50 mt-1 w-32" x-show="isShown")
+              ul(role="menu" class="absolute right-0 left-auto bg-white text-black rounded border z-50 mt-1 w-32" x-show="isShown" @click.away="isShown = false" x-on:keydown.escape="isShown = false")
                 li
                   a(href="/account" class="block px-2 py-2 border-b hover:bg-gray-300") Your Account
                 li
@@ -38,7 +38,7 @@ html(lang="en")
                 button.text-xl(onClick="this.parentElement.remove()" class="self-end") &times;
       if currentUser
         aside(class="bg-gray-300 px-3 py-4 md:w-64 sm:w-100 md:block z-10" x-data="{ open: false }")
-          button(type="button" class="md:hidden block w-full text-left" x-on:click="open = !open")
+          button(type="button" class="md:hidden block w-full text-left" @click="open = !open")
             span(x-show="open") Close Menu
             span(x-show="!open") Open Menu
           nav(class="flex flex-col -mx-3 md:block" x-bind:class="{ 'hidden': open !== true }")
@@ -53,19 +53,21 @@ html(lang="en")
               a(href="/rosters" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
             if currentUser.usersAllowed
               a(href="/users" class="block p-3 hover:bg-gray-600 hover:text-white") Users
-      main#main(class=`w-full flex-1 relative z-10 ${currentUser ? 'md:ml-6 px-3' : ''}`)
+      main#main(class=`w-full flex-1 relative z-10 ${currentUser ? 'md:ml-6 px-3' : ''}` x-ref="main")
         div.mx-auto.container.p-3
           block content
     footer(class="text-center bg-gray-800 text-white py-3")
       p &copy; Hooligan Hymnal
     script.
-      const skip = document.getElementById('skip');
-      skip.addEventListener('click', () => {
-        let main = document.getElementById('main');
-        main.setAttribute('tabindex', '-1');
-        main.focus();
-        main.removeAttribute('tabindex');
-      });
+      function skipToContent() {
+        return {
+          focus() {
+            this.$refs.main.setAttribute("tabindex", "-1");
+            this.$refs.main.focus();
+            this.$refs.main.removeAttribute("tabindex");
+          }
+        }
+      }
     block scripts
 
   script(src="/js/app.js")
