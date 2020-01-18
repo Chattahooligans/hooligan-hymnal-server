@@ -33,7 +33,6 @@ exports.store = async (req, res) => {
 	const foe = new Foes(req.body);
 	await foe.save();
 	await foes_cache.force_reload(res);
-	res.json(foe);
 };
 
 exports.update = async (req, res) => {
