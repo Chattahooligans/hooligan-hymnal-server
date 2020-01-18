@@ -16,7 +16,8 @@ var feeditems_cache = {
         that.last_refresh = 0;
         if (res != null) res.send(error);
       }
-      that.data = feed;
+      //sort cache on publishedAt, descending
+      that.data = feed.sort((a, b) => a.publishedAt < b.publishedAt ? 1 : -1);
       that.last_refresh = Date.now();
       if (res != null) {
         sendCallback(that.data);
