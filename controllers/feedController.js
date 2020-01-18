@@ -25,7 +25,7 @@ var feeditems_cache = {
   },
   send_data: function (res) {
     if (this.last_refresh + config.cache_timeout < Date.now()) {
-      this.force_reload(res, res.send);
+      this.force_reload(res, (data) => res.send((data)));
     } else {
       res.send(this.data);
     }
