@@ -87,6 +87,7 @@ module.exports = app => {
     permissions("feedAllowed"),
     (req, res) => {
       var feedItem = FeedItems(req.body);
+      feedItem.active = true;
       Channels.findById(feedItem.channel, (error, channel) => {
         if(error) {
           res.send(error);
