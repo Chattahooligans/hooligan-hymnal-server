@@ -30,13 +30,6 @@ router.get("/goalkeeperNicknames", catchErrors(goalkeeperNicknameController.inde
 router.post("/users/login", userController.login);
 router.get("/users/me", apiLoggedIn, userController.me);
 
-// Foes
-router.get("/foes", catchErrors(foesController.index));
-router.post("/foes", apiLoggedIn, catchErrors(foesController.store));
-router.get("/foes/:id", catchErrors(foesController.show));
-router.post("/foes/:id", apiLoggedIn, catchErrors(foesController.update));
-router.post("/foes/:id/delete", apiLoggedIn, catchErrors(foesController.delete));
-
 // Notifications
 router.get("/notifications/last", catchErrors(notificationsController.last));
 router.post("/notification", apiLoggedIn, catchErrors(notificationsController.store));
