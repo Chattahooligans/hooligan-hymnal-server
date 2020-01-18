@@ -21,6 +21,7 @@ router.get("/foes/:id", catchErrors(foesController.show));
 router.post("/foes", apiLoggedIn, catchErrors(foesController.store));
 router.put("/foes/:id", apiLoggedIn, catchErrors(foesController.update));
 router.delete("/foes/:id", apiLoggedIn, catchErrors(foesController.delete));
+
 // Goalkeepers Nicknames
 router.get("/goalkeeperNicknames/last", catchErrors(goalkeeperNicknameController.last));
 router.get("/goalkeeperNicknames", catchErrors(goalkeeperNicknameController.index));

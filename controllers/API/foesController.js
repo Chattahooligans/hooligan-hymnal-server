@@ -31,7 +31,8 @@ exports.show = async (req, res) => {
 
 exports.store = async (req, res) => {
 	const foe = new Foes(req.body);
-	await Promise.all([foes_cache.force_reload(res), foe.save()]);
+	await foe.save();
+	await foes_cache.force_reload(res);
 	res.json(foe);
 };
 
