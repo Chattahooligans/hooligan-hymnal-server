@@ -24,25 +24,32 @@ var feeditems_cache = {
       }
     });
   },
-  send_data: function (res) {
+  send_data: function (res, createdBefore, limit) {
     if (this.last_refresh + config.cache_timeout < Date.now()) {
-      this.force_reload(res, (data) => res.send((data)));
+      this.force_reload(res, (data) => res.send(
+        this.filter_data(data, createdBefore, limit)));
     } else {
-      res.send(this.data);
+      res.send(this.filter_data(this.data, createdBefore, limit));
     }
   },
-  send_active: function(res) {
+  send_active: function(res, createdBefore, limit) {
     if (this.last_refresh + config.cache_timeout < Date.now()) {
-      this.force_reload(res, (data) => res.send(this.get_active_items(data)));
+      this.force_reload(res, (data) => res.send(
+        this.filter_data(
+          this.get_active_items(data), createdBefore, limit) 
+          ));
     } else {
-      res.send(this.get_active_items(this.data));
+      res.send(this.filter_data(this.get_active_items(this.data), createdBefore, limit));
     }
   },
-  send_channel: function(res, channelId) {
+  send_channel: function(res, channelId, createdBefore, limit) {
     if (this.last_refresh + config.cache_timeout < Date.now()) {
-      this.force_reload(res, (data) => res.send(this.get_channel_items(data, channelId)));
+      this.force_reload(res, (data) => res.send(
+        this.filter_data(
+          this.get_channel_items(data, channelId), createdBefore, limit) 
+          ));
     } else {
-      res.send(this.get_channel_items(this.data, channelId));
+      res.send(this.filter_data(this.get_channel_items(this.data, channelId), createdBefore, limit));
     }
   },
   get_active_items(data) {
@@ -58,16 +65,23 @@ var feeditems_cache = {
       if (data[i].channel == channelId && data[i].channel) items.push(data[i]);
     }
     return items;
+  },
+  filter_data(data, createdBefore, limit) {
+    limit = parseInt(limit);
+    createdBefore = Date.parse(createdBefore);
+    if (!createdBefore || !limit) return data;
+    var filtered = data.filter(i => i.publishedAt < createdBefore);
+    return filtered.slice(0, limit);
   }
 };
 
 module.exports = app => {
   app.get("/api/feed", (req, res) => {
-    feeditems_cache.send_active(res);
+    feeditems_cache.send_active(res, req.query.createdBefore, req.query.limit);
   });
 
   app.get("/api/feed/all", (req, res) => {
-    feeditems_cache.send_data(res);
+    feeditems_cache.send_data(res, req.query.createdBefore, req.query.limit);
   });
 
   // returns single item by _id
@@ -78,7 +92,7 @@ module.exports = app => {
   });
 
   app.get("/api/feed/channel/:id", (req, res) => {
-    feeditems_cache.send_channel(res, req.params.id);
+    feeditems_cache.send_channel(res, req.params.id, req.query.createdBefore, req.query.limit);
   });
 
   // creates feed item
