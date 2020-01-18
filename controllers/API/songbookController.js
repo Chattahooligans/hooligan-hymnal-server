@@ -15,21 +15,19 @@ var songbook_cache = {
 		}
 		that.data = songbooks;
 		that.last_refresh = Date.now();
-		res.json(songbooks);
+		return res.json(songbooks);
 	},
 	send_data: async function(res) {
 		if (this.last_refresh + config.cache_timeout < Date.now()) {
 			await this.force_reload(res);
 		} else {
-			res.send(this.data);
+			return res.json(this.data);
 		}
 	}
 };
 
 exports.index = async (req, res) => {
-	const songbooks = await Songbook.find();
-	res.json(songbooks);
-	// await songbook_cache.send_data(res);
+	await songbook_cache.send_data(res);
 };
 
 exports.show = async (req, res) => {
