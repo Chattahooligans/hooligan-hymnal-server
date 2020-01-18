@@ -78,9 +78,6 @@ async function changePlayerImages() {
 	const players = await Players.find();
 	for(const player of players) {
 		if (player.image) {
-			// if (player.image.search("cloudinary") !== -1) {
-			// 	imageId = player.image.match(/[\w\d]*\.jpg$/)[0].split(".jpg")[0];
-			// }
 			player.images.push(player.image);
 			player.image = undefined;
 			player.save();
@@ -95,12 +92,19 @@ require("./handlers/passport");
 
 app.use(flash());
 
+let langs = process.env.INPUT_LANGUAGES;
+if (!langs) {
+	langs = "en";
+}
+langs = langs.split(",").map(function(lang) {
+	return lang.trim();
+});
+
 app.use((req, res, next) => {
 	res.locals.h = helpers;
 	res.locals.currentUser = req.user || null;
 	res.locals.flashes = req.flash();
-	res.locals.langs =
-    JSON.parse(process.env.INPUT_LANGUAGES) || JSON.parse(["en"]);
+	res.locals.langs = langs;
 	next();
 });
 
