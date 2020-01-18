@@ -33,7 +33,7 @@
     "dropzone": "^5.5.1",
     "ejs": "^2.7.1",
     "es6-promisify": "^6.0.2",
-    "expo-server-sdk": "^2.4.0",
+    "expo-server-sdk": "^3.4.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6-alpha.5",
     "express-history-api-fallback": "^2.2.1",
