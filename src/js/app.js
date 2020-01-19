@@ -1,6 +1,3 @@
-// import Alpine from "alpinejs";
-require("alpinejs");
-
 import dropzone from "./modules/dropzone";
 
 

@@ -10,10 +10,10 @@ const generateToken = (payload, key, expires) => {
 exports.login = (req, res, next) => {
 	passport.authenticate("local", (err, user, info) => {
 		if (err) {
-			next(err);
+			return next(err);
 		}
 		if (!user) {
-			res.json({ message: "Incorrect email or password" });
+			return res.json({ message: "Incorrect email or password" });
 		}
 		req.logIn(user, err => {
 			if (err) return next(err);
