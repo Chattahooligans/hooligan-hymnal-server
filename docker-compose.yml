@@ -13,6 +13,8 @@ services:
       - mongo
     environment:
       - MONGO_URI=mongodb://mongo:27017/hymnal
+      - SECRET_KEY=${HOOLIGAN_HYMNAL_SERVER_SECRET_KEY}
+      - INPUT_LANGUAGES=${HOOLIGAN_HYMNAL_SERVER_INPUT_LANGUAGES}
   mongo:
     container_name: mongo
     image: mongo

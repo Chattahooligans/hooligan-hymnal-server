@@ -1,7 +1,5 @@
 FROM mongo
 
-COPY data /data
+COPY ./ /
 
-CMD mongoimport --host mongo --db hymnal --collection songs /data/songs.json
-CMD mongoimport --host mongo --db hymnal --collection players /data/players.json
-# Add any other collections here
+CMD /bin/sh ./seed_data.sh
