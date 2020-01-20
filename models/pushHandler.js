@@ -14,7 +14,7 @@ async function sendNotification(notification) {
 async function sendPost(post, channel) {
   var body = post.text;
   ["\n", ".", "!", "?"].forEach((value) => {
-    if (body.indexOf(value) != -1)
+    if (body.indexOf(value) > 0)
       body = body.substring(0, body.indexOf(value))
   });
 
