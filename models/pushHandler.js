@@ -12,9 +12,14 @@ async function sendNotification(notification) {
 }
 
 async function sendPost(post, channel) {
+  var body = post.text;
+  ["\n", ".", "!", "?"].forEach((value) => {
+    body = body.substring(0, body.indexOf(value))
+  });
+
   var push = { 
-    title: channel.name,
-    body: post.text,
+    title: "New notification from " + channel.name,
+    body: body + "... (tap to view more)",
     data: { postId: post._id }
   };
   return await sendPush(push);
