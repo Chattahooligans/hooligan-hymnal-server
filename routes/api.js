@@ -11,9 +11,11 @@ const rostersController = require("../controllers/API/rosterController");
 const songbooksController = require("../controllers/API/songbookController");
 const songsController = require("../controllers/API/songController");
 const feedController = require("../controllers/API/feedController");
+const channelController = require("../controllers/API/channelsController");
 
 const { catchErrors } = require("../handlers/errorHandlers");
 const { apiLoggedIn } = require("../middleware/authMiddleware");
+const { checkPermission } = require("../middleware/PermissionsMiddleware");
 
 router.get("/i18n-settings", langController.lang);
 // Foes
@@ -53,5 +55,9 @@ router.get("/feed/:id", catchErrors(feedController.show));
 router.get("/feed/channel/:id", catchErrors(feedController.channel));
 router.post("/feed/", apiLoggedIn, catchErrors(feedController.store));
 router.delete("/feed/", apiLoggedIn, catchErrors(feedController.delete));
+// channel
+router.get("/channels/", catchErrors(channelController.active));
+router.get("/channels/all", catchErrors(channelController.all));
+router.post("/channels/", apiLoggedIn, catchErrors(channelController.store));
 
 module.exports = router;

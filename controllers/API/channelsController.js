@@ -1,7 +1,5 @@
-const channels = require("../models/channels");
-const config = require("../config.js");
-const passport = require("passport");
-const permissions = require("../middleware/PermissionsMiddleware");
+const channels = require("../../models/channels");
+const config = require("../../config.js");
 
 var channels_cache = {
   data: null,
@@ -44,31 +42,18 @@ var channels_cache = {
   },
 };
 
-module.exports = app => {
-  app.get("/api/channels", (req, res) => {
-    channels_cache.send_active(res);
+exports.active = async (req, res) => {
+  channels_cache.send_active(res);
+};
+
+exports.all = async (req, res) => {
+  channels_cache.send_data(res);
+};
+
+exports.store = async (req, res) => {
+  var channel = channels(req.body);
+  channel.save((error, channel) => {
+    error ? res.status(501).send({ error }) : res.send(channel);
+    channels_cache.force_reload();
   });
-
-  app.get("/api/channels/all",
-    passport.authenticate("jwt", { session: false }),
-    permissions("channelsAllowed"),
-    (req, res) => {
-      channels_cache.send_data(res);
-    }
-  );
-
-  // creates channel
-  app.post(
-    "/api/channels",
-    passport.authenticate("jwt", { session: false }),
-    permissions("channelsAllowed"),
-    (req, res) => {
-      var channel = channels(req.body);
-      channel.save((error, channel) => {
-        error ? res.status(501).send({ error }) : res.send(channel);
-        channels_cache.force_reload();
-      });
-    }
-  );
-
-}
+};
