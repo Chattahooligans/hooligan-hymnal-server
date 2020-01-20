@@ -9,6 +9,7 @@ var fs = require("fs");
 var morgan = require("morgan");
 var cors = require("cors");
 var passport = require("passport");
+var Scheduler = require("./models/scheduledTasks");
 var helmet = require("helmet");
 var { promisify } = require("es6-promisify");
 var cookieParser = require("cookie-parser");
@@ -115,7 +116,6 @@ app.use((req, res, next) => {
 	req.login = promisify(req.login, req);
 	next();
 });
-
 const web = require("./routes/web");
 app.use("/", web);
 const api = require("./routes/api");
@@ -128,6 +128,14 @@ app.use(errorHandlers.flashValidationErrors);
 if (app.get("env") === "development") {
 	app.use(errorHandlers.developmentErrors);
 }
+
+Scheduler.loadAllScheduledTasks();
+//sample task creation:
+//var task = {};
+//task.creator = "maxgene@gmail.com";
+//task.triggerAt = new Date(2019, 11, 14, 14, 41, 0);
+//task.data = { "foo": "bar" };
+//Scheduler.scheduleNewsPost(task);
 
 app.use(errorHandlers.productionErrors);
 

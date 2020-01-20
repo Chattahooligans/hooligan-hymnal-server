@@ -2,6 +2,11 @@
 node_modules
 /dist
 
+vagrant-bootstrap-private.sh
+deploy/account-file.json
+deploy/remote-provision-private.sh
+deploy/nginx.conf
+
 # local env files
 .env
 .env.local

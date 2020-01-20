@@ -79,6 +79,11 @@ exports.register = async (req, res) => {
 		familyName: req.body.familyName,
 		displayName: req.body.displayName,
 		password: req.body.password,
+		pushNotificationsAllowed,
+		feedAllowed,
+        _id: user._id,
+        usersAllowed: user.usersAllowed,
+        feedAllowed: user.feedAllowed
 	});
 	if (req.body.permissions) {
 		req.body.permissions.map((permission) => {

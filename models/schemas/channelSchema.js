@@ -1,27 +1,33 @@
-const mongoose = require("mongoose");
+var mongoose = require("mongoose");
 var ObjectId = mongoose.Schema.Types.ObjectId;
-const mongoDbErrors = require("mongoose-mongodb-errors");
 
-const channelSchema = new mongoose.Schema({
-	name: {
-		type: String,
-		required: "Name required for channel"
-	},
-	defaultLocale: String,
-	description: String,
-	avatarUrl: String,
-	headerUrl: String,
-	follow: Boolean,
-	active: Boolean,
-	users: [
-		{
-			id: ObjectId,
-			canCreate: Boolean,
-			canEdit: Boolean,
-			canDelete: Boolean,
-			canPush: Boolean
-		}
-	]
-});
+// Note to self: https://stackoverflow.com/questions/45952928/mongodb-error-document-must-have-an-id-before-saving
+/*
+If you have declared _id field explicitly in schema, you must initialize it explicitly
+If you have not declared it in schema, MongoDB will declare and initialize it.
+*/
 
-channelSchema.plugin(mongoDbErrors);
+module.exports = new mongoose.Schema(
+    {
+        name: String,
+        defaultLocale: String,
+        description: String,
+        avatarUrl: String,
+        headerUrl: String,
+        follow: Boolean,
+        active: Boolean,
+        users: [
+            {
+                _id: ObjectId,
+                canCreate: Boolean,
+                canEdit: Boolean,
+                canDelete: Boolean,
+                canPush: Boolean,
+            }
+        ]
+    },
+    {
+        strict: false,
+        timestamps: true
+    }
+);
