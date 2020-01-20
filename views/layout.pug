@@ -15,13 +15,13 @@ html(lang="en")
         nav(class="flex md:flex-row flex-col")
           if currentUser
             div(x-data="{ isShown: false }" class="relative")
-              a(href="#" @click.prevent="isShown = ! isShown")
+              a(href="#" class="block" x-on:click.prevent="isShown = ! isShown")
                 img(src=`${currentUser.gravatar}` class="h-12 w-12 rounded-full")
               ul(role="menu" class="absolute right-0 left-auto bg-white text-black rounded border z-50 mt-1 w-32" x-show="isShown" @click.away="isShown = false" x-on:keydown.escape="isShown = false")
                 li
                   a(href="/account" class="block px-2 py-2 border-b hover:bg-gray-300") Your Account
                 li
-                  a(href="#" @click.prevent="$refs.logout.submit()" class="block px-2 py-2 border-b hover:bg-gray-300") Logout
+                  a(href="#" x-on:click.prevent="$refs.logout.submit()" class="block px-2 py-2 border-b hover:bg-gray-300") Logout
                 form(method="POST" action="/logout" class="m-0 flex align-middle hidden" x-ref="logout")
           else
             a.mr-3(href="/login") Login

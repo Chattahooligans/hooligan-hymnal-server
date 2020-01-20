@@ -107,8 +107,6 @@ app.use((req, res, next) => {
 	res.locals.flashes = req.flash();
 	res.locals.langs =
     process.env.INPUT_LANGUAGES ? JSON.parse(process.env.INPUT_LANGUAGES) : ["en"];
-	res.locals.cloudinary_key = CLOUDINARY_API_KEY;
-	res.locals.cloudinary_name = CLOUDINARY_CLOUDNAME;
 	next();
 });
 
