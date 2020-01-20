@@ -11,11 +11,11 @@ async function sendNotification(notification) {
   return await sendPush(push);
 }
 
-async function sendPost(post) {
+async function sendPost(post, channel) {
   var push = { 
-    title: post.title,
+    title: channel.name,
     body: post.text,
-    data: post.data
+    data: { postId: post._id }
   };
   return await sendPush(push);
 }
