@@ -1,0 +1,19 @@
+extends ../layout
+
+block content
+  h2 #{title}
+  p First Name: #{user.name}
+  p Last Name: #{user.familyName}
+  p Email: #{user.email}
+  p Display Name: #{user.displayName}
+  if user.lastLogin
+    p Last Login #{user.lastLogin}
+  else
+    p Hasn't Logged in yet
+  p pushNotificationsAllowed: #{user.pushNotificationsAllowed}
+  p rosterAllowed: #{user.rosterAllowed}
+  p songbookAllowed: #{user.songbookAllowed}
+  p usersAllowed: #{user.usersAllowed}
+  a(href=`/users/${user._id}/edit`) Edit #{user.fullname}
+  br
+  a(href=`/users/${user._id}/delete`) Delete #{user.fullname}

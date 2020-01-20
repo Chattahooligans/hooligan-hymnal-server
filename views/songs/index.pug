@@ -1,0 +1,10 @@
+extends ../layout
+
+block content
+  h2 #{title}
+  a(href="/songs/create") Add Song
+  each song in songs
+    div
+      a(href=`/songs/${song._id}`) #{song.title}
+  else
+    h3 No Songs

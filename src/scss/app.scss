@@ -1,0 +1,25 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+.flash--success {
+  @apply .bg-green-600;
+}
+
+.flash--error {
+  @apply .bg-red-600;
+}
+
+.flash--info {
+  @apply .bg-orange-600;
+}
+
+#skip {
+  @apply .-top-16 .-left-16;
+
+  &:focus {
+    @apply .top-0 .left-0;
+  }
+}

@@ -1,0 +1,11 @@
+include ./_baseInput
+
+mixin songbookSongForm(song = {})
+  form(method="POST")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Song Hint", "hint", song.hint, "Song Hint", true)
+    .flex.flex-col.mb-3
+      label(for="featured" class="font-semibold flex-1") Featured
+      input(type="checkbox" name="featured" id="featured" checked=song.featured)
+    .mb-3
+      button(type="submit" class="px-3 py-2 rounded bg-blue-700 text-white") Save Song

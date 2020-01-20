@@ -1,0 +1,20 @@
+extends ../layout
+
+block content
+  .mx-auto.container
+    h2 #{title}
+    p Flag: #{player.flag}
+    p Squad Number: #{player.squadNumber}
+    p Position: #{player.position}
+    p Team: #{player.team}
+    h3 Bio(s)
+    - let bios = JSON.parse(JSON.stringify(player.bio));
+    each lang in langs
+      h4 #{lang}
+      p #{bios[lang]}
+    p Twitter: #{player.twitter}
+    P Instagram: #{player.instagram}
+    br
+    a(href=`/players/${player._id}/edit`) Edit #{player.name}
+    br
+    a(href=`/players/${player._id}/delete`) Delete #{player.name}

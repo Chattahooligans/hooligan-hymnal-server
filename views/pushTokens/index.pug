@@ -1,0 +1,9 @@
+extends ../layout
+
+block content
+  h2 #{title}
+  each token in pushTokens
+    div
+      a(href=`/push-tokens/${token._id}`) #{token._id}
+  else
+    h3 No Push Tokens

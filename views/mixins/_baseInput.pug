@@ -1,0 +1,3 @@
+mixin baseInput(type='text', label='', name='', value='', placeholder='', required=false)
+  label(for=name class="flex-1 font-semibold") #{label}
+  input(type=type, name=name, id=name, value=value, class="border flex-auto rounded p-2 shadow" placeholder=placeholder, required=required)

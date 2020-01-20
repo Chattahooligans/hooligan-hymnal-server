@@ -1,0 +1,21 @@
+include ./_baseInput
+
+mixin songbookForm(songbook = {})
+  form(method="POST")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Title", "songbook_title", songbook.songbook_title, "Title", true)
+    .flex.flex-col.mb-3
+      +baseInput("text", "Organization", "organization", songbook.organization, "Organization", true)
+    .flex.flex-col.mb-3
+      label(for="description" class="flex-1 font-semibold") Description
+      textarea(name="description" id="description" class="border flex-auto rounded p-2 shadow" placeholder="Description") #{songbook.description}
+    .flex.flex-col.mb-3
+      button#front_cover_button(type="button" class="px-3 py-2 rounded bg-blue-700 text-white mb-2") Upload Front Cover
+      input(type="text" name="front_cover" id="front_cover" class="border flex-auto rounded p-2 shadow bg-gray-400 text-gray-700 cursor-not-allowed pointer-events-none" value=songbook.front_cover)
+    .flex.flex-col.mb-3
+      button#back_cover_button(type="button" class="px-3 py-2 rounded bg-blue-700 text-white mb-2") Upload Back Cover
+      input(type="text" name="back_cover" id="back_cover" class="border flex-auto rounded p-2 shadow bg-gray-400 text-gray-700 cursor-not-allowed pointer-events-none" value=songbook.back_cover)
+    .flex.flex-col.mb-3
+      +baseInput("date", "Publish or Expiration Dates?", "some_publish_or_expiration_dates", songbook.some_publish_or_expiration_dates)
+    .mb-3
+      button(type="submit" class="px-3 py-2 rounded bg-blue-700 text-white") Save Songbook

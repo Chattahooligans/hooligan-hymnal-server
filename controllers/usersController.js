@@ -1,324 +1,149 @@
-const User = require("../models/users");
-const jwt = require("jsonwebtoken");
-const bcryptjs = require("bcrypt");
-const passport = require("passport");
-const permissionsMiddleware = require("../middleware/PermissionsMiddleware");
-const { body, check, validationResult } = require("express-validator");
-const Validator = require("validatorjs");
-const { normalizeEmail } = require("validator");
+const mongoose = require("mongoose");
+const User = mongoose.model("User");
+const { check, validationResult } = require("express-validator");
 
-// Might need to implement a redis setup eventually...
-let tokenList = {};
+exports.allUsers = async (req, res) => {
+	const users = await User.find({})
+		.where({
+			email: {
+				$ne: req.user.email,
+			},
+		})
+		.sort({ lastLogin: "desc" });
+	res.render("users/index", {
+		title: "All Users",
+		users,
+	});
+};
 
-module.exports = app => {
-  app.post("/api/users/register", (req, res) => {
-    const errors = new Validator(req.body, {
-      email: "required|email",
-      password: "required|confirmed",
-      password_confirmed: "required",
-      name: "required",
-      familyName: "required",
-      displayName: "required"
-    });
-    if (errors.fails()) {
-      return res.status(422).send(errors.errors);
-    }
-    let email = normalizeEmail(req.body.email);
-    let { password, name, familyName, displayName } = req.body;
-    const newUser = new User({
-      name,
-      familyName,
-      displayName,
-      email,
-      password
-    });
+exports.newUserForm = (req, res) => {
+	res.render("users/create", {
+		title: "Create User",
+	});
+};
 
-    User.createUser(newUser, (error, user) => {
-      if (error) {
-        return res.status(422).json({
-          message:
-            "Something happened... please check that you don't already have an account otherwise try again later"
-        });
-      }
-      return res.json({ message: "User created please login", user });
-    });
-  });
+exports.validateRegister = (req, res, next) => {
+	check("name")
+		.not()
+		.isEmpty()
+		.withMessage("You must supply a first name!");
+	check("familyName")
+		.not()
+		.isEmpty()
+		.withMessage("You must supply a last name!");
+	check("email")
+		.not()
+		.isEmpty()
+		.withMessage("You must supply a email!")
+		.isEmail()
+		.normalizeEmail({
+			gmail_remove_dots: false,
+			gmail_remove_subaddress: false,
+		});
+	check("displayName")
+		.not()
+		.isEmpty()
+		.withMessage("Display name is required");
+	check("password")
+		.not()
+		.isEmpty()
+		.withMessage("Password cannot be blank");
+	check("passwordConfirm")
+		.not()
+		.isEmpty()
+		.withMessage("Confirmed Password cannot be blank");
+	check("passwordConfirm")
+		.equals(req.body.password)
+		.withMessage("Oops Your passwords do not match");
 
-  const generateToken = (payload, key, expires) => {
-    return jwt.sign(payload, key, {
-      expiresIn: expires
-    });
-  };
+	const errors = validationResult(req.body);
+	if (errors.length) {
+		req.flash(
+			"error",
+			errors.map((err) => err.msg),
+		);
+		res.render("users/create", {
+			title: "Create User",
+			body: req.body,
+			flashes: req.flash(),
+		});
+		return;
+	}
+	next();
+};
 
-  app.post("/api/users/login", async (req, res) => {
-    let errors = new Validator(req.body, {
-      email: "required|email",
-      password: "required",
-      rememberMe: "boolean"
-    });
-    if (errors.fails()) {
-      return res.status(422).send(errors.errors);
-    }
-    let email = normalizeEmail(req.body.email);
-    let { password, rememberMe } = req.body;
-    let loginTime = Date.now();
-    let user = await User.findOneAndUpdate(
-      { email: email },
-      {
-        $set: {
-          lastLogin: loginTime
-        }
-      }
-    )
-      .select("+password")
-      .exec();
-    if (!user) {
-      return res.status(400).send({ message: "Something happend." });
-    }
-    if (password) {
-      bcryptjs.compare(password, user.password, (err, isMatch) => {
-        if (isMatch) {
-          const payload = {
-            id: user._id
-          };
-          const secretOrKey = process.env.SECRET_KEY;
-          const tokenExpires = `${process.env.TOKEN_EXPIRES}` || "1h";
-          const refreshExpires = `${process.env.REFRESH_TOKEN_EXPIRES}` || "1d";
-          let token = generateToken(payload, secretOrKey, tokenExpires);
-          user = {
-            _id: user._id,
-            id: user.id,
-            email: user.email,
-            foesAllowed: user.foesAllowed,
-            pushNotificationsAllowed: user.pushNotificationsAllowed,
-            rosterAllowed: user.rosterAllowed,
-            songbookAllowed: user.songbookAllowed,
-            usersAllowed: user.usersAllowed,
-            feedAllowed: user.feedAllowed
-          };
-          if (rememberMe) {
-            token = generateToken(payload, secretOrKey, refreshExpires);
-          }
-          return res.status(200).send({
-            token,
-            user
-          });
-        } else {
-          return res
-            .status(400)
-            .send({ message: "Incorrect Password. Please try again." });
-        }
-      });
-    } else {
-      return res
-        .send(422)
-        .json({ message: "Password was incorrect or wasn't provided" });
-    }
-  });
+exports.register = async (req, res) => {
+	const user = new User({
+		email: req.body.email,
+		name: req.body.name,
+		familyName: req.body.familyName,
+		displayName: req.body.displayName,
+		password: req.body.password,
+		pushNotificationsAllowed,
+		feedAllowed,
+        _id: user._id,
+        usersAllowed: user.usersAllowed,
+        feedAllowed: user.feedAllowed
+	});
+	if (req.body.permissions) {
+		req.body.permissions.map((permission) => {
+			user[permission] = true;
+		});
+	}
+	await user.save();
+	req.flash("success", `${user.fullname} was created!`);
+	res.redirect("/users");
+	// Might implement a checkbox that allows a password reset email to be sent??
+};
 
-  app.get(
-    "/api/users/me",
-    passport.authenticate("jwt", { session: false }),
-    (req, res) => {
-      const {
-        email,
-        name,
-        familyName,
-        foesAllowed,
-        songbookAllowed,
-        rosterAllowed,
-        pushNotificationsAllowed,
-        usersAllowed
-      } = req.user;
-      res.json({
-        user: {
-          email,
-          name,
-          familyName,
-          foesAllowed,
-          songbookAllowed,
-          rosterAllowed,
-          pushNotificationsAllowed,
-          usersAllowed
-        }
-      });
-    }
-  );
+exports.singleUser = async (req, res) => {
+	const user = await User.findById(req.params.id);
+	res.render("users/show", {
+		title: `${user.name}'s Info`,
+		user,
+	});
+};
 
-  app.post(
-    "/api/users/logout",
-    passport.authenticate("jwt", { session: false }),
-    (req, res) => {
-      req.user = {};
-      res.status(201).json({ message: "You have been logged out" });
-    }
-  );
+exports.editForm = async (req, res) => {
+	const user = await User.findById(req.params.id);
+	res.render("users/edit", {
+		title: `Edit ${user.name}`,
+		user,
+	});
+};
 
-  app.get(
-    "/api/users",
-    passport.authenticate("jwt", { session: false }),
-    permissionsMiddleware("usersAllowed"),
-    async (req, res) => {
-      const { email } = req.user;
-      const { role } = req.query;
-      const users = User.find({}, "-__v +lastLogin").where({
-        email: { $ne: email }
-      });
-      if (role) {
-        users.where(role, true);
-      }
-      users.exec((err, users) => {
-        if (err) {
-          return res.json({ message: err });
-        }
-        return res.send(users);
-      });
-    }
-  );
+exports.updateUser = async (req, res) => {
+	const updates = {
+		name: req.body.name,
+		familyName: req.body.familyName,
+		email: req.body.email,
+		displayName: req.body.displayName,
+	};
+	// TODO: Need to implement a better check for permissions
+	if (req.body.permissions) {
+		req.body.permissions.map((permission) => {
+			updates[permission] = true;
+		});
+	}
+	const user = await User.findOneAndUpdate(
+		{ _id: req.params.id },
+		{ $set: updates },
+		{ new: true, runValidators: true, context: "query" },
+	);
+	req.flash("success", `${user.fullname} has been updated!`);
+	res.redirect("back");
+};
 
-  app.post(
-    "/api/users",
-    passport.authenticate("jwt", { session: false }),
-    permissionsMiddleware("usersAllowed"),
-    (req, res) => {
-      const {
-        email,
-        name,
-        familyName,
-        displayName,
-        password,
-        songbookAllowed,
-        rosterAllowed,
-        foesAllowed,
-        usersAllowed,
-        pushNotificationsAllowed
-      } = req.body;
-      let newUser = new User({
-        email,
-        name,
-        familyName,
-        displayName,
-        password
-      });
-      newUser.songbookAllowed = songbookAllowed;
-      newUser.rosterAllowed = rosterAllowed;
-      newUser.foesAllowed = foesAllowed;
-      newUser.usersAllowed = usersAllowed;
-      newUser.pushNotificationsAllowed = pushNotificationsAllowed;
-      newUser.feedAllowed = feedAllowed;
+exports.deleteConfirm = async (req, res) => {
+	const user = await User.findById(req.params.id);
+	res.render("users/delete-confirm", {
+		title: `Delete ${user.name}`,
+		user,
+	});
+};
 
-      User.create(newUser)
-        .then(user => {
-          User.findByIdAndUpdate(user._id, {
-            songbookAllowed,
-            rosterAllowed,
-            foesAllowed,
-            usersAllowed,
-			pushNotificationsAllowed,
-			feedAllowed
-          })
-            .then(user => {
-              return res.send(user);
-            })
-            .catch(err => {
-              return res.status(422).send(err);
-            });
-        })
-        .catch(err => {
-          return res.status(422).send(err);
-        });
-    }
-  );
-
-  app.get(
-    "/api/users/:id",
-    passport.authenticate("jwt", { session: false }),
-    permissionsMiddleware("usersAllowed"),
-    (req, res) => {
-      const { id } = req.params;
-      User.findOne({ _id: id }, "+password", (err, user) => {
-        if (!user) {
-          res.status(404).send({ message: "User doesn't exist" });
-        }
-        res.json(user);
-      });
-    }
-  );
-
-  app.put(
-    "/api/users/:id",
-    passport.authenticate("jwt", { session: false }),
-    permissionsMiddleware("usersAllowed"),
-    (req, res) => {
-      const { id } = req.params;
-      User.findByIdAndUpdate(id, req.body, (error, user) => {
-        if (error) {
-          res.status(501).send({ error });
-        }
-        res.send(user);
-      });
-    }
-  );
-
-  app.delete(
-    "/api/users/:id",
-    passport.authenticate("jwt", { session: false }),
-    permissionsMiddleware("usersAllowed"),
-    (req, res) => {
-      const { id } = req.params;
-      User.findByIdAndRemove(id, error => {
-        if (error) {
-          res.status(501).send({ error });
-        }
-        res.send({ message: `Deleted: ${id}` });
-      });
-    }
-  );
-
-  app.put(
-    "/api/users/:id/reset-password",
-    [
-      check("password")
-        .not()
-        .isEmpty()
-        .withMessage("Please provide a password")
-        .trim(),
-      check("newPassword")
-        .not()
-        .isEmpty()
-        .withMessage("Please provide a new password")
-        .trim()
-    ],
-    passport.authenticate("jwt", { session: false }),
-    (req, res) => {
-      const { id } = req.user;
-      const { password, newPassword } = req.body;
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(422).send({ errors: errors.array() });
-      }
-      User.findById(id, "+password", (err, user) => {
-        if (err) {
-          return res.send(err);
-        }
-        bcryptjs.compare(password, user.password, (err, isMatch) => {
-          if (!isMatch) {
-            return res.send(err);
-          }
-          bcryptjs.genSalt(10, (err, salt) => {
-            if (err) {
-              return res.send(err);
-            }
-            bcryptjs.hash(newPassword, salt, (err, hash) => {
-              if (err) {
-                return res.send(err);
-              }
-              user.password = hash;
-              user.save(res.send({ message: "Password succefully updated!" }));
-            });
-          });
-        });
-      });
-    }
-  );
+exports.delete = async (req, res) => {
+	const user = await User.findByIdAndDelete(req.params.id);
+	req.flash("success", `${user.fullname} has been deleted!`);
+	res.redirect("/users");
 };

@@ -1,0 +1,11 @@
+extends ../layout
+
+include ../mixins/_registerForm
+
+block content
+  .container.mx-auto.px-3
+    div(class="shadow-2xl md:w-2/3 mx-auto mt-6 rounded overflow-hidden")
+      header(class="bg-gray-300 p-3 border-b border-gray-500")
+        h1(class="text-2xl font-bold mb-3") Register
+      div(class="p-3")
+        +registerForm()

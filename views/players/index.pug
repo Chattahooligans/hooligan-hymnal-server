@@ -1,0 +1,14 @@
+extends ../layout
+
+include ../mixins/_playersList
+
+block content
+  .mx-auto.container
+    div(class="mb-3")
+      h2(class="font-extrabold text-3xl mb-3") #{title}
+    div(x-data="{ input:'" + name +"' }")
+      div(class="flex justify-between mb-3 flex-col md:flex-row")
+        a(href="/players/create" class="rounded bg-blue-700 text-white px-3 py-2 mb-3 md:mb-auto") Create Player
+        input(type="text" name="playersSearch" id="playersSearch" class="border rounded bg-gray-200 p-2 mb-3 md:mb-auto" placeholder="Filter Player" x-model="input" x-on:input="setTimeout(() => {fetch('/players-partial?name='+input).then(res => res.text()).then(html => $refs.playersList.innerHTML = html)}, 200)")
+      div#playersList(class="-mx-3" x-ref="playersList")
+        +playersList(players, totalCount, searchCount, page, pages, name)

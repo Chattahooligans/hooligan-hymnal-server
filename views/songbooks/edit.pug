@@ -1,0 +1,8 @@
+extends ../layout
+
+include ../mixins/_songbookForm
+
+block content
+  .container.mx-auto
+    h2 #{title}
+    +songbookForm(songbook)

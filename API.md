@@ -20,7 +20,7 @@
 * GET => returns only the most recent notification from the database
 
 ##### /api/notification
-* POST => creates a notification. if `push` is true, then this sends a notification to all pushTokens stored in the database. otherwise, the notificaiton is just written to the database. 
+* POST => creates a notification. if `push` is true, then this sends a notification to all pushTokens stored in the database. otherwise, the notificaiton is just written to the database.
 
 ##### /api/notification/:id
 * GET => this method returns a single notification form the database with the matching `id`.

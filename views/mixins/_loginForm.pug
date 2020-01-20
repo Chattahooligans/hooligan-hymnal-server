@@ -1,0 +1,10 @@
+include _baseInput
+
+mixin loginForm()
+  form.form(method="POST" action="/login")
+    .flex.flex-col.mb-3
+      +baseInput("email", "Email", "email", "", "email@email.com", true)
+    .flex.flex-col.mb-3
+      +baseInput("password", "Password", "password", "", "******", true)
+    div
+      button(type="submit" class="bg-blue-700 text-white py-2 px-3 rounded") Login

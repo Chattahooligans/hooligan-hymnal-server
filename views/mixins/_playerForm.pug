@@ -1,0 +1,44 @@
+include ../mixins/_baseInput
+
+mixin playerForm(player = {})
+  form(method="POST")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Name", "name", player.name, "Name", true)
+    .flex.flex-col.mb-3
+      +baseInput("text", "Flag", "flag", player.flag, "Flag Emoji")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Squad Number", "squadNumber", player.squadNumber, "Squad Number", true)
+    .flex.flex-col.mb-3
+      - const options = ['Forward','Defender','Midfielder', 'Goalkeeper', 'Head Coach', 'Associate Head Coach', 'Goalkeeper Coach']
+      label(for="position") Position
+      select(name="position" id="position" value=player.position required)
+        each option in options
+          option(value=option)= option
+    .flex.flex-col.mb-3
+      +baseInput("text", "Team", "team", player.team, "Team", true)
+    .flex.flex-col.mb-3
+      h3.font-semibold Bios
+      div.flex.flex-col
+        div(x-data="{ lang: '"+ langs[0] +"' }")
+          .flex
+            each lang in langs
+              button(x-on:click="lang = '" + lang +"'" type="button" class="uppercase flex-1 px-2 py-3 rounded-t" x-bind:class="{ 'bg-gray-800 text-white': lang === '" + lang + "' }") #{lang}
+          each lang in langs
+            - const bios = player.bio ? JSON.parse(JSON.stringify(player.bio)) : {};
+            div.flex.flex-col.border-2.p-3.rounded-b-lg(x-show="lang === '" + lang + "'")
+              label(for=lang class="flex-1 font-semibold capitalize") #{lang}
+              textarea(name=`bio[${lang}]` id=lang class="border flex-auto rounded p-2 shadow") #{bios[lang]}
+    .flex.flex-col.mb-3
+      button#player-thumbnail-uploader(type="button" class="px-3 py-2 bg-blue-700 text-white rounded mb-3") Upload Thumbnail
+      img(src=player.thumbnail id="thumbnail-img" height="50" width="50" class=`rounded-full ${player.thumbnail ? "block mb-2" : "hidden"}`)
+      input(type="text" name="thumbnail" id="thumbnail" class="border flex-auto rounded p-2 shadow bg-gray-200 text-gray-700" placeholder="Player Thumbnail" value=player.thumbnail)
+    .flex.flex-col.mb-3
+      button#player-image(type="button" class="px-3 py-2 bg-blue-700 text-white rounded mb-3") Upload Image
+      img(src=player.image id="image-img" class=`${player.image ? 'block mb-2' : 'hidden'}`)
+      input(type="text" name="image" id="image" class="border flex-auto rounded p-2 shadow bg-gray-200 text-gray-700" placeholder="Player Image" value=player.image)
+    .flex.flex-col.mb-3
+      +baseInput("text", "Twitter", "twitter", player.twitter, "twitter")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Instagram", "instagram", player.instagram, "instagram")
+    .mb-3
+      button(type="submit" class="py-3 px-2 rounded bg-blue-700 text-white") Save Player

@@ -1,0 +1,29 @@
+include ./_baseInput
+
+mixin songForm(song = {})
+  form(method="POST")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Title", "title", song.title, "Title", true)
+    .flex.flex-col.mb-3
+      label(for="lyrics" class="flex-1 font-semibold") Lyrics
+      textarea(name="lyrics" id="lyrics" placeholder="Lyrics" class="border flex-auto rounded p-2 shadow" rows="10") #{song.lyrics}
+    .flex.flex-col.mb-3
+      +baseInput("text", "Instructions", "instructions", song.instructions, "Instructions")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Category", "category", song.category, "Category")
+    .flex.flex-col.mb-3
+      +baseInput("date", "Delete Local", "delete_local", song.delete_local, "Delete Local")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Reference Title", "reference_title", song.reference_title, "Title")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Reference Link", "reference_link", song.reference_link, "Link")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Sheet Music Link", "sheetMusicLink", song.sheetMusicLink, "Sheet Music Link")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Player ID", "player_id", song.player_id, "Player ID")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Legend", "legend", song.legend, "Legend")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Capo Signal", "capoSignal", song.capoSignal, "Capo Signal")
+    .mb-3
+      button(type="submit" class="px-3 py-2 bg-blue-700 text-white") Save Song

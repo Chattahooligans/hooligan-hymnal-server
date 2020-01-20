@@ -1,161 +1,145 @@
-let Players = require("../models/players");
-let config = require("../config.js");
-const passport = require("passport");
-const permissions = require("../middleware/PermissionsMiddleware");
-// const apiMiddleware = require("../middleware/ApiKeyMiddleware");
-const cloudinary = require("cloudinary").v2;
+const mongoose = require("mongoose");
+const Player = mongoose.model("players");
 
-var players_cache = {
-  data: null,
-  last_refresh: 0,
-  force_reload: function(res) {
-    var that = this;
-    Players.find((error, players) => {
-      if (error) {
-        that.data = null;
-        that.last_refresh = 0;
-        if (res != null) res.send(error);
-      }
-      that.data = players;
-      that.last_refresh = Date.now();
-      if (res != null) res.send(that.data);
-    });
-  },
-  send_data: function(res) {
-    if (this.last_refresh + config.cache_timeout < Date.now()) {
-      this.force_reload(res);
-    } else {
-      res.send(this.data);
-    }
-  }
+exports.index = async (req, res) => {
+	const page = req.query.page || 1;
+	const limit = 10;
+	const skip = (page * limit) - limit;
+	const name = req.query.name || "";
+	console.log(name);
+
+	const playersPromise = Player
+		.find({
+			name: {
+				$regex: `.*${name}.*`,
+				$options: "i"
+			}
+		})
+		.skip(skip)
+		.limit(limit)
+		.sort({ "name": "asc" });
+
+	const countPromise = Player.count();
+	const searchCountPromise = Player.find({
+		name: {
+			$regex: `.*${name}.*`,
+			$options: "i"
+		}
+	}).count();
+	const [players, totalCount, searchCount] = await Promise.all([playersPromise, countPromise, searchCountPromise]);
+	const pages = Math.ceil((searchCount ? searchCount : totalCount) / limit);
+	if (!players.length && skip) {
+		req.flash("error", `Hey! You asked for page ${page}. But that dosen't exist. So I put you on page ${pages}`);
+		res.redirect(`/players?page=${pages}`);
+	}
+
+	res.render("players/index", {
+		title: "All Players",
+		players,
+		totalCount,
+		searchCount,
+		skip,
+		page,
+		pages,
+		name
+	});
 };
 
-module.exports = app => {
-  // returns all players
-  app.get("/api/players", (req, res) => {
-    players_cache.send_data(res);
-  });
+// TODO: Implement players search that returns div of players cards.
+exports.search = async (req, res) => {
+	const name = req.query.name || "";
+	const page = req.query.page || 1;
+	const limit = 10;
+	const skip = (page * limit) - limit;
 
-  // returns single player by _id
-  app.get("/api/players/:id", (req, res) => {
-    Players.findById(req.params.id, (error, player) => {
-      res.send(player);
-    });
-  });
+	const playersPromise = Player
+		.find({
+			name: {
+				$regex: `.*${name}.*`,
+				$options: "i"
+			}
+		})
+		.skip(skip)
+		.limit(limit)
+		.sort({ "name": "asc" });
+	const totalCountPromise = Player.count();
+	const searchCountPromise = Player.find({
+		name: {
+			$regex: `.*${name}.*`,
+			$options: "i"
+		}
+	}).count();
+	const [players, totalCount, searchCount] = await Promise.all([playersPromise, totalCountPromise, searchCountPromise]);
+	const pages = Math.ceil(searchCount / limit);
 
-  // upload player thumbnail
-  app.post(
-    "/api/players/thumbnail-upload",
-    passport.authenticate("jwt", { session: false }),
-    permissions("rosterAllowed"),
-    (req, res) => {
-      if (!req.files || Object.keys(req.files).length === 0) {
-        return res.status(400).send("No files were uploaded");
-      }
-      const { playerThumbnail } = req.files;
-      const { public_id } = req.body;
-      if (public_id !== "") {
-        cloudinary.uploader.destroy(public_id, (err, result) => {
-          if (err) {
-            console.warn(err);
-            return;
-          }
-        });
-      }
-      cloudinary.uploader
-        .upload(playerThumbnail.tempFilePath, {
-          tags: "player_thumbnail",
-          height: 50,
-          width: 50,
-          crop: "thumb",
-          gravity: "face"
-        })
-        .then(image => {
-          return res.send(image);
-        })
-        .catch(err => {
-          if (err) {
-            console.warn(err);
-            return;
-          }
-        });
-    }
-  );
+	res.render("players/_playersList", {
+		players,
+		name,
+		skip,
+		page,
+		pages,
+		totalCount,
+		searchCount
+	});
+};
 
-  // Upload player full image
-  app.post(
-    "/api/players/full-image",
-    passport.authenticate("jwt", { session: false }),
-    permissions("rosterAllowed"),
-    (req, res) => {
-      if (!req.files || Object.keys(req.files).length === 0) {
-        return res.status(400).send("No files were uploaded");
-      }
-      const { playerImage } = req.files;
-      const { public_id } = req.body;
-      if (public_id !== "") {
-        cloudinary.uploader.destroy(public_id, (err, result) => {
-          if (err) {
-            console.warn(err);
-            return;
-          }
-        });
-      }
-      cloudinary.uploader
-        .upload(playerImage.tempFilePath, {
-          tags: "player_image"
-        })
-        .then(image => {
-          return res.send(image);
-        })
-        .catch(err => {
-          if (err) {
-            console.warn(err);
-            return;
-          }
-        });
-    }
-  );
+exports.create = (req, res) => {
+	res.render("players/create", {
+		title: "Create Player"
+	});
+};
 
-  // creates player
-  app.post(
-    "/api/players",
-    passport.authenticate("jwt", { session: false }),
-    permissions("rosterAllowed"),
-    (req, res) => {
-      var newPlayer = Players(req.body);
-      newPlayer.save((error, player) => {
-        error ? res.status(501).send({ error }) : res.send(player);
-        players_cache.force_reload();
-      });
-    }
-  );
+exports.store = async (req, res) => {
+	const player = new Player(req.body);
+	await player.save();
+	req.flash("success", `${player.name} was successfully created!`);
+	res.redirect("/players");
+};
 
-  // updates player
-  app.put(
-    "/api/players/:id",
-    passport.authenticate("jwt", { session: false }),
-    permissions("rosterAllowed"),
-    (req, res) => {
-      Players.findByIdAndUpdate(req.params.id, req.body, (error, player) => {
-        error ? res.status(501).send({ error }) : res.send(player);
-        players_cache.force_reload();
-      });
-    }
-  );
+exports.show = async (req, res) => {
+	const player = await Player.findById(req.params.id);
+	res.render("players/show", {
+		title: `${player.name}`,
+		player
+	});
+};
 
-  //deletes player
-  app.delete(
-    "/api/players/:id",
-    passport.authenticate("jwt", { session: false }),
-    permissions("rosterAllowed"),
-    (req, res) => {
-      Players.findByIdAndRemove(req.params.id, error => {
-        error
-          ? res.status(501).send({ error })
-          : res.send({ message: "Deleted" + req.params.id });
-        players_cache.force_reload();
-      });
-    }
-  );
+exports.edit = async (req, res) => {
+	const player = await Player.findById(req.params.id);
+	res.render("players/edit", {
+		title: `Edit ${player.name}`,
+		player
+	});
+};
+
+exports.update = async (req, res) => {
+	const player = await Player.findOneAndUpdate(
+		{
+			_id: req.params.id
+		},
+		{
+			$set: req.body
+		},
+		{
+			new: true,
+			runValidators: true,
+			context: "query"
+		}
+	);
+	req.flash("success", `${player.name} was updated`);
+	res.redirect(`/players/${player._id}`);
+};
+
+exports.deleteConfirm = async (req, res) => {
+	const player = await Player.findById(req.params.id);
+	res.render("players/delete", {
+		title: `${player.name} Delete`,
+		player
+	});
+};
+
+exports.delete = async (req, res) => {
+	const player = await Player.findOneAndDelete(req.params.id);
+	req.flash("success", `${player.name} was deleted!`);
+	res.redirect("/players");
 };

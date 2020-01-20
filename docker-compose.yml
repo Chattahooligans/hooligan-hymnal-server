@@ -1,0 +1,26 @@
+version: "3"
+services:
+  app:
+    container_name: hooligan-hymnal-server
+    restart: always
+    build: ./
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    links:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/hymnal
+      - SECRET_KEY=${HOOLIGAN_HYMNAL_SERVER_SECRET_KEY}
+      - INPUT_LANGUAGES=${HOOLIGAN_HYMNAL_SERVER_INPUT_LANGUAGES}
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - "27017:27017"
+  mongo-seed:
+    build: ./mongo-seed
+    links:
+      - mongo

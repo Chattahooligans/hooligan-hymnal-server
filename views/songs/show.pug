@@ -1,0 +1,22 @@
+extends ../layout
+
+block content
+  h2 #{title}
+  p Lyrics:
+    div(class="whitespace-pre") #{song.lyrics}
+    br
+  p Instructions: #{song.instructions}
+  p Category: #{song.category}
+  p Delete Local: #{song.delete_local}
+  p Reference Title: #{song.reference_title}
+  p Reference Link: &nbsp;
+    a(href=`${song.reference_link}`) #{song.reference_link}
+  p Sheet Music Link: &nbsp;
+    a(href=`${song.sheetMusicLink}`) #{song.sheetMusicLink}
+  p Player ID: #{song.player_id}
+  p Legend: #{song.legend}
+  p Capo Signal: #{song.capoSignal}
+  br
+  a(href=`/songs/${song._id}/edit`) Edit #{song.title}
+  br
+  a(href=`/songs/${song._id}/delete`) Delete #{song.title}
