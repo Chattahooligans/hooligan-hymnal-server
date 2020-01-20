@@ -118,10 +118,9 @@ module.exports = app => {
             //send a push notification here
             //need to translate feedItem into a Notification object first
             //TODO? currently, this means that the Notification form will be sent back, not the feedItem.
-            PushHandler.sendPost(notification)
+            PushHandler.sendPost(feedItem)
             .then(function(results) {
-              results.notification = notification;
-              res.send(results);
+              feeditems_cache.force_reload();
             }).catch(function(error) {
               //TODO: returning an error would be cleaner
               console.log("error 2: ", error);
@@ -130,8 +129,9 @@ module.exports = app => {
                 .send({ error: `Error fetching push tokens: ${error}` });
               return;
             });
+          } else {
+            feeditems_cache.force_reload();
           }
-          feeditems_cache.force_reload();
         });
       }
       )}
