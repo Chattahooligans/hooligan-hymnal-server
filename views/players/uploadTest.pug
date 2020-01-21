@@ -1,0 +1,20 @@
+extends ../layout
+
+block content
+  #template
+    div
+      img(data-dz-thumbnail)
+      p(data-dz-name)
+    div(class="dz-error-mark" data-dz-remove)
+      span ✘
+    div(class="dz-error-message")
+      span(data-dz-errormessage)
+  #upload-section(class="border rounded-lg bg-gray-200 h-20 w-full flex justify-center align-middle block cursor-pointer")
+    h2 Upload files here
+
+  #previews
+
+  #actions
+    button(class="rounded bg-green-700 text-white px-3 py-2 upload") Upload
+
+  #target

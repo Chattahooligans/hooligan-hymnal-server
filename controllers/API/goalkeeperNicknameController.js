@@ -1,4 +1,4 @@
-const Expo = require("expo-server-sdk");
+const {Expo} = require("expo-server-sdk");
 const mongoose = require("mongoose");
 const GoalkeeperNickname = mongoose.model("goalkeeperNickname");
 const PushTokens = mongoose.model("pushTokens");
@@ -31,35 +31,35 @@ let expo = new Expo();
 // };
 
 var goalkeepers_nickname_cache = {
-  data: null,
-  last_refresh: 0,
-  force_reload: async function(res) {
-    var that = this;
-    const goalkeeperNicknames = await GoalkeeperNickname.find();
-    that.data = goalkeeperNicknames;
-    that.last_refresh = Date.now();
-    res.send(that.data);
-  },
-  send_data: async function(res) {
-    if (this.last_refresh + config.cache_timeout < Date.now()) {
-      this.force_reload(res);
-    } else {
-      res.send(this.data);
-    }
-  }
+	data: null,
+	last_refresh: 0,
+	force_reload: async function(res) {
+		var that = this;
+		const goalkeeperNicknames = await GoalkeeperNickname.find();
+		that.data = goalkeeperNicknames;
+		that.last_refresh = Date.now();
+		res.send(that.data);
+	},
+	send_data: async function(res) {
+		if (this.last_refresh + config.cache_timeout < Date.now()) {
+			this.force_reload(res);
+		} else {
+			res.send(this.data);
+		}
+	}
 };
 
 exports.last = async (req, res) => {
-  const goalkeeperNickname = await GoalkeeperNickname.find()
-    .sort({
-      createAt: -1
-    })
-    .limit(1);
-  res.json(goalkeeperNickname[0]);
+	const goalkeeperNickname = await GoalkeeperNickname.find()
+		.sort({
+			createAt: -1
+		})
+		.limit(1);
+	res.json(goalkeeperNickname[0]);
 };
 
 exports.index = async (req, res) => {
-  await goalkeepers_nickname_cache.send_data(res);
+	await goalkeepers_nickname_cache.send_data(res);
 };
 
 // module.exports = app => {

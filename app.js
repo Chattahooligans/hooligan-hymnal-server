@@ -9,6 +9,7 @@ var fs = require("fs");
 var morgan = require("morgan");
 var cors = require("cors");
 var passport = require("passport");
+var Scheduler = require("./models/scheduledTasks");
 var helmet = require("helmet");
 var { promisify } = require("es6-promisify");
 var cookieParser = require("cookie-parser");
@@ -73,12 +74,32 @@ fs.readdirSync("models").forEach(file => {
 	}
 });
 
+const Players = mongoose.model("players");
+async function changePlayerImages() {
+	const players = await Players.find();
+	for(const player of players) {
+		if (player.image) {
+			player.images.push(player.image);
+			player.image = undefined;
+			player.save();
+		}
+	}
+}
+changePlayerImages();
+
 app.use(passport.initialize());
 app.use(passport.session());
 require("./handlers/passport");
 
 app.use(flash());
-const { CLOUDINARY_API_KEY, CLOUDINARY_CLOUDNAME } = require("./config");
+
+let langs = process.env.INPUT_LANGUAGES;
+if (!langs) {
+	langs = "en";
+}
+langs = langs.split(",").map(function(lang) {
+	return lang.trim();
+});
 
 app.use((req, res, next) => {
 	res.locals.h = helpers;
@@ -86,8 +107,6 @@ app.use((req, res, next) => {
 	res.locals.flashes = req.flash();
 	res.locals.langs =
     process.env.INPUT_LANGUAGES ? JSON.parse(process.env.INPUT_LANGUAGES) : ["en"];
-	res.locals.cloudinary_key = CLOUDINARY_API_KEY;
-	res.locals.cloudinary_name = CLOUDINARY_CLOUDNAME;
 	next();
 });
 
@@ -95,7 +114,6 @@ app.use((req, res, next) => {
 	req.login = promisify(req.login, req);
 	next();
 });
-
 const web = require("./routes/web");
 app.use("/", web);
 const api = require("./routes/api");
@@ -108,6 +126,14 @@ app.use(errorHandlers.flashValidationErrors);
 if (app.get("env") === "development") {
 	app.use(errorHandlers.developmentErrors);
 }
+
+Scheduler.loadAllScheduledTasks();
+//sample task creation:
+//var task = {};
+//task.creator = "maxgene@gmail.com";
+//task.triggerAt = new Date(2019, 11, 14, 14, 41, 0);
+//task.data = { "foo": "bar" };
+//Scheduler.scheduleNewsPost(task);
 
 app.use(errorHandlers.productionErrors);
 

@@ -4,21 +4,25 @@ html(lang="en")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     meta(http-equiv="X-UA-Compatible", content="ie=edge")
     link(rel="stylesheet" href="/css/app.css")
-    script(src="/js/app.js" defer)
-    //- script(src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.2.0/dist/alpine.js" defer)
+    script(src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.2.0/dist/alpine.js" defer)
     title #{title} | #{h.siteName}
-  body.flex.flex-col
+  body.flex.flex-col(x-data="skipToContent()")
     header.bg-gray-800.text-white.py-3.relative
-      button#skip(type="button" class="btn absolute p-3 bg-black text-white") Skip To Content
+      button#skip(type="button" class="btn absolute p-3 bg-black text-white" @click="focus()") Skip To Content
       .px-3.flex.flex-row.justify-between
         nav.flex.items-center
           a(href="/" class="block") Hooligan Server
         nav(class="flex md:flex-row flex-col")
           if currentUser
-            a(href="/account")
-              img(src=`${currentUser.gravatar}` class="h-12 w-12 rounded-full")
-            form(method="POST" action="/logout" class="m-0 flex align-middle md:ml-3")
-              button(type="submit" class="block") Logout
+            div(x-data="{ isShown: false }" class="relative")
+              a(href="#" class="block" x-on:click.prevent="isShown = ! isShown")
+                img(src=`${currentUser.gravatar}` class="h-12 w-12 rounded-full")
+              ul(role="menu" class="absolute right-0 left-auto bg-white text-black rounded border z-50 mt-1 w-32" x-show="isShown" x-on:click.away="isShown = false" x-on:keydown.escape="isShown = false")
+                li
+                  a(href="/account" class="block px-2 py-2 border-b hover:bg-gray-300") Your Account
+                li
+                  a(href="#" x-on:click.prevent="$refs.logout.submit()" class="block px-2 py-2 border-b hover:bg-gray-300") Logout
+                form(method="POST" action="/logout" class="m-0 flex align-middle hidden" x-ref="logout")
           else
             a.mr-3(href="/login") Login
             a(href="/register") Register
@@ -49,17 +53,21 @@ html(lang="en")
               a(href="/rosters" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
             if currentUser.usersAllowed
               a(href="/users" class="block p-3 hover:bg-gray-600 hover:text-white") Users
-      main#main(class=`w-full flex-1 relative z-10 ${currentUser ? 'md:ml-6 px-3' : ''}`)
+      main#main(class=`w-full flex-1 relative z-10 ${currentUser ? 'md:ml-6 px-3' : ''}` x-ref="main")
         div.mx-auto.container.p-3
           block content
     footer(class="text-center bg-gray-800 text-white py-3")
       p &copy; Hooligan Hymnal
     script.
-      const skip = document.getElementById('skip');
-      skip.addEventListener('click', () => {
-        let main = document.getElementById('main');
-        main.setAttribute('tabindex', '-1');
-        main.focus();
-        main.removeAttribute('tabindex');
-      });
+      function skipToContent() {
+        return {
+          focus() {
+            this.$refs.main.setAttribute("tabindex", "-1");
+            this.$refs.main.focus();
+            this.$refs.main.removeAttribute("tabindex");
+          }
+        }
+      }
     block scripts
+
+  script(src="/js/app.js")

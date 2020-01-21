@@ -11,8 +11,8 @@ env.config();
 
 var secretOrKey = process.env.SECRET_KEY || "NOTsoSECRETkey";
 var JWTOptions = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: secretOrKey
+	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+	secretOrKey: secretOrKey
 };
 
 // passport.use(User.createStrategy());
@@ -20,60 +20,60 @@ var JWTOptions = {
 // passport.serializeUser(User.serializeUser());
 // passport.deserializeUser(User.deserializeUser());
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+	done(null, user.id);
 });
 
 passport.deserializeUser((id, done) => {
-  User.findById(id, (err, user) => {
-    done(err, user);
-  });
+	User.findById(id, (err, user) => {
+		done(err, user);
+	});
 });
 
 passport.use(
-  new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-    User.findOne({ email: email.toLowerCase() }, (err, user) => {
-      if (err) {
-        return done(err);
-      }
-      if (!user) {
-        return done(null, false, { msg: `Email ${email} not found.` });
-      }
-      if (!user.password) {
-        return done(null, false, {
-          msg:
+	new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
+		User.findOne({ email: email.toLowerCase() }, (err, user) => {
+			if (err) {
+				return done(err);
+			}
+			if (!user) {
+				return done(null, false, { msg: `Email ${email} not found.` });
+			}
+			if (!user.password) {
+				return done(null, false, {
+					msg:
             "Your account was registered using a sign-in provider. To enable password login, sign in using a provider, and then set a password under your user profile."
-        });
-      }
-      user.comparePassword(password, (err, isMatch) => {
-        if (err) {
-          return done(err);
-        }
-        if (isMatch) {
-          return done(null, user);
-        }
-        return done(null, false, { msg: "Invalid email or password." });
-      });
-    });
-  })
+				});
+			}
+			user.comparePassword(password, (err, isMatch) => {
+				if (err) {
+					return done(err);
+				}
+				if (isMatch) {
+					return done(null, user);
+				}
+				return done(null, false, { msg: "Invalid email or password." });
+			});
+		});
+	})
 );
 
 passport.use(
-  new JwtStrategy(JWTOptions, function(jwt_payload, done) {
-    var { id } = jwt_payload;
-    User.findOne(
-      {
-        _id: id
-      },
-      (err, user) => {
-        if (err) {
-          return done(err, false);
-        }
-        if (user) {
-          return done(null, user);
-        } else {
-          return done(null, false);
-        }
-      }
-    );
-  })
+	new JwtStrategy(JWTOptions, function(jwt_payload, done) {
+		var { id } = jwt_payload;
+		User.findOne(
+			{
+				_id: id
+			},
+			(err, user) => {
+				if (err) {
+					return done(err, false);
+				}
+				if (user) {
+					return done(null, user);
+				} else {
+					return done(null, false);
+				}
+			}
+		);
+	})
 );

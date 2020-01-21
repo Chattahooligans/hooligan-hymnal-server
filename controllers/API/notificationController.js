@@ -1,7 +1,8 @@
-const Expo = require("expo-server-sdk");
+const {Expo} = require("expo-server-sdk");
 const mongoose = require("mongoose");
 const PushTokens = mongoose.model("pushTokens");
 const Notifications = mongoose.model("notification");
+const { sendNotification } = require("../../handlers/pushNotifications");
 let expo = new Expo();
 
 exports.last = async (req, res) => {
@@ -14,12 +15,13 @@ exports.last = async (req, res) => {
 
 exports.store = async (req, res) => {
 	console.log("entering post for notification push");
-	const notification = await new Notifications(req.body).save();
+	const notification = await (new Notifications(req.body)).save();
 	if (!notification.push) {
 		return res.json({
 			message: `Notification created but not pushed: ${notification._id}`
 		});
 	}
+	// await sendNotification(notification);
 	console.log("Pushing notification");
 	const tokens = await PushTokens.find({});
 	for (let token of tokens) {

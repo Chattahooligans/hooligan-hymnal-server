@@ -1,5 +1,5 @@
 var mongoose = require("mongoose");
-var ObjectId = mongoose.Schema.Types.ObjectId
+var ObjectId = mongoose.Schema.Types.ObjectId;
 
 module.exports = new mongoose.Schema(
     {
@@ -11,7 +11,7 @@ module.exports = new mongoose.Schema(
         locale: String,
         text: String,
         images: [{ url: String, caption: String, credit: String, default: Boolean }],
-        attachments: [{ type: String, id: ObjectId, data: null }],
+        attachments: [{ attachmentType: String, relatedId: ObjectId, data: {} }],
         active: Boolean
     },
     {
