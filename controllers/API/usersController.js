@@ -31,7 +31,8 @@ exports.login = (req, res, next) => {
 				pushNotificationsAllowed: user.pushNotificationsAllowed,
 				rosterAllowed: user.rosterAllowed,
 				songbookAllowed: user.songbookAllowed,
-				usersAllowed: user.usersAllowed
+				usersAllowed: user.usersAllowed,
+				feedAllowed: user.feedAllowed
 			};
 			if (req.rememberMe) {
 				token = generateToken(payload, secretOrKey, refreshExpires);
