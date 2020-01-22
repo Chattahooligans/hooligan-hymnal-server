@@ -2,8 +2,17 @@ const mongoose = require("mongoose");
 const User = mongoose.model("User");
 const crypto = require("crypto");
 const mail = require("../handlers/mail");
+const { check } = require("express-validator");
 
 exports.forgot = async (req, res) => {
+	check("email")
+		.not()
+		.isEmpty()
+		.isEmail()
+		.normalizeEmail({
+			gmail_remove_dots: false,
+			gmail_remove_subaddress: false
+		});
 	const user = await User.findOne({ email: req.body.email });
 	if (!user) {
 		req.flash("error", "No account with that email exists!");
