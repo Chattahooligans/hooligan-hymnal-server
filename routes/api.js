@@ -12,6 +12,7 @@ const songbooksController = require("../controllers/API/songbookController");
 const songsController = require("../controllers/API/songController");
 const feedController = require("../controllers/API/feedController");
 const channelController = require("../controllers/API/channelsController");
+const notificationsEngagementController = require('../controllers/API/notificationEngagementController');
 
 const { catchErrors } = require("../handlers/errorHandlers");
 const { apiLoggedIn } = require("../middleware/authMiddleware");
@@ -36,6 +37,10 @@ router.get("/users/me", apiLoggedIn, userController.me);
 // Notifications
 router.get("/notifications/last", catchErrors(notificationsController.last));
 router.post("/notification", apiLoggedIn, catchErrors(notificationsController.store));
+router.post('/notifications/:id/engagements', catchErrors(notificationsEngagementController.create));
+router.get('/notifications/:id/engagements', catchErrors(notificationsEngagementController.show));
+router.get('/notifications/:id', catchErrors(notificationsEngagementController.summarize));
+
 // Players
 router.get("/players", catchErrors(playersController.index));
 router.get("/players/:id", catchErrors(playersController.show));
