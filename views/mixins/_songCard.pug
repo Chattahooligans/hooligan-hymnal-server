@@ -1,0 +1,8 @@
+mixin songCard(song = {})
+  a(href=`/songs/${song._id}` class="list--card flex-col")
+    h2(class="text-gray-600 font-semibold mb-3") #{song.title}
+    - const lyrics = (song.lyrics.length > 150) ? song.lyrics.substring(0, 150) + "..." : song.lyrics
+    p(class="text-gray-500 mb-2").
+      #{lyrics}
+    p(class="text-gray-500 mb-2") #{song.reference_title}
+    p(class="text-gray-500") #{song.category}

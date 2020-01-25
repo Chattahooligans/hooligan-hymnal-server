@@ -11,7 +11,6 @@ exports.index = async (req, res) => {
 	const limit = 10;
 	const skip = (page * limit) - limit;
 	const name = req.query.name || "";
-	console.log(name);
 
 	const playersPromise = Player
 		.find({
@@ -34,7 +33,7 @@ exports.index = async (req, res) => {
 	const [players, totalCount, searchCount] = await Promise.all([playersPromise, countPromise, searchCountPromise]);
 	const pages = Math.ceil((searchCount ? searchCount : totalCount) / limit);
 	if (!players.length && skip) {
-		req.flash("error", `Hey! You asked for page ${page}. But that dosen't exist. So I put you on page ${pages}`);
+		req.flash("error", `Hey! You asked for page ${page}. But that doesn't exist. So I put you on page ${pages}`);
 		res.redirect(`/players?page=${pages}`);
 	}
 

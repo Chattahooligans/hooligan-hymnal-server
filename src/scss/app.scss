@@ -23,3 +23,10 @@
     @apply .top-0 .left-0;
   }
 }
+
+.list--card {
+  @apply .block .flex-1 .flex .bg-white .rounded-lg .p-6 .shadow-lg .mb-3;
+  @media (min-width: 768px) {
+    @apply .ml-3 .flex;
+  }
+}
