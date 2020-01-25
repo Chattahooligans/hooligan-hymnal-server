@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Songs = mongoose.model("song");
+const Players = mongoose.model("player");
 const config = require("../../config.js");
 
 const song_cache = {
@@ -32,7 +33,11 @@ exports.index = async (req, res) => {
 };
 
 exports.show = async (req, res) => {
-	const song = await Songs.findById(req.params.id);
+	let song = await Songs.findById(req.params.id);
+	if (song.playerId) {
+		const player = await Players.findById(song.playerId);
+		song.player = player;
+	}
 	res.json(song);
 };
 
