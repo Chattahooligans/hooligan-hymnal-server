@@ -87,6 +87,34 @@ async function changePlayerImages() {
 }
 changePlayerImages();
 
+const Songs = mongoose.model("song");
+async function changeSongs() {
+	const songs = await Songs.find();
+	for (const song of songs) {
+		if (song.delete_local || song.delete_local == "") {
+			song.delete_local = undefined;
+			await song.save();
+		}
+		if (song.reference_title || song.reference_title == "") {
+			song.referenceTitle = song.reference_title;
+			song.reference_title = undefined;
+			await song.save();
+		}
+		if (song.reference_link || song.reference_link == "") {
+			song.referenceLink = song.reference_link;
+			song.reference_link = undefined;
+			await song.save();
+		}
+		if (song.player_id || song.player_id == "") {
+			song.playerId = song.player_id;
+			song.player_id = undefined;
+			await song.save();
+		}
+	}
+}
+
+changeSongs();
+
 app.use(passport.initialize());
 app.use(passport.session());
 require("./handlers/passport");

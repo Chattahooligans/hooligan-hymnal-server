@@ -7,4 +7,4 @@ exports.dump = obj => JSON.stringify(obj, null, 2);
 exports.moment = require("moment");
 
 // Some details about the site
-exports.siteName = process.env.SITE_NAME || "Hooligan Server";
+exports.siteName = process.env.SITE_NAME ? process.env.SITE_NAME : "Hooligan Server";
