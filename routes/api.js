@@ -55,6 +55,8 @@ router.get("/feed/all", catchErrors(feedController.all));
 router.get("/feed/:id", catchErrors(feedController.show));
 router.get("/feed/channel/:id", catchErrors(feedController.channel));
 router.post("/feed/", apiLoggedIn, catchErrors(feedController.store));
+router.put("/feed/:id/active", apiLoggedIn, catchErrors(feedController.activate));
+router.delete("/feed/:id/active", apiLoggedIn, catchErrors(feedController.deactivate));
 router.delete("/feed/", apiLoggedIn, catchErrors(feedController.delete));
 // channel
 router.get("/channels/", catchErrors(channelController.active));
