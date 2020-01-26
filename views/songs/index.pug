@@ -1,10 +1,15 @@
 extends ../layout
 
+include ../mixins/_songsList
+
 block content
-  h2 #{title}
-  a(href="/songs/create") Add Song
-  each song in songs
-    div
-      a(href=`/songs/${song._id}`) #{song.title}
-  else
-    h3 No Songs
+  .mx-auto.container
+    div(class="mb-3")
+      h2(class="font-extrabold text-3xl mb-3") #{title}
+    div(x-data="{ input: '"+ filter +"'}")
+      div(class="flex justify-between mb-3 flex-col md:flex-row")
+        a(href="/songs/create" class="rounded bg-blue-700 text-white px-3 py-2 mb-3 md:mb-auto") Add Song
+        input(type="text" name="songSearch" id="songSearch" class="border rounded bg-gray-200 p-2 mb-3 md:mb-auto" placeholder="Filter Songs" x-model="input" x-on:input="setTimeout(() => {fetch('/songs-partial?filter='+input).then(res => res.text()).then(html => $refs.songsList.innerHTML = html)}, 200)")
+      div#songsList(class="-mx-3" x-ref="songsList")
+        +songsList(songs, totalCount, searchCount, page, pages, filter)
+      script.

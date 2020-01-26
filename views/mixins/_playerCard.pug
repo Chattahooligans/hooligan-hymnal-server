@@ -1,5 +1,5 @@
 mixin playerCard(player = {})
-  a(href=`/players/${player._id}` class="block md:flex bg-white rounded-lg p-6 shadow-lg mb-3 md:ml-3 flex-1 flex")
+  a(href=`/players/${player._id}` class="list--card")
     if player.thumbnail
       img(src=`${player.thumbnail}` alt=`${player.name} thumbnail` class="rounded-full mr-6" style="height:50px;width:50p;max-width:50px;max-height:50px")
     else

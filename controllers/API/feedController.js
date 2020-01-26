@@ -129,6 +129,24 @@ exports.store = async (req, res) => {
   }
 )};
 
+exports.activate = async (req, res) => {
+  FeedItems.update({_id: req.params.id}, {
+    active: true
+  }, 
+  function(err, affected, resp) {
+    res.send(resp);
+  });
+};
+
+exports.deactivate = async (req, res) => {
+  FeedItems.update({_id: req.params.id}, {
+    active: false
+  }, 
+  function(err, affected, resp) {
+    res.send(resp);
+  });
+};
+
 exports.delete = (req, res) => {
   FeedItems.findById(req.params.id, (error, feedItem) => {
     if(error) res.status(501).send({error});

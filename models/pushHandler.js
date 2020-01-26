@@ -27,6 +27,7 @@ async function sendPost(post, channel) {
 }
 
 async function sendPush(push) {
+	console.log("sending push...");
 	PushTokens.find(async (error, tokens) => {
 		if (error) {
 			throw error;
