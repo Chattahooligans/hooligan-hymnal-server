@@ -21,9 +21,9 @@ router.get("/i18n-settings", langController.lang);
 // Foes
 router.get("/foes", catchErrors(foesController.index));
 router.get("/foes/:id", catchErrors(foesController.show));
-router.post("/foes", apiLoggedIn, catchErrors(foesController.store));
-router.put("/foes/:id", apiLoggedIn, catchErrors(foesController.update));
-router.delete("/foes/:id", apiLoggedIn, catchErrors(foesController.delete));
+router.post("/foes", apiLoggedIn, checkPermission("foesAllowed"), catchErrors(foesController.store));
+router.put("/foes/:id", apiLoggedIn, checkPermission("foesAllowed"), catchErrors(foesController.update));
+router.delete("/foes/:id", apiLoggedIn, checkPermission("foesAllowed"), catchErrors(foesController.delete));
 
 // Goalkeepers Nicknames
 router.get("/goalkeeperNicknames/last", catchErrors(goalkeeperNicknameController.last));
@@ -35,7 +35,7 @@ router.get("/users/me", apiLoggedIn, userController.me);
 
 // Notifications
 router.get("/notifications/last", catchErrors(notificationsController.last));
-router.post("/notification", apiLoggedIn, catchErrors(notificationsController.store));
+router.post("/notification", apiLoggedIn, checkPermission("pushNotificationsAllowed"), catchErrors(notificationsController.store));
 // Players
 router.get("/players", catchErrors(playersController.index));
 router.get("/players/:id", catchErrors(playersController.show));
@@ -54,13 +54,13 @@ router.get("/feed/", catchErrors(feedController.active));
 router.get("/feed/all", catchErrors(feedController.all));
 router.get("/feed/:id", catchErrors(feedController.show));
 router.get("/feed/channel/:id", catchErrors(feedController.channel));
-router.post("/feed/", apiLoggedIn, catchErrors(feedController.store));
-router.delete("/feed/", apiLoggedIn, catchErrors(feedController.delete));
+router.post("/feed/", apiLoggedIn, checkPermission("feedAllowed"), catchErrors(feedController.store));
+router.put("/feed/:id/active", apiLoggedIn, checkPermission("feedAllowed"), catchErrors(feedController.activate));
+router.delete("/feed/:id/active", apiLoggedIn, checkPermission("feedAllowed"), catchErrors(feedController.deactivate));
+router.delete("/feed/", apiLoggedIn, checkPermission("feedAllowed"), catchErrors(feedController.delete));
 // channel
 router.get("/channels/", catchErrors(channelController.active));
 router.get("/channels/all", catchErrors(channelController.all));
-router.post("/channels/", apiLoggedIn, catchErrors(channelController.store));
-
-router.post("/delete-thumbnail", catchErrors(playersController.deleteThumbnail));
+router.post("/channels/", apiLoggedIn, checkPermission("feedAllowed"), catchErrors(channelController.store));
 
 module.exports = router;

@@ -2,11 +2,150 @@ const mongoose = require("mongoose");
 const Song = mongoose.model("song");
 
 exports.index = async (req, res) => {
-	const songs = await Song.find();
+	const page = req.query.page || 1;
+	const limit = 10;
+	const skip = (page * limit) - limit;
+	const filter = req.query.filter || "";
+
+	const songsPromise = Song
+		.find({
+			$or: [
+				{
+					title: {
+						$regex: `.*${filter}.*`,
+						$options: "i"
+					},
+				},
+				{
+					lyrics: {
+						$regex: `.*${filter}.*`,
+						$options: "i"
+					},
+				},
+				{
+					reference_title: {
+						$regex: `.*${filter}.*`,
+						$options: "i"
+					}
+				},
+				{
+					category: {
+						$regex: `.*${filter}.$`,
+						$options: "i"
+					}
+				}
+			]
+		})
+		.skip(skip)
+		.limit(limit)
+		.sort({ "title": "asc" });
+
+	const countPromise = Song.count();
+	const searchCountPromise = Song.find({
+		$or: [
+			{
+				title: {
+					$regex: `.*${filter}.*`,
+					$options: "i"
+				},
+			},
+			{
+				lyrics: {
+					$regex: `.*${filter}.*`,
+					$options: "i"
+				},
+			},
+			{
+				reference_title: {
+					$regex: `.*${filter}.*`,
+					$options: "i"
+				}
+			},
+			{
+				category: {
+					$regex: `.*${filter}.$`,
+					$options: "i"
+				}
+			}
+		]
+	}).count();
+	const [songs, totalCount, searchCount] = await Promise.all([songsPromise, countPromise, searchCountPromise]);
+	const pages = Math.ceil((searchCount ? searchCount : totalCount) / limit);
+	if (!songs.length && skip) {
+		req.flash("error", `Hey! You asked for page ${page}. But that doesn't exist. So I put you on page ${pages}`);
+		res.redirect(`/songs?page=${pages}`);
+	}
+
 	res.render("songs/index", {
 		title: "All Songs",
-		songs
+		songs,
+		totalCount,
+		searchCount,
+		skip,
+		page,
+		pages,
+		filter
 	});
+};
+
+exports.search = async (req, res) => {
+	const filter = req.query.filter || "";
+	const page = req.query.page || 1;
+	const limit = 10;
+	const skip = (page * limit) - limit;
+
+	const query = {
+		$or: [
+			{
+				title: {
+					$regex: `.*${filter}.*`,
+					$options: "i"
+				},
+			},
+			{
+				lyrics: {
+					$regex: `.*${filter}.*`,
+					$options: "i"
+				},
+			},
+			{
+				reference_title: {
+					$regex: `.*${filter}.*`,
+					$options: "i"
+				}
+			},
+			{
+				category: {
+					$regex: `.*${filter}.$`,
+					$options: "i"
+				}
+			}
+		]
+	};
+
+	const songsPromise = Song
+		.find(query)
+		.skip(skip)
+		.limit(limit)
+		.sort({
+			"title": "asc"
+		});
+
+	const totalCountPromise = Song.countDocuments();
+	const searchCountPromise = Song.find(query).countDocuments();
+	const [songs, totalCount, searchCount] = await Promise.all([songsPromise, totalCountPromise, searchCountPromise]);
+	const pages = Math.ceil(searchCount / limit);
+
+	res.render("songs/_songsList", {
+		songs,
+		filter,
+		skip,
+		page,
+		pages,
+		totalCount,
+		searchCount
+	});
+
 };
 exports.create = (req, res) => {
 	res.render("songs/create", {
