@@ -68,8 +68,9 @@ var feeditems_cache = {
   },
   filter_data(data, publishedBefore, limit) {
     limit = parseInt(limit);
-    publishedBefore = Date.parse(publishedBefore);
-    if (!publishedBefore || !limit) return data;
+    publishedBefore = Date.parse(publishedBefore);    console.log(publishedBefore);
+    if (!publishedBefore) publishedBefore = new Date();
+    if(!limit) limit = 20;
     var filtered = data.filter(i => i.publishedAt < publishedBefore);
     return filtered.slice(0, limit);
   }
