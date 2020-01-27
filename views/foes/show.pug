@@ -2,7 +2,6 @@ extends ../layout
 
 block content
   .mx-auto.container
-    pre= h.dump(foe)
     div(class="shadow border rounded-lg p-6")
       if foe.logo
         img(src=`${foe.logo}` class="rounded-full mr-auto md:mx-auto md:mb-3" width="200" height="200")
