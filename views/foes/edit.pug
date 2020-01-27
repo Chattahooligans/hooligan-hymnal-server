@@ -1,0 +1,8 @@
+extends ../layout
+
+include ../mixins/_foeForm
+
+block content
+  .mx-auto.container
+    h2 #{title}
+    +foeForm(foe, true)

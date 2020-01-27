@@ -22,6 +22,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   previewNode.id = "";
   var previewTemplate = previewNode.parentNode.innerHTML;
   let playerId;
+  let foeId;
   var myDropzone = new Dropzone(uploadSection, {
     url: url,
     maxFiles: maxFiles,
@@ -33,6 +34,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         previewNode.remove();
         const thisDropzone = this;
         playerId = document.getElementById("player-id");
+        foeId = document.getElementById("foe-id");
         if (playerId) {
           axios.get(`/players/images?playerId=${playerId.innerText}&type=${inputName.toLowerCase()}`, {
             withCredentials: true
@@ -70,6 +72,28 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
             }).catch(err => {
               console.log(err);
             });
+        } else if (foeId) {
+          axios.get(`/foes/logos?foeId=${foeId.innerText}&type=${inputName.toLocaleLowerCase()}`, {
+            withCredentials: true
+          })
+            .then(({ data }) => {
+              if (data.logo.length) {
+                var mockFile = {
+                  name: `${data.name} logo`
+                };
+                thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
+                thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.logo);
+                var tEl = document.createElement(target);
+                var input = document.createElement("input");
+                input.value = data.logo;
+                input.setAttribute("data-id", `${slugify(data.name).toLowerCase()}-logo`);
+                input.classList.add = "hidden";
+                input.setAttribute("name", inputName);
+                tEl.appendChild(input);
+              }
+            }).catch(err => {
+              console.error(err);
+            })
         }
     }
   });
@@ -126,6 +150,19 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
               }
             });
         }).catch((err) => {
+          console.error(err);
+        })
+    } else if (foeId) {
+      axios.post(`/foes/remove-logo?foeId=${foeId.innerText}&type=${slugify(inputName.toLowerCase())}`, {
+        withCredentials: true,
+        img: img.src
+      })
+        .then(() => {
+          const inputs = document.querySelectorAll(`input[name="${inputName.toLowerCase()}]`);
+          inputs.forEach(input => {
+            input.remove();
+          });
+        }).catch(err => {
           console.error(err);
         })
     }

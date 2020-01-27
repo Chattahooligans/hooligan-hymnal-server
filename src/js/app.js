@@ -23,3 +23,14 @@ dropzone(
   10,
   "images"
 )
+
+dropzone(
+  "/foes/logo",
+  "logo-template",
+  document.getElementById("logo-upload-section"),
+  "#logo-previews",
+  "#logo-target",
+  "Logo",
+  1,
+  "logo"
+)

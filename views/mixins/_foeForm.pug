@@ -1,0 +1,54 @@
+include ./_baseInput
+
+mixin foeForm(foe = {}, edit = false)
+  if foe.id
+    #foe-id(class="hidden") #{foe.id}
+  form(method="POST")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Opponent", "opponent", foe.opponent, "Opponent", true)
+    .flex.flex-col.mb-3
+      +baseInput("text", "Competition", "competition", foe.competition, "Competition")
+    .flex.flex-col.mb-3#logo
+      #logo-template
+        div(class="relative inline-block")
+          img(data-dz-thumbnail class="rounded-full mx-auto" style="height:50px;width:50px")
+          p(class="" data-dz-name)
+          div(class="dz-error-mark cursor-pointer absolute top-0 right-0" data-dz-remove)
+            span &times;
+        div(class="dz-error-message")
+          span(data-dz-errormessage)
+      #logo-upload-section(class="border rounded-lg bg-gray-200 h-32 w-full flex justify-center items-center cursor-pointer relative z-10")
+        h2(class="pointer-events-none -z-1") Upload logo here
+      #logo-previews
+      div(class="progress active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0")
+          div(class="h-2 bg-gray-700 progress-bar" style="width:0%;" data-dz-uploadprogress)
+      .actions
+        button(class="rounded bg-green-700 text-white px-3 py-2 upload" type="button") Upload
+        if !edit
+          button(class="rounded bg-red-700 text-white px-3 py-2 cancel" type="button") Clear
+      #logo-target.hidden
+    .flex.flex-col.mb-3
+      +baseInput("color", "Background Color", "backgroundColor", foe.backgroundColor ? foe.backgroundColor : "#000000", "Background Color")
+    .flex.flex-col.mb-3
+      +baseInput("color", "Accent Color", "accentColor", foe.accentColor ? foe.accentColor : "#000000", "Accent Color")
+    .flex.flex-col.mb-3
+      +baseInput("color", "Text Color", "textColor", foe.textColor ? foe.textColor : "#000000", "Text Color")
+    .flex.flex-col.mb-3
+      div(x-data="{ players: [], newPlayer: { name: '', squadNumber: '', position: '' } }" x-init=`players = [${foe.players ? foe.players : {}}]`)
+        template(x-for="player in players")
+          input(type="hidden" name="players[]" :value="JSON.stringify(player)")
+
+        template(x-for="player in players")
+          div(class="list--card")
+            div
+              h4(x-text="player.name")
+              p(x-text="player.squadNumber")
+              p(x-text="player.position")
+              button(type="button" @click="players = players.filter(i => i.name !== player.name)") &times;
+        div
+          input(type="text" name="name" id="name" x-model="newPlayer.name" @keyup="newPlayer.name.trim()" placeholder="Name")
+          input(type="number" name="squadNumber" id="squadNumber" x-model="newPlayer.squadNumber" @keyup="newPlayer.squadNumber.trim()" placeholder="Squad Number")
+          input(type="text" name="position" id="position" x-model="newPlayer.position" @keyup='newPlayer.position.trim()' placeholder="Position")
+          button(type="button" @click="if (newPlayer.name.trim() !== '' && newPlayer.position.trim() !== '') { players.push(newPlayer); newPlayer = { name: '', position: '', squadNumber: '' } } else { alert('Check players fields') }" class="bg-green-700 text-white p-4") &plus;
+    .mb-3
+      button(type="submit" class="px-3 py-2 bg-blue-700 text-white") Save Foe

@@ -191,7 +191,6 @@ exports.getImages = async (req, res) => {
 		return res.send("Please provide the image field you are looking for");
 	}
 	const player = await Player.findById(playerId);
-	console.log();
 	res.send({
 		name: player.name,
 		[type]: player[type]

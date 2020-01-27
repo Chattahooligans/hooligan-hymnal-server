@@ -12,4 +12,3 @@ block content
         input(type="text" name="songSearch" id="songSearch" class="border rounded bg-gray-200 p-2 mb-3 md:mb-auto" placeholder="Filter Songs" x-model="input" x-on:input="setTimeout(() => {fetch('/songs-partial?filter='+input).then(res => res.text()).then(html => $refs.songsList.innerHTML = html)}, 200)")
       div#songsList(class="-mx-3" x-ref="songsList")
         +songsList(songs, totalCount, searchCount, page, pages, filter)
-      script.

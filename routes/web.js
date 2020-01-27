@@ -14,6 +14,7 @@ const songsController = require("../controllers/songsController");
 const songbookSongsController = require("../controllers/songbookSongsController");
 const notificationsController = require("../controllers/notificationsController");
 const pushTokensController = require("../controllers/pushTokensController");
+const foesController = require("../controllers/foesController");
 
 const { isLoggedIn } = require("../middleware/authMiddleware");
 const { catchErrors } = require("../handlers/errorHandlers");
@@ -60,6 +61,7 @@ router.get("/players-partial", isLoggedIn, checkPermission("rosterAllowed"), cat
 router.get("/players/create", isLoggedIn, checkPermission("rosterAllowed"), playersController.create);
 router.post("/players/create", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.store));
 router.get("/players/images", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.getImages));
+
 router.post("/players/remove-images", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.removeImage));
 router.get("/players/:id", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.show));
 router.get("/players/:id/edit", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(playersController.edit));
@@ -132,5 +134,22 @@ router.get("/push-tokens/:id/edit", isLoggedIn, checkPermission("pushNotificatio
 router.post("/push-tokens/:id/edit", isLoggedIn, checkPermission("pushNotificationsAllowed"), catchErrors(pushTokensController.update));
 router.get("/push-tokens/:id/delete", isLoggedIn, checkPermission("pushNotificationsAllowed"), catchErrors(pushTokensController.deleteConfirm));
 router.post("/push-tokens/:id/delete", isLoggedIn, checkPermission("pushNotificationsAllowed"), catchErrors(pushTokensController.delete));
+
+// Foes
+router.get("/foes", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(foesController.index));
+router.post("/foes/logo", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(foesController.logo));
+router.get("/foes/create", isLoggedIn, checkPermission("rosterAllowed"), foesController.create);
+router.post("/foes/create", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(foesController.store));
+router.get("/foes/logos", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(foesController.getLogo));
+router.post("/foes/remove-logo", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(foesController.removeLogo));
+router.get("/foes/:id", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(foesController.show));
+router.get("/foes/:id/edit", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(foesController.edit));
+router.post("/foes/:id/edit", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(foesController.update));
+router.get("/foes/:id/delete", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(foesController.deleteConfirm));
+router.post("/foes/:id/delete", isLoggedIn, checkPermission("rosterAllowed"), catchErrors(foesController.delete));
+
+router.get("/alpine-for", (req, res) => {
+	res.render("alpine-for");
+});
 
 module.exports = router;

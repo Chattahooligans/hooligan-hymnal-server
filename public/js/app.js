@@ -5778,6 +5778,7 @@ __webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/alpine.js");
 
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/players/thumbnail", "thumbnail-template", document.getElementById("thumbnail-upload-section"), "#thumbnail-previews", "#thumbnail-target", "Thumbnail", 1, "thumbnail");
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/players/images", "images-template", document.getElementById("images-upload-section"), "#images-previews", "#images-target", "Player Images", 10, "images");
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/foes/logo", "logo-template", document.getElementById("logo-upload-section"), "#logo-previews", "#logo-target", "Logo", 1, "logo");
 
 /***/ }),
 
@@ -5824,6 +5825,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   previewNode.id = "";
   var previewTemplate = previewNode.parentNode.innerHTML;
   var playerId;
+  var foeId;
   var myDropzone = new dropzone__WEBPACK_IMPORTED_MODULE_0___default.a(uploadSection, {
     url: url,
     maxFiles: maxFiles,
@@ -5835,6 +5837,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       previewNode.remove();
       var thisDropzone = this;
       playerId = document.getElementById("player-id");
+      foeId = document.getElementById("foe-id");
 
       if (playerId) {
         axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/players/images?playerId=".concat(playerId.innerText, "&type=").concat(inputName.toLowerCase()), {
@@ -5894,6 +5897,29 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         })["catch"](function (err) {
           console.log(err);
         });
+      } else if (foeId) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/foes/logos?foeId=".concat(foeId.innerText, "&type=").concat(inputName.toLocaleLowerCase()), {
+          withCredentials: true
+        }).then(function (_ref2) {
+          var data = _ref2.data;
+
+          if (data.logo.length) {
+            var mockFile = {
+              name: "".concat(data.name, " logo")
+            };
+            thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
+            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.logo);
+            var tEl = document.createElement(target);
+            var input = document.createElement("input");
+            input.value = data.logo;
+            input.setAttribute("data-id", "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-logo"));
+            input.classList.add = "hidden";
+            input.setAttribute("name", inputName);
+            tEl.appendChild(input);
+          }
+        })["catch"](function (err) {
+          console.error(err);
+        });
       }
     }
   });
@@ -5932,8 +5958,8 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       document.querySelector("#small-".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(text).toLowerCase())).remove();
     }
   });
-  myDropzone.on("removedfile", function (_ref2) {
-    var previewElement = _ref2.previewElement;
+  myDropzone.on("removedfile", function (_ref3) {
+    var previewElement = _ref3.previewElement;
     var img = previewElement.querySelector("img");
 
     if (playerId) {
@@ -5946,6 +5972,18 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
           if (input.value == img.src) {
             input.remove();
           }
+        });
+      })["catch"](function (err) {
+        console.error(err);
+      });
+    } else if (foeId) {
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/foes/remove-logo?foeId=".concat(foeId.innerText, "&type=").concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase())), {
+        withCredentials: true,
+        img: img.src
+      }).then(function () {
+        var inputs = document.querySelectorAll("input[name=\"".concat(inputName.toLowerCase(), "]"));
+        inputs.forEach(function (input) {
+          input.remove();
         });
       })["catch"](function (err) {
         console.error(err);

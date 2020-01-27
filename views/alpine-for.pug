@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  div(x-data="{ tags: ['hey'], newTag: '' }")
+    template(x-for="tag in tags")
+      input(type="hidden" name="tags[]" :value="tag")
+
+    template(x-for="tag in tags")
+      span(x-text="tag")
+        button(type="button" @click="tags = tags.filter(i => i !== tag)") &times;
+    input(placeholder="Add Tag..." @keydown.enter.prevent="if (newTag.trim() !== '') tags.push(newTag.trim()); newTag = ''" @keydown.backspace="if (newTag.trim() === '') tags.pop()" x-model="newTag")
+
+  div(x-data="{ players: [{ name: 'Bill', squadNumber: 2, position: 'Defence' }], newPlayer: { name: '', squadNumber: '', position: '' } }")
+    template(x-for="player in players")
+      input(type="hidden" name="players[]" :value="JSON.stringify(player)")
+
+    template(x-for="player in players")
+      div(class="list--card")
+        div
+          h4(x-text="player.name")
+          p(x-text="player.squadNumber")
+          p(x-text="player.position")
+          button(type="button" @click="players = players.filter(i => i.name !== player.name)") &times;
+
+    span(x-text="newPlayer.name")
+
+    form(method="POST" @submit.prevent="if (newPlayer.name.trim() !== '' && newPlayer.position.trim() !== '') { players.push(newPlayer); newPlayer = { name: '', position: '', squadNumber: '' } } else { alert('Check players fields') }" action="")
+      input(type="text" name="name" id="name" x-model="newPlayer.name" @keyup="newPlayer.name.trim()" placeholder="Name")
+      input(type="number" name="squadNumber" id="squadNumber" x-model="newPlayer.squadNumber" @keyup="newPlayer.squadNumber.trim()" placeholder="Squad Number")
+      input(type="text" name="position" id="position" x-model="newPlayer.position" @keyup='newPlayer.position.trim()' placeholder="Position")
+      button(type="submit" class="bg-green-700 text-white p-4") &plus;
