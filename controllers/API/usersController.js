@@ -34,7 +34,7 @@ exports.login = (req, res, next) => {
 				usersAllowed: user.usersAllowed,
 				feedAllowed: user.feedAllowed
 			};
-			if (req.rememberMe) {
+			if (req.body.rememberMe) {
 				token = generateToken(payload, secretOrKey, refreshExpires);
 			}
 			return res.json({
