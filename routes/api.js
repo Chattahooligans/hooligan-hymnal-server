@@ -8,6 +8,7 @@ const goalkeeperNicknameController = require('../controllers/API/goalkeeperNickn
 const userController = require('../controllers/API/usersController');
 const notificationsController = require('../controllers/API/notificationController');
 const playersController = require('../controllers/API/playersController');
+const pushTokenController = require('../controllers/API/pushTokenController');
 const rostersController = require('../controllers/API/rosterController');
 const songbooksController = require('../controllers/API/songbookController');
 const songsController = require('../controllers/API/songController');
@@ -43,6 +44,9 @@ router.post('/notification', apiLoggedIn, checkPermission('pushNotificationsAllo
 // Players
 router.get('/players', catchErrors(playersController.index));
 router.get('/players/:id', catchErrors(playersController.show));
+// Push tokens
+router.get('/pushToken', catchErrors(pushTokenController.get));
+router.post('/pushToken', catchErrors(pushTokenController.store));
 // Roster
 router.get('/rosters', catchErrors(rostersController.index));
 router.get('/rosters/active', catchErrors(rostersController.active));
