@@ -1,0 +1,1 @@
+{ "_id": {"$oid": "5e2db445ad88e8a4c9cacbd4"}, "sender": { "user" : {"$oid":"5e2db088651c950026397b03"}, "pushToken": "ExponentPushToken[Mo4sfwDQIk913f4-ApBEjs]"}, "publishedAt": {"$date": "2020-01-02T12:12:12.000Z"}, "push": true, "locale": "en_US", "text": "Schedule posted!", "active": true}
