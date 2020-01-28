@@ -1,8 +1,6 @@
 const FeedItems = require("../../models/feeditems");
 const Channels = require("../../models/channels");
 const config = require("../../config.js");
-const passport = require("passport");
-const permissions = require("../../middleware/PermissionsMiddleware");
 let PushHandler = require("../../models/pushHandler");
 
 var feeditems_cache = {
