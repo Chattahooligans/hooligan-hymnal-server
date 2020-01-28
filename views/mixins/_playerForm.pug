@@ -15,7 +15,10 @@ mixin playerForm(player = {}, edit = false)
       label(for="position") Position
       select(name="position" id="position" value=player.position required class="h-10 rounded-lg shadow border bg-white")
         each option in options
-          option(value=option)= option
+          if (player.position === option)
+            option(value=option selected)= option
+          else
+            option(value=option)= option
     .flex.flex-col.mb-3
       h3.font-semibold Bios
       div.flex.flex-col
