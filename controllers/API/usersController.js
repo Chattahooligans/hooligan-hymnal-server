@@ -33,7 +33,7 @@ exports.login = (req, res, next) => {
 				songbookAllowed: user.songbookAllowed,
 				usersAllowed: user.usersAllowed
 			};
-			if (req.rememberMe) {
+			if (req.body.rememberMe) {
 				token = generateToken(payload, secretOrKey, refreshExpires);
 			}
 			return res.json({
