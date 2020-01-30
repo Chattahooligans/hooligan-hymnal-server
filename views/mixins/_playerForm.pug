@@ -11,7 +11,7 @@ mixin playerForm(player = {}, edit = false)
     .flex.flex-col.mb-3
       +baseInput("text", "Squad Number", "squadNumber", player.squadNumber, "Squad Number", true)
     .flex.flex-col.mb-3
-      - const options = ['Forward', 'Defender', 'Midfielder', 'Goalkeeper', 'Head Coach', 'Goalkeeper Coach', 'Technical Director', 'Associate Head Coach',]
+      - const options = ['Forward', 'Defender', 'Midfielder', 'Goalkeeper', 'Head Coach', 'Assistant Coach', 'Goalkeeper Coach', 'Technical Director', 'Associate Head Coach',]
       label(for="position") Position
       select(name="position" id="position" value=player.position required class="h-10 rounded-lg shadow border bg-white")
         each option in options
