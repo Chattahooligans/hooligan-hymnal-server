@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Songs = mongoose.model("song");
-const Players = mongoose.model("player");
+const Players = mongoose.model("players");
 const config = require("../../config.js");
 
 const song_cache = {
