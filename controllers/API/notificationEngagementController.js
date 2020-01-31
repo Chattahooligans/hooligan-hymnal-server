@@ -29,13 +29,16 @@ exports.create = async (req, res, next) => {
 					res.send("");
 					return;
 				}
-				engagementDetails.engagedAt = Date.parse(req.body.timestamp);
+				engagementDetails.engagedAt = Date.parse(req.body.engagedAt);
 				return NotificationEngagements.create(engagementDetails);
 			})
 			.then(() => {
 				res.status(204);
 				res.send("");
 				return;
+			})
+			.catch (error => {
+				return next(error);
 			});
 	} catch (error) {
 		return next(error);
