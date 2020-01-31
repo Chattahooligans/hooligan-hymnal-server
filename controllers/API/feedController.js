@@ -134,6 +134,7 @@ exports.activate = async (req, res) => {
   }, 
   function(err, affected, resp) {
     res.send(resp);
+    feeditems_cache.force_reload();
   });
 };
 
@@ -143,6 +144,7 @@ exports.deactivate = async (req, res) => {
   }, 
   function(err, affected, resp) {
     res.send(resp);
+    feeditems_cache.force_reload();
   });
 };
 
