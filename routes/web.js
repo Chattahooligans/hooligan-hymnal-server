@@ -108,7 +108,7 @@ router.post('/songbooks/:songbookId/chapters/:chapterId/remove-song/:songId', is
 // Songs
 router.get('/songs', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.index));
 router.get('/songs-partial', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.search));
-router.get('/songs/create', isLoggedIn, checkPermission('songbookAllowed'), songsController.create);
+router.get('/songs/create', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.create));
 router.post('/songs/create', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.store));
 router.get('/songs/:id', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.show));
 router.get('/songs/:id/edit', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.edit));
