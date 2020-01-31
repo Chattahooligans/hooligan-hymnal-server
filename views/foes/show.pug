@@ -1,0 +1,22 @@
+extends ../layout
+
+block content
+  .mx-auto.container
+    div(class="shadow border rounded-lg p-6")
+      if foe.logo
+        img(src=`${foe.logo}` class="rounded-full mr-auto md:mx-auto md:mb-3" width="200" height="200")
+      else
+        div(class="rounded-full mr-auto md:mx-auto md:mb-3" style=`background-color: ${foe.backgroundColor}` width="200" height="200")
+      h2(class="font-semibold text-2xl mb-3") #{foe.opponent}
+      h3(class="text-xl mb-3") Players
+      section
+        each player in foe.players
+          article(class="list--card")
+            div
+              h4 #{player.name}
+              p #{player.squadNumber}
+              p #{player.position}
+      div(class="border-t flex bg-gray-400 mt-3 -ml-6 -mr-6 -mb-6 p-6")
+        a(href=`/foes/${foe._id}/edit` class="px-3 py-2 rounded bg-green-600 text-white md:mr-3") Edit
+        br
+        a(href=`/foes/${foe._id}/delete` class="bg-red-700 text-white rounded px-3 py-2") Delete
