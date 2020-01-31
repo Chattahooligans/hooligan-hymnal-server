@@ -79,11 +79,6 @@ exports.register = async (req, res) => {
 		familyName: req.body.familyName,
 		displayName: req.body.displayName,
 		password: req.body.password,
-		pushNotificationsAllowed,
-		feedAllowed,
-        _id: user._id,
-        usersAllowed: user.usersAllowed,
-        feedAllowed: user.feedAllowed
 	});
 	if (req.body.permissions) {
 		req.body.permissions.map((permission) => {
@@ -119,10 +114,10 @@ exports.updateUser = async (req, res) => {
 		email: req.body.email,
 		displayName: req.body.displayName,
 	};
-	// TODO: Need to implement a better check for permissions
+	const tempUser = await User.findById(req.params.id);
 	if (req.body.permissions) {
 		req.body.permissions.map((permission) => {
-			updates[permission] = true;
+			updates[permission] = !tempUser[permission];
 		});
 	}
 	const user = await User.findOneAndUpdate(
@@ -131,7 +126,7 @@ exports.updateUser = async (req, res) => {
 		{ new: true, runValidators: true, context: "query" },
 	);
 	req.flash("success", `${user.fullname} has been updated!`);
-	res.redirect("back");
+	res.redirect(`/users/${user._id}`);
 };
 
 exports.deleteConfirm = async (req, res) => {

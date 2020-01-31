@@ -10,9 +10,12 @@ module.exports = new mongoose.Schema(
 		},
 		instructions: String,
 		lyrics: String,
+		referenceTitle: String,
 		reference_title: String,
+		referenceLink: String,
 		reference_link: String,
 		sheetMusicLink: String,
+		playerId: String,
 		player_id: String,
 		legend: String,
 		capoSignal: String

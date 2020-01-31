@@ -23,3 +23,39 @@
     @apply .top-0 .left-0;
   }
 }
+
+.list--card {
+  @apply .block .flex-1 .flex .bg-white .rounded-lg .p-6 .shadow-lg .mb-3;
+
+  @media (min-width: 768px) {
+    @apply .ml-3 .flex;
+  }
+}
+
+.show--card {
+  @apply .shadow .border rounded-lg p-6;
+}
+
+.show--card__footer {
+  @apply .border-t .flex .bg-gray-400 .mt-3 .-ml-6 .-mr-6 .-mb-6 .p-6;
+}
+
+.btn {
+  @apply .px-3 .py-2 .rounded;
+}
+
+.btn--edit {
+  @apply.bg-green-600 .text-white;
+
+  @media (min-width: 768px) {
+    @apply .mr-3;
+  }
+}
+
+.btn--delete {
+  @apply .bg-red-600 text-white;
+
+  @media (min-width: 768px) {
+    //
+  }
+}

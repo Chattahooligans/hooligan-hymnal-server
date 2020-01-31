@@ -1,8 +1,6 @@
 const FeedItems = require("../../models/feeditems");
 const Channels = require("../../models/channels");
 const config = require("../../config.js");
-const passport = require("passport");
-const permissions = require("../../middleware/PermissionsMiddleware");
 let PushHandler = require("../../models/pushHandler");
 
 var feeditems_cache = {
@@ -68,8 +66,9 @@ var feeditems_cache = {
   },
   filter_data(data, publishedBefore, limit) {
     limit = parseInt(limit);
-    publishedBefore = Date.parse(publishedBefore);
-    if (!publishedBefore || !limit) return data;
+    publishedBefore = Date.parse(publishedBefore);    console.log(publishedBefore);
+    if (!publishedBefore) publishedBefore = new Date();
+    if(!limit) limit = 20;
     var filtered = data.filter(i => i.publishedAt < publishedBefore);
     return filtered.slice(0, limit);
   }
@@ -128,6 +127,24 @@ exports.store = async (req, res) => {
     });
   }
 )};
+
+exports.activate = async (req, res) => {
+  FeedItems.update({_id: req.params.id}, {
+    active: true
+  }, 
+  function(err, affected, resp) {
+    res.send(resp);
+  });
+};
+
+exports.deactivate = async (req, res) => {
+  FeedItems.update({_id: req.params.id}, {
+    active: false
+  }, 
+  function(err, affected, resp) {
+    res.send(resp);
+  });
+};
 
 exports.delete = (req, res) => {
   FeedItems.findById(req.params.id, (error, feedItem) => {
