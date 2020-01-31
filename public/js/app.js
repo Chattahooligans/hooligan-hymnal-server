@@ -6009,8 +6009,8 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/collin/code/ngs/chatta-server/src/js/app.js */"./src/js/app.js");
-module.exports = __webpack_require__(/*! /Users/collin/code/ngs/chatta-server/src/scss/app.scss */"./src/scss/app.scss");
+__webpack_require__(/*! /Users/collin/code/ngs/hooligan-hymnal-server/src/js/app.js */"./src/js/app.js");
+module.exports = __webpack_require__(/*! /Users/collin/code/ngs/hooligan-hymnal-server/src/scss/app.scss */"./src/scss/app.scss");
 
 
 /***/ })

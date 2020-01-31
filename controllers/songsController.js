@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Song = mongoose.model("song");
+const Player = mongoose.model("players");
 
 exports.index = async (req, res) => {
 	const page = req.query.page || 1;
@@ -147,9 +148,12 @@ exports.search = async (req, res) => {
 	});
 
 };
-exports.create = (req, res) => {
+
+exports.create = async (req, res) => {
+	const players = await Player.find({}).select("id name");
 	res.render("songs/create", {
-		title: "Create Song"
+		title: "Create Song",
+		players: players
 	});
 };
 exports.store = async (req, res) => {
@@ -159,16 +163,24 @@ exports.store = async (req, res) => {
 };
 exports.show = async (req, res) => {
 	const song = await Song.findById(req.params.id);
+	let player = {};
+	if (song.playerId) {
+		player = await Player.findById(song.playerId);
+	}
 	res.render("songs/show", {
 		title: `${song.title}`,
-		song
+		song,
+		player
 	});
 };
 exports.edit = async (req, res) => {
-	const song = await Song.findById(req.params.id);
+	const songPromise = Song.findById(req.params.id);
+	const playersPromise = Player.find({});
+	const [song, players] = await Promise.all([songPromise, playersPromise]);
 	res.render("songs/edit", {
 		title: `Edit ${song.title}`,
-		song
+		song,
+		players
 	});
 };
 exports.update = async (req, res) => {

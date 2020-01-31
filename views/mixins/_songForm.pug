@@ -1,6 +1,6 @@
 include ./_baseInput
 
-mixin songForm(song = {})
+mixin songForm(song = {}, players = {})
   form(method="POST")
     .flex.flex-col.mb-3
       +baseInput("text", "Title", "title", song.title, "Title", true)
@@ -12,18 +12,23 @@ mixin songForm(song = {})
     .flex.flex-col.mb-3
       +baseInput("text", "Category", "category", song.category, "Category")
     .flex.flex-col.mb-3
-      +baseInput("date", "Delete Local", "delete_local", song.delete_local, "Delete Local")
+      +baseInput("text", "Reference Title", "referenceTitle", song.referenceTitle, "Title")
     .flex.flex-col.mb-3
-      +baseInput("text", "Reference Title", "reference_title", song.reference_title, "Title")
-    .flex.flex-col.mb-3
-      +baseInput("text", "Reference Link", "reference_link", song.reference_link, "Link")
+      +baseInput("text", "Reference Link", "referenceLink", song.referenceLink, "Link")
     .flex.flex-col.mb-3
       +baseInput("text", "Sheet Music Link", "sheetMusicLink", song.sheetMusicLink, "Sheet Music Link")
     .flex.flex-col.mb-3
-      +baseInput("text", "Player ID", "player_id", song.player_id, "Player ID")
+      label(for="playerId") Select A Player
+      select#playerId(name="playerId" class="h-10 bg-white shadow border rounded") Select A Player
+        option(value="") No Player
+        each player in players
+          if (player._id == song.playerId)
+            option(value=`${player._id}` selected) #{player.name}
+          else
+            option(value=`${player._id}`) #{player.name}
     .flex.flex-col.mb-3
       +baseInput("text", "Legend", "legend", song.legend, "Legend")
     .flex.flex-col.mb-3
       +baseInput("text", "Capo Signal", "capoSignal", song.capoSignal, "Capo Signal")
     .mb-3
-      button(type="submit" class="px-3 py-2 bg-blue-700 text-white") Save Song
+      button(type="submit" class="btn bg-blue-700 text-white") Save Song
