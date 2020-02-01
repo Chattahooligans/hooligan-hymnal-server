@@ -57,7 +57,7 @@ exports.index = async (req, res) => {
 				},
 			},
 			{
-				reference_title: {
+				referenceTitle: {
 					$regex: `.*${filter}.*`,
 					$options: "i"
 				}
