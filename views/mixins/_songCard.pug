@@ -4,5 +4,5 @@ mixin songCard(song = {})
     - const lyrics = (song.lyrics.length > 150) ? song.lyrics.substring(0, 150) + "..." : song.lyrics
     p(class="text-gray-500 mb-2").
       #{lyrics}
-    p(class="text-gray-500 mb-2") #{song.reference_title}
+    p(class="text-gray-500 mb-2") #{song.referenceTitle}
     p(class="text-gray-500") #{song.category}
