@@ -118,7 +118,7 @@ exports.search = async (req, res) => {
       },
       {
         category: {
-          $regex: `.*${filter}.$`,
+          $regex: `.*${filter}.*`,
           $options: 'i',
         },
       },
@@ -198,7 +198,7 @@ exports.update = async (req, res) => {
     },
   );
   req.flash('success', `${song.title} was updated!`);
-  res.redirect(`/songs/${song._id}`);
+  res.redirect(`/songs/${song.id}`);
 };
 exports.deleteConfirm = async (req, res) => {
   const song = await Song.findById(req.params.id);
