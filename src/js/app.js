@@ -38,3 +38,14 @@ dropzone(
   1,
   'logo',
 );
+
+// dropzone(
+//   '/foes/logo',
+//   'logo-template',
+//   document.getElementById('logo-upload-section'),
+//   '#logo-previews',
+//   '#logo-target',
+//   'Logo',
+//   1,
+//   'logo',
+// );

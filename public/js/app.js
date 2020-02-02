@@ -12807,7 +12807,16 @@ __webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/alpine.js"); /
 Object(_modules_sortable__WEBPACK_IMPORTED_MODULE_1__["default"])();
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/thumbnail', 'thumbnail-template', document.getElementById('thumbnail-upload-section'), '#thumbnail-previews', '#thumbnail-target', 'Thumbnail', 1, 'thumbnail');
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/images', 'images-template', document.getElementById('images-upload-section'), '#images-previews', '#images-target', 'Player Images', 10, 'images');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/foes/logo', 'logo-template', document.getElementById('logo-upload-section'), '#logo-previews', '#logo-target', 'Logo', 1, 'logo');
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/foes/logo', 'logo-template', document.getElementById('logo-upload-section'), '#logo-previews', '#logo-target', 'Logo', 1, 'logo'); // dropzone(
+//   '/foes/logo',
+//   'logo-template',
+//   document.getElementById('logo-upload-section'),
+//   '#logo-previews',
+//   '#logo-target',
+//   'Logo',
+//   1,
+//   'logo',
+// );
 
 /***/ }),
 
@@ -12851,7 +12860,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   var initUrl = arguments.length > 8 ? arguments[8] : undefined;
   var previewNode = document.getElementById(templateId);
   if (!previewNode || !templateId) return;
-  previewNode.id = "";
+  previewNode.id = '';
   var previewTemplate = previewNode.parentNode.innerHTML;
   var playerId;
   var foeId;
@@ -12865,8 +12874,8 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     init: function init() {
       previewNode.remove();
       var thisDropzone = this;
-      playerId = document.getElementById("player-id");
-      foeId = document.getElementById("foe-id");
+      playerId = document.getElementById('player-id');
+      foeId = document.getElementById('foe-id');
 
       if (playerId) {
         axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/players/images?playerId=".concat(playerId.innerText, "&type=").concat(inputName.toLowerCase()), {
@@ -12888,11 +12897,11 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
                 thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
                 thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, d);
                 var tEl = document.querySelector(target);
-                var input = document.createElement("input");
+                var input = document.createElement('input');
                 input.value = d;
-                input.setAttribute("data-id", "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-image"));
-                input.classList.add = "hidden";
-                input.setAttribute("name", inputName);
+                input.setAttribute('data-id', "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-image"));
+                input.classList.add = 'hidden';
+                input.setAttribute('name', inputName);
                 tEl.appendChild(input);
               }
             } catch (err) {
@@ -12916,11 +12925,11 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
             thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
             thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.thumbnail);
             var tEl = document.querySelector(target);
-            var input = document.createElement("input");
+            var input = document.createElement('input');
             input.value = data.thumbnail;
-            input.setAttribute("data-id", "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-thumbnail"));
-            input.classList.add = "hidden";
-            input.setAttribute("name", inputName);
+            input.setAttribute('data-id', "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-thumbnail"));
+            input.classList.add = 'hidden';
+            input.setAttribute('name', inputName);
             tEl.appendChild(input);
           }
         })["catch"](function (err) {
@@ -12937,13 +12946,14 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
               name: "".concat(data.name, " logo")
             };
             thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
-            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.logo);
-            var tEl = document.createElement(target);
-            var input = document.createElement("input");
+            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.logo); // debugger;
+
+            var tEl = document.querySelector(target);
+            var input = document.createElement('input');
             input.value = data.logo;
-            input.setAttribute("data-id", "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-logo"));
-            input.classList.add = "hidden";
-            input.setAttribute("name", inputName);
+            input.setAttribute('data-id', "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-logo"));
+            input.classList.add = 'hidden';
+            input.setAttribute('name', inputName);
             tEl.appendChild(input);
           }
         })["catch"](function (err) {
@@ -12953,43 +12963,43 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     }
   });
   var submitButton;
-  myDropzone.on("addedfile", function (file, res) {
-    var form = document.querySelector("main form");
+  myDropzone.on('addedfile', function (file, res) {
+    var form = document.querySelector('main form');
     submitButton = form.querySelector("button[type='submit']");
-    submitButton.setAttribute("disabled", "disabled");
-    submitButton.classList.add("cursor-disabled");
-    submitButton.classList.add("opacity-75");
+    submitButton.setAttribute('disabled', 'disabled');
+    submitButton.classList.add('cursor-disabled');
+    submitButton.classList.add('opacity-75');
 
     if (!document.getElementById("small-".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(text.toLowerCase())))) {
-      var smallAlert = document.createElement("small");
+      var smallAlert = document.createElement('small');
       smallAlert.innerText = "Please upload ".concat(text, " to submit form");
-      smallAlert.id = "small-" + slugify__WEBPACK_IMPORTED_MODULE_2___default()(text.toLowerCase());
-      smallAlert.classList.add("block");
-      smallAlert.classList.add("text-red-700");
+      smallAlert.id = "small-".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(text.toLowerCase()));
+      smallAlert.classList.add('block');
+      smallAlert.classList.add('text-red-700');
       submitButton.parentNode.appendChild(smallAlert);
     }
   });
-  myDropzone.on("success", function (_, res) {
+  myDropzone.on('success', function (_, res) {
     var tEl = document.querySelector(target);
-    var input = document.createElement("input");
+    var input = document.createElement('input');
     input.value = res.url;
-    input.setAttribute("data-id", res.id);
-    input.classList.add = "hidden";
-    input.setAttribute("name", inputName);
+    input.setAttribute('data-id', res.id);
+    input.classList.add = 'hidden';
+    input.setAttribute('name', inputName);
     tEl.appendChild(input);
-    var form = document.querySelector("main form");
+    var form = document.querySelector('main form');
     submitButton = form.querySelector("button[type='submit']");
-    submitButton.removeAttribute("disabled");
-    submitButton.classList.remove("cursor-disabled");
-    submitButton.classList.remove("opacity-75");
+    submitButton.removeAttribute('disabled');
+    submitButton.classList.remove('cursor-disabled');
+    submitButton.classList.remove('opacity-75');
 
     if (document.querySelector("#small-".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(text).toLowerCase()))) {
       document.querySelector("#small-".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(text).toLowerCase())).remove();
     }
   });
-  myDropzone.on("removedfile", function (_ref3) {
+  myDropzone.on('removedfile', function (_ref3) {
     var previewElement = _ref3.previewElement;
-    var img = previewElement.querySelector("img");
+    var img = previewElement.querySelector('img');
 
     if (playerId) {
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/players/remove-images?playerId=".concat(playerId.innerText, "&type=").concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase())), {
@@ -13019,23 +13029,23 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       });
     }
 
-    var form = document.querySelector("main form");
+    var form = document.querySelector('main form');
     submitButton = form.querySelector("button[type='submit']");
-    submitButton.removeAttribute("disabled");
-    submitButton.classList.remove("cursor-disabled");
-    submitButton.classList.remove("opacity-75");
+    submitButton.removeAttribute('disabled');
+    submitButton.classList.remove('cursor-disabled');
+    submitButton.classList.remove('opacity-75');
     var small = document.querySelector("#small-".concat(text.toLowerCase()));
 
     if (small) {
       small.remove();
     }
   });
-  myDropzone.on("maxfilesexceeded", function () {
+  myDropzone.on('maxfilesexceeded', function () {
     alert("Max files exceeded: ".concat(maxFiles));
   });
   var progressBar = document.querySelector("#".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase()), " .progress-bar"));
-  myDropzone.on("totaluploadprogress", function (progress) {
-    progressBar.style.width = progress + "%";
+  myDropzone.on('totaluploadprogress', function (progress) {
+    progressBar.style.width = "".concat(progress, "%");
   });
   var uploadButton = document.querySelector("#".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase()), " .actions .upload"));
 
