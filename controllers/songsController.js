@@ -131,12 +131,15 @@ exports.create = async (req, res) => {
     players,
   });
 };
+
 exports.store = async (req, res) => {
   const song = await new Song(req.body).save();
   req.flash('success', `${song.title} was created!`);
   res.redirect('/songs');
 };
+
 exports.show = async (req, res) => {
+  const { breadcrumbs } = req;
   const song = await Song.findById(req.params.id);
   let player = {};
   if (song.playerId) {
@@ -146,8 +149,10 @@ exports.show = async (req, res) => {
     title: `${song.title}`,
     song,
     player,
+    breadcrumbs,
   });
 };
+
 exports.edit = async (req, res) => {
   const songPromise = Song.findById(req.params.id);
   const playersPromise = Player.find({}).select('id name').sort('name');
@@ -158,6 +163,7 @@ exports.edit = async (req, res) => {
     players,
   });
 };
+
 exports.update = async (req, res) => {
   const song = await Song.findOneAndUpdate(
     {
@@ -175,6 +181,7 @@ exports.update = async (req, res) => {
   req.flash('success', `${song.title} was updated!`);
   res.redirect(`/songs/${song.id}`);
 };
+
 exports.deleteConfirm = async (req, res) => {
   const song = await Song.findById(req.params.id);
   res.render('songs/delete', {
@@ -182,6 +189,7 @@ exports.deleteConfirm = async (req, res) => {
     song,
   });
 };
+
 exports.delete = async (req, res) => {
   const song = await Song.findByIdAndDelete(req.params.id);
   req.flash('success', `${song.title} was deleted`);
