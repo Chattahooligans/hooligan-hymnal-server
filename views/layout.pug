@@ -4,14 +4,14 @@ html(lang="en")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     meta(http-equiv="X-UA-Compatible", content="ie=edge")
     link(rel="stylesheet" href="/css/app.css")
-    //- script(src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.2.0/dist/alpine.js")
+    //- script(src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.9.7/dist/alpine.js" defer)
     title #{title} | #{h.siteName}
   body.flex.flex-col(x-data="skipToContent()")
     header.bg-gray-800.text-white.py-3.relative
       button#skip(type="button" class="btn absolute p-3 bg-black text-white" @click="focus()") Skip To Content
       .px-3.flex.flex-row.justify-between
         nav.flex.items-center
-          a(href="/" class="block") Hooligan Server
+          a(href="/" class="block") #{h.siteName}
         nav(class="flex md:flex-row flex-col")
           if currentUser
             div(x-data="{ isShown: false }" class="relative")

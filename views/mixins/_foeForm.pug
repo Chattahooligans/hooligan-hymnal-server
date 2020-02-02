@@ -36,16 +36,16 @@ mixin foeForm(foe = {}, edit = false)
     .flex.flex-col.mb-3
     if !edit
       div(x-data="{ players: [], newPlayer: { name: '', squadNumber: '', position: '' } }")
-        template(x-for="player in players")
-          input(type="hidden" name="players[]" :value="JSON.stringify(player)")
+        div(class="StackedList")
+          template(x-for="player in players")
+            div(class="list--card draggable")
+              input(type="hidden" name="players[]" :value="JSON.stringify(player)")
+              div
+                h4(x-text="player.name")
+                p(x-text="player.squadNumber")
+                p(x-text="player.position")
+                button(type="button" @click="players = players.filter(i => i.name !== player.name)") &times;
 
-        template(x-for="player in players")
-          div(class="list--card")
-            div
-              h4(x-text="player.name")
-              p(x-text="player.squadNumber")
-              p(x-text="player.position")
-              button(type="button" @click="players = players.filter(i => i.name !== player.name)") &times;
         div
           input(type="text" name="name" id="name" x-model="newPlayer.name" @keyup="newPlayer.name.trim()" placeholder="Name")
           input(type="number" name="squadNumber" id="squadNumber" x-model="newPlayer.squadNumber" @keyup="newPlayer.squadNumber.trim()" placeholder="Squad Number")
@@ -53,16 +53,16 @@ mixin foeForm(foe = {}, edit = false)
           button(type="button" @click="if (newPlayer.name.trim() !== '' && newPlayer.position.trim() !== '') { players.push(newPlayer); newPlayer = { name: '', position: '', squadNumber: '' } } else { alert('Check players fields') }" class="bg-green-700 text-white p-4") &plus;
     else
       div(x-data="{ players: "+JSON.stringify(foe.players)+" , newPlayer: { name: '', squadNumber: '', position: ''} }")
-        template(x-for="player in players")
-          input(type="hidden" name="players[]" :value="JSON.stringify(player)")
+        div(class="StackedList")
+          template(x-for="player in players")
+            div(class="list--card draggable")
+              input(type="hidden" name="players[]" :value="JSON.stringify(player)")
+              div
+                h4(x-text="player.name")
+                p(x-text="player.squadNumber")
+                p(x-text="player.position")
+                button(type="button" @click="players = players.filter(i => i.name !== player.name)") &times;
 
-        template(x-for="player in players")
-          div(class="list--card")
-            div
-              h4(x-text="player.name")
-              p(x-text="player.squadNumber")
-              p(x-text="player.position")
-              button(type="button" @click="players = players.filter(i => i.name !== player.name)") &times;
         div
           input(type="text" name="name" id="name" x-model="newPlayer.name" @keyup="newPlayer.name.trim()" placeholder="Name")
           input(type="number" name="squadNumber" id="squadNumber" x-model="newPlayer.squadNumber" @keyup="newPlayer.squadNumber.trim()" placeholder="Squad Number")
