@@ -51,6 +51,7 @@ html(lang="en")
             if currentUser.rosterAllowed
               a(href="/players" class="block p-3 hover:bg-gray-600 hover:text-white") Players
               a(href="/rosters" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
+            if currentUser.foesAllowed
               a(href="/foes" class="block p-3 hover:bg-gray-600 hover:text-white") Foes
             if currentUser.usersAllowed
               a(href="/users" class="block p-3 hover:bg-gray-600 hover:text-white") Users

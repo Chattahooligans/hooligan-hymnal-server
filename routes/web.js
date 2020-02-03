@@ -137,17 +137,17 @@ router.get('/push-tokens/:id/delete', isLoggedIn, checkPermission('pushNotificat
 router.post('/push-tokens/:id/delete', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.delete));
 
 // Foes
-router.get('/foes', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.index));
-router.post('/foes/logo', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.logo));
-router.get('/foes/create', isLoggedIn, checkPermission('rosterAllowed'), foesController.create);
-router.post('/foes/create', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.store));
-router.get('/foes/logos', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.getLogo));
-router.post('/foes/remove-logo', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.removeLogo));
-router.get('/foes/:id', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.show));
-router.get('/foes/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.edit));
-router.post('/foes/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.update));
-router.get('/foes/:id/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.deleteConfirm));
-router.post('/foes/:id/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.delete));
+router.get('/foes', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.index));
+router.post('/foes/logo', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.logo));
+router.get('/foes/create', isLoggedIn, checkPermission('foesAllowed'), foesController.create);
+router.post('/foes/create', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.store));
+router.get('/foes/logos', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.getLogo));
+router.post('/foes/remove-logo', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.removeLogo));
+router.get('/foes/:id', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.show));
+router.get('/foes/:id/edit', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.edit));
+router.post('/foes/:id/edit', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.update));
+router.get('/foes/:id/delete', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.deleteConfirm));
+router.post('/foes/:id/delete', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.delete));
 
 router.get('/alpine-for', (req, res) => {
   res.render('alpine-for');
