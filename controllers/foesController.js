@@ -5,10 +5,18 @@ const { removeFromCloudinary } = require('../handlers/cloudinaryDelete');
 const { upload } = require('../handlers/imageUploader');
 
 exports.index = async (req, res) => {
-  const foes = await Foe.find({});
+  const { all } = req.query;
+  let foes = await Foe.find({});
+  let title = 'All Foes';
+  if (!all) {
+    foes = foes.filter((foe) => (foe.active ? foe : null));
+    title = 'All Active Foes';
+  }
+  console.log(all);
   res.render('foes/index', {
-    title: 'All Foes',
+    title,
     foes,
+    all,
   });
 };
 
@@ -59,6 +67,11 @@ exports.update = async (req, res) => {
   }
   if (!req.body.logo) {
     req.body.logo = '';
+  }
+  if (!req.body.active) {
+    req.body.active = false;
+  } else {
+    req.body.active = true;
   }
   const foe = await Foe.findOneAndUpdate(
     {

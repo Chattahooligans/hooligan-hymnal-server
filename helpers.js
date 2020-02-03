@@ -9,3 +9,5 @@ exports.moment = require('moment');
 
 // Some details about the site
 exports.siteName = process.env.SITE_NAME ? process.env.SITE_NAME : 'Hooligan Server';
+
+exports.positionOptions = ['Forward', 'Defender', 'Midfielder', 'Goalkeeper', 'Head Coach', 'Assistant Coach', 'Goalkeeper Coach', 'Technical Director', 'Associate Head Coach'];

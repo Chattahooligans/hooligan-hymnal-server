@@ -2,19 +2,20 @@ extends ../layout
 
 block content
   .container.mx-auto
+    //- pre=h.dump(all)
     div(class="mb-3")
       h2(class="font-extrabold text-3xl mb-3") #{title}
     div(class="flex justify-between mb-3 flex-col md:flex-row")
         a(href="/foes/create" class="rounded bg-blue-700 text-white px-3 py-2 mb-3 md:mb-auto") Add Foe
+        a(href=`/foes${all ? '' : '?all=true'}` class="btn bg-green-700 text-white")=`${all ? 'View Active Foes' : 'View All Foes In DB'}`
     section(class="-mx-3")
       each foe in foes
-        a(href=`/foes/${foe.id}` class="list--card" style=`background: ${foe.backgroundColor}`)
+        a(href=`/foes/${foe.id}` class="list--card border-4" style=`border-color: ${foe.backgroundColor}`)
           if foe.logo
             img(src=`${foe.logo}` alt=`${foe.opponent} logo` class="rounded-full mr-6" style="height:50px;width:50px;max-width:50px;max-height:50px;")
           else
-            div(style=`height:50px;width:50px;max-width:50px;max-height:50px;background:${foe.accentColor}`)
+            div(style=`height:50px;width:50px;max-width:50px;max-height:50px;background:${foe.accentColor}` class="rounded-full mr-6")
           div
-            h3(class="text-gray-600 font-semibold" style=`color: ${foe.accentColor}`) #{foe.opponent}
-            p(style=`color: ${foe.textColor}`)
+            h3(class="text-gray-600 font-semibold") #{foe.opponent} - #{foe.season} #{foe.competition}
       else
         h3 No Foes
