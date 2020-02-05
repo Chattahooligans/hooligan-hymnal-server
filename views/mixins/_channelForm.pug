@@ -1,0 +1,9 @@
+include ../mixins/_baseInput
+
+mixin channelForm(channel = {}, users = {})
+  if channel.id
+    #channel-id(class="hidden") #{channel.id}
+  form(method="POST")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Name", "name", channel.name, "Name", true)
+    .flex.flex-col.mb-3
