@@ -17,5 +17,7 @@ block content
             div(style=`height:50px;width:50px;max-width:50px;max-height:50px;background:${foe.accentColor}` class="rounded-full mr-6")
           div
             h3(class="text-gray-600 font-semibold") #{foe.opponent} - #{foe.season} #{foe.competition}
+            if !foe.active
+              p(class="text-gray-600") Not Active
       else
         h3 No Foes

@@ -13020,9 +13020,13 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         withCredentials: true,
         img: img.src
       }).then(function () {
-        var inputs = document.querySelectorAll("input[name=\"".concat(inputName.toLowerCase(), "]"));
+        var _inputName = inputName.toLowerCase();
+
+        var inputs = document.querySelectorAll("input[name=\"".concat(_inputName, "\"]"));
         inputs.forEach(function (input) {
-          input.remove();
+          if (input.value == img.src) {
+            input.remove();
+          }
         });
       })["catch"](function (err) {
         console.error(err);
