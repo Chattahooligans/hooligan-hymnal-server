@@ -140,12 +140,16 @@ if (!langs) {
 }
 langs = langs.split(',').map((lang) => lang.trim());
 
+const randomId = Math
+  .random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
 app.use((req, res, next) => {
   req.breadcrumbs = getBreadcrumbs(req.originalUrl);
   res.locals.h = helpers;
   res.locals.currentUser = req.user || null;
   res.locals.flashes = req.flash();
   res.locals.langs = process.env.INPUT_LANGUAGES ? JSON.parse(process.env.INPUT_LANGUAGES) : ['en'];
+  res.locals.randomId = randomId;
   next();
 });
 
