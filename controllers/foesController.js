@@ -36,6 +36,9 @@ exports.store = async (req, res) => {
   } else {
     req.body.players = players;
   }
+  if (req.body.active) {
+    req.body.active = true;
+  }
   const foe = await (new Foe(req.body)).save();
   req.flash('success', `Foe ${foe.opponent} was created`);
   res.redirect('/foes');

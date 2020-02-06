@@ -159,9 +159,12 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         img: img.src,
       })
         .then(() => {
-          const inputs = document.querySelectorAll(`input[name="${inputName.toLowerCase()}]`);
+          const _inputName = inputName.toLowerCase();
+          const inputs = document.querySelectorAll(`input[name="${_inputName}"]`);
           inputs.forEach((input) => {
-            input.remove();
+            if (input.value == img.src) {
+              input.remove();
+            }
           });
         }).catch((err) => {
           console.error(err);
