@@ -7,3 +7,13 @@ block content
     div
       div(class="flex justify-between mb-3 flex-col md:flex-row")
         a(href="/channels/create" class="btn bg-blue-700 text-white mb-3 md:mb-auto") Create Channel
+      div#channelsList(class="-mx-3")
+        each channel in channels
+          a(href=`/channels/${channel.id}` class='list--card')
+            if channel.avatarUrl
+              img(src=`${channel.avatarUrl}` alt=`${channel.name} channel avatar`)
+            div
+              h2 #{channel.name}
+              p #{channel.description}
+        else
+          h3 No Channels in database

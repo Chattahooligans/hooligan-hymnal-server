@@ -1,6 +1,7 @@
 import dropzone from './modules/dropzone';
 import SortList from './modules/sortable';
 
+
 require('alpinejs');
 // require('./modules/sortable');
 

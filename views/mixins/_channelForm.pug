@@ -1,9 +1,25 @@
 include ../mixins/_baseInput
+include ../mixins/_baseCheckbox
 
-mixin channelForm(channel = {}, users = {})
+mixin channelForm(channel = {}, ...props)
   if channel.id
     #channel-id(class="hidden") #{channel.id}
   form(method="POST")
     .flex.flex-col.mb-3
       +baseInput("text", "Name", "name", channel.name, "Name", true)
     .flex.flex-col.mb-3
+      +baseInput("text", "Default Locale", "defaultLocale", channel.defaultLocale, "Default Local", true)
+    .flex.flex-col.mb-3
+      span Insert Avatar Upload...
+    .flex.flex-col.mb-3
+      +baseInput("text", "Header URL", "headerUrl", channel.headerUrl, "Header Url")
+    .flex.flex-col.mb-3
+      +baseCheckbox("checkbox", "Follow", "follow", channel.follow, "Follow")
+    .flex.flex-col.mb-3
+      +baseCheckbox("checkbox", "Active", "active", channel.active, "Active")
+    .flex.flex-col.mb-3
+      select#users-select(name="users" multiple)
+        each user in users
+          option(value=user.id) #{user.name}
+    .mb-3
+      button(type="submit" class="btn bg-blue-700 text-white") Save
