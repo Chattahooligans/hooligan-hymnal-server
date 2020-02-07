@@ -1,4 +1,8 @@
 extends ../layout
 
+include ../mixins/_channelForm
+
 block content
-  h2 #{title}
+  .container.mx-auto
+    h2 #{title}
+    +channelForm(channel, users)

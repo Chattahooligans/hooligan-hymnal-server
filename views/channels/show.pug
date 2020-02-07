@@ -1,4 +1,9 @@
 extends ../layout
 
 block content
-  h2 #{title}
+  .container.mx-auto
+    .show--card
+      h2 #{title}
+      .show--card__footer
+        a(href=`/channels/${channel.id}/edit` class="btn bg-green-700 text-white mr-3") Edit
+        a(href=`/channels/${channel.id}/delete` class="btn bg-red-700 text-white") Delete

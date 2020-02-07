@@ -1,8 +1,9 @@
 import dropzone from './modules/dropzone';
 import SortList from './modules/sortable';
 
-
-require('alpinejs');
+import 'alpinejs';
+import { log } from 'util';
+// require('alpinejs');
 // require('./modules/sortable');
 
 SortList();
@@ -50,3 +51,12 @@ dropzone(
 //   1,
 //   'logo',
 // );
+
+// document.querySelector('.move-button').addEventListener('click', (e) => {
+//   e.preventDefault();
+//   const userSelected = document.getElementById('users-select-from');
+//   const options = Array.from(
+//     userSelected.querySelectorAll(':scope > option:checked'), (target) => target,
+//   );
+//   console.log(options);
+// });

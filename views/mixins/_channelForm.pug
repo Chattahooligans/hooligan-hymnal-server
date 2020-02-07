@@ -18,8 +18,30 @@ mixin channelForm(channel = {}, ...props)
     .flex.flex-col.mb-3
       +baseCheckbox("checkbox", "Active", "active", channel.active, "Active")
     .flex.flex-col.mb-3
-      select#users-select(name="users" multiple)
-        each user in users
-          option(value=user.id) #{user.name}
+      div(x-data="{ users: " + JSON.stringify(users) + ", selectedUser: { _id: '', name: '', canCreate: false, canEdit: false, canDelete: false, canPush: false }, selectedUsers: [] }")
+        h3 Unassigned Users
+        template(x-for="_user in users")
+          div(class="flex")
+            button(type="button" @click="selectedUser = _user")
+              input(type="hidden" :value="JSON.stringify(_user)")
+              h4(x-text="_user.name")
+        template(x-if="selectedUser.name")
+          div(class="list--card")
+            h4(x-text="selectedUser.name")
+            label Can Create
+              input(type="checkbox" x-model="selectedUser.canCreate")
+            label Can Edit
+              input(type="checkbox" x-model="selectedUser.canEdit")
+            label Can Delete
+              input(type="checkbox" x-model="selectedUser.canDelete")
+            label Can Push
+              input(type="checkbox" x-model="selectedUser.canPush")
+            button(type="button" @click="selectedUsers.push(selectedUser); selectedUser = { _id: '', name: '', canCreate: false, canEdit: false, canDelete: false, canPush: false }") &plus;
+            button(type="button" @click="selectedUser = {}") &times;
+        h3 Assigned Users
+        template(x-for="user in selectedUsers")
+          input(type="hidden" name="users[]" :value="JSON.stringify(user)")
+          div
+            h4(x-text="user.name")
     .mb-3
       button(type="submit" class="btn bg-blue-700 text-white") Save

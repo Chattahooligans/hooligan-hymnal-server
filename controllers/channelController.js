@@ -21,6 +21,17 @@ exports.create = async (req, res) => {
 };
 
 exports.store = async (req, res) => {
+  const users = [];
+  if (req.body.users) {
+    req.body.users.forEach((user) => users.push(JSON.parse(user)));
+    req.body.users = users;
+  }
+  if (req.body.follow) {
+    req.body.follow = true;
+  }
+  if (req.body.active) {
+    req.body.active = true;
+  }
   const channel = new Channel(req.body);
   await channel.save();
   req.flash('success', `${channel.name} aws created!`);
@@ -36,10 +47,15 @@ exports.show = async (req, res) => {
 };
 
 exports.edit = async (req, res) => {
-  const channel = await Channel.findById(req.params.id);
+  const channelPromise = Channel.findById(req.params.id);
+  const userPromise = User.find();
+  let [channel, users] = await Promise.all([channelPromise, userPromise]);
+
+  users = users.filter((user) => user.feedAllowed === true);
   return res.render('channels/edit', {
     title: `Edit ${channel.name}`,
     channel,
+    users,
   });
 };
 
