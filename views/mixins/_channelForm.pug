@@ -18,30 +18,38 @@ mixin channelForm(channel = {}, ...props)
     .flex.flex-col.mb-3
       +baseCheckbox("checkbox", "Active", "active", channel.active, "Active")
     .flex.flex-col.mb-3
-      div(x-data="{ users: " + JSON.stringify(users) + ", selectedUser: { _id: '', name: '', canCreate: false, canEdit: false, canDelete: false, canPush: false }, selectedUsers: [] }")
-        h3 Unassigned Users
-        template(x-for="_user in users")
-          div(class="flex")
-            button(type="button" @click="selectedUser = _user")
-              input(type="hidden" :value="JSON.stringify(_user)")
-              h4(x-text="_user.name")
+      div(x-data=`{ users: ${JSON.stringify(users)}, selectedUser: { _id: '', name: '', canCreate: false, canEdit: false, canDelete: false, canPush: false }, selectedUsers: ${channel.users ? JSON.stringify(channel.users) : JSON.stringify([]) } }`)
+        div(class="flex flex-col md:flex-row w-full mx-auto justify-between")
+          div(class="flex-1 h-full")
+            h3 Unassigned Users
+            div(class="h-24 border-2 rounded shadow overflow-y-scroll md:mr-3")
+              template(x-for="_user in users")
+                button(type="button" @click="selectedUser = _user" class="flex p-2 border-b-2 w-full")
+                  input(type="hidden" :value="JSON.stringify(_user)")
+                  h4(x-text="_user.name")
+          div(class="flex-1 h-full")
+            h3 Assigned Users
+            div(class="h-24 border-2 rounded shadow overflow-y-scroll")
+              template(x-for="user in selectedUsers")
+                div(class="flex p-2 border-b-2 justify-between")
+                  span(x-text="user.name")
+                  input(type="hidden" name="users[]" :value="JSON.stringify(user)")
+                  button(type="button" @click="selectedUsers = selectedUsers.filter(i => i._id !== user._id)") &times;
         template(x-if="selectedUser.name")
-          div(class="list--card")
-            h4(x-text="selectedUser.name")
-            label Can Create
-              input(type="checkbox" x-model="selectedUser.canCreate")
-            label Can Edit
-              input(type="checkbox" x-model="selectedUser.canEdit")
-            label Can Delete
-              input(type="checkbox" x-model="selectedUser.canDelete")
-            label Can Push
-              input(type="checkbox" x-model="selectedUser.canPush")
-            button(type="button" @click="selectedUsers.push(selectedUser); selectedUser = { _id: '', name: '', canCreate: false, canEdit: false, canDelete: false, canPush: false }") &plus;
-            button(type="button" @click="selectedUser = {}") &times;
-        h3 Assigned Users
-        template(x-for="user in selectedUsers")
-          input(type="hidden" name="users[]" :value="JSON.stringify(user)")
-          div
-            h4(x-text="user.name")
+          div(class="list--card flex flex-col mt-3")
+            h4(class="font-semibold text-xl" x-text="selectedUser.name")
+            div(class="flex items-center justify-between")
+              div(class="flex flex-col")
+                label Can Create
+                  input(type="checkbox" class="ml-3" x-model="selectedUser.canCreate")
+                label Can Edit
+                  input(type="checkbox" class="ml-3" x-model="selectedUser.canEdit")
+                label Can Delete
+                  input(type="checkbox" class="ml-3" x-model="selectedUser.canDelete")
+                label Can Push
+                  input(type="checkbox" class="ml-3" x-model="selectedUser.canPush")
+              div
+                button(type="button" @click="selectedUsers.push(selectedUser); selectedUser = {}" class="bg-green-700 text-white rounded-full h-12 w-12 mr-3 align-middle") &plus;
+                button(type="button" @click="selectedUser = {}" class="bg-red-700 text-white h-12 w-12 rounded-full align-middle") &times;
     .mb-3
       button(type="submit" class="btn bg-blue-700 text-white") Save

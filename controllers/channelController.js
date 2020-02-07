@@ -59,7 +59,23 @@ exports.edit = async (req, res) => {
   });
 };
 
-exports.update = async (req, res) => res.send(req.body);
+exports.update = async (req, res) => {
+  const users = [];
+  if (req.body.users) {
+    req.body.users.forEach((user) => users.push(JSON.parse(user)));
+    req.body.users = users;
+  }
+  if (req.body.follow) {
+    req.body.follow = true;
+  }
+  if (req.body.active) {
+    req.body.active = true;
+  }
+  const channel = await Channel.findById(req.params.id);
+  await channel.update(req.body);
+  return res.redirect(`/channels/${channel._id}`);
+  // res.send(req.body);
+};
 
 exports.deleteConfirm = async (req, res) => {
   const channel = await Channel.findById(req.params.id);
