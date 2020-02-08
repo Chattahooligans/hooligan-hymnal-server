@@ -23,6 +23,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   const previewTemplate = previewNode.parentNode.innerHTML;
   let playerId;
   let foeId;
+  let channelId;
   const myDropzone = new Dropzone(uploadSection, {
     url,
     maxFiles,
@@ -35,6 +36,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       const thisDropzone = this;
       playerId = document.getElementById('player-id');
       foeId = document.getElementById('foe-id');
+      channelId = document.getElementById('channel-id');
       if (playerId) {
         axios.get(`/players/images?playerId=${playerId.innerText}&type=${inputName.toLowerCase()}`, {
           withCredentials: true,
@@ -88,6 +90,29 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
               const input = document.createElement('input');
               input.value = data.logo;
               input.setAttribute('data-id', `${slugify(data.name).toLowerCase()}-logo`);
+              input.classList.add = 'hidden';
+              input.setAttribute('name', inputName);
+              tEl.appendChild(input);
+            }
+          }).catch((err) => {
+            console.error(err);
+          });
+      } else if (channelId) {
+        axios.get(`/channels/avatars?channelId=${channelId.innerText}&type=${inputName}`, {
+          withCredentials: true,
+        })
+          .then(({ data }) => {
+            if (data.logo.length) {
+              const mockFile = {
+                name: `${data.name} logo`,
+              };
+              thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
+              thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.logo);
+              // debugger;
+              const tEl = document.querySelector(target);
+              const input = document.createElement('input');
+              input.value = data.logo;
+              input.setAttribute('data-id', `${slugify(data.name).toLowerCase()}-avatar`);
               input.classList.add = 'hidden';
               input.setAttribute('name', inputName);
               tEl.appendChild(input);
@@ -155,6 +180,19 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         });
     } else if (foeId) {
       axios.post(`/foes/remove-logo?foeId=${foeId.innerText}&type=${slugify(inputName.toLowerCase())}`, {
+        withCredentials: true,
+        img: img.src,
+      })
+        .then(() => {
+          const inputs = document.querySelectorAll(`input[name="${inputName.toLowerCase()}]`);
+          inputs.forEach((input) => {
+            input.remove();
+          });
+        }).catch((err) => {
+          console.error(err);
+        });
+    } else if (channelId) {
+      axios.post(`/channels/remove-avatar?channelId=${channelId.innerText}&type=${slugify(inputName.toLowerCase())}`, {
         withCredentials: true,
         img: img.src,
       })

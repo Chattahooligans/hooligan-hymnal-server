@@ -9,8 +9,25 @@ mixin channelForm(channel = {}, ...props)
       +baseInput("text", "Name", "name", channel.name, "Name", true)
     .flex.flex-col.mb-3
       +baseInput("text", "Default Locale", "defaultLocale", channel.defaultLocale, "Default Local", true)
-    .flex.flex-col.mb-3
-      span Insert Avatar Upload...
+    .flex.flex-col.mb-3#avatar
+      #avatar-template
+        div(class="relative inline-block")
+          img(data-dz-thumbnail class="rounded-full mx-auto" style="height:50px;width:50px")
+          p(class="" data-dz-name)
+          div(class="dz-error-mark cursor-pointer absolute top-0 right-0" data-dz-remove)
+            span &times;
+        div(class="dz-error-message")
+          span(data-dz-errormessage)
+      #avatar-upload-section(class="border rounded-lg bg-gray-200 h-32 w-full flex justify-center items-center cursor-pointer relative z-10")
+        h2(class="pointer-events-none -z-1") Upload avatar here
+      #avatar-previews
+      div(class="progress active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0")
+          div(class="h-2 bg-gray-700 progress-bar" style="width:0%;" data-dz-uploadprogress)
+      .actions
+        button(class="rounded bg-green-700 text-white px-3 py-2 upload mr-2" type="button") Upload
+        if !channel.id
+          button(class="rounded bg-red-700 text-white px-3 py-2 cancel" type="button") Clear
+        #avatar-target.hidden
     .flex.flex-col.mb-3
       +baseInput("text", "Header URL", "headerUrl", channel.headerUrl, "Header Url")
     .flex.flex-col.mb-3

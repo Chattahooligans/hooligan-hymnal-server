@@ -149,6 +149,5 @@ exports.removeLogo = async (req, res) => {
   const img = foe[type];
   const response = await removeFromCloudinary(`foes_${type.toLowerCase()}`, img);
   // eslint-disable-next-line
-  console.log(response);
   return res.send(response);
 };

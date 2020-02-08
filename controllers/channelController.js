@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const Channel = mongoose.model('channels');
 const User = mongoose.model('User');
+const { removeFromCloudinary } = require('../handlers/cloudinaryDelete');
+const { upload } = require('../handlers/imageUploader');
 
 exports.index = async (req, res) => {
   const channels = await Channel.find();
@@ -74,7 +76,6 @@ exports.update = async (req, res) => {
   const channel = await Channel.findById(req.params.id);
   await channel.update(req.body);
   return res.redirect(`/channels/${channel._id}`);
-  // res.send(req.body);
 };
 
 exports.deleteConfirm = async (req, res) => {
@@ -85,4 +86,63 @@ exports.deleteConfirm = async (req, res) => {
   });
 };
 
-exports.delete = async (req, res) => {};
+exports.delete = async (req, res) => {
+  const channel = await Channel.findById(req.params.id);
+  if (!req.body.name) {
+    req.flash('error', 'Please provide a valid name for the channel');
+    return res.redirect('back');
+  }
+  if (req.body.name !== channel.name) {
+    req.flash('error', 'The name did not match. Please try again');
+    return res.redirect('back');
+  }
+  await channel.remove();
+  req.flash('success', `${channel.name} was deleted`);
+  return res.redirect('/channels');
+};
+
+exports.avatar = async (req, res) => {
+  const avatar = await upload(req, {
+    folder: 'channels',
+    format: 'png',
+  });
+  return res.json({
+    url: avatar.url,
+    id: avatar.public_id,
+  });
+};
+
+exports.getAvatars = async (req, res) => {
+  const {
+    channelId,
+    type,
+  } = req.query;
+  if (!channelId.length) {
+    return res.send('Please provide and id');
+  }
+  if (!type) {
+    return res.send('Please provide the image field you are looking for');
+  }
+  const channel = await Channel.findById(channelId);
+  return res.send({
+    name: channel.name,
+    [type]: channel[type],
+  });
+};
+
+exports.removeAvatar = async (req, res) => {
+  const {
+    channelId,
+    type,
+  } = req.query;
+  if (!channelId.length) {
+    return res.send('Please provide and id');
+  }
+  if (!type) {
+    return res.send('Please provide the image field you are looking for');
+  }
+  const channel = await Channel.findById(channelId);
+  const img = channel[type];
+  const response = await removeFromCloudinary(`channels/${img}`);
+  return res.send(response);
+};

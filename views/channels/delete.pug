@@ -1,4 +1,11 @@
 extends ../layout
 
+include ../mixins/_baseInput
+
 block content
-  h2 #{title}
+  h2(class="text-2xl font-semibold") #{title}
+  strong Are you sure you want to delete #{channel.title}
+  form(method="POST")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Channel Name", "name", "", "Name", true)
+    button(type="submit" class="btn bg-red-700 text-white") Delete
