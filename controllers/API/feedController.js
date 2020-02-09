@@ -103,8 +103,8 @@ exports.channel = async (req, res) => {
 };
 
 exports.store = async (req, res) => {
+  req.body.images = [];
   if (req.files.images) {
-    req.body.images = [];
     req.files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
     const images = await upload(req, {
       folder: 'feed',
@@ -118,26 +118,23 @@ exports.store = async (req, res) => {
   }
   req.body.active = true;
   const channel = await Channels.findById(req.body.channel);
-  req.body.channel = channel.id;
-  if (req.body.sender) {
-    req.body.sender = JSON.parse(req.body.sender);
-  }
-  // const feedItem = new FeedItems(req.body);
-  const feedItem = new FeedItems({
-    sender: { user: 'Test', pushToken: 'Test' },
-    push: false,
-    channel: 'Chatta',
-    locale: 'en',
-    text: 'Hello',
-    images: [''],
-    attachments: [''],
+  console.log(req.body);
+  const data = {
+    sender: JSON.parse(req.body.sender),
+    publishedAt: req.body.publishedAt,
+    push: req.body.push,
+    locale: req.body.locale,
+    text: req.body.text,
+    images: req.body.images,
+    attachments: req.body.attachments ? req.body.attachments : [],
     active: true,
-  });
+    channel: channel.id,
+  };
+  const feedItem = await (new FeedItems(data)).save();
   const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
   if (!userHasPermission) {
     return res.status(401).send('You do not have permission to post to this news feed channel');
   }
-  await feedItem.save();
   feeditems_cache.force_reload();
   return res.json(feedItem);
 };

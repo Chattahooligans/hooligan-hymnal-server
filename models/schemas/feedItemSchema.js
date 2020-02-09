@@ -12,10 +12,10 @@ module.exports = new mongoose.Schema(
     channel: String,
     locale: String,
     text: String,
-    // images: [{
-    //   url: String, caption: String, credit: String, default: Boolean,
-    // }],
-    // attachments: [{ attachmentType: String, relatedId: String, data: {} }],
+    images: [{
+      url: String, caption: String, credit: String, default: Boolean,
+    }],
+    attachments: [{ attachmentType: String, relatedId: String, data: {} }],
     active: Boolean,
   },
   {
