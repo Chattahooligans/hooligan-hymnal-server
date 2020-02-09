@@ -83,9 +83,7 @@ const feeditems_cache = {
 };
 
 exports.active = async (req, res) => {
-  const feedItems = await FeedItems.find({});
-  return res.json(feedItems);
-  // feeditems_cache.send_active(res, req.query.publishedBefore, req.query.limit);
+  feeditems_cache.send_active(res, req.query.publishedBefore, req.query.limit);
 };
 
 exports.all = async (req, res) => {
@@ -118,11 +116,10 @@ exports.store = async (req, res) => {
   }
   req.body.active = true;
   const channel = await Channels.findById(req.body.channel);
-  console.log(req.body);
   const data = {
     sender: JSON.parse(req.body.sender),
     publishedAt: req.body.publishedAt,
-    push: req.body.push,
+    push: req.body.push === 'true',
     locale: req.body.locale,
     text: req.body.text,
     images: req.body.images,
@@ -131,11 +128,21 @@ exports.store = async (req, res) => {
     channel: channel.id,
   };
   const feedItem = await (new FeedItems(data)).save();
+  console.log(feedItem);
   const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
   if (!userHasPermission) {
     return res.status(401).send('You do not have permission to post to this news feed channel');
   }
-  feeditems_cache.force_reload();
+  if (feedItem.push) {
+    PushHandler.sendPost(feedItem, channel)
+      .then((res) => {
+        feeditems_cache.force_reload();
+      }).catch((err) => {
+        console.log(`Error: ${err}`);
+      });
+  } else {
+    feeditems_cache.force_reload();
+  }
   return res.json(feedItem);
 };
 
