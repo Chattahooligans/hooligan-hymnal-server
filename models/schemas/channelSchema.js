@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+mongoose.Promise = global.Promise;
 const { ObjectId } = mongoose.Schema.Types;
 
 // Note to self: https://stackoverflow.com/questions/45952928/mongodb-error-document-must-have-an-id-before-saving

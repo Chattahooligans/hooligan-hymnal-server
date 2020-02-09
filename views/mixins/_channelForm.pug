@@ -9,7 +9,7 @@ mixin channelForm(channel = {}, ...props)
       +baseInput("text", "Name", "name", channel.name, "Name", true)
     .flex.flex-col.mb-3
       +baseInput("text", "Default Locale", "defaultLocale", channel.defaultLocale, "Default Local", true)
-    .flex.flex-col.mb-3#avatar
+    .flex.flex-col.mb-3#avatarUrl
       #avatar-template
         div(class="relative inline-block")
           img(data-dz-thumbnail class="rounded-full mx-auto" style="height:50px;width:50px")
@@ -66,7 +66,7 @@ mixin channelForm(channel = {}, ...props)
                 label Can Push
                   input(type="checkbox" class="ml-3" x-model="selectedUser.canPush")
               div
-                button(type="button" @click="selectedUsers.push(selectedUser); selectedUser = {}" class="bg-green-700 text-white rounded-full h-12 w-12 mr-3 align-middle") &plus;
+                button(type="button" @click="selectedUsers.push({ _id: selectedUser._id, name: selectedUser.name, canCreate: selectedUser.canCreate, canEdit: selectedUser.canEdit, canDelete: selectedUser.canDelete, canPush: selectedUser.canPush }); selectedUser = {}" class="bg-green-700 text-white rounded-full h-12 w-12 mr-3 align-middle") &plus;
                 button(type="button" @click="selectedUser = {}" class="bg-red-700 text-white h-12 w-12 rounded-full align-middle") &times;
     .mb-3
       button(type="submit" class="btn bg-blue-700 text-white") Save

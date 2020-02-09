@@ -7,12 +7,12 @@ const cloudinary = require('cloudinary').v2;
  */
 exports.upload = async (req, options) => {
   const { files } = req;
-  const images = [];
+  let images = [];
   for (const file in files) {
     if (files.hasOwnProperty(file)) {
       const path = files[file].tempFilePath;
       const image = await cloudinary.uploader.upload(path, options);
-      images.push(image);
+      images = [...images, image];
     }
   }
   if (images.length === 1) {
