@@ -46,6 +46,7 @@ mongoose
   .connect(
     MONGO_URI,
     {
+      useCreateIndex: true,
       useNewUrlParser: true,
       useUnifiedTopology: true,
     },

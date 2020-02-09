@@ -83,13 +83,13 @@ const feeditems_cache = {
 };
 
 exports.active = async (req, res) => {
-  feeditems_cache.send_active(res, req.query.publishedBefore, req.query.limit);
+  const feedItems = await FeedItems.find({});
+  return res.json(feedItems);
+  // feeditems_cache.send_active(res, req.query.publishedBefore, req.query.limit);
 };
 
 exports.all = async (req, res) => {
-  const items = await FeedItems.find();
-  return res.json(items);
-  // feeditems_cache.send_data(res, req.query.publishedBefore, req.query.limit);
+  feeditems_cache.send_data(res, req.query.publishedBefore, req.query.limit);
 };
 
 exports.show = async (req, res) => {
@@ -117,63 +117,29 @@ exports.store = async (req, res) => {
     }
   }
   req.body.active = true;
-  const feedItem = await (new FeedItems(req.body)).save();
-  const channel = await Channels.findById(feedItem.channel);
-  const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) == String(req.user._id));
+  const channel = await Channels.findById(req.body.channel);
+  req.body.channel = channel.id;
+  if (req.body.sender) {
+    req.body.sender = JSON.parse(req.body.sender);
+  }
+  // const feedItem = new FeedItems(req.body);
+  const feedItem = new FeedItems({
+    sender: { user: 'Test', pushToken: 'Test' },
+    push: false,
+    channel: 'Chatta',
+    locale: 'en',
+    text: 'Hello',
+    images: [''],
+    attachments: [''],
+    active: true,
+  });
+  const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
   if (!userHasPermission) {
     return res.status(401).send('You do not have permission to post to this news feed channel');
   }
-  if (feedItem.push) {
-    PushHandler.sendPost(feedItem, channel)
-      .then(() => {
-        feeditems_cache.force_reload();
-      }).catch((error) => {
-        console.log('Error 2:', error);
-        res.status(501).json({ error: `ERror fetching push tokens: ${error}` });
-      });
-  } else {
-    feeditems_cache.force_reload();
-  }
-  return feeditems_cache.force_reload();
-  // const feedItem = new FeedItems(req.body);
-  // feedItem.active = true;
-  // if (req.files) {
-  //   const images = await upload(req, {
-  //     folder: 'feed_images',
-  //     format: 'jpg',
-  //   });
-  //   feedItem.images = images;
-  // }
-  // Channels.findById(feedItem.channel, (error, channel) => {
-  //   if (error) {
-  //     res.send(error);
-  //   }
-  //   const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) == String(req.user._id));
-  //   if (!userHasPermission) {
-  //     res.status(401).send('You do not have permission to post to this news feed channel!');
-  //     return;
-  //   }
-  //   feedItem.save((error, item) => {
-  //     error ? res.status(501).send({ error }) : res.send(item);
-  //     if (feedItem.push) {
-  //       // send a push notification here
-  //       // need to translate feedItem into a Notification object first
-  //       // TODO? currently, this means that the Notification form will be sent back, not the feedItem.
-  //       PushHandler.sendPost(feedItem, channel)
-  //         .then((results) => {
-  //           feeditems_cache.force_reload();
-  //         }).catch((error) => {
-  //         // TODO: returning an error would be cleaner
-  //           console.log('error 2: ', error);
-  //           res
-  //             .status(501)
-  //             .send({ error: `Error fetching push tokens: ${error}` });
-  //         });
-  //     } else {
-  //       feeditems_cache.force_reload();
-  //     }
-  //   });
-  // });
+  await feedItem.save();
+  feeditems_cache.force_reload();
+  return res.json(feedItem);
 };
 
 exports.activate = async (req, res) => {

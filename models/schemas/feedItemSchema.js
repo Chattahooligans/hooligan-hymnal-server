@@ -5,21 +5,20 @@ const { ObjectId } = mongoose.Schema.Types;
 
 module.exports = new mongoose.Schema(
   {
-    sender: { user: ObjectId, pushToken: String },
+    sender: { user: String, pushToken: String },
     publishedAt: Date,
     unpublishedAt: Date,
     push: Boolean,
-    channel: ObjectId,
+    channel: String,
     locale: String,
     text: String,
-    images: [{
-      url: String, caption: String, credit: String, default: Boolean,
-    }],
-    attachments: [{ attachmentType: String, relatedId: ObjectId, data: {} }],
+    // images: [{
+    //   url: String, caption: String, credit: String, default: Boolean,
+    // }],
+    // attachments: [{ attachmentType: String, relatedId: String, data: {} }],
     active: Boolean,
   },
   {
-    strict: false,
     timestamps: true,
   },
 );
