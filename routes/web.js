@@ -16,6 +16,7 @@ const songbookSongsController = require('../controllers/songbookSongsController'
 const notificationsController = require('../controllers/notificationsController');
 const pushTokensController = require('../controllers/pushTokensController');
 const foesController = require('../controllers/foesController');
+const channelController = require('../controllers/channelController');
 
 const { isLoggedIn } = require('../middleware/authMiddleware');
 const { catchErrors } = require('../handlers/errorHandlers');
@@ -137,20 +138,29 @@ router.get('/push-tokens/:id/delete', isLoggedIn, checkPermission('pushNotificat
 router.post('/push-tokens/:id/delete', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.delete));
 
 // Foes
-router.get('/foes', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.index));
-router.post('/foes/logo', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.logo));
-router.get('/foes/create', isLoggedIn, checkPermission('rosterAllowed'), foesController.create);
-router.post('/foes/create', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.store));
-router.get('/foes/logos', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.getLogo));
-router.post('/foes/remove-logo', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.removeLogo));
-router.get('/foes/:id', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.show));
-router.get('/foes/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.edit));
-router.post('/foes/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.update));
-router.get('/foes/:id/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.deleteConfirm));
-router.post('/foes/:id/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(foesController.delete));
+router.get('/foes', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.index));
+router.post('/foes/logo', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.logo));
+router.get('/foes/create', isLoggedIn, checkPermission('foesAllowed'), foesController.create);
+router.post('/foes/create', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.store));
+router.get('/foes/logos', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.getLogo));
+router.post('/foes/remove-logo', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.removeLogo));
+router.get('/foes/:id', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.show));
+router.get('/foes/:id/edit', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.edit));
+router.post('/foes/:id/edit', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.update));
+router.get('/foes/:id/delete', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.deleteConfirm));
+router.post('/foes/:id/delete', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.delete));
 
-router.get('/alpine-for', (req, res) => {
-  res.render('alpine-for');
-});
+router.get('/channels', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.index));
+router.get('/channels/create', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.create));
+router.post('/channels/create', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.store));
+router.post('/channels/avatar', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.avatar));
+router.get('/channels/avatars', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.getAvatars));
+router.post('/channels/remove-avatar', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.removeAvatar));
+router.get('/channels/:id', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.show));
+router.get('/channels/:id/edit', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.edit));
+router.post('/channels/:id/edit', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.update));
+router.get('/channels/:id/delete', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.deleteConfirm));
+router.post('/channels/:id/delete', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.delete));
+
 
 module.exports = router;

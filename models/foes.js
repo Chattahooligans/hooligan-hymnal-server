@@ -1,4 +1,4 @@
-var mongoose = require("mongoose");
-var foesSchema = require("./schemas/foesSchema");
+const mongoose = require('mongoose');
+const foesSchema = require('./schemas/foesSchema');
 
-module.exports = mongoose.model("foes", foesSchema);
+module.exports = mongoose.model('foes', foesSchema);
