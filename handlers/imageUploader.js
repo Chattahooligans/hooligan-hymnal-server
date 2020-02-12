@@ -12,9 +12,9 @@ exports.upload = async (req, options) => {
     if (files.hasOwnProperty(file)) {
       const path = files[file].tempFilePath;
       // TODO: See if we can upload the images based on type to cloudinary
-      // if (!options.type) {
-      //   options.type = files[file].type;
-      // }
+      if (!options.format) {
+        options.format = files[file].mimetype.split('/')[1];
+      }
       const image = await cloudinary.uploader.upload(path, options);
       images = [...images, image];
     }

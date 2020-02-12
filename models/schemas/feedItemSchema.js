@@ -13,7 +13,11 @@ module.exports = new mongoose.Schema(
     locale: String,
     text: String,
     images: [{
-      url: String, caption: String, credit: String, default: Boolean,
+      uri: String,
+      url: String,
+      caption: String,
+      credit: String,
+      default: Boolean,
     }],
     attachments: [{ attachmentType: String, relatedId: String, data: {} }],
     active: Boolean,

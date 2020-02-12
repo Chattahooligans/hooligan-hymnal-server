@@ -83,6 +83,7 @@ fs.readdirSync('models').forEach((file) => {
 // modelMigrations();
 const Players = mongoose.model('players');
 const Songs = mongoose.model('song');
+const FeedItems = mongoose.model('feedItem');
 
 async function changePlayerImages() {
   const players = await Players.find();
@@ -122,9 +123,26 @@ async function changeSongs() {
   });
 }
 
+async function changeFeedImagesUrlToUri() {
+  const feedItems = await FeedItems.find();
+  feedItems.forEach(async (feedItem) => {
+    const item = await FeedItems.findById(feedItem.id);
+    if (item.images) {
+      item.images.forEach((img) => {
+        if (!img.uri) {
+          img.uri = img.url;
+        }
+        img.url = img.uri;
+      });
+    }
+    item.save();
+  });
+}
+
 async function modelMigrations() {
   await changePlayerImages();
   await changeSongs();
+  await changeFeedImagesUrlToUri();
 }
 
 modelMigrations();

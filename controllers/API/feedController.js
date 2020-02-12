@@ -106,7 +106,6 @@ exports.store = async (req, res) => {
     req.files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
     const images = await upload(req, {
       folder: 'feed',
-      format: 'jpg',
     });
     if (Array.isArray(images)) {
       images.map((image) => req.body.images.push({ url: image.url }));
@@ -128,7 +127,6 @@ exports.store = async (req, res) => {
     channel: channel.id,
   };
   const feedItem = await (new FeedItems(data)).save();
-  console.log(feedItem);
   const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
   if (!userHasPermission) {
     return res.status(401).send('You do not have permission to post to this news feed channel');
