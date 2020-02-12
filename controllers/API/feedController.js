@@ -108,9 +108,9 @@ exports.store = async (req, res) => {
       folder: 'feed',
     });
     if (Array.isArray(images)) {
-      images.map((image) => req.body.images.push({ url: image.url }));
+      images.map((image) => req.body.images.push({ url: image.url, uri: image.url }));
     } else {
-      req.body.images.push({ url: images.url });
+      req.body.images.push({ url: images.url, uri: images.url });
     }
   }
   req.body.active = true;
