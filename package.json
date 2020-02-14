@@ -65,7 +65,7 @@
     "uuid": "^3.3.3",
     "validator": "^12.1.0",
     "validatorjs": "^3.17.1",
-    "yarn": "^1.19.1"
+    "yarn": "^1.22.0"
   },
   "devDependencies": {
     "autoprefixer": "^9.6.5",
