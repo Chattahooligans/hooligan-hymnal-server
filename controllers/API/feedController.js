@@ -83,6 +83,7 @@ const feeditems_cache = {
 };
 
 exports.active = async (req, res) => {
+  console.log("CONSPICUOUS LOGGING TO GET FEED " + req)
   feeditems_cache.send_active(res, req.query.publishedBefore, req.query.limit);
 };
 
@@ -101,6 +102,7 @@ exports.channel = async (req, res) => {
 };
 
 exports.store = async (req, res) => {
+  console.log("CONSPICUOUS LOGGING TO POST " + req)
   req.body.images = [];
   if (req.files.images) {
     req.files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
