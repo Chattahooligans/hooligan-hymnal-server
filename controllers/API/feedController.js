@@ -101,6 +101,8 @@ exports.channel = async (req, res) => {
 };
 
 exports.store = async (req, res) => {
+  console.log("REQUEST")
+  console.log(req.body)
   req.body.images = [];
   if (req.files.images) {
     req.files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
