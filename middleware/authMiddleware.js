@@ -1,4 +1,4 @@
-const passport = require("passport");
+const passport = require('passport');
 
 exports.isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -8,4 +8,4 @@ exports.isLoggedIn = (req, res, next) => {
   res.redirect(`/login?nextUrl=${req.session.redirectTo}`);
 };
 
-exports.apiLoggedIn = passport.authenticate("jwt", { session: false });
+exports.apiLoggedIn = passport.authenticate('jwt', { session: false });
