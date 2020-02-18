@@ -105,13 +105,14 @@ exports.store = async (req, res) => {
   req.body.images = [];
   if (req.files && req.files.images) {
     req.files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
+    req.body.metadata = Array.isArray(req.body.metadata) ? req.body.metadata : [req.body.metadata];
     const images = await upload(req, {
       folder: 'feed',
     });
     if (Array.isArray(images)) {
-      images.map((image) => req.body.images.push({ url: image.url, uri: image.url }));
+      images.map((image, index) => req.body.images.push({ url: image.url, uri: image.url, metadata: JSON.parse(req.body.metadata[index]) }));
     } else {
-      req.body.images.push({ url: images.url, uri: images.url });
+      req.body.images.push({ url: images.url, uri: images.url, metadata: JSON.parse(req.body.metadata) });
     }
   }
   req.body.active = true;
