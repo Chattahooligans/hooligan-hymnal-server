@@ -102,9 +102,8 @@ exports.channel = async (req, res) => {
 };
 
 exports.store = async (req, res) => {
-  console.log(`CONSPICUOUS LOGGING TO POST ${req}`);
   req.body.images = [];
-  if (req.files.images) {
+  if (req.files && req.files.images) {
     req.files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
     const images = await upload(req, {
       folder: 'feed',
@@ -124,7 +123,7 @@ exports.store = async (req, res) => {
     locale: req.body.locale,
     text: req.body.text,
     images: req.body.images,
-    attachments: req.body.attachments ? req.body.attachments : [],
+    attachments: req.body.attachments ? JSON.parse(req.body.attachments) : [],
     active: true,
     channel: channel.id,
   };
