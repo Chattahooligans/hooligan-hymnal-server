@@ -108,7 +108,7 @@ exports.store = async (req, res) => {
     req.body.metadata = Array.isArray(req.body.metadata) ? req.body.metadata : [req.body.metadata];
 
     // TODO: do something with req.body.publishedAt
-    let targetFolder = 'feed'
+    const targetFolder = 'feed';
 
     const images = await upload(req, {
       folder: 'feed',
