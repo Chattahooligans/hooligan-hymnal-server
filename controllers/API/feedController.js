@@ -108,7 +108,8 @@ exports.store = async (req, res) => {
     req.files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
     req.body.metadata = Array.isArray(req.body.metadata) ? req.body.metadata : [req.body.metadata];
 
-    const date = moment(req.body.publishedAt).format('YYYY/MM/D_hh_mm');
+    const date = moment(req.body.publishedAt).format('YYYY/MM/DD_hh_mm');
+    console.log(date);
     const targetFolder = `feed/${date}`;
 
     const images = await upload(req, {
