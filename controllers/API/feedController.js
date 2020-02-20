@@ -111,7 +111,7 @@ exports.store = async (req, res) => {
     const targetFolder = 'feed';
 
     const images = await upload(req, {
-      folder: 'feed'
+      folder: 'feed',
     });
     if (Array.isArray(images)) {
       images.map((image, index) => req.body.images.push({ url: image.url, uri: image.url, metadata: JSON.parse(req.body.metadata[index]) }));
