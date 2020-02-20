@@ -69,6 +69,23 @@ async function sendPush(push, res) {
 				);
 			}
 		}
+		var tokenMatcher = new RegExp("ExponentPushToken");
+		receipts.forEach(receipt => {
+		  if (receipt.status == "error") {
+			//run regex to retrieve token from it
+			let matches = tokenMatcher.exec(receipt.message);
+			if (matches.length > 0) {
+			  let i = matches.index;
+			  var token = receipt.message.substring(i, i + 41);
+			  //if token found, find and delete
+			  PushTokens.deleteOne({ pushToken: token }).then(
+				deleteResult => {
+					console.log("deleted bad push token");
+				}
+			  );
+			}
+		  }
+		});
 		res.send({ errors: errors, receipts: receipts });
 	});
 }
