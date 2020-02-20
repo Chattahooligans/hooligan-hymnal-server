@@ -59,7 +59,7 @@ module.exports = app => {
         } else if (notification.push) {
           console.log("no error, pushing forward");
           //send push
-          PushHandler.sendNotification(notification)
+          PushHandler.sendNotification(notification, res)
           .then(function(results) {
             results.notification = notification;
             res.send(results);

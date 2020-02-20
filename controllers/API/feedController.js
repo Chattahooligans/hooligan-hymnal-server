@@ -105,12 +105,15 @@ exports.store = async (req, res) => {
       return;
     }
     feedItem.save((error, item) => {
-      error ? res.status(501).send({ error }) : res.send(item);
+      if(error) {
+        res.status(501).send({ error });
+        return;
+      } 
       if(feedItem.push) {
         //send a push notification here
         //need to translate feedItem into a Notification object first
         //TODO? currently, this means that the Notification form will be sent back, not the feedItem.
-        PushHandler.sendPost(feedItem, channel)
+        PushHandler.sendPost(feedItem, channel, res)
         .then(function(results) {
           feeditems_cache.force_reload();
         }).catch(function(error) {
@@ -122,6 +125,7 @@ exports.store = async (req, res) => {
           return;
         });
       } else {
+        res.send(item);
         feeditems_cache.force_reload();
       }
     });

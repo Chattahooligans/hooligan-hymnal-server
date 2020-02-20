@@ -2,16 +2,16 @@ let PushTokens = require("./pushTokens");
 let { Expo } = require("expo-server-sdk");
 let expo = new Expo();
 
-async function sendNotification(notification) {
+async function sendNotification(notification, res) {
 	var push = {
 		title: notification.song.title,
 		body: notification.song.lyrics,
 		data: { song: notification.song }
 	};
-	return await sendPush(push);
+	return await sendPush(push, res);
 }
 
-async function sendPost(post, channel) {
+async function sendPost(post, channel, res) {
 	var body = post.text;
 	["\n", ".", "!", "?"].forEach((value) => {
 		if (body.indexOf(value) > 0)
@@ -23,10 +23,10 @@ async function sendPost(post, channel) {
 		body: body + "... (tap to view more)",
 		data: { postId: post._id }
 	};
-	return await sendPush(push);
+	await sendPush(push, res);
 }
 
-async function sendPush(push) {
+async function sendPush(push, res) {
 	console.log("sending push...");
 	PushTokens.find(async (error, tokens) => {
 		if (error) {
@@ -69,7 +69,7 @@ async function sendPush(push) {
 				);
 			}
 		}
-		return { errors: errors, receipts: receipts };
+		res.send({ errors: errors, receipts: receipts });
 	});
 }
 
