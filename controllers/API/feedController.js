@@ -4,6 +4,7 @@ const FeedItems = mongoose.model('feedItem');
 const Channels = mongoose.model('channels');
 // const FeedItems = require('../../models/feeditems');
 // const Channels = require('../../models/channels');
+const moment = require('moment');
 const config = require('../../config.js');
 const PushHandler = require('../../models/pushHandler');
 const { upload } = require('../../handlers/imageUploader');
@@ -107,11 +108,11 @@ exports.store = async (req, res) => {
     req.files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
     req.body.metadata = Array.isArray(req.body.metadata) ? req.body.metadata : [req.body.metadata];
 
-    // TODO: do something with req.body.publishedAt
-    const targetFolder = 'feed';
+    const date = moment(req.body.publishedAt).format('YYYY/MM/D_hh_mm');
+    const targetFolder = `feed/${date}`;
 
     const images = await upload(req, {
-      folder: 'feed',
+      folder: targetFolder,
     });
     if (Array.isArray(images)) {
       images.map((image, index) => req.body.images.push({ url: image.url, uri: image.url, metadata: JSON.parse(req.body.metadata[index]) }));
