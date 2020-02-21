@@ -111,6 +111,16 @@ exports.store = async (req, res) => {
     const date = moment(req.body.publishedAt).format('YYYY/MM/DD_HH_mm');
     const targetFolder = `feed/${date}`;
 
+    /*
+    TODO: 
+    - remove url from req.body.images (we've switched entirely to uri everywhere at this point, so this is a relic)
+    - alter upload() function to handle a single image at a time rather than all of them
+    - (decide if we actually wanna do .thumbnailUri for remote images or not)
+    - we use .remoteUri and .thumbnailUri for a remotely linked image, not an uploaded file
+    - if it's a remotely linked image, don't call upload()
+    - if it's a remotely linked image, save .uri: remoteUri and .thumbnailUri: thumbnailUri
+    */
+
     const images = await upload(req, {
       folder: targetFolder,
     });
