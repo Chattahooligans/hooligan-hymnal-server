@@ -35,12 +35,9 @@ router.get('/users/me', apiLoggedIn, userController.me);
 
 // Notifications
 router.get('/notifications/last', catchErrors(notificationsController.last));
-router.post('/notification', apiLoggedIn, catchErrors(notificationsController.store));
 router.post('/notifications/:id/engagements', catchErrors(notificationsEngagementController.create));
 router.get('/notifications/:id/engagements', catchErrors(notificationsEngagementController.show));
 router.get('/notifications/:id', catchErrors(notificationsEngagementController.summarize));
-
-router.post('/notification', apiLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(notificationsController.store));
 // Players
 router.get('/players', catchErrors(playersController.index));
 router.get('/players/:id', catchErrors(playersController.show));
