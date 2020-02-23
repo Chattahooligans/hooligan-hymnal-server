@@ -14,6 +14,7 @@ module.exports = new mongoose.Schema(
     text: String,
     images: [{
       uri: String,
+      thumbnailUri: String,
       metadata: {
         caption: String,
         credit: String,

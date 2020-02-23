@@ -111,24 +111,33 @@ exports.store = async (req, res) => {
     const date = moment(req.body.publishedAt).format('YYYY/MM/DD_HH_mm');
     const targetFolder = `feed/${date}`;
 
-    /*
-    TODO: 
-    - remove url from req.body.images (we've switched entirely to uri everywhere at this point, so this is a relic)
-    - alter upload() function to handle a single image at a time rather than all of them
-    - (decide if we actually wanna do .thumbnailUri for remote images or not)
-    - we use .remoteUri and .thumbnailUri for a remotely linked image, not an uploaded file
-    - if it's a remotely linked image, don't call upload()
-    - if it's a remotely linked image, save .uri: remoteUri and .thumbnailUri: thumbnailUri
-    */
-
     const images = await upload(req, {
       folder: targetFolder,
     });
     if (Array.isArray(images)) {
-      images.map((image, index) => req.body.images.push({ url: image.url, uri: image.url, metadata: JSON.parse(req.body.metadata[index]) }));
+      images.map((image, index) => req.body.images.push({
+        uri: image.url,
+        metadata: JSON.parse(req.body.metadata[index]),
+      }));
     } else {
       req.body.images.push({ url: images.url, uri: images.url, metadata: JSON.parse(req.body.metadata) });
     }
+  }
+  if (req.body.remoteImages) {
+    const remoteImages = [];
+    const { remoteMetadata } = req.body;
+    if (Array.isArray(req.body.remoteImages)) {
+      req.body.remoteImages.map((image) => remoteImages.push(JSON.parse(image)));
+    } else {
+      remoteImages.push(JSON.parse(req.body.remoteImages));
+    }
+    remoteImages.map((image, i) => req.body.images.push({
+      uri: image.uri,
+      thumbnailUri: image.thumbnailUri,
+      metadata: Array.isArray(remoteMetadata)
+        ? JSON.parse(remoteMetadata[i])
+        : JSON.parse(remoteMetadata),
+    }));
   }
   req.body.active = true;
   const channel = await Channels.findById(req.body.channel);
