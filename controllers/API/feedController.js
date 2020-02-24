@@ -132,6 +132,7 @@ exports.store = async (req, res) => {
       req.body.remoteImages.forEach((image, index) => {
         let thisImage = {
           uri: image.url,
+          thumbnailUri: image.thumbnailUri,
           metadata: JSON.parse(req.body.remoteMetadata[index])
         }
 
