@@ -211,33 +211,7 @@ exports.store = async (req, res) => {
 
   console.log("DONE PROCESSING IMAGES, feedItemImages is")
   console.log(JSON.stringify(feedItemImages))
-  /*
-  if (Array.isArray(images)) {
-    images.map((image, index) => req.body.images.push({
-      uri: image.url,
-      metadata: JSON.parse(req.body.metadata[index]),
-    }));
-  } else {
-    req.body.images.push({ url: images.url, uri: images.url, metadata: JSON.parse(req.body.metadata) });
-  }
-}
-if (req.body.remoteImages) {
-  const remoteImages = [];
-  const { remoteMetadata } = req.body;
-  if (Array.isArray(req.body.remoteImages)) {
-    req.body.remoteImages.map((image) => remoteImages.push(JSON.parse(image)));
-  } else {
-    remoteImages.push(JSON.parse(req.body.remoteImages));
-  }
-  remoteImages.map((image, i) => req.body.images.push({
-    uri: image.uri,
-    thumbnailUri: image.thumbnailUri,
-    metadata: Array.isArray(remoteMetadata)
-      ? JSON.parse(remoteMetadata[i])
-      : JSON.parse(remoteMetadata),
-  }));
-}
-*/
+  
   req.body.active = true;
   const channel = await Channels.findById(req.body.channel);
   const data = {
