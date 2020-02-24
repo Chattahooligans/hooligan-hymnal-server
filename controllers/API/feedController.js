@@ -125,7 +125,7 @@ exports.store = async (req, res) => {
     req.files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
     req.body.metadata = Array.isArray(req.body.metadata) ? req.body.metadata : [req.body.metadata];
 
-    const date = moment(req.body.publishedAt).format('YYYY/MM/DD_HH_mm');
+    const date = moment(req.body.publishedAt).format('YYYY/MM/DD_HHmm');
     const targetFolder = `feed/${date}`;
 
     // upload() returns an array
@@ -151,6 +151,7 @@ exports.store = async (req, res) => {
       console.log(image)
       let thisMetadata = JSON.parse(uploadMetadata[index])
       console.log(JSON.stringify(thisMetadata))
+      let targetIndex = thisMetadata.index
 
       let thisImage = {
         uri: image.url,
@@ -159,10 +160,10 @@ exports.store = async (req, res) => {
 
       delete thisImage.metadata.index
 
-      console.log("PROCESSED AN UPLOADED IMAGE, will place in index " + thisMetadata.index)
+      console.log("PROCESSED AN UPLOADED IMAGE, will place in index " + targetIndex)
       console.log(JSON.stringify(thisImage))
 
-      feedItemImages[thisMetadata.index] = thisImage
+      feedItemImages[targetIndex] = thisImage
     })
   }
 
@@ -190,6 +191,7 @@ exports.store = async (req, res) => {
       console.log(image)
       let thisMetadata = JSON.parse(remoteMetadata[index])
       console.log(JSON.stringify(thisMetadata))
+      let targetIndex = thisMetadata.index
 
       let thisImage = {
         uri: image.url,
@@ -199,10 +201,10 @@ exports.store = async (req, res) => {
 
       delete thisImage.metadata.index
 
-      console.log("PROCESSED A REMOTE IMAGE, will place into index " + image.index)
+      console.log("PROCESSED A REMOTE IMAGE, will place into index " + targetIndex)
       console.log(JSON.stringify(thisImage))
 
-      feedItemImages[image.index] = thisImage
+      feedItemImages[targetIndex] = thisImage
     })
   }
 
