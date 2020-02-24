@@ -135,23 +135,34 @@ exports.store = async (req, res) => {
 
     // if there's only one item, turn it into an array
     let uploadMetadata = []
-    if (Array.isArray(req.body.metadata))
+    if (Array.isArray(req.body.metadata)) {
+      console.log("req.body.metadata is array, assign it to uploadMetadata")
       uploadMetadata = req.body.metadata
-    else
+      console.log(uploadMetadata)
+    }
+    else {
+      console.log("req.body.metadata is not an array, push it to uploadMetadata")
       uploadMetadata.push(req.body.metadata)
+      console.log(uploadMetadata)
+    }
 
     images.forEach((image, index) => {
+      console.log("PROCESSING UPLOADED IMAGE")
+      console.log(image)
+      let thisMetadata = JSON.parse(uploadMetadata[index])
+      console.log(JSON.stringify(thisMetadata))
+
       let thisImage = {
         uri: image.url,
-        metadata: JSON.parse(req.body.metadata[index])
+        metadata: thisMetadata
       }
 
       delete thisImage.metadata.index
 
-      console.log("PROCESSED AN UPLOADED IMAGE, will place in index " + uploadMetadata[index].index)
+      console.log("PROCESSED AN UPLOADED IMAGE, will place in index " + thisMetadata.index)
       console.log(JSON.stringify(thisImage))
 
-      feedItemImages[uploadMetadata[index].index] = thisImage
+      feedItemImages[thisMetadata.index] = thisImage
     })
   }
 
@@ -160,19 +171,30 @@ exports.store = async (req, res) => {
     let remoteImages = []
     let remoteMetadata = []
     if (Array.isArray(req.body.remoteImages)) {
+      console.log("req.body.remoteImages is array, assign it")
       remoteImages = req.body.remoteImages
       remoteMetadata = req.body.remoteMetadata
+      console.log(remoteImages)
+      console.log(remoteMetadata)
     }
     else {
+      console.log("req.body.remoteImages is not an array, push it")
       remoteImages.push(req.body.remoteImages)
       remoteMetadata.push(req.body.remoteMetadata)
+      console.log(remoteImages)
+      console.log(remoteMetadata)
     }
 
     remoteImages.forEach((image, index) => {
+      console.log("PROCESSING REMOTE IMAGE")
+      console.log(image)
+      let thisMetadata = JSON.parse(remoteMetadata[index])
+      console.log(JSON.stringify(thisMetadata))
+
       let thisImage = {
         uri: image.url,
         thumbnailUri: image.thumbnailUri,
-        metadata: JSON.parse(remoteMetadata[index])
+        metadata: thisMetadata
       }
 
       delete thisImage.metadata.index
