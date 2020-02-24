@@ -19,8 +19,10 @@ exports.upload = async (req, options) => {
       images = [...images, image];
     }
   }
+  /*
   if (images.length === 1) {
     return images[0];
   }
+  */
   return images;
 };
