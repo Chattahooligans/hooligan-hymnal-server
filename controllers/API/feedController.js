@@ -117,6 +117,13 @@ exports.store = async (req, res) => {
 
     let feedItemImages = []
 
+    // if there's only one item, it's not an array to iterate over
+    let uploadMetadata = []
+    if (Array.isArray(req.body.metadata))
+      uploadMetadata = req.body.metadata
+    else
+      uploadMetadata.push(req.body.metadata)
+
     images.forEach((image, index) => {
       let thisImage = {
         uri: image.url,
@@ -129,11 +136,24 @@ exports.store = async (req, res) => {
     })
 
     if (req.body.remoteImages) {
-      req.body.remoteImages.forEach((image, index) => {
+      // if there's only one item, it's not an array to iterate over
+      let remoteImages = []
+      let remoteMetadata = []
+      if (Array.isArray(req.body.remoteImages)) {
+        remoteImages = req.body.remoteImages
+        remoteMetadata = req.body.remoteMetadata
+      }
+      else {
+        remoteImages.push(req.body.remoteImages)
+        remoteMetadata.push(req.body.remoteMetadata)
+      }
+
+
+      remoteImages.forEach((image, index) => {
         let thisImage = {
           uri: image.url,
           thumbnailUri: image.thumbnailUri,
-          metadata: JSON.parse(req.body.remoteMetadata[index])
+          metadata: JSON.parse(remoteMetadata[index])
         }
 
         delete thisImage.metadata.index
