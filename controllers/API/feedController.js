@@ -103,6 +103,19 @@ exports.channel = async (req, res) => {
 };
 
 exports.store = async (req, res) => {
+  /*
+      Notes on images:
+      - the server expects .images as file streams and the same number of accompanying .metadata 
+      - .metadata is a either a single object or an array, becaue of oddities with multipart/form-data
+      - using a similar pattern, .remoteImages and .remoteMetadat are objects / arrays of the same length
+  
+      - we want to treat everything as an array to iterate over, so we convert the single-item versions to arrays of length=1
+  
+      - each of .images, .metadata, .remoteImages, .remoteMetadata all have a matching .index property for the final sequence
+      - these are all combined into feedItemImages to store in the db
+  */
+  let feedItemImages = []
+
   req.body.images = [];
   if (req.files && req.files.images) {
     req.files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
@@ -110,19 +123,6 @@ exports.store = async (req, res) => {
 
     const date = moment(req.body.publishedAt).format('YYYY/MM/DD_HH_mm');
     const targetFolder = `feed/${date}`;
-
-    /*
-      Notes on images:
-      - the server expects .images as file streams and the same number of accompanying .metadata 
-      - .metadata is a either a single object or an array, becaue of oddities with multipart/form-data
-      - using a similar pattern, .remoteImages and .remoteMetadat are objects / arrays of the same length
-
-      - we want to treat everything as an array to iterate over, so we convert the single-item versions to arrays of length=1
-
-      - each of .images, .metadata, .remoteImages, .remoteMetadata all have a matching .index property for the final sequence
-      - these are all combined into feedItemImages to store in the db
-    */
-    let feedItemImages = []
 
     // upload() returns an array
     const images = await upload(req, {
@@ -146,128 +146,129 @@ exports.store = async (req, res) => {
 
       feedItemImages[image.index] = thisImage
     })
-
-    if (req.body.remoteImages) {
-      // if there's only one item, turn it into an array
-      let remoteImages = []
-      let remoteMetadata = []
-      if (Array.isArray(req.body.remoteImages)) {
-        remoteImages = req.body.remoteImages
-        remoteMetadata = req.body.remoteMetadata
-      }
-      else {
-        remoteImages.push(req.body.remoteImages)
-        remoteMetadata.push(req.body.remoteMetadata)
-      }
-
-
-      remoteImages.forEach((image, index) => {
-        let thisImage = {
-          uri: image.url,
-          thumbnailUri: image.thumbnailUri,
-          metadata: JSON.parse(remoteMetadata[index])
-        }
-
-        delete thisImage.metadata.index
-
-        feedItemImages[image.index] = thisImage
-      })
-    }
-    /*
-    if (Array.isArray(images)) {
-      images.map((image, index) => req.body.images.push({
-        uri: image.url,
-        metadata: JSON.parse(req.body.metadata[index]),
-      }));
-    } else {
-      req.body.images.push({ url: images.url, uri: images.url, metadata: JSON.parse(req.body.metadata) });
-    }
   }
+
   if (req.body.remoteImages) {
-    const remoteImages = [];
-    const { remoteMetadata } = req.body;
+    // if there's only one item, turn it into an array
+    let remoteImages = []
+    let remoteMetadata = []
     if (Array.isArray(req.body.remoteImages)) {
-      req.body.remoteImages.map((image) => remoteImages.push(JSON.parse(image)));
-    } else {
-      remoteImages.push(JSON.parse(req.body.remoteImages));
+      remoteImages = req.body.remoteImages
+      remoteMetadata = req.body.remoteMetadata
     }
-    remoteImages.map((image, i) => req.body.images.push({
-      uri: image.uri,
-      thumbnailUri: image.thumbnailUri,
-      metadata: Array.isArray(remoteMetadata)
-        ? JSON.parse(remoteMetadata[i])
-        : JSON.parse(remoteMetadata),
-    }));
+    else {
+      remoteImages.push(req.body.remoteImages)
+      remoteMetadata.push(req.body.remoteMetadata)
+    }
+
+
+    remoteImages.forEach((image, index) => {
+      let thisImage = {
+        uri: image.url,
+        thumbnailUri: image.thumbnailUri,
+        metadata: JSON.parse(remoteMetadata[index])
+      }
+
+      delete thisImage.metadata.index
+
+      feedItemImages[image.index] = thisImage
+    })
   }
-  */
-    req.body.active = true;
-    const channel = await Channels.findById(req.body.channel);
-    const data = {
-      sender: JSON.parse(req.body.sender),
-      publishedAt: req.body.publishedAt,
-      push: req.body.push === 'true',
-      locale: req.body.locale,
-      text: req.body.text,
-      images: feedItemImages,
-      attachments: req.body.attachments ? JSON.parse(req.body.attachments) : [],
-      active: true,
-      channel: channel.id,
-    };
-    const feedItem = await (new FeedItems(data)).save();
-    const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
-    if (!userHasPermission) {
-      return res.status(401).send('You do not have permission to post to this news feed channel');
-    }
-    if (feedItem.push) {
-      PushHandler.sendPost(feedItem, channel)
-        .then((res) => {
-          feeditems_cache.force_reload();
-        }).catch((err) => {
-          console.log(`Error: ${err}`);
-        });
-    } else {
+  /*
+  if (Array.isArray(images)) {
+    images.map((image, index) => req.body.images.push({
+      uri: image.url,
+      metadata: JSON.parse(req.body.metadata[index]),
+    }));
+  } else {
+    req.body.images.push({ url: images.url, uri: images.url, metadata: JSON.parse(req.body.metadata) });
+  }
+}
+if (req.body.remoteImages) {
+  const remoteImages = [];
+  const { remoteMetadata } = req.body;
+  if (Array.isArray(req.body.remoteImages)) {
+    req.body.remoteImages.map((image) => remoteImages.push(JSON.parse(image)));
+  } else {
+    remoteImages.push(JSON.parse(req.body.remoteImages));
+  }
+  remoteImages.map((image, i) => req.body.images.push({
+    uri: image.uri,
+    thumbnailUri: image.thumbnailUri,
+    metadata: Array.isArray(remoteMetadata)
+      ? JSON.parse(remoteMetadata[i])
+      : JSON.parse(remoteMetadata),
+  }));
+}
+*/
+  req.body.active = true;
+  const channel = await Channels.findById(req.body.channel);
+  const data = {
+    sender: JSON.parse(req.body.sender),
+    publishedAt: req.body.publishedAt,
+    push: req.body.push === 'true',
+    locale: req.body.locale,
+    text: req.body.text,
+    images: feedItemImages,
+    attachments: req.body.attachments ? JSON.parse(req.body.attachments) : [],
+    active: true,
+    channel: channel.id,
+  };
+  const feedItem = await (new FeedItems(data)).save();
+  const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
+  if (!userHasPermission) {
+    return res.status(401).send('You do not have permission to post to this news feed channel');
+  }
+  if (feedItem.push) {
+    PushHandler.sendPost(feedItem, channel)
+      .then((res) => {
+        feeditems_cache.force_reload();
+      }).catch((err) => {
+        console.log(`Error: ${err}`);
+      });
+  } else {
+    feeditems_cache.force_reload();
+  }
+  return res.json(feedItem);
+};
+
+exports.activate = async (req, res) => {
+  FeedItems.update({ _id: req.params.id }, {
+    active: true,
+  },
+    (err, affected, resp) => {
+      res.send(resp);
       feeditems_cache.force_reload();
-    }
-    return res.json(feedItem);
-  };
-
-  exports.activate = async (req, res) => {
-    FeedItems.update({ _id: req.params.id }, {
-      active: true,
-    },
-      (err, affected, resp) => {
-        res.send(resp);
-        feeditems_cache.force_reload();
-      });
-  };
-
-  exports.deactivate = async (req, res) => {
-    FeedItems.update({ _id: req.params.id }, {
-      active: false,
-    },
-      (err, affected, resp) => {
-        res.send(resp);
-        feeditems_cache.force_reload();
-      });
-  };
-
-  exports.delete = (req, res) => {
-    FeedItems.findById(req.params.id, (error, feedItem) => {
-      if (error) res.status(501).send({ error });
-
-      Channels.findById(feedItem.channel.Id), (error, channel) => {
-        if (error) {
-          res.send(error);
-        }
-        const userHasPermission = channel.users.some((user) => user.canDelete && user._id === req.user._id);
-        if (!userHasPermission) {
-          res.status(401).send('You do not have permission to delete from this news feed channel!');
-        }
-        FeedItems.findByIdAndRemove(req.params.id, (error) => {
-          error
-            ? res.status(501).send({ error })
-            : res.send({ message: `Deleted${req.params.id}` });
-        });
-      };
     });
-  };
+};
+
+exports.deactivate = async (req, res) => {
+  FeedItems.update({ _id: req.params.id }, {
+    active: false,
+  },
+    (err, affected, resp) => {
+      res.send(resp);
+      feeditems_cache.force_reload();
+    });
+};
+
+exports.delete = (req, res) => {
+  FeedItems.findById(req.params.id, (error, feedItem) => {
+    if (error) res.status(501).send({ error });
+
+    Channels.findById(feedItem.channel.Id), (error, channel) => {
+      if (error) {
+        res.send(error);
+      }
+      const userHasPermission = channel.users.some((user) => user.canDelete && user._id === req.user._id);
+      if (!userHasPermission) {
+        res.status(401).send('You do not have permission to delete from this news feed channel!');
+      }
+      FeedItems.findByIdAndRemove(req.params.id, (error) => {
+        error
+          ? res.status(501).send({ error })
+          : res.send({ message: `Deleted${req.params.id}` });
+      });
+    };
+  });
+};
