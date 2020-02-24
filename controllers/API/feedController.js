@@ -188,14 +188,15 @@ exports.store = async (req, res) => {
 
     remoteImages.forEach((image, index) => {
       console.log("PROCESSING REMOTE IMAGE")
-      console.log(image)
+      let parsedImage = JSON.parse(image)
+      console.log(parsedImage)
       let thisMetadata = JSON.parse(remoteMetadata[index])
       console.log(JSON.stringify(thisMetadata))
       let targetIndex = thisMetadata.index
 
       let thisImage = {
-        uri: image.url,
-        thumbnailUri: image.thumbnailUri,
+        uri: parsedImage.url,
+        thumbnailUri: parsedImage.thumbnailUri,
         metadata: thisMetadata
       }
 
