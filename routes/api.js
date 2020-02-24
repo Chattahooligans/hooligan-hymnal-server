@@ -57,15 +57,16 @@ router.get('/songbooks/:id', catchErrors(songbooksController.show));
 // Songs
 router.get('/songs', catchErrors(songsController.index));
 router.get('/song/:id', catchErrors(songsController.show));
+
 // feed
-router.get('/feed/', catchErrors(feedController.active));
+router.get('/feed', catchErrors(feedController.active));
+router.post('/feed', apiLoggedIn, checkPermission('feedAllowed'), catchErrors(feedController.store));
+// router.delete('/feed', apiLoggedIn, checkPermission('feedAllowed'), catchErrors(feedController.delete));
 router.get('/feed/all', catchErrors(feedController.all));
 router.get('/feed/:id', catchErrors(feedController.show));
 router.get('/feed/channel/:id', catchErrors(feedController.channel));
-router.post('/feed/', apiLoggedIn, checkPermission('feedAllowed'), catchErrors(feedController.store));
 router.put('/feed/:id/active', apiLoggedIn, checkPermission('feedAllowed'), catchErrors(feedController.activate));
 router.delete('/feed/:id/active', apiLoggedIn, checkPermission('feedAllowed'), catchErrors(feedController.deactivate));
-router.delete('/feed/', apiLoggedIn, checkPermission('feedAllowed'), catchErrors(feedController.delete));
 
 // channel
 router.get('/channels/', catchErrors(channelController.active));

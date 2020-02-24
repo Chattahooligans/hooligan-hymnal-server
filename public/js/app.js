@@ -12798,25 +12798,16 @@ module.exports = function(module) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/dropzone */ "./src/js/modules/dropzone.js");
 /* harmony import */ var _modules_sortable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/sortable */ "./src/js/modules/sortable.js");
+/* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/alpine.js");
+/* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(alpinejs__WEBPACK_IMPORTED_MODULE_2__);
 
-
-
-__webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/alpine.js"); // require('./modules/sortable');
 
 
 Object(_modules_sortable__WEBPACK_IMPORTED_MODULE_1__["default"])();
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/thumbnail', 'thumbnail-template', document.getElementById('thumbnail-upload-section'), '#thumbnail-previews', '#thumbnail-target', 'Thumbnail', 1, 'thumbnail');
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/images', 'images-template', document.getElementById('images-upload-section'), '#images-previews', '#images-target', 'Player Images', 10, 'images');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/foes/logo', 'logo-template', document.getElementById('logo-upload-section'), '#logo-previews', '#logo-target', 'Logo', 1, 'logo'); // dropzone(
-//   '/foes/logo',
-//   'logo-template',
-//   document.getElementById('logo-upload-section'),
-//   '#logo-previews',
-//   '#logo-target',
-//   'Logo',
-//   1,
-//   'logo',
-// );
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/foes/logo', 'logo-template', document.getElementById('logo-upload-section'), '#logo-previews', '#logo-target', 'Logo', 1, 'logo');
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/channels/avatar', 'avatar-template', document.getElementById('avatar-upload-section'), '#avatar-previews', '#avatar-target', 'Avatar', 1, 'avatarUrl');
 
 /***/ }),
 
@@ -12864,6 +12855,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   var previewTemplate = previewNode.parentNode.innerHTML;
   var playerId;
   var foeId;
+  var channelId;
   var myDropzone = new dropzone__WEBPACK_IMPORTED_MODULE_0___default.a(uploadSection, {
     url: url,
     maxFiles: maxFiles,
@@ -12876,6 +12868,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       var thisDropzone = this;
       playerId = document.getElementById('player-id');
       foeId = document.getElementById('foe-id');
+      channelId = document.getElementById('channel-id');
 
       if (playerId) {
         axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/players/images?playerId=".concat(playerId.innerText, "&type=").concat(inputName.toLowerCase()), {
@@ -12959,6 +12952,30 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         })["catch"](function (err) {
           console.error(err);
         });
+      } else if (channelId) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/channels/avatars?channelId=".concat(channelId.innerText, "&type=").concat(inputName), {
+          withCredentials: true
+        }).then(function (_ref3) {
+          var data = _ref3.data;
+
+          if (data.logo.length) {
+            var mockFile = {
+              name: "".concat(data.name, " logo")
+            };
+            thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
+            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.logo); // debugger;
+
+            var tEl = document.querySelector(target);
+            var input = document.createElement('input');
+            input.value = data.logo;
+            input.setAttribute('data-id', "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-avatar"));
+            input.classList.add = 'hidden';
+            input.setAttribute('name', inputName);
+            tEl.appendChild(input);
+          }
+        })["catch"](function (err) {
+          console.error(err);
+        });
       }
     }
   });
@@ -12997,8 +13014,8 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       document.querySelector("#small-".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(text).toLowerCase())).remove();
     }
   });
-  myDropzone.on('removedfile', function (_ref3) {
-    var previewElement = _ref3.previewElement;
+  myDropzone.on('removedfile', function (_ref4) {
+    var previewElement = _ref4.previewElement;
     var img = previewElement.querySelector('img');
 
     if (playerId) {
@@ -13027,6 +13044,18 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
           if (input.value == img.src) {
             input.remove();
           }
+        });
+      })["catch"](function (err) {
+        console.error(err);
+      });
+    } else if (channelId) {
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/channels/remove-avatar?channelId=".concat(channelId.innerText, "&type=").concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase())), {
+        withCredentials: true,
+        img: img.src
+      }).then(function () {
+        var inputs = document.querySelectorAll("input[name=\"".concat(inputName.toLowerCase(), "]"));
+        inputs.forEach(function (input) {
+          input.remove();
         });
       })["catch"](function (err) {
         console.error(err);
@@ -13123,8 +13152,8 @@ function SortList() {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/collin/code/ngs/hooligan-hymnal-server/src/js/app.js */"./src/js/app.js");
-module.exports = __webpack_require__(/*! /Users/collin/code/ngs/hooligan-hymnal-server/src/scss/app.scss */"./src/scss/app.scss");
+__webpack_require__(/*! /Users/collin/code/ngs/chatta-server/src/js/app.js */"./src/js/app.js");
+module.exports = __webpack_require__(/*! /Users/collin/code/ngs/chatta-server/src/scss/app.scss */"./src/scss/app.scss");
 
 
 /***/ })

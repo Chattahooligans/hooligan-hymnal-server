@@ -6,7 +6,7 @@ html(lang="en")
     link(rel="stylesheet" href=`/css/app.css?${randomId}`)
     //- script(src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.9.7/dist/alpine.js" defer)
     title #{title} | #{h.siteName}
-  body.flex.flex-col(x-data="skipToContent()")
+  body.flex.flex-col.min-h-screen(x-data="skipToContent()")
     header.bg-gray-800.text-white.py-3.relative
       button#skip(type="button" class="btn absolute p-3 bg-black text-white" @click="focus()") Skip To Content
       .px-3.flex.flex-row.justify-between
@@ -53,6 +53,8 @@ html(lang="en")
               a(href="/rosters" class="block p-3 hover:bg-gray-600 hover:text-white") Rosters
             if currentUser.foesAllowed
               a(href="/foes" class="block p-3 hover:bg-gray-600 hover:text-white") Foes
+            if currentUser.feedAllowed
+              a(href='/channels' class='block p-3 hover:bg-gray-600 hover:text-white') Channels
             if currentUser.usersAllowed
               a(href="/users" class="block p-3 hover:bg-gray-600 hover:text-white") Users
       main#main(class=`w-full flex-1 relative z-10 ${currentUser ? 'md:ml-6 px-3' : ''}` x-ref="main")

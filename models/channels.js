@@ -1,4 +1,4 @@
-var mongoose = require("mongoose");
-var channelSchema = require("./schemas/channelSchema");
+const mongoose = require('mongoose');
+const channelSchema = require('./schemas/channelSchema');
 
-module.exports = mongoose.model("channels", channelSchema);
+module.exports = mongoose.model('channels', channelSchema);

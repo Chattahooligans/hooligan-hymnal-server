@@ -1,4 +1,4 @@
-var mongoose = require("mongoose");
-var feedItemSchema = require("./schemas/feedItemSchema");
+const mongoose = require('mongoose');
+const feedItemSchema = require('./schemas/feedItemSchema');
 
-module.exports = mongoose.model("feedItem", feedItemSchema);
+module.exports = mongoose.model('feedItem', feedItemSchema);

@@ -16,6 +16,7 @@ const songbookSongsController = require('../controllers/songbookSongsController'
 const notificationsController = require('../controllers/notificationsController');
 const pushTokensController = require('../controllers/pushTokensController');
 const foesController = require('../controllers/foesController');
+const channelController = require('../controllers/channelController');
 
 const { isLoggedIn } = require('../middleware/authMiddleware');
 const { catchErrors } = require('../handlers/errorHandlers');
@@ -149,8 +150,17 @@ router.post('/foes/:id/edit', isLoggedIn, checkPermission('foesAllowed'), catchE
 router.get('/foes/:id/delete', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.deleteConfirm));
 router.post('/foes/:id/delete', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.delete));
 
-router.get('/alpine-for', (req, res) => {
-  res.render('alpine-for');
-});
+router.get('/channels', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.index));
+router.get('/channels/create', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.create));
+router.post('/channels/create', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.store));
+router.post('/channels/avatar', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.avatar));
+router.get('/channels/avatars', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.getAvatars));
+router.post('/channels/remove-avatar', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.removeAvatar));
+router.get('/channels/:id', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.show));
+router.get('/channels/:id/edit', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.edit));
+router.post('/channels/:id/edit', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.update));
+router.get('/channels/:id/delete', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.deleteConfirm));
+router.post('/channels/:id/delete', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.delete));
+
 
 module.exports = router;

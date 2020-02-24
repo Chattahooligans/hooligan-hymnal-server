@@ -1,8 +1,7 @@
 import dropzone from './modules/dropzone';
 import SortList from './modules/sortable';
 
-require('alpinejs');
-// require('./modules/sortable');
+import 'alpinejs';
 
 SortList();
 
@@ -39,13 +38,13 @@ dropzone(
   'logo',
 );
 
-// dropzone(
-//   '/foes/logo',
-//   'logo-template',
-//   document.getElementById('logo-upload-section'),
-//   '#logo-previews',
-//   '#logo-target',
-//   'Logo',
-//   1,
-//   'logo',
-// );
+dropzone(
+  '/channels/avatar',
+  'avatar-template',
+  document.getElementById('avatar-upload-section'),
+  '#avatar-previews',
+  '#avatar-target',
+  'Avatar',
+  1,
+  'avatarUrl',
+);

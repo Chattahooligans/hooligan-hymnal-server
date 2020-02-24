@@ -1,0 +1,10 @@
+extends ../layout
+
+include ../mixins/_channelForm
+
+block content
+  .mx-auto.container
+    div(class='mb-3')
+      h2(class='font-semibold font-2xl') #{title}
+    div
+      +channelForm()
