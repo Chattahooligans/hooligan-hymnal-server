@@ -111,13 +111,25 @@ exports.store = async (req, res) => {
     const date = moment(req.body.publishedAt).format('YYYY/MM/DD_HH_mm');
     const targetFolder = `feed/${date}`;
 
+    /*
+      Notes on images:
+      - the server expects .images as file streams and the same number of accompanying .metadata 
+      - .metadata is a either a single object or an array, becaue of oddities with multipart/form-data
+      - using a similar pattern, .remoteImages and .remoteMetadat are objects / arrays of the same length
+
+      - we want to treat everything as an array to iterate over, so we convert the single-item versions to arrays of length=1
+
+      - each of .images, .metadata, .remoteImages, .remoteMetadata all have a matching .index property for the final sequence
+      - these are all combined into feedItemImages to store in the db
+    */
+    let feedItemImages = []
+
+    // upload() returns an array
     const images = await upload(req, {
       folder: targetFolder,
     });
 
-    let feedItemImages = []
-
-    // if there's only one item, it's not an array to iterate over
+    // if there's only one item, turn it into an array
     let uploadMetadata = []
     if (Array.isArray(req.body.metadata))
       uploadMetadata = req.body.metadata
@@ -136,7 +148,7 @@ exports.store = async (req, res) => {
     })
 
     if (req.body.remoteImages) {
-      // if there's only one item, it's not an array to iterate over
+      // if there's only one item, turn it into an array
       let remoteImages = []
       let remoteMetadata = []
       if (Array.isArray(req.body.remoteImages)) {
