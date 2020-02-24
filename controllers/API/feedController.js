@@ -195,7 +195,7 @@ exports.store = async (req, res) => {
       let targetIndex = thisMetadata.index
 
       let thisImage = {
-        uri: parsedImage.url,
+        uri: parsedImage.uri,
         thumbnailUri: parsedImage.thumbnailUri,
         metadata: thisMetadata
       }
