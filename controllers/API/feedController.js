@@ -148,7 +148,10 @@ exports.store = async (req, res) => {
 
       delete thisImage.metadata.index
 
-      feedItemImages[image.index] = thisImage
+      console.log("PROCESSED AN UPLOADED IMAGE")
+      console.log(JSON.stringify(thisImage))
+
+      feedItemImages[req.body.metadata[index].index] = thisImage
     })
   }
 
@@ -165,7 +168,6 @@ exports.store = async (req, res) => {
       remoteMetadata.push(req.body.remoteMetadata)
     }
 
-
     remoteImages.forEach((image, index) => {
       let thisImage = {
         uri: image.url,
@@ -175,9 +177,15 @@ exports.store = async (req, res) => {
 
       delete thisImage.metadata.index
 
+      console.log("PROCESSED A REMOTE IMAGE")
+      console.log(JSON.stringify(thisImage))
+
       feedItemImages[image.index] = thisImage
     })
   }
+
+  console.log("DONE PROCESSING IMAGES, feedItemImages is")
+  console.log(JSON.stringify(feedItemImages))
   /*
   if (Array.isArray(images)) {
     images.map((image, index) => req.body.images.push({
