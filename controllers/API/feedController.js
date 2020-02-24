@@ -103,7 +103,10 @@ exports.channel = async (req, res) => {
 
 exports.store = async (req, res) => {
   console.log("CONSPICUOUS LOGGING TO POST TO FEED")
-  console.log(req)
+  console.log("BODY")
+  console.log(req.body)
+  console.log("FILES")
+  console.log(req.files)
   /*
       Notes on images:
       - the server expects .images as file streams and the same number of accompanying .metadata 
