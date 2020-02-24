@@ -148,7 +148,7 @@ exports.store = async (req, res) => {
 
       delete thisImage.metadata.index
 
-      console.log("PROCESSED AN UPLOADED IMAGE")
+      console.log("PROCESSED AN UPLOADED IMAGE, will place in index " + req.body.metadata[index].index)
       console.log(JSON.stringify(thisImage))
 
       feedItemImages[req.body.metadata[index].index] = thisImage
@@ -177,7 +177,7 @@ exports.store = async (req, res) => {
 
       delete thisImage.metadata.index
 
-      console.log("PROCESSED A REMOTE IMAGE")
+      console.log("PROCESSED A REMOTE IMAGE, will place into index " + image.index)
       console.log(JSON.stringify(thisImage))
 
       feedItemImages[image.index] = thisImage
