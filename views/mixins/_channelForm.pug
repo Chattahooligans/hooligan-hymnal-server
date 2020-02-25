@@ -1,0 +1,72 @@
+include ../mixins/_baseInput
+include ../mixins/_baseCheckbox
+
+mixin channelForm(channel = {}, ...props)
+  if channel.id
+    #channel-id(class="hidden") #{channel.id}
+  form(method="POST")
+    .flex.flex-col.mb-3
+      +baseInput("text", "Name", "name", channel.name, "Name", true)
+    .flex.flex-col.mb-3
+      +baseInput("text", "Default Locale", "defaultLocale", channel.defaultLocale, "Default Local", true)
+    .flex.flex-col.mb-3#avatarUrl
+      #avatar-template
+        div(class="relative inline-block")
+          img(data-dz-thumbnail class="rounded-full mx-auto" style="height:50px;width:50px")
+          p(class="" data-dz-name)
+          div(class="dz-error-mark cursor-pointer absolute top-0 right-0" data-dz-remove)
+            span &times;
+        div(class="dz-error-message")
+          span(data-dz-errormessage)
+      #avatar-upload-section(class="border rounded-lg bg-gray-200 h-32 w-full flex justify-center items-center cursor-pointer relative z-10")
+        h2(class="pointer-events-none -z-1") Upload avatar here
+      #avatar-previews
+      div(class="progress active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0")
+          div(class="h-2 bg-gray-700 progress-bar" style="width:0%;" data-dz-uploadprogress)
+      .actions
+        button(class="rounded bg-green-700 text-white px-3 py-2 upload mr-2" type="button") Upload
+        if !channel.id
+          button(class="rounded bg-red-700 text-white px-3 py-2 cancel" type="button") Clear
+        #avatar-target.hidden
+    .flex.flex-col.mb-3
+      +baseInput("text", "Header URL", "headerUrl", channel.headerUrl, "Header Url")
+    .flex.flex-col.mb-3
+      +baseCheckbox("checkbox", "Follow", "follow", channel.follow, "Follow")
+    .flex.flex-col.mb-3
+      +baseCheckbox("checkbox", "Active", "active", channel.active, "Active")
+    .flex.flex-col.mb-3
+      div(x-data=`{ users: ${JSON.stringify(users)}, selectedUser: { _id: '', name: '', canCreate: false, canEdit: false, canDelete: false, canPush: false }, selectedUsers: ${channel.users ? JSON.stringify(channel.users) : JSON.stringify([]) } }`)
+        div(class="flex flex-col md:flex-row w-full mx-auto justify-between")
+          div(class="flex-1 h-full")
+            h3 Unassigned Users
+            div(class="h-24 border-2 rounded shadow overflow-y-scroll md:mr-3")
+              template(x-for="_user in users")
+                button(type="button" @click="selectedUser = _user" class="flex p-2 border-b-2 w-full")
+                  input(type="hidden" :value="JSON.stringify(_user)")
+                  h4(x-text="_user.name")
+          div(class="flex-1 h-full")
+            h3 Assigned Users
+            div(class="h-24 border-2 rounded shadow overflow-y-scroll")
+              template(x-for="user in selectedUsers")
+                div(class="flex p-2 border-b-2 justify-between")
+                  span(x-text="user.name")
+                  input(type="hidden" name="users[]" :value="JSON.stringify(user)")
+                  button(type="button" @click="selectedUsers = selectedUsers.filter(i => i._id !== user._id)") &times;
+        template(x-if="selectedUser.name")
+          div(class="list--card flex flex-col mt-3")
+            h4(class="font-semibold text-xl" x-text="selectedUser.name")
+            div(class="flex items-center justify-between")
+              div(class="flex flex-col")
+                label Can Create
+                  input(type="checkbox" class="ml-3" x-model="selectedUser.canCreate")
+                label Can Edit
+                  input(type="checkbox" class="ml-3" x-model="selectedUser.canEdit")
+                label Can Delete
+                  input(type="checkbox" class="ml-3" x-model="selectedUser.canDelete")
+                label Can Push
+                  input(type="checkbox" class="ml-3" x-model="selectedUser.canPush")
+              div
+                button(type="button" @click="selectedUsers.push({ _id: selectedUser._id, name: selectedUser.name, canCreate: selectedUser.canCreate, canEdit: selectedUser.canEdit, canDelete: selectedUser.canDelete, canPush: selectedUser.canPush }); selectedUser = {}" class="bg-green-700 text-white rounded-full h-12 w-12 mr-3 align-middle") &plus;
+                button(type="button" @click="selectedUser = {}" class="bg-red-700 text-white h-12 w-12 rounded-full align-middle") &times;
+    .mb-3
+      button(type="submit" class="btn bg-blue-700 text-white") Save
