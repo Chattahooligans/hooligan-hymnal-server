@@ -19,14 +19,6 @@ exports.store = async (req, res) => {
     lastUsed: now,
     $inc: { checkinCount: 1 }
   });
-
-  if(!tokenData.hasOwnProperty("expoExperience")) {
-    res.status(501).send({
-      error: `Error creating or updating push token ${tokenData.pushToken}: You must include an expoExperience.`
-    })
-    return;
-  }
-  
   PushTokens.findOneAndUpdate(
     { pushToken: tokenData.pushToken },
     tokenData,
