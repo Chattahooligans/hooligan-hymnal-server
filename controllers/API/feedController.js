@@ -234,8 +234,6 @@ exports.store = async (req, res) => {
   console.log("ABOUT TO SAVE FEEDITEM TO DATABASE")
   const feedItem = await (new FeedItems(data)).save();
   console.log("SAVED FEEDITEM TO DATABASE")
-  console.log("USERHASPERMISSION " + userHasPermission)
-  console.log("INSIDE (FALSE) USERHASPERMISSION CONDITIONAL")
   console.log("CHECKING FOR PUSH")
   if (feedItem.push) {
     console.log("PUSH TRUE")
@@ -247,8 +245,9 @@ exports.store = async (req, res) => {
       });
   } else {
     console.log("PUSH FALSE")
-    res.send(item);
     feeditems_cache.force_reload();
+    console.log(feedItem);
+    res.send(item);
   }
   console.log("ABOUT TO RETURN")
   // HEY: this doesn't look like it sends receipts at all in the response, which is at least a nice confirmation
