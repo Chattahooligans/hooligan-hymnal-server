@@ -230,14 +230,19 @@ exports.store = async (req, res) => {
   if (!userHasPermission) {
     return res.status(401).send('You do not have permission to post to this news feed channel');
   }
+      if(error) {
+        res.status(501).send({ error });
+        return;
+      } 
   if (feedItem.push) {
-    PushHandler.sendPost(feedItem, channel)
+        PushHandler.sendPost(feedItem, channel, res)
       .then((res) => {
         feeditems_cache.force_reload();
       }).catch((err) => {
         console.log(`Error: ${err}`);
       });
   } else {
+        res.send(item);
     feeditems_cache.force_reload();
   }
   return res.json(feedItem);
