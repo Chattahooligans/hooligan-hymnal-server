@@ -236,6 +236,8 @@ exports.store = async (req, res) => {
   }
   console.log("BEFORE ERROR CONDITIONAL")
   if (error) {
+    console.log("INSIDE ERROR CONDITIONAL")
+    console.log(error)
     res.status(501).send({ error });
     return;
   }
