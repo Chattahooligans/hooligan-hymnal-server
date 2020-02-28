@@ -230,19 +230,28 @@ exports.store = async (req, res) => {
 
   console.log("DONE PROCESSING IMAGES, feedItemImages is")
   console.log(JSON.stringify(feedItemImages))
-  
+
+  console.log("ABOUT TO SAVE FEEDITEM TO DATABASE")
   const feedItem = await (new FeedItems(data)).save();
+  console.log("SAVED FEEDITEM TO DATABASE")
+  console.log("USERHASPERMISSION " + userHasPermission)
+  console.log("INSIDE (FALSE) USERHASPERMISSION CONDITIONAL")
+  console.log("CHECKING FOR PUSH")
   if (feedItem.push) {
-        PushHandler.sendPost(feedItem, channel, res)
+    console.log("PUSH TRUE")
+    PushHandler.sendPost(feedItem, channel, res)
       .then((res) => {
         feeditems_cache.force_reload();
       }).catch((err) => {
         console.log(`Error: ${err}`);
       });
   } else {
+    console.log("PUSH FALSE")
     res.send(item);
     feeditems_cache.force_reload();
   }
+  console.log("ABOUT TO RETURN")
+  // HEY: this doesn't look like it sends receipts at all in the response, which is at least a nice confirmation
   return res.json(feedItem);
 };
 
