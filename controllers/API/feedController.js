@@ -234,10 +234,12 @@ exports.store = async (req, res) => {
     console.log("INSIDE (FALSE) USERHASPERMISSION CONDITIONAL")
     return res.status(401).send('You do not have permission to post to this news feed channel');
   }
+  console.log("BEFORE ERROR CONDITIONAL")
   if (error) {
     res.status(501).send({ error });
     return;
   }
+  console.log("AFTER ERROR CONDITIONAL")
   console.log("CHECKING FOR PUSH")
   if (feedItem.push) {
     console.log("PUSH TRUE")
