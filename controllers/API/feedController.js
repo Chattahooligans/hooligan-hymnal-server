@@ -211,7 +211,7 @@ exports.store = async (req, res) => {
 
   console.log("DONE PROCESSING IMAGES, feedItemImages is")
   console.log(JSON.stringify(feedItemImages))
-  
+
   req.body.active = true;
   const channel = await Channels.findById(req.body.channel);
   const data = {
@@ -225,26 +225,33 @@ exports.store = async (req, res) => {
     active: true,
     channel: channel.id,
   };
+  console.log("ABOUT TO SAVE FEEDITEM TO DATABASE")
   const feedItem = await (new FeedItems(data)).save();
+  console.log("SAVED FEEDITEM TO DATABASE")
   const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
   if (!userHasPermission) {
     return res.status(401).send('You do not have permission to post to this news feed channel');
   }
-      if(error) {
-        res.status(501).send({ error });
-        return;
-      } 
+  if (error) {
+    res.status(501).send({ error });
+    return;
+  }
+  console.log("CHECKING FOR PUSH")
   if (feedItem.push) {
-        PushHandler.sendPost(feedItem, channel, res)
+    console.log("PUSH TRUE")
+    PushHandler.sendPost(feedItem, channel, res)
       .then((res) => {
         feeditems_cache.force_reload();
       }).catch((err) => {
         console.log(`Error: ${err}`);
       });
   } else {
-        res.send(item);
+    console.log("PUSH FALSE")
+    res.send(item);
     feeditems_cache.force_reload();
   }
+  console.log("ABOUT TO RETURN")
+  // HEY: this doesn't look like it sends receipts at all in the response, which is at least a nice confirmation
   return res.json(feedItem);
 };
 
