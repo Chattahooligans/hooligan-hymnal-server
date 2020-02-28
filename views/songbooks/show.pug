@@ -2,24 +2,27 @@ extends ../layout
 
 block content
   .container.mx-auto
-    h2 #{title}
-    p Organization: #{songbook.organization}
-    div #{songbook.description}
-    p
-      if songbook.front_cover
-        img(src=`${songbook.front_cover}` alt=`${songbook.songbook_title} front cover`)
-    p
-      if songbook.back_cover
-        img(src=`${songbook.back_cover}` alt=`${songbook.back_cover} back cover`)
-    h3 Chapters
-    each chapter in songbook.chapters
-      strong
-        a(href=`/songbooks/${songbook._id}/chapters/${chapter._id}/songs`) #{chapter.chapter_title} - &nbsp;
-        a(href=`/songbooks/${songbook._id}/chapters/${chapter._id}`) Add Song to #{chapter.chapter_title}
-      p Song Count: #{chapter.songs.length}
-    br
-    a(href=`/songbooks/${songbook._id}/add-chapter`) Add Chapter To #{songbook.songbook_title}
-    br
-    a(href=`/songbooks/${songbook._id}/edit`) Edit #{songbook.songbook_title}
-    br
-    a(href=`/songbooks/${songbook._id}/delete`) Delete #{songbook.songbook_title}
+    div(class="show--card")
+      h2(class="font-semibold text-2xl mb-3") #{title}
+      div
+      h3(class="text-xl mb-3") Organization: #{songbook.organization}
+      h3(class="text-lg mb-3") Description
+      p #{songbook.description}
+      if (songbook.front_cover)
+        h4 Front Cover
+        img(src=songbook.front_cover alt=`${title} front cover`)
+      if (songbook.back_cover)
+        h4 Back Cover
+        img(src=songbook.back_cover alt=`${title} back cover`)
+      h3 Chapters
+      each chapter in songbook.chapters
+        h4 #{chapter.chapter_title}
+        p Chapter Songs: #{chapter.songs.length}
+        if (chapter.songs.length)
+          p Songs
+          each song in chapter.songs
+            span #{song}
+      div(class="show--card__footer")
+        a(href=`/songbooks/${songbook.id}/edit` class="btn btn--edit") Edit
+        br
+        a(href=`/songbooks/${songbook.id}/delete` class="btn btn--delete") Delete
