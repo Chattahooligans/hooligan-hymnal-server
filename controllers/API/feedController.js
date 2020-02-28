@@ -120,6 +120,25 @@ exports.store = async (req, res) => {
   */
   let feedItemImages = []
 
+  req.body.active = true;
+  const channel = await Channels.findById(req.body.channel);
+  const data = {
+    sender: JSON.parse(req.body.sender),
+    publishedAt: req.body.publishedAt,
+    push: req.body.push === 'true',
+    locale: req.body.locale,
+    text: req.body.text,
+    images: feedItemImages,
+    attachments: req.body.attachments ? JSON.parse(req.body.attachments) : [],
+    active: true,
+    channel: channel.id,
+  };
+
+  const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
+  if (!userHasPermission) {
+    return res.status(401).send('You do not have permission to post to this news feed channel');
+  }
+
   req.body.images = [];
   if (req.files && req.files.images) {
     req.files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
@@ -212,28 +231,7 @@ exports.store = async (req, res) => {
   console.log("DONE PROCESSING IMAGES, feedItemImages is")
   console.log(JSON.stringify(feedItemImages))
   
-  req.body.active = true;
-  const channel = await Channels.findById(req.body.channel);
-  const data = {
-    sender: JSON.parse(req.body.sender),
-    publishedAt: req.body.publishedAt,
-    push: req.body.push === 'true',
-    locale: req.body.locale,
-    text: req.body.text,
-    images: feedItemImages,
-    attachments: req.body.attachments ? JSON.parse(req.body.attachments) : [],
-    active: true,
-    channel: channel.id,
-  };
   const feedItem = await (new FeedItems(data)).save();
-  const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
-  if (!userHasPermission) {
-    return res.status(401).send('You do not have permission to post to this news feed channel');
-  }
-      if(error) {
-        res.status(501).send({ error });
-        return;
-      } 
   if (feedItem.push) {
         PushHandler.sendPost(feedItem, channel, res)
       .then((res) => {
@@ -242,7 +240,7 @@ exports.store = async (req, res) => {
         console.log(`Error: ${err}`);
       });
   } else {
-        res.send(item);
+    res.send(item);
     feeditems_cache.force_reload();
   }
   return res.json(feedItem);
