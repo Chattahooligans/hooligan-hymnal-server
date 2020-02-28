@@ -229,7 +229,9 @@ exports.store = async (req, res) => {
   const feedItem = await (new FeedItems(data)).save();
   console.log("SAVED FEEDITEM TO DATABASE")
   const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
+  console.log("USERHASPERMISSION " + userHasPermission)
   if (!userHasPermission) {
+    console.log("INSIDE (FALSE) USERHASPERMISSION CONDITIONAL")
     return res.status(401).send('You do not have permission to post to this news feed channel');
   }
   if (error) {
