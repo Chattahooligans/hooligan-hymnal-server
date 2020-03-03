@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const Songbook = mongoose.model('songbook');
+const Song = mongoose.model('song');
 
 exports.index = async (req, res) => {
   const songbooks = await Songbook.find({});
@@ -9,15 +10,22 @@ exports.index = async (req, res) => {
     songbooks,
   });
 };
-exports.create = (req, res) => res.render('songbooks/create', {
-  title: 'Create Songbook',
-});
-exports.store = async (req, res) => {
-  const songbook = new Songbook(req.body);
-  await songbook.save();
-  req.flash('success', `${songbook.songbook_title} was created`);
-  res.redirect('/songbooks');
+exports.create = async (req, res) => {
+  const songs = await Song.find();
+
+  return res.render('songbooks/create', {
+    title: 'Create Songbook',
+    songs,
+  });
 };
+
+exports.store = async (req, res) => res.send(req.body)
+// const songbook = new Songbook(req.body);
+// await songbook.save();
+// req.flash('success', `${songbook.songbook_title} was created`);
+// res.redirect('/songbooks');
+;
+
 exports.show = async (req, res) => {
   const songbook = await Songbook.findById(req.params.id);
   res.render('songbooks/show', {

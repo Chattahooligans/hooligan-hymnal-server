@@ -1,6 +1,6 @@
 include ./_baseInput
 
-mixin songbookForm(songbook = {})
+mixin songbookForm(songbook = {}, songs = {})
   form(method="POST")
     .flex.flex-col.mb-3
       +baseInput("text", "Title", "songbook_title", songbook.songbook_title, "Title", true)
@@ -15,21 +15,30 @@ mixin songbookForm(songbook = {})
     .flex.flex-col.mb-3
       button#back_cover_button(type="button" class="px-3 py-2 rounded bg-blue-700 text-white mb-2") Upload Back Cover
       input(type="text" name="back_cover" id="back_cover" class="border flex-auto rounded p-2 shadow bg-gray-400 text-gray-700 cursor-not-allowed pointer-events-none" value=songbook.back_cover)
-    .flex.flex-col.mb-3
-      +baseInput("date", "Publish or Expiration Dates?", "some_publish_or_expiration_dates", songbook.some_publish_or_expiration_dates)
+    //- .flex.flex-col.mb-3
+    //-   +baseInput("date", "Publish or Expiration Dates?", "some_publish_or_expiration_dates", songbook.some_publish_or_expiration_dates)
     .flex.flex-col.mb-3
       h3 Chapters
       div(x-data="{ chapters: [], newChapter: { chapter_title: '', songs: []}}")
+        div(class="border-t-2 mt-3 pt-3")
+          div(class="flex items-center")
+            div(class="flex flex-1 flex-col")
+              input(type="text" x-model="newChapter.chapter_title"  placeholder="Chapter Title" class="border flex-auto rounded p-2 shadow" aria-label="Chapter Title")
+            button(type="button" x-on:click="if (newChapter.chapter_title.length) {chapters.push(newChapter); newChapter = {chapter_title: '', songs: [] }}" class="bg-green-700 text-white h-10 w-10 rounded-full ml-3") &plus;
         template(x-for="chapter in chapters")
-          span(x-text="chapter.chapter_title")
-          div(x-data="{songs: [], newSong: { hint: '' }}")
-            input(type="text" x-model="newSong.hint")
-            button(type="button" x-on:click="songs.push(newSong); newSong = { hint: '' }") Add
-            template(x-for="song in songs")
-              span(x-text="song.hint")
-        div(class="flex flex-col mb-3")
-          label(for="chapter_title") Chapter Title
-          input(type="text" x-model="newChapter.chapter_title" placeholder="Chapter Title" class="border flex-auto rounded p-2 shadow")
-        button(type="button" x-on:click="if (newChapter.chapter_title.length) {chapters.push(newChapter); newChapter = {chapter_title: '', songs: [] }}") &plus;
+          article(class="list--card flex flex-col")
+            header(class="flex flex-1 justify-between")
+              h4(x-text="chapter.chapter_title")
+              button(type="button" class="rounded h-10 w-10 bg-red-700 text-white" @click="chapters = chapters.filter(i => i.name !== chapter.name)") &times;
+            div(x-data="{songs: [], newSong: { hint: '' }}" class="flex flex-col")
+              div(class="flex flex-col mb-3")
+                label(for="songHint") Song Hint
+                input(type="text" id="songHint" name="songHint" x-model="newSong.hint" class="border flex-auto rounded p-2 shadow")
+                button(type="button" x-on:click="songs.push(newSong); newSong = { hint: '' }") Add
+              template(x-for="song in songs")
+                div(class="")
+                  div(x-text="song.hint")
+                  button(type="button" class="" @click="songs = songs.filter(i => i.hint !== song.hint)") &times;
+          input(type="text" :value="JSON.stringify(chapter)")
     .mb-3
       button(type="submit" class="px-3 py-2 rounded bg-blue-700 text-white") Save Songbook
