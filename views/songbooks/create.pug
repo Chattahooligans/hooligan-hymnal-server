@@ -6,6 +6,8 @@ include ../mixins/_songbookForm
 block content
   .container.mx-auto
     h2 #{title}
-    +songbookForm({}, songs)
+    #songbookForm
+    //- +songbookForm({}, songs)
 
 block scripts
+  script(src="/js/react.js")

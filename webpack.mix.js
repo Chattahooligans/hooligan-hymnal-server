@@ -1,5 +1,5 @@
-let mix = require("laravel-mix");
-let tailwindcss = require("tailwindcss");
+const mix = require('laravel-mix');
+const tailwindcss = require('tailwindcss');
 
 /*
  |--------------------------------------------------------------------------
@@ -13,11 +13,12 @@ let tailwindcss = require("tailwindcss");
  */
 
 mix
-  .js("src/js/app.js", "public/js")
-  .sass("src/scss/app.scss", "public/css")
+  .js('src/js/app.js', 'public/js')
+  .react('src/js/react.js', 'public/js')
+  .sass('src/scss/app.scss', 'public/css')
   .options({
     processCssUrls: false,
-    postCss: [tailwindcss("./tailwind.config.js")]
+    postCss: [tailwindcss('./tailwind.config.js')],
   });
 
 // Full API
