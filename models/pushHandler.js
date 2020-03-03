@@ -51,8 +51,9 @@ async function sendPush(push, res) {
 			});
 			try {
 				console.log("trying to push");
+				let sendPushResult = await expo.sendPushNotificationsAsync(notifications)
 				receipts.push(
-					...(await expo.sendPushNotificationsAsync(notifications))
+					...(sendPushResult)
 				);
 			} catch (error) {
 				console.log("there was a problem with the push");
@@ -63,7 +64,7 @@ async function sendPush(push, res) {
 					`Error notifying with tokens [${tokenString}]: ${error}`
 				);
 				console.error(
-					`Verbose: ${receipts[receipts.length-1]}`
+					`Verbose: ${sendPushResult}`
 				);
 				errors.push(
 					...chunk.map(
