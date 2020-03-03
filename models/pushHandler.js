@@ -49,9 +49,10 @@ async function sendPush(push, res) {
 					data: push.data
 				};
 			});
+			let sendPushResult;
 			try {
 				console.log("trying to push");
-				let sendPushResult = await expo.sendPushNotificationsAsync(notifications)
+				sendPushResult = await expo.sendPushNotificationsAsync(notifications)
 				receipts.push(
 					...(sendPushResult)
 				);
