@@ -87,9 +87,10 @@ async function sendPush(push, res) {
 				);
 			}
 		}
-		console.log("Starting tokenMatcher block")
+		console.log("Starting tokenMatcher block, receipts.length: " + receipts.length)
 		var tokenMatcher = new RegExp("ExponentPushToken");
 		receipts.forEach(receipt => {
+			console.log("iterating on " + receipt.message)
 			if (receipt.status == "error") {
 				console.log("error found on " + receipt.message)
 				//run regex to retrieve token from it
