@@ -62,6 +62,21 @@ async function sendPush(push, res) {
 				console.error(
 					`Error notifying with tokens [${tokenString}]: ${error}`
 				);
+
+				/*
+					This line returns an object like:
+					{
+						"@chattahooligan/chattahooligan-hymnal":
+							["ExponentPushToken[NQjQBqBjcnAfQk8N-3R2al]","ExponentPushToken[HcDpdlINasiVlvc8fOIlEa]","ExponentPushToken[I8QML2Ir_01kPeOXEfjizU]","ExponentPushToken[jqoXnuCi8Acw2sk9Dtq_C2]"],
+						"@ngsdetroit/chattahooligan-hymnal":
+							["ExponentPushToken[rA-sHTCBP85w2U3D9kix17]","ExponentPushToken[r76-uHJwwHZM8y5OwgXNOW]"]
+					}
+
+					suggest:
+					- an environment variable of the acceptable expo experience
+					- not register tokens that don't match
+					- capturing keys in that error.details that don't match, deleting associated tokens
+				*/
 				console.error(
 					`Details: ${JSON.stringify(error.details)}`
 				);
@@ -72,22 +87,24 @@ async function sendPush(push, res) {
 				);
 			}
 		}
+		console.log("Starting tokenMatcher block")
 		var tokenMatcher = new RegExp("ExponentPushToken");
 		receipts.forEach(receipt => {
-		  if (receipt.status == "error") {
-			//run regex to retrieve token from it
-			let matches = tokenMatcher.exec(receipt.message);
-			if (matches.length > 0) {
-			  let i = matches.index;
-			  var token = receipt.message.substring(i, i + 41);
-			  //if token found, find and delete
-			  PushTokens.deleteOne({ pushToken: token }).then(
-				deleteResult => {
-					console.log("deleted bad push token");
+			if (receipt.status == "error") {
+				console.log("error found on " + receipt.message)
+				//run regex to retrieve token from it
+				let matches = tokenMatcher.exec(receipt.message);
+				if (matches.length > 0) {
+					let i = matches.index;
+					var token = receipt.message.substring(i, i + 41);
+					//if token found, find and delete
+					PushTokens.deleteOne({ pushToken: token }).then(
+						deleteResult => {
+							console.log("deleted bad push token");
+						}
+					);
 				}
-			  );
 			}
-		  }
 		});
 		res.send({ errors: errors, receipts: receipts });
 	});
