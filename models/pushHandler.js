@@ -62,6 +62,9 @@ async function sendPush(push, res) {
 				console.error(
 					`Error notifying with tokens [${tokenString}]: ${error}`
 				);
+				console.error(
+					`Verbose: ${receipts[receipts.length-1]}`
+				);
 				errors.push(
 					...chunk.map(
 						token => `Error notifying with token ${token}: ${error}`
