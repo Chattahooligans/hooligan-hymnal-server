@@ -64,6 +64,7 @@ async function sendPush(push, res) {
 				);
 
 				/*
+					TODO: 
 					This line returns an object like:
 					{
 						"@chattahooligan/chattahooligan-hymnal":

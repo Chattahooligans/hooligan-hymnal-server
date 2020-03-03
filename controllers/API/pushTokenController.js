@@ -26,6 +26,8 @@ exports.store = async (req, res) => {
     })
     return;
   }
+
+  // TODO: Check an environment variable to get the acceptable expoExperience and drop anything that doesn't match
   
   PushTokens.findOneAndUpdate(
     { pushToken: tokenData.pushToken },
