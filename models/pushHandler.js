@@ -63,7 +63,7 @@ async function sendPush(push, res) {
 					`Error notifying with tokens [${tokenString}]: ${error}`
 				);
 				console.error(
-					`Details: ${error.details}`
+					`Details: ${JSON.stringify(error.details)}`
 				);
 				errors.push(
 					...chunk.map(
