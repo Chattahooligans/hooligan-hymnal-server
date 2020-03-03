@@ -51,8 +51,11 @@ async function sendPush(push, res) {
 			});
 			try {
 				console.log("trying to push");
+				let sendPushResult = await expo.sendPushNotificationsAsync(notifications)
+				console.log("RESULT")
+				console.log(sendPushResult)
 				receipts.push(
-					...(await expo.sendPushNotificationsAsync(notifications))
+					...(sendPushResult)
 				);
 			} catch (error) {
 				console.log("there was a problem with the push");
