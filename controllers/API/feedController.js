@@ -251,6 +251,7 @@ exports.store = async (req, res) => {
   }
   console.log("ABOUT TO RETURN")
   // HEY: this doesn't look like it sends receipts at all in the response, which is at least a nice confirmation
+  // this appears to execute BEFORE PushHandler finishes
   return res.json(feedItem);
 };
 
