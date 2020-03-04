@@ -245,6 +245,7 @@ exports.store = async (req, res) => {
       if (!Expo.isExpoPushToken(pushToken.pushToken)) {
         console.error(`Push token ${pushTokens.pushToken} is not valid`);
       }
+      console.log(pushToken);
       messages.push({
         to: pushToken.pushToken,
         sound: 'default',
