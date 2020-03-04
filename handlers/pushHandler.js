@@ -48,18 +48,18 @@ exports.pushNotification = async (feedItem, sender) => {
     receiptsIdsChunks.map(async (chunk) => {
       try {
         const localReceipts = await expo.getPushNotificationReceiptsAsync(chunk);
-        // console.log(receipts);
+        console.log(localReceipts);
 
         localReceipts.map(async (receiptId) => {
           const { status, message, details } = localReceipts[receiptId];
+          if (status === 'ok') {
+            receipts.push(localReceipts[receiptId]);
+          }
           if (status === 'error') {
             console.error(`There was an error sending a notification: ${message}`);
             if (details && details.error) {
               console.error(`The error code is ${details.error}`);
             }
-          }
-          if (status === 'ok') {
-            receipts.push(message);
           }
         });
       } catch (error) {
