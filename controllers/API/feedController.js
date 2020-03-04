@@ -195,10 +195,10 @@ exports.store = async (req, res) => {
   const feedItem = await (new FeedItems(data)).save();
   if (feedItem.push) {
     console.log('PUSH TRUE');
-    const { messages, receipts } = await pushNotification(feedItem, senderToken);
-    console.log(receipts);
+    const response = await pushNotification(feedItem, senderToken);
+    console.log(response);
     feeditems_cache.force_reload();
-    return res.send(messages);
+    return res.send(response);
   }
   feeditems_cache.force_reload();
   return res.json(feedItem);
