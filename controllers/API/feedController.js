@@ -226,8 +226,9 @@ exports.deactivate = async (req, res) => {
 
 exports.delete = (req, res) => {
   FeedItems.findById(req.params.id, (error, feedItem) => {
-    if (error) res.status(501).send({ error });
-
+    if (error) {
+      res.status(501).send({ error });
+    }
     Channels.findById(feedItem.channel.Id), (error, channel) => {
       if (error) {
         res.send(error);
