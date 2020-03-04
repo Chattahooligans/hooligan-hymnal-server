@@ -2,20 +2,26 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
 
 const SongbookForm = () => {
   const [songbook, setSongbook] = useState({});
   const handleInput = ({ target: { name, value } }) => {
-    console.log(name, value)
-  }
+    console.log(name, value);
+  };
   return (
-    <form>
-      <div className="flex flex-col mb-3">
-        <label htmlFor="songbook_title">Title</label>
-        <input type="text" className="border" id="songbook_title" name="songbook_title" value={songbook.songbook_title} onChange={handleInput} />
-      </div>
-    </form>
-  )
-}
+    <>
+      <form method="POST">
+        <div className="flex flex-col mb-3">
+          <label htmlFor="name">
+            Name
+            <input type="text" name="name" id="name" className="border block" />
+          </label>
+        </div>
+      </form>
+    </>
+  );
+};
 
+// eslint-disable-next-line no-undef
 ReactDOM.render(<SongbookForm />, document.querySelector('#songbookForm'));
