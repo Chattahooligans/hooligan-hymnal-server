@@ -202,7 +202,6 @@ exports.store = async (req, res) => {
         console.error(`Push token ${pushToken.pushToken} is not valid`);
       }
       if (pushToken.expoExperience === senderToken.expoExperience) {
-        console.log(pushToken);
         messages.push({
           to: pushToken.pushToken,
           sound: 'default',
@@ -253,7 +252,7 @@ exports.store = async (req, res) => {
       for (const chunk of receiptIdChunks) {
         try {
           const receipts = await expo.getPushNotificationReceiptsAsync(chunk);
-          console.log(receipts);
+          console.log({ receipts });
 
           // The receipts specify whether Apple or Google successfully received the
           // notification and information about an error, if one occurred.
