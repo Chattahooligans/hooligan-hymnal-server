@@ -105,29 +105,12 @@ exports.channel = async (req, res) => {
 };
 
 exports.store = async (req, res) => {
-  console.log('CONSPICUOUS LOGGING TO POST TO FEED');
-  console.log('BODY');
-  console.log(req.body);
-  console.log('FILES');
-  console.log(req.files);
-  /*
-      Notes on images:
-      - the server expects .images as file streams and the same number of accompanying .metadata
-      - .metadata is a either a single object or an array, becaue of oddities with multipart/form-data
-      - using a similar pattern, .remoteImages and .remoteMetadat are objects / arrays of the same length
-
-      - we want to treat everything as an array to iterate over, so we convert the single-item versions to arrays of length=1
-
-      - each of .images, .metadata, .remoteImages, .remoteMetadata all have a matching .index property for the final sequence
-      - these are all combined into feedItemImages to store in the db
-  */
   const feedItemImages = [];
 
   req.body.active = true;
   const channel = await Channels.findById(req.body.channel);
   const sender = JSON.parse(req.body.sender);
   const senderToken = await PushTokens.findOne({ pushToken: sender.pushToken });
-  console.log({ senderToken: senderToken.expoExperience });
   const data = {
     sender: JSON.parse(req.body.sender),
     publishedAt: req.body.publishedAt,
@@ -161,20 +144,13 @@ exports.store = async (req, res) => {
     // if there's only one item, turn it into an array
     let uploadMetadata = [];
     if (Array.isArray(req.body.metadata)) {
-      console.log('req.body.metadata is array, assign it to uploadMetadata');
       uploadMetadata = req.body.metadata;
-      console.log(uploadMetadata);
     } else {
-      console.log('req.body.metadata is not an array, push it to uploadMetadata');
       uploadMetadata.push(req.body.metadata);
-      console.log(uploadMetadata);
     }
 
     images.forEach((image, index) => {
-      console.log('PROCESSING UPLOADED IMAGE');
-      console.log(image);
       const thisMetadata = JSON.parse(uploadMetadata[index]);
-      console.log(JSON.stringify(thisMetadata));
       const targetIndex = thisMetadata.index;
 
       const thisImage = {
@@ -183,9 +159,6 @@ exports.store = async (req, res) => {
       };
 
       delete thisImage.metadata.index;
-
-      console.log(`PROCESSED AN UPLOADED IMAGE, will place in index ${targetIndex}`);
-      console.log(JSON.stringify(thisImage));
 
       feedItemImages[targetIndex] = thisImage;
     });
@@ -196,25 +169,16 @@ exports.store = async (req, res) => {
     let remoteImages = [];
     let remoteMetadata = [];
     if (Array.isArray(req.body.remoteImages)) {
-      console.log('req.body.remoteImages is array, assign it');
       remoteImages = req.body.remoteImages;
       remoteMetadata = req.body.remoteMetadata;
-      console.log(remoteImages);
-      console.log(remoteMetadata);
     } else {
-      console.log('req.body.remoteImages is not an array, push it');
       remoteImages.push(req.body.remoteImages);
       remoteMetadata.push(req.body.remoteMetadata);
-      console.log(remoteImages);
-      console.log(remoteMetadata);
     }
 
     remoteImages.forEach((image, index) => {
-      console.log('PROCESSING REMOTE IMAGE');
       const parsedImage = JSON.parse(image);
-      console.log(parsedImage);
       const thisMetadata = JSON.parse(remoteMetadata[index]);
-      console.log(JSON.stringify(thisMetadata));
       const targetIndex = thisMetadata.index;
 
       const thisImage = {
@@ -224,21 +188,10 @@ exports.store = async (req, res) => {
       };
 
       delete thisImage.metadata.index;
-
-      console.log(`PROCESSED A REMOTE IMAGE, will place into index ${targetIndex}`);
-      console.log(JSON.stringify(thisImage));
-
       feedItemImages[targetIndex] = thisImage;
     });
   }
-
-  console.log('DONE PROCESSING IMAGES, feedItemImages is');
-  console.log(JSON.stringify(feedItemImages));
-
-  console.log('ABOUT TO SAVE FEEDITEM TO DATABASE');
   const feedItem = await (new FeedItems(data)).save();
-  console.log('SAVED FEEDITEM TO DATABASE');
-  console.log('CHECKING FOR PUSH');
   if (feedItem.push) {
     console.log('PUSH TRUE');
     const pushTokens = await PushTokens.find();
@@ -260,7 +213,6 @@ exports.store = async (req, res) => {
         });
       }
     });
-    console.log(messages);
     // The Expo push notification service accepts batches of notifications so
     // that you don't need to send 1000 requests to send 1000 notifications. We
     // recommend you batch your notifications to reduce the number of requests
