@@ -3,41 +3,19 @@ const PushTokens = require('./pushTokens');
 
 const expo = new Expo();
 
-async function sendNotification(notification, res) {
-  const push = {
-    title: notification.song.title,
-    body: notification.song.lyrics,
-    data: { song: notification.song },
-  };
-  return await sendPush(push, res);
-}
-
-async function sendPost(post, channel, res) {
-  let body = post.text;
-  ['\n', '.', '!', '?'].forEach((value) => {
-    if (body.indexOf(value) > 0) { body = body.substring(0, body.indexOf(value)); }
-  });
-
-  const push = {
-    title: `New notification from ${channel.name}`,
-    body: `${body}... (tap to view more)`,
-    data: { postId: post._id },
-  };
-  await sendPush(push, res);
-}
-
-async function sendPush(push, res) {
+async function sendPush(push) {
   console.log('sending push...');
   const tokens = await PushTokens.find();
   const messages = [];
   const errors = [];
   let receipts = [];
   tokens.map((pushToken) => {
-    if (!Expo.isExpoPushToken(pushToken.token)) {
-      console.error(`Push token ${pushToken.token} is not a valid expo push token`);
+    console.log(pushToken);
+    if (!Expo.isExpoPushToken(pushToken.pushToken)) {
+      console.error(`Push token ${pushToken.pushToken} is not a valid expo push token`);
     }
     return messages.push({
-      to: pushToken.token,
+      to: pushToken.pushToken,
       sound: 'default',
       title: push.title,
       body: push.body,
@@ -185,7 +163,35 @@ async function sendPush(push, res) {
   //   });
   //   res.send({ errors, receipts });
   // });
-  return res.send({ errors, receipts });
+  return {
+    errors,
+    receipts,
+  };
+  // return res.send({ errors, receipts });
+}
+
+async function sendNotification(notification) {
+  const push = {
+    title: notification.song.title,
+    body: notification.song.lyrics,
+    data: { song: notification.song },
+  };
+  const { errors, receipts } = await sendPush(push);
+  return { errors, receipts };
+}
+
+async function sendPost(post, channel) {
+  let body = post.text;
+  ['\n', '.', '!', '?'].forEach((value) => {
+    if (body.indexOf(value) > 0) { body = body.substring(0, body.indexOf(value)); }
+  });
+
+  const push = {
+    title: `New notification from ${channel.name}`,
+    body: `${body}... (tap to view more)`,
+    data: { postId: post._id },
+  };
+  await sendPush(push);
 }
 
 module.exports = { sendNotification, sendPost };
