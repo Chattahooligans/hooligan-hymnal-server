@@ -127,7 +127,7 @@ exports.store = async (req, res) => {
   const channel = await Channels.findById(req.body.channel);
   const sender = JSON.parse(req.body.sender);
   const senderToken = await PushTokens.findOne({ pushToken: sender.pushToken });
-  console.log({ senderToken });
+  console.log({ senderToken: senderToken.expoExperience });
   const data = {
     sender: JSON.parse(req.body.sender),
     publishedAt: req.body.publishedAt,
@@ -249,7 +249,7 @@ exports.store = async (req, res) => {
       if (!Expo.isExpoPushToken(pushToken.pushToken)) {
         console.error(`Push token ${pushToken.pushToken} is not valid`);
       }
-      if (pushToken.expoExperience == sender.expoExperience) {
+      if (pushToken.expoExperience === senderToken.expoExperience) {
         console.log(pushToken);
         messages.push({
           to: pushToken.pushToken,
