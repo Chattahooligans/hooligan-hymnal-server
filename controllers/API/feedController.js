@@ -125,6 +125,9 @@ exports.store = async (req, res) => {
 
   req.body.active = true;
   const channel = await Channels.findById(req.body.channel);
+  const sender = JSON.parse(req.body.sender);
+  const senderToken = await PushTokens.findOne({ pushToken: sender.pushToken });
+  console.log({ senderToken });
   const data = {
     sender: JSON.parse(req.body.sender),
     publishedAt: req.body.publishedAt,
@@ -239,6 +242,7 @@ exports.store = async (req, res) => {
   if (feedItem.push) {
     console.log('PUSH TRUE');
     const pushTokens = await PushTokens.find();
+    pushTokens.filter((i) => i.expoExperience === sender.expoExperience);
     const expo = new Expo();
     const messages = [];
     pushTokens.map(async (pushToken, index) => {
@@ -333,7 +337,6 @@ exports.store = async (req, res) => {
   console.log('PUSH FALSE');
   feeditems_cache.force_reload();
   console.log(feedItem);
-  res.send(item);
 
   console.log('ABOUT TO RETURN');
   // HEY: this doesn't look like it sends receipts at all in the response, which is at least a nice confirmation
