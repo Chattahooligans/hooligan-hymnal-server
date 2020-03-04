@@ -247,16 +247,18 @@ exports.store = async (req, res) => {
     const messages = [];
     pushTokens.map(async (pushToken, index) => {
       if (!Expo.isExpoPushToken(pushToken.pushToken)) {
-        console.error(`Push token ${pushTokens.pushToken} is not valid`);
+        console.error(`Push token ${pushToken.pushToken} is not valid`);
       }
-      console.log(pushToken);
-      messages.push({
-        to: pushToken.pushToken,
-        sound: 'default',
-        title: `New notification from ${channel.name}`,
-        body: `${feedItem.text}... (tap to view more)`,
-        data: { post: feedItem.id },
-      });
+      if (pushToken.expoExperience == sender.expoExperience) {
+        console.log(pushToken);
+        messages.push({
+          to: pushToken.pushToken,
+          sound: 'default',
+          title: `New notification from ${channel.name}`,
+          body: `${feedItem.text}... (tap to view more)`,
+          data: { post: feedItem.id },
+        });
+      }
     });
     console.log(messages);
     // The Expo push notification service accepts batches of notifications so
