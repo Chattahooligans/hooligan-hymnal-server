@@ -26,8 +26,23 @@ exports.store = async (req, res) => {
     })
     return;
   }
+  else {
+    // TODO: Check an environment variable to get the acceptable expoExperience and drop anything that doesn't match
+    let acceptedExpoExperience = ""
+    try {
+      acceptedExpoExperience = process.env.EXPO_EXPERIENCE
+      if (tokenData.expoExperience != acceptedExpoExperience) {
+        res.status(501).send({
+          error: `expoExperience for push token ${tokenData.pushToken}: tokenData.expoExperience is not allowed`
+        })
+        return
+      }
+    }
+    catch (error) {
+      console.error("Error on expoExperience check " + error)
+    }
+  }
 
-  // TODO: Check an environment variable to get the acceptable expoExperience and drop anything that doesn't match
   
   PushTokens.findOneAndUpdate(
     { pushToken: tokenData.pushToken },
