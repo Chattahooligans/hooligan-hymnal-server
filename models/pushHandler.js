@@ -62,32 +62,19 @@ async function sendPush(push, res) {
 				console.error(
 					`Error notifying with tokens [${tokenString}]: ${error}`
 				);
-
-				/*
-					TODO: 
-					This line returns an object like:
-					{
-						"@chattahooligan/chattahooligan-hymnal":
-							["ExponentPushToken[NQjQBqBjcnAfQk8N-3R2al]","ExponentPushToken[HcDpdlINasiVlvc8fOIlEa]","ExponentPushToken[I8QML2Ir_01kPeOXEfjizU]","ExponentPushToken[jqoXnuCi8Acw2sk9Dtq_C2]"],
-						"@ngsdetroit/chattahooligan-hymnal":
-							["ExponentPushToken[rA-sHTCBP85w2U3D9kix17]","ExponentPushToken[r76-uHJwwHZM8y5OwgXNOW]"]
-					}
-
-					suggest:
-					- an environment variable of the acceptable expo experience
-					- not register tokens that don't match
-					- capturing keys in that error.details that don't match, deleting associated tokens
-				*/
 				console.error(
 					`Details: ${JSON.stringify(error.details)}`
 				);
 				const acceptedExpoExperience = process.env.EXPO_EXPERIENCE
 				Object.keys(error.details).forEach(key => {
-					console.log(acceptedExpoExperience + " vs " + key)
 					if (acceptedExpoExperience !== key) {
-						console.log("doesn't match, delete some shit")
+						console.log("expoExperience mismatch: " + acceptedExpoExperience + " vs " + key)
 						error.details[key].forEach(token => {
-							console.log("need to delete " + token)
+							PushTokens.deleteOne({ pushToken: token }).then(
+								deleteResult => {
+									console.log("deleted push token with mismatched experience " + token);
+								}
+							)
 						})
 					}
 				})
