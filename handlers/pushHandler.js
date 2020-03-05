@@ -9,12 +9,11 @@ exports.pushNotification = async (feedItem, sender) => {
   const pushTokens = await PushTokens.find();
   const expo = new Expo();
   const messages = [];
-  const receipts = [];
   const channel = await Channels.findById(feedItem.channel);
-  pushTokens.map(async (pushToken) => {
-    if (!Expo.isExpoPushToken(pushTokens.pushToken)) {
-      console.error(`Push token ${pushToken.pushToken} is not valid`);
-    }
+  pushTokens.forEach(async (pushToken) => {
+    // if (!Expo.isExpoPushToken(pushTokens.pushToken)) {
+    //   console.error(`Push token ${pushToken.pushToken} is not valid`);
+    // }
     if (pushToken.expoExperience === sender.expoExperience) {
       messages.push({
         to: pushToken.pushToken,
@@ -28,7 +27,7 @@ exports.pushNotification = async (feedItem, sender) => {
   const chunks = expo.chunkPushNotifications(messages);
   const tickets = [];
   (async () => {
-    chunks.map(async (chunk) => {
+    chunks.forEach(async (chunk) => {
       try {
         const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
         tickets.push(...ticketChunk);
@@ -38,23 +37,20 @@ exports.pushNotification = async (feedItem, sender) => {
     });
   })();
   const receiptsIds = [];
-  tickets.map((ticket) => {
+  tickets.forEach((ticket) => {
     if (ticket.id) {
       receiptsIds.push(ticket.id);
     }
   });
   const receiptsIdsChunks = expo.chunkPushNotificationReceiptIds(receiptsIds);
   (async () => {
-    receiptsIdsChunks.map(async (chunk) => {
+    receiptsIdsChunks.forEach(async (chunk) => {
       try {
-        const localReceipts = await expo.getPushNotificationReceiptsAsync(chunk);
-        console.log(localReceipts);
+        const notificationReceipts = await expo.getPushNotificationReceiptsAsync(chunk);
+        console.log(notificationReceipts);
 
-        localReceipts.map(async (receiptId) => {
-          const { status, message, details } = localReceipts[receiptId];
-          if (status === 'ok') {
-            receipts.push(localReceipts[receiptId]);
-          }
+        notificationReceipts.forEach(async (receiptId) => {
+          const { status, message, details } = notificationReceipts[receiptId];
           if (status === 'error') {
             console.error(`There was an error sending a notification: ${message}`);
             if (details && details.error) {
@@ -67,7 +63,7 @@ exports.pushNotification = async (feedItem, sender) => {
       }
     });
   })();
-  return { messages, receipts };
+  return messages;
 };
 
 /**
