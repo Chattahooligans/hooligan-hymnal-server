@@ -28,8 +28,10 @@ exports.store = async (req, res) => {
   } else {
     let acceptedExpoExperience = '';
     try {
-      acceptedExpoExperience = process.env.EXPO_EXPERIENCE || '';
-      if (tokenData.expoExperience != acceptedExpoExperience) {
+      if (process.env.EXPO_EXPERIENCE) {
+        acceptedExpoExperience = process.env.EXPO_EXPERIENCE || '';
+      }
+      if (tokenData.expoExperience !== acceptedExpoExperience) {
         return res.status(403).json({
           error: `expoExperience for push token ${tokenData.pushToken}: tokenData.expoExperience is not allowed`,
         });
