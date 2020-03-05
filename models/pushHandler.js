@@ -22,6 +22,10 @@ async function sendPush(feedItem, senderToken, channel) {
         data: { post: feedItem.id },
       });
     }
+    // else {
+    //   const token = await PushTokens.findOneAndRemove({ pushToken: pushToken.pushToken });
+    //   console.log(`token ${token.pushToken} was deleted`);
+    // }
   });
   // The Expo push notification service accepts batches of notifications so
   // that you don't need to send 1000 requests to send 1000 notifications. We
