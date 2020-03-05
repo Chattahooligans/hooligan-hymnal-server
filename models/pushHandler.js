@@ -89,7 +89,6 @@ async function sendPush(push, res) {
 		console.log("Starting tokenMatcher block, receipts.length: " + receipts.length)
 		var tokenMatcher = new RegExp("ExponentPushToken");
 		receipts.forEach(receipt => {
-			console.log("iterating on " + JSON.stringify(receipt))
 			if (receipt.status == "error") {
 				console.log("error found on " + receipt.message)
 				//run regex to retrieve token from it
@@ -100,7 +99,7 @@ async function sendPush(push, res) {
 					//if token found, find and delete
 					PushTokens.deleteOne({ pushToken: token }).then(
 						deleteResult => {
-							console.log("deleted bad push token");
+							console.log("deleted push token with error: " + token);
 						}
 					);
 				}
