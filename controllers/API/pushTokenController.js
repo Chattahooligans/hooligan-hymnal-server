@@ -40,7 +40,6 @@ exports.store = async (req, res) => {
       console.error(error);
     }
   }
-
   PushTokens.findOneAndUpdate(
     { pushToken: tokenData.pushToken },
     tokenData,
