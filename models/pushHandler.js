@@ -81,6 +81,17 @@ async function sendPush(push, res) {
 				console.error(
 					`Details: ${JSON.stringify(error.details)}`
 				);
+				const acceptedExpoExperience = process.env.EXPO_EXPERIENCE
+				Object.keys(error.details).forEach(key => {
+					console.log(acceptedExpoExperience + " vs " + key)
+					if (acceptedExpoExperience !== key) {
+						console.log("doesn't match, delete some shit")
+						error.details[key].forEach(token => {
+							console.log("need to delete " + token)
+						})
+					}
+				})
+
 				errors.push(
 					...chunk.map(
 						token => `Error notifying with token ${token}: ${error}`
