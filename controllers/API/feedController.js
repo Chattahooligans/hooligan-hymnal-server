@@ -12,7 +12,6 @@ const { sendPush } = require('../../models/pushHandler');
 const config = require('../../config.js');
 // const PushHandler = require('../../models/pushHandler');
 const { upload } = require('../../handlers/imageUploader');
-const { pushNotification } = require('../../handlers/pushHandler');
 
 const feeditems_cache = {
   data: null,
