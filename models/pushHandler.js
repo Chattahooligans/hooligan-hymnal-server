@@ -58,12 +58,13 @@ async function sendPush(feedItem, senderToken, channel) {
 			);
 
 			// only go down this path if it's the mixed expo experience issue
-			const experienceConflictMessage = 'Error: All push notification messages in the same request must be for the same project; check the details field to investigate conflicting tokens.';
+			const experienceConflictCode = 'PUSH_TOO_MANY_EXPERIENCE_IDS';
 			console.error(error)
+			console.error(error.code)
 			console.error('vs')
-			console.error(experienceConflictMessage)
-			if (error === experienceConflictMessage) {
-				console.error("error === experienceConflictMessage")
+			console.error(experienceConflictCode)
+			if (error.code === experienceConflictCode) {
+				console.error("error === experienceConflictCode")
 				// and check the environment variable exists first
 				if (process.env.EXPO_EXPERIENCE) {
 					const acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
