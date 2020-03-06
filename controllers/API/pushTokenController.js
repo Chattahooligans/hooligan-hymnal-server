@@ -26,15 +26,15 @@ exports.store = async (req, res) => {
       error: `Error creating or updating push token ${tokenData.pushToken}: You must include an expoExperience.`,
     });
   } else {
-    let acceptedExpoExperience = '';
     try {
+      let acceptedExpoExperience = '';
       if (process.env.EXPO_EXPERIENCE) {
         acceptedExpoExperience = process.env.EXPO_EXPERIENCE || '';
-      }
-      if (tokenData.expoExperience !== acceptedExpoExperience) {
-        return res.status(403).json({
-          error: `expoExperience for push token ${tokenData.pushToken}: tokenData.expoExperience is not allowed`,
-        });
+        if (tokenData.expoExperience !== acceptedExpoExperience) {
+          return res.status(403).json({
+            error: `expoExperience for push token ${tokenData.pushToken}: ${tokenData.expoExperience} is not allowed`,
+          });
+        }
       }
     } catch (error) {
       console.error(error);
