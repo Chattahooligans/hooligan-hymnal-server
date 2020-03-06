@@ -9,6 +9,13 @@ async function sendPush(feedItem, senderToken, channel) {
 	const messages = [];
 	const receipts = [];
 	const errors = [];
+
+	let truncatedBody = feedItem.text;
+	["\n", ".", "!", "?"].forEach((value) => {
+		if (truncatedBody.indexOf(value) > 0)
+			truncatedBody = truncatedBody.substring(0, truncatedBody.indexOf(value));
+	});
+
 	pushTokens.map(async (pushToken) => {
 		if (!Expo.isExpoPushToken(pushToken.pushToken)) {
 			console.error(`Push token ${pushToken.pushToken} is not valid`);
@@ -16,13 +23,13 @@ async function sendPush(feedItem, senderToken, channel) {
 
 		let acceptedExpoExperience = senderToken.expoExperience
 		if (process.env.EXPO_EXPERIENCE && process.env.EXPO_EXPERIENCE != "")
-				acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
+			acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
 
 		if (pushToken.expoExperience === acceptedExpoExperience) {
 			messages.push({
 				to: pushToken.pushToken,
 				title: `New notification from ${channel.name}`,
-				body: `${feedItem.text}... (tap to view more)`,
+				body: `${truncatedBody}... (tap to view more)`,
 				data: { post: feedItem.id },
 			});
 		}
