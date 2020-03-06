@@ -2,11 +2,15 @@ const mongoose = require('mongoose');
 
 const FeedItems = mongoose.model('feedItem');
 const Channels = mongoose.model('channels');
+const { Expo } = require('expo-server-sdk');
+
+const PushTokens = mongoose.model('pushTokens');
+const moment = require('moment');
+const { sendPush } = require('../../models/pushHandler');
 // const FeedItems = require('../../models/feeditems');
 // const Channels = require('../../models/channels');
-const moment = require('moment');
 const config = require('../../config.js');
-const PushHandler = require('../../models/pushHandler');
+// const PushHandler = require('../../models/pushHandler');
 const { upload } = require('../../handlers/imageUploader');
 
 const feeditems_cache = {
@@ -102,26 +106,12 @@ exports.channel = async (req, res) => {
 };
 
 exports.store = async (req, res) => {
-  console.log("CONSPICUOUS LOGGING TO POST TO FEED")
-  console.log("BODY")
-  console.log(req.body)
-  console.log("FILES")
-  console.log(req.files)
-  /*
-      Notes on images:
-      - the server expects .images as file streams and the same number of accompanying .metadata 
-      - .metadata is a either a single object or an array, becaue of oddities with multipart/form-data
-      - using a similar pattern, .remoteImages and .remoteMetadat are objects / arrays of the same length
-  
-      - we want to treat everything as an array to iterate over, so we convert the single-item versions to arrays of length=1
-  
-      - each of .images, .metadata, .remoteImages, .remoteMetadata all have a matching .index property for the final sequence
-      - these are all combined into feedItemImages to store in the db
-  */
-  let feedItemImages = []
+  const feedItemImages = [];
 
   req.body.active = true;
   const channel = await Channels.findById(req.body.channel);
+  const sender = JSON.parse(req.body.sender);
+  const senderToken = await PushTokens.findOne({ pushToken: sender.pushToken });
   const data = {
     sender: JSON.parse(req.body.sender),
     publishedAt: req.body.publishedAt,
@@ -153,105 +143,67 @@ exports.store = async (req, res) => {
     });
 
     // if there's only one item, turn it into an array
-    let uploadMetadata = []
+    let uploadMetadata = [];
     if (Array.isArray(req.body.metadata)) {
-      console.log("req.body.metadata is array, assign it to uploadMetadata")
-      uploadMetadata = req.body.metadata
-      console.log(uploadMetadata)
-    }
-    else {
-      console.log("req.body.metadata is not an array, push it to uploadMetadata")
-      uploadMetadata.push(req.body.metadata)
-      console.log(uploadMetadata)
+      uploadMetadata = req.body.metadata;
+    } else {
+      uploadMetadata.push(req.body.metadata);
     }
 
     images.forEach((image, index) => {
-      console.log("PROCESSING UPLOADED IMAGE")
-      console.log(image)
-      let thisMetadata = JSON.parse(uploadMetadata[index])
-      console.log(JSON.stringify(thisMetadata))
-      let targetIndex = thisMetadata.index
+      const thisMetadata = JSON.parse(uploadMetadata[index]);
+      const targetIndex = thisMetadata.index;
 
-      let thisImage = {
+      const thisImage = {
         uri: image.url,
-        metadata: thisMetadata
-      }
+        metadata: thisMetadata,
+      };
 
-      delete thisImage.metadata.index
+      delete thisImage.metadata.index;
 
-      console.log("PROCESSED AN UPLOADED IMAGE, will place in index " + targetIndex)
-      console.log(JSON.stringify(thisImage))
-
-      feedItemImages[targetIndex] = thisImage
-    })
+      feedItemImages[targetIndex] = thisImage;
+    });
   }
 
   if (req.body.remoteImages) {
     // if there's only one item, turn it into an array
-    let remoteImages = []
-    let remoteMetadata = []
+    let remoteImages = [];
+    let remoteMetadata = [];
     if (Array.isArray(req.body.remoteImages)) {
-      console.log("req.body.remoteImages is array, assign it")
-      remoteImages = req.body.remoteImages
-      remoteMetadata = req.body.remoteMetadata
-      console.log(remoteImages)
-      console.log(remoteMetadata)
-    }
-    else {
-      console.log("req.body.remoteImages is not an array, push it")
-      remoteImages.push(req.body.remoteImages)
-      remoteMetadata.push(req.body.remoteMetadata)
-      console.log(remoteImages)
-      console.log(remoteMetadata)
+      remoteImages = req.body.remoteImages;
+      remoteMetadata = req.body.remoteMetadata;
+    } else {
+      remoteImages.push(req.body.remoteImages);
+      remoteMetadata.push(req.body.remoteMetadata);
     }
 
     remoteImages.forEach((image, index) => {
-      console.log("PROCESSING REMOTE IMAGE")
-      let parsedImage = JSON.parse(image)
-      console.log(parsedImage)
-      let thisMetadata = JSON.parse(remoteMetadata[index])
-      console.log(JSON.stringify(thisMetadata))
-      let targetIndex = thisMetadata.index
+      const parsedImage = JSON.parse(image);
+      const thisMetadata = JSON.parse(remoteMetadata[index]);
+      const targetIndex = thisMetadata.index;
 
-      let thisImage = {
+      const thisImage = {
         uri: parsedImage.uri,
         thumbnailUri: parsedImage.thumbnailUri,
-        metadata: thisMetadata
-      }
+        metadata: thisMetadata,
+      };
 
-      delete thisImage.metadata.index
-
-      console.log("PROCESSED A REMOTE IMAGE, will place into index " + targetIndex)
-      console.log(JSON.stringify(thisImage))
-
-      feedItemImages[targetIndex] = thisImage
-    })
+      delete thisImage.metadata.index;
+      feedItemImages[targetIndex] = thisImage;
+    });
   }
-
-  console.log("DONE PROCESSING IMAGES, feedItemImages is")
-  console.log(JSON.stringify(feedItemImages))
-
-  console.log("ABOUT TO SAVE FEEDITEM TO DATABASE")
   const feedItem = await (new FeedItems(data)).save();
-  console.log("SAVED FEEDITEM TO DATABASE")
-  console.log("CHECKING FOR PUSH")
   if (feedItem.push) {
-    console.log("PUSH TRUE")
-    PushHandler.sendPost(feedItem, channel, res)
-      .then((res) => {
-        feeditems_cache.force_reload();
-      }).catch((err) => {
-        console.log(`Error: ${err}`);
-      });
-  } else {
-    console.log("PUSH FALSE")
+    console.log('PUSH TRUE');
+    const { tickets, errors } = await sendPush(feedItem, senderToken, channel);
     feeditems_cache.force_reload();
-    console.log(feedItem);
-    res.send(item);
+    return res.json({
+      feedItem,
+      receipts: tickets,
+      errors,
+    });
   }
-  console.log("ABOUT TO RETURN")
-  // HEY: this doesn't look like it sends receipts at all in the response, which is at least a nice confirmation
-  // this appears to execute BEFORE PushHandler finishes
+  feeditems_cache.force_reload();
   return res.json(feedItem);
 };
 
@@ -259,26 +211,27 @@ exports.activate = async (req, res) => {
   FeedItems.update({ _id: req.params.id }, {
     active: true,
   },
-    (err, affected, resp) => {
-      res.send(resp);
-      feeditems_cache.force_reload();
-    });
+  (err, affected, resp) => {
+    res.send(resp);
+    feeditems_cache.force_reload();
+  });
 };
 
 exports.deactivate = async (req, res) => {
   FeedItems.update({ _id: req.params.id }, {
     active: false,
   },
-    (err, affected, resp) => {
-      res.send(resp);
-      feeditems_cache.force_reload();
-    });
+  (err, affected, resp) => {
+    res.send(resp);
+    feeditems_cache.force_reload();
+  });
 };
 
 exports.delete = (req, res) => {
   FeedItems.findById(req.params.id, (error, feedItem) => {
-    if (error) res.status(501).send({ error });
-
+    if (error) {
+      res.status(501).send({ error });
+    }
     Channels.findById(feedItem.channel.Id), (error, channel) => {
       if (error) {
         res.send(error);
