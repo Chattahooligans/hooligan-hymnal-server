@@ -195,11 +195,11 @@ exports.store = async (req, res) => {
   const feedItem = await (new FeedItems(data)).save();
   if (feedItem.push) {
     console.log('PUSH TRUE');
-    const { tickets, errors } = await sendPush(feedItem, senderToken, channel);
+    const { receipts, errors } = await sendPush(feedItem, senderToken, channel);
     feeditems_cache.force_reload();
     return res.json({
       feedItem,
-      receipts: tickets,
+      receipts,
       errors,
     });
   }
