@@ -91,11 +91,14 @@ async function sendPush(feedItem, senderToken, channel) {
 					// okay, the tokens from conflicting experiences have been cleaned up
 					// let's try pushing the valid ones again
 					try {
-						let newChunk = [];
-						//chunk.forEach
+						let validChunk = [];
+						chunk.forEach((element) => {
+							if (validTokens.includes(element.to))
+								validChunk.push(element)
+						})
 
-						//const ticketChunk = await expo.sendPushNotificationsAsync(newChunk);
-						//tickets.push(...ticketChunk);
+						const ticketChunk = await expo.sendPushNotificationsAsync(validChunk);
+						tickets.push(...ticketChunk);
 					}
 					catch (error) {
 						// surrender at this point
