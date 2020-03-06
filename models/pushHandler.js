@@ -7,7 +7,7 @@ async function sendPush(feedItem, senderToken, channel) {
 	console.log('sending push...');
 	const pushTokens = await PushTokens.find();
 	const messages = [];
-	const tickets = [];
+	const receipts = [];
 	const errors = [];
 	pushTokens.map(async (pushToken) => {
 		if (!Expo.isExpoPushToken(pushToken.pushToken)) {
@@ -40,7 +40,7 @@ async function sendPush(feedItem, senderToken, channel) {
 		console.log("(before push attempt) chunkPushNotifications chunk count: " + chunk.length)
 		try {
 			const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-			tickets.push(...ticketChunk);
+			receipts.push(...ticketChunk);
 			// NOTE: If a ticket contains an error code in ticket.details.error, you
 			// must handle it appropriately. The error codes are listed in the Expo
 			// documentation:
@@ -93,7 +93,7 @@ async function sendPush(feedItem, senderToken, channel) {
 						})
 
 						const ticketChunk = await expo.sendPushNotificationsAsync(validChunk);
-						tickets.push(...ticketChunk);
+						receipts.push(...ticketChunk);
 					}
 					catch (error) {
 						// surrender at this point
@@ -109,29 +109,19 @@ async function sendPush(feedItem, senderToken, channel) {
 			);
 		}
 	}
-	const receiptIds = [];
-	for (const ticket of tickets) {
-		// NOTE: Not all tickets have IDs; for example, tickets for notifications
-		// that could not be enqueued will have error information and no receipt ID.
-		if (ticket.id) {
-			receiptIds.push(ticket.id);
-		}
-	}
 
-	console.log("WHAT THE HECK ARE TICKETS")
-	console.log(JSON.stringify(tickets))
-	tickets.forEach((ticket) => {
+	receipts.forEach((receipt) => {
 		try {
-			if (ticket.status === 'error') {
+			if (receipt.status === 'error') {
 				// Write to errors object. We return this later
-				errors.push(ticket);
-				console.error(`There was an error sending a notification: ` + JSON.stringify(ticket));
+				errors.push(receipt);
+				console.error(`There was an error sending a notification: ` + JSON.stringify(receipt));
 
 				const tokenMatcher = new RegExp('ExponentPushToken');
-				const matches = tokenMatcher.exec(ticket.message);
+				const matches = tokenMatcher.exec(receipt.message);
 				if (matches.length > 0) {
 					const i = matches.index;
-					const token = ticket.message.substring(i, i + 41);
+					const token = receipt.message.substring(i, i + 41);
 					console.error(`Deleting bad token: ${token}`);
 					await PushTokens.findOneAndRemove({ pushToken: token });
 				}
@@ -142,56 +132,8 @@ async function sendPush(feedItem, senderToken, channel) {
 		}
 	})
 
-	/*
-	console.log("LET'S CHECK THE RECEIPTS FOR ERRORS")
-
-	const receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
-	// Like sending notifications, there are different strategies you could use
-	// to retrieve batches of receipts from the Expo service.
-	for (const chunk of receiptIdChunks) {
-		console.log("(after push complete) receiptIdChunks chunk count: " + chunk.length)
-		console.log(JSON.stringify(chunk))
-		try {
-			const receipts = await expo.getPushNotificationReceiptsAsync(chunk);
-
-			console.log("receipts count: " + receipts.length)
-			console.log(JSON.stringify(receipts))
-
-			// The receipts specify whether Apple or Google successfully received the
-			// notification and information about an error, if one occurred.
-			for (const receiptId in receipts) {
-				const { status, message, details } = receipts[receiptId];
-				if (status === 'ok') {
-					continue;
-				} else if (status === 'error') {
-					errors.push({ status, details });
-					console.error(
-						`There was an error sending a notification: ${message}`,
-					);
-					const tokenMatcher = new RegExp('ExponentPushToken');
-					const matches = tokenMatcher.exec(message);
-					if (matches.length > 0) {
-						const i = matches.index;
-						const token = message.substring(i, i + 41);
-						console.error(`Bad token: ${token}`);
-						const deletedPushToken = await PushTokens.findOneAndRemove({ pushToken: token });
-						console.error(`Removed ${deletedPushToken.token} from db`);
-					}
-					if (details && details.error) {
-						// The error codes are listed in the Expo documentation:
-						// https://docs.expo.io/versions/latest/guides/push-notifications/#individual-errors
-						// You must handle the errors appropriately.
-						console.error(`The error code is ${details.error}`);
-					}
-				}
-			}
-		} catch (error) {
-			console.error(error);
-		}
-	}
-	*/
 	return {
-		tickets,
+		receipts,
 		errors,
 	};
 }
