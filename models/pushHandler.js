@@ -79,31 +79,26 @@ async function sendPush(feedItem, senderToken, channel) {
 						}
 						else {
 							// These are good tokens. Keep track of them.
-							console.log("Save the valid tokens for " + key)
 							error.details[key].forEach((token) => {
 								validTokens.push(token);
 							})
 						}
 					});
 
-					// okay, the tokens from conflicting experiences have been cleaned up
-					// let's try pushing the valid ones again
 					try {
-						console.log("Valid Tokens still, count: " + validTokens.length)
+						console.log('Conflict with experience, trying to send again for: ' + validTokens)
 						let validChunk = [];
 						chunk.forEach((element) => {
 							if (validTokens.includes(element.to))
 								validChunk.push(element)
 						})
 
-						console.log("valid chunk?")
-						console.log(validChunk)
 						const ticketChunk = await expo.sendPushNotificationsAsync(validChunk);
 						tickets.push(...ticketChunk);
 					}
 					catch (error) {
 						// surrender at this point
-						console.error("A second error occured: " + error)
+						console.error(`A second error occured: ` + error)
 					}
 				}
 			}
