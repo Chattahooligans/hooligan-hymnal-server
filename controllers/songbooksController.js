@@ -10,6 +10,7 @@ exports.index = async (req, res) => {
     songbooks,
   });
 };
+
 exports.create = async (req, res) => {
   const songs = await Song.find();
 

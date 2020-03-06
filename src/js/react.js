@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { render } from 'react-dom';
 
-// import { Formik, Form, Field } from 'formik';
-// import * as Yup from 'yup';
+import {
+  Formik, Form, Field, ErrorMessage,
+} from 'formik';
+import * as Yup from 'yup';
 
 const SongbookForm = () => {
   const [songbook, setSongbook] = useState({
@@ -13,7 +15,10 @@ const SongbookForm = () => {
     back_cover: '',
     chapters: [],
   });
+
   const [chapters, setChapters] = useState([]);
+  const [allSongs, setAllSongs] = useState([]);
+
   const [newChapter, setNewChapter] = useState({
     chapter_title: '',
   });
@@ -21,6 +26,12 @@ const SongbookForm = () => {
     featured: false,
     hint: '',
   });
+
+  useEffect(() => {
+    const songs = document.getElementById('songs').innerHTML;
+    const songsJSON = JSON.parse(songs);
+    setAllSongs(songsJSON);
+  }, []);
 
   const handleInput = ({ target: { name, value } }) => {
     setSongbook({
@@ -36,48 +47,39 @@ const SongbookForm = () => {
   };
   return (
     <>
-      <form method="POST">
-        <div className="flex flex-col mb-3">
-          <label htmlFor="name">
-            Name
-            <input type="text" name="name" id="name" className="border block" onChange={handleInput} value={songbook.name} />
+      <h2>Songs</h2>
+      <Formik
+        initialValues={songbook}
+        validationSchema={Yup.object({
+          songbook_title: Yup.string().required('Title is required'),
+          organization: Yup.string().required('Organization is required'),
+          description: Yup.string().required('Description is required').max(140),
+        })}
+      >
+        <>
+          <label htmlFor="songbook_title" className="flex flex-col mb-3">
+            Songbook Title
+            <Field name="songbook_title" type="text" id="songbook_title" className="border flex-auto rounded p-2 shadow" />
           </label>
-        </div>
-      </form>
-      <div>
-        <input type="text" name="chapters" id="chapters" className="border block" value={newChapter.chapter_title} onChange={updateChapterTitle} />
-        <button
-          type="button"
-          onClick={(e) => {
-            setSongbook({
-              ...songbook,
-              chapters: [
-                ...songbook.chapters,
-                {
-                  chapter_title: newChapter.chapter_title,
-                  songs: [],
-                },
-              ],
-            });
-            setNewChapter({
-              chapter_title: '',
-            });
-          }}
-        >
-          &plus;
-
-        </button>
-      </div>
-      <ul>
-        {songbook.chapters.map((chapter, index) => (
-          <li key={index}>
-            {chapter.chapter_title}
-            <div>
-              <input type="text" id="hint" name="hint" />
-            </div>
-          </li>
-        ))}
-      </ul>
+          <small className="text-red-700">
+            <ErrorMessage name="songbook_title" />
+          </small>
+          <label htmlFor="organization" className="flex flex-col mb-3">
+            Organization
+            <Field name="organization" type="text" id="organization" className="border flex-auto rounded p-2 shadow" />
+            <small className="text-red-700">
+              <ErrorMessage name="organization" />
+            </small>
+          </label>
+          <label htmlFor="description" className="flex flex-col mb-3">
+            description
+            <Field name="description" component="textarea" id="description" className="border flex-auto rounded p-2 shadow" />
+            <small className="text-red-700">
+              <ErrorMessage name="description" />
+            </small>
+          </label>
+        </>
+      </Formik>
     </>
   );
 };
