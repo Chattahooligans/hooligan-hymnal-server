@@ -74,6 +74,15 @@ async function sendPush(feedItem, senderToken, channel) {
           console.error(
             `There was an error sending a notification: ${message}`,
           );
+          const tokenMatcher = new RegExp('ExponentPushToken');
+          const matches = tokenMatcher.exec(message);
+          if (matches.length > 0) {
+            const i = matches.index;
+            const token = message.substring(i, i + 41);
+            console.error(`Bad token: ${token}`);
+            const deletedPushToken = await PushTokens.findOneAndRemove({ pushToken: token });
+            console.error(`Removed ${deletedPushToken.token} from db`);
+          }
           if (details && details.error) {
             // The error codes are listed in the Expo documentation:
             // https://docs.expo.io/versions/latest/guides/push-notifications/#individual-errors
