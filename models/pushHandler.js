@@ -44,7 +44,6 @@ async function sendPush(feedItem, senderToken, channel) {
 			// must handle it appropriately. The error codes are listed in the Expo
 			// documentation:
 			// https://docs.expo.io/versions/latest/guides/push-notifications#response-format
-			console.log("ticketChunk: " + ticketChunk)
 		} catch (error) {
 			// console.error(error);
 			console.log('there was a problem with the push for this chunk');
@@ -61,6 +60,7 @@ async function sendPush(feedItem, senderToken, channel) {
 			// only go down this path if it's the mixed expo experience issue
 			const experienceConflictMessage = 'Error: All push notification messages in the same request must be for the same project; check the details field to investigate conflicting tokens.';
 			if (error === experienceConflictMessage) {
+				console.error("error === experienceConflictMessage")
 				// and check the environment variable exists first
 				if (process.env.EXPO_EXPERIENCE) {
 					const acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
@@ -71,7 +71,7 @@ async function sendPush(feedItem, senderToken, channel) {
 							error.details[key].forEach((token) => {
 								PushTokens.deleteOne({ pushToken: token }).then(
 									(deleteResult) => {
-										console.log(`deleted push token with mismatched experience ${token}`);
+										console.log(`Deleted token with mismatched experience ${token}`);
 									  },
 									  );
 								  });
