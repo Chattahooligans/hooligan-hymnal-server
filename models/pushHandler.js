@@ -21,7 +21,6 @@ async function sendPush(feedItem, senderToken, channel) {
 		if (pushToken.expoExperience === acceptedExpoExperience) {
 			messages.push({
 				to: pushToken.pushToken,
-				sound: 'default',
 				title: `New notification from ${channel.name}`,
 				body: `${feedItem.text}... (tap to view more)`,
 				data: { post: feedItem.id },
