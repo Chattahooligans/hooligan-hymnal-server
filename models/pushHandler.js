@@ -110,7 +110,7 @@ async function sendPush(feedItem, senderToken, channel) {
 		}
 	}
 
-	receipts.forEach((receipt) => {
+	for (const receipt of receipts) {
 		try {
 			if (receipt.status === 'error') {
 				// Write to errors object. We return this later
@@ -123,14 +123,14 @@ async function sendPush(feedItem, senderToken, channel) {
 					const i = matches.index;
 					const token = receipt.message.substring(i, i + 41);
 					console.error(`Deleting bad token: ${token}`);
-					const deletedPushToken = await PushTokens.findOneAndRemove({ pushToken: token });
+					await PushTokens.findOneAndRemove({ pushToken: token });
 				}
 			}
 		}
 		catch (error) {
 			console.error("Receipt cleanup error:  " + error)
 		}
-	})
+	}
 
 	return {
 		receipts,
