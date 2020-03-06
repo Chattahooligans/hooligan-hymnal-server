@@ -13,7 +13,13 @@ async function sendPush(feedItem, senderToken, channel) {
 		if (!Expo.isExpoPushToken(pushToken.pushToken)) {
 			console.error(`Push token ${pushToken.pushToken} is not valid`);
 		}
-		if (pushToken.expoExperience === senderToken.expoExperience) {
+
+		let acceptedExpoExperience = senderToken.expoExperience
+		if (process.env.EXPO_EXPERIENCE)
+			if (process.env.EXPO_EXPERIENCE != "")
+				acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
+
+		if (pushToken.expoExperience === acceptedExpoExperience) {
 			messages.push({
 				to: pushToken.pushToken,
 				sound: 'default',
