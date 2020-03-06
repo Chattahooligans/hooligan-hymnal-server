@@ -44,10 +44,10 @@ async function sendPush(feedItem, senderToken, channel) {
 			// must handle it appropriately. The error codes are listed in the Expo
 			// documentation:
 			// https://docs.expo.io/versions/latest/guides/push-notifications#response-format
+			console.log("ticketChunk: " + ticketChunk)
 		} catch (error) {
 			// console.error(error);
 			console.log('there was a problem with the push for this chunk');
-			console.log(chunk)
 			const tokenString = chunk
 				.map((token) => token.to)
 				.join(', ');
