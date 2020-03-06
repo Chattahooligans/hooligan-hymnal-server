@@ -56,6 +56,9 @@ async function sendPush(feedItem, senderToken, channel) {
 			console.error(
 				`Details: ${JSON.stringify(error.details)}`,
 			);
+			console.error(
+				`Errors: ${JSON.stringify(error.errors)}`,
+			);
 			if (process.env.EXPO_EXPERIENCE) {
 				const acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
 				Object.keys(error.details).forEach((key) => {
