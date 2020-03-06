@@ -120,7 +120,25 @@ async function sendPush(feedItem, senderToken, channel) {
 
 	console.log("WHAT THE HECK ARE TICKETS")
 	console.log(JSON.stringify(tickets))
+	tickets.forEach((ticket) => {
+		if (ticket.status === 'error') {
+			// Write to errors object. We return this later
+			errors.push(ticket);
+			console.error(`There was an error sending a notification: ` + JSON.stringify(ticket));
 
+			const tokenMatcher = new RegExp('ExponentPushToken');
+			const matches = tokenMatcher.exec(message);
+			if (matches.length > 0) {
+				const i = matches.index;
+				const token = message.substring(i, i + 41);
+				console.error(`Bad token: ${token}`);
+				//const deletedPushToken = await PushTokens.findOneAndRemove({ pushToken: token });
+				//console.error(`Removed ${deletedPushToken.token} from db`);
+			}
+		}
+	})
+
+	/*
 	console.log("LET'S CHECK THE RECEIPTS FOR ERRORS")
 
 	const receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
@@ -167,6 +185,7 @@ async function sendPush(feedItem, senderToken, channel) {
 			console.error(error);
 		}
 	}
+	*/
 	return {
 		tickets,
 		errors,
