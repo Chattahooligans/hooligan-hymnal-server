@@ -37,6 +37,7 @@ async function sendPush(feedItem, senderToken, channel) {
 	// different strategies you could use. A simple one is to send one chunk at a
 	// time, which nicely spreads the load out over time:
 	for (const chunk of chunks) {
+		console.log("(before push attempt) chunkPushNotifications chunk count: " + chunk.length)
 		try {
 			const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
 			tickets.push(...ticketChunk);
@@ -123,7 +124,7 @@ async function sendPush(feedItem, senderToken, channel) {
 	// Like sending notifications, there are different strategies you could use
 	// to retrieve batches of receipts from the Expo service.
 	for (const chunk of receiptIdChunks) {
-		console.log("chunk count: " + chunk.length)
+		console.log("(after push complete) receiptIdChunks chunk count: " + chunk.length)
 		console.log(JSON.stringify(chunk))
 		try {
 			const receipts = await expo.getPushNotificationReceiptsAsync(chunk);
