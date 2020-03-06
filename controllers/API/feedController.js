@@ -198,6 +198,7 @@ exports.store = async (req, res) => {
     const { tickets, errors } = await sendPush(feedItem, senderToken, channel);
     feeditems_cache.force_reload();
     return res.json({
+      feedItem,
       receipts: tickets,
       errors,
     });
