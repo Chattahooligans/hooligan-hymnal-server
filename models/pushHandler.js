@@ -123,12 +123,12 @@ async function sendPush(feedItem, senderToken, channel) {
 	// Like sending notifications, there are different strategies you could use
 	// to retrieve batches of receipts from the Expo service.
 	for (const chunk of receiptIdChunks) {
-		console.log("chunk is")
+		console.log("chunk count: " + chunk.length)
 		console.log(JSON.stringify(chunk))
 		try {
 			const receipts = await expo.getPushNotificationReceiptsAsync(chunk);
 
-			console.log("receipts are")
+			console.log("receipts count: " + receipts.length)
 			console.log(JSON.stringify(receipts))
 
 			// The receipts specify whether Apple or Google successfully received the
