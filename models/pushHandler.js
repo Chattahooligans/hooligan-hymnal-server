@@ -45,7 +45,36 @@ async function sendPush(feedItem, senderToken, channel) {
       // documentation:
       // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      console.log('there was a problem with the push');
+      const tokenString = chunk
+        .map((token) => token.pushToken)
+        .join(', ');
+      console.error(
+        `Error notifying with tokens [${tokenString}]: ${error}`,
+      );
+      console.error(
+        `Details: ${JSON.stringify(error.details)}`,
+      );
+      const acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
+      Object.keys(error.details).forEach((key) => {
+        if (acceptedExpoExperience !== key) {
+          console.log(`expoExperience mismatch: ${acceptedExpoExperience} vs ${key}`);
+          error.details[key].forEach((token) => {
+            PushTokens.deleteOne({ pushToken: token }).then(
+              (deleteResult) => {
+                console.log(`deleted push token with mismatched experience ${token}`);
+              },
+            );
+          });
+        }
+      });
+
+      errors.push(
+        ...chunk.map(
+          (token) => `Error notifying with token ${token}: ${error}`,
+        ),
+      );
     }
   }
   const receiptIds = [];
