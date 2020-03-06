@@ -15,8 +15,7 @@ async function sendPush(feedItem, senderToken, channel) {
 		}
 
 		let acceptedExpoExperience = senderToken.expoExperience
-		if (process.env.EXPO_EXPERIENCE)
-			if (process.env.EXPO_EXPERIENCE != "")
+		if (process.env.EXPO_EXPERIENCE && process.env.EXPO_EXPERIENCE != "")
 				acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
 
 		if (pushToken.expoExperience === acceptedExpoExperience) {
