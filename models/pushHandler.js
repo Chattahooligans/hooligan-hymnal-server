@@ -56,25 +56,28 @@ async function sendPush(feedItem, senderToken, channel) {
 			console.error(
 				`Details: ${JSON.stringify(error.details)}`,
 			);
-			console.error(
-				`Errors: ${JSON.stringify(error.errors)}`,
-			);
-			if (process.env.EXPO_EXPERIENCE) {
-				const acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
-				Object.keys(error.details).forEach((key) => {
-					if (acceptedExpoExperience !== key) {
-						console.log(`expoExperience mismatch: ${acceptedExpoExperience} vs ${key}`);
-						/*
-						error.details[key].forEach((token) => {
-							PushTokens.deleteOne({ pushToken: token }).then(
-								(deleteResult) => {
-									console.log(`deleted push token with mismatched experience ${token}`);
-								  },
-								  );
-							  });
-							  */
-					}
-				});
+
+			// only go down this path if it's the mixed expo experience issue
+			const experienceConflictMessage = 'Error: All push notification messages in the same request must be for the same project; check the details field to investigate conflicting tokens.';
+			if (error === experienceConflictMessage) {
+				// and check the environment variable exists first
+				if (process.env.EXPO_EXPERIENCE) {
+					const acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
+					Object.keys(error.details).forEach((key) => {
+						if (acceptedExpoExperience !== key) {
+							console.log(`expoExperience mismatch: ${acceptedExpoExperience} vs ${key}`);
+							/*
+							error.details[key].forEach((token) => {
+								PushTokens.deleteOne({ pushToken: token }).then(
+									(deleteResult) => {
+										console.log(`deleted push token with mismatched experience ${token}`);
+									  },
+									  );
+								  });
+								  */
+						}
+					});
+				}
 			}
 
 			errors.push(
