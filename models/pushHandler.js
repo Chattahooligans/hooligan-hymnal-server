@@ -59,6 +59,9 @@ async function sendPush(feedItem, senderToken, channel) {
 
 			// only go down this path if it's the mixed expo experience issue
 			const experienceConflictMessage = 'Error: All push notification messages in the same request must be for the same project; check the details field to investigate conflicting tokens.';
+			console.error(error)
+			console.error('vs')
+			console.error(experienceConflictMessage)
 			if (error === experienceConflictMessage) {
 				console.error("error === experienceConflictMessage")
 				// and check the environment variable exists first
