@@ -45,8 +45,8 @@ async function sendPush(feedItem, senderToken, channel) {
 			// documentation:
 			// https://docs.expo.io/versions/latest/guides/push-notifications#response-format
 		} catch (error) {
-			// console.error(error);
-			console.log('there was a problem with the push for this chunk');
+			console.log('There was a problem with the push for this chunk');
+			console.error(error);
 			const tokenString = chunk
 				.map((token) => token.to)
 				.join(', ');
