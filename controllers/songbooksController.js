@@ -19,12 +19,12 @@ exports.create = async (req, res) => {
   });
 };
 
-exports.store = async (req, res) => res.send(req.body)
-// const songbook = new Songbook(req.body);
-// await songbook.save();
-// req.flash('success', `${songbook.songbook_title} was created`);
-// res.redirect('/songbooks');
-;
+exports.store = async (req, res) => {
+  const songbook = new Songbook(req.body);
+  await songbook.save();
+  req.flash('success', `${songbook.songbook_title} was created`);
+  res.redirect(`/songbooks/${songbook.id}`);
+};
 
 exports.show = async (req, res) => {
   const songbook = await Songbook.findById(req.params.id);
@@ -91,7 +91,7 @@ exports.saveChapter = async (req, res) => {
     'success',
     `${newChapter.chapter_title} was added to ${songbook.songbook_title}`,
   );
-  res.redirect(`/songbooks/${songbook._id}`);
+  res.redirect(`/songbooks/${songbook.id}`);
 };
 
 exports.deleteChapterConfirm = async (req, res) => {
