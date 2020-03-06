@@ -67,7 +67,6 @@ async function sendPush(feedItem, senderToken, channel) {
 					Object.keys(error.details).forEach((key) => {
 						if (acceptedExpoExperience !== key) {
 							console.log(`expoExperience mismatch: ${acceptedExpoExperience} vs ${key}`);
-							/*
 							error.details[key].forEach((token) => {
 								PushTokens.deleteOne({ pushToken: token }).then(
 									(deleteResult) => {
@@ -75,7 +74,6 @@ async function sendPush(feedItem, senderToken, channel) {
 									},
 								);
 							});
-							*/
 						}
 						else {
 							// These are good tokens. Keep track of them.
