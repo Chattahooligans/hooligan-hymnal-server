@@ -117,12 +117,20 @@ async function sendPush(feedItem, senderToken, channel) {
 		}
 	}
 
+	console.log("LET'S CHECK THE RECEIPTS FOR ERRORS")
+
 	const receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
 	// Like sending notifications, there are different strategies you could use
 	// to retrieve batches of receipts from the Expo service.
 	for (const chunk of receiptIdChunks) {
+		console.log("chunk is")
+		console.log(JSON.stringify(chunk))
 		try {
 			const receipts = await expo.getPushNotificationReceiptsAsync(chunk);
+
+			console.log("receipts are")
+			console.log(JSON.stringify(receipts))
+
 			// The receipts specify whether Apple or Google successfully received the
 			// notification and information about an error, if one occurred.
 			for (const receiptId in receipts) {
