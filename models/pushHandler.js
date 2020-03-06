@@ -127,13 +127,12 @@ async function sendPush(feedItem, senderToken, channel) {
 			console.error(`There was an error sending a notification: ` + JSON.stringify(ticket));
 
 			const tokenMatcher = new RegExp('ExponentPushToken');
-			const matches = tokenMatcher.exec(message);
+			const matches = tokenMatcher.exec(ticket.message);
 			if (matches.length > 0) {
 				const i = matches.index;
-				const token = message.substring(i, i + 41);
-				console.error(`Bad token: ${token}`);
-				//const deletedPushToken = await PushTokens.findOneAndRemove({ pushToken: token });
-				//console.error(`Removed ${deletedPushToken.token} from db`);
+				const token = ticket.message.substring(i, i + 41);
+				console.error(`Deleting bad token: ${token}`);
+				//await PushTokens.findOneAndRemove({ pushToken: token });
 			}
 		}
 	})
