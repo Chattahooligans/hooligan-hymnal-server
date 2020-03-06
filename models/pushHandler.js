@@ -123,7 +123,7 @@ async function sendPush(feedItem, senderToken, channel) {
 					const i = matches.index;
 					const token = receipt.message.substring(i, i + 41);
 					console.error(`Deleting bad token: ${token}`);
-					await PushTokens.findOneAndRemove({ pushToken: token });
+					const deletedPushToken = await PushTokens.findOneAndRemove({ pushToken: token });
 				}
 			}
 		}
