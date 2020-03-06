@@ -121,19 +121,24 @@ async function sendPush(feedItem, senderToken, channel) {
 	console.log("WHAT THE HECK ARE TICKETS")
 	console.log(JSON.stringify(tickets))
 	tickets.forEach((ticket) => {
-		if (ticket.status === 'error') {
-			// Write to errors object. We return this later
-			errors.push(ticket);
-			console.error(`There was an error sending a notification: ` + JSON.stringify(ticket));
+		try {
+			if (ticket.status === 'error') {
+				// Write to errors object. We return this later
+				errors.push(ticket);
+				console.error(`There was an error sending a notification: ` + JSON.stringify(ticket));
 
-			const tokenMatcher = new RegExp('ExponentPushToken');
-			const matches = tokenMatcher.exec(ticket.message);
-			if (matches.length > 0) {
-				const i = matches.index;
-				const token = ticket.message.substring(i, i + 41);
-				console.error(`Deleting bad token: ${token}`);
-				//await PushTokens.findOneAndRemove({ pushToken: token });
+				const tokenMatcher = new RegExp('ExponentPushToken');
+				const matches = tokenMatcher.exec(ticket.message);
+				if (matches.length > 0) {
+					const i = matches.index;
+					const token = ticket.message.substring(i, i + 41);
+					console.error(`Deleting bad token: ${token}`);
+					await PushTokens.findOneAndRemove({ pushToken: token });
+				}
 			}
+		}
+		catch (error) {
+			console.error("Receipt cleanup error:  " + error)
 		}
 	})
 
