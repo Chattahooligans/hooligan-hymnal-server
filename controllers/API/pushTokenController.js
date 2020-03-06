@@ -1,4 +1,4 @@
-const PushTokens = require('../../models/pushTokens');
+const PushTokens = require("../../models/pushTokens");
 
 
 exports.get = async (req, res) => {
@@ -8,38 +8,42 @@ exports.get = async (req, res) => {
     }
     res.send(pushTokens);
   });
-};
+}
 
-exports.store = async (req, res) => {
-  const now = new Date()
+exports.store = async (req, res) => {  
+  var now = new Date()
     .toISOString()
-    .replace(/T/, ' ') // replace T with a space
-    .replace(/\..+/, '');
-  const tokenData = {
-    ...req.body,
+    .replace(/T/, " ") // replace T with a space
+    .replace(/\..+/, "");
+  var tokenData = Object.assign({}, req.body, {
     lastUsed: now,
-    $inc: { checkinCount: 1 },
-  };
+    $inc: { checkinCount: 1 }
+  });
 
-  if (!tokenData.hasOwnProperty('expoExperience')) {
+  if(!tokenData.hasOwnProperty("expoExperience")) {
     res.status(501).send({
-      error: `Error creating or updating push token ${tokenData.pushToken}: You must include an expoExperience.`,
-    });
-  } else {
-    let acceptedExpoExperience = '';
+      error: `Error creating or updating push token ${tokenData.pushToken}: You must include an expoExperience.`
+    })
+    return;
+  }
+  else {
+    // TODO: Check an environment variable to get the acceptable expoExperience and drop anything that doesn't match
+    let acceptedExpoExperience = ""
     try {
-      if (process.env.EXPO_EXPERIENCE) {
-        acceptedExpoExperience = process.env.EXPO_EXPERIENCE || '';
+      acceptedExpoExperience = process.env.EXPO_EXPERIENCE
+      if (tokenData.expoExperience != acceptedExpoExperience) {
+        res.status(501).send({
+          error: `expoExperience for push token ${tokenData.pushToken}: tokenData.expoExperience is not allowed`
+        })
+        return
       }
-      if (tokenData.expoExperience !== acceptedExpoExperience) {
-        return res.status(403).json({
-          error: `expoExperience for push token ${tokenData.pushToken}: tokenData.expoExperience is not allowed`,
-        });
-      }
-    } catch (error) {
-      console.error(error);
+    }
+    catch (error) {
+      console.error("Error on expoExperience check " + error)
     }
   }
+
+  
   PushTokens.findOneAndUpdate(
     { pushToken: tokenData.pushToken },
     tokenData,
@@ -50,14 +54,14 @@ exports.store = async (req, res) => {
       // probably the behavior we'd want.
       new: true,
       upsert: true,
-      setDefaultsOnInsert: true,
+      setDefaultsOnInsert: true
     },
     (error, token) => {
       error
         ? res.status(501).send({
-          error: `Error creating or updating push token ${tokenData.pushToken}: ${error}`,
-        })
+            error: `Error creating or updating push token ${tokenData.pushToken}: ${error}`
+          })
         : res.send(token);
-    },
+    }
   );
-};
+}
