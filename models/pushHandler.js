@@ -37,6 +37,7 @@ async function sendPush(feedItem, senderToken, channel) {
 	// different strategies you could use. A simple one is to send one chunk at a
 	// time, which nicely spreads the load out over time:
 	for (const chunk of chunks) {
+		console.log("chunk: " + chunk)
 		try {
 			const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
 			tickets.push(...ticketChunk);
@@ -63,6 +64,7 @@ async function sendPush(feedItem, senderToken, channel) {
 				// and check the environment variable exists first
 				if (process.env.EXPO_EXPERIENCE) {
 					const acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
+					let validTokens = []
 					Object.keys(error.details).forEach((key) => {
 						if (acceptedExpoExperience !== key) {
 							console.log(`expoExperience mismatch: ${acceptedExpoExperience} vs ${key}`);
@@ -74,7 +76,26 @@ async function sendPush(feedItem, senderToken, channel) {
 								);
 							});
 						}
+						else {
+							error.details[key].forEach((token) => {
+								validTokens.push(token);
+							})
+						}
 					});
+
+					// okay, the tokens from conflicting experiences have been cleaned up
+					// let's try pushing the valid ones again
+					try {
+						let newChunk = [];
+						//chunk.forEach
+
+						//const ticketChunk = await expo.sendPushNotificationsAsync(newChunk);
+						//tickets.push(...ticketChunk);
+					}
+					catch (error) {
+						// surrender at this point
+						console.error("A second error occured: " + error)
+					}
 				}
 			}
 
