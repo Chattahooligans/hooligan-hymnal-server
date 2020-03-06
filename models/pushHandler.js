@@ -37,8 +37,6 @@ async function sendPush(feedItem, senderToken, channel) {
 	// different strategies you could use. A simple one is to send one chunk at a
 	// time, which nicely spreads the load out over time:
 	for (const chunk of chunks) {
-		console.log("chunk: ")
-		console.log(JSON.stringify(chunk))
 		try {
 			const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
 			tickets.push(...ticketChunk);
@@ -91,12 +89,15 @@ async function sendPush(feedItem, senderToken, channel) {
 					// okay, the tokens from conflicting experiences have been cleaned up
 					// let's try pushing the valid ones again
 					try {
+						console.log("Valid Tokens still, count: " + validTokens.length)
 						let validChunk = [];
 						chunk.forEach((element) => {
 							if (validTokens.includes(element.to))
 								validChunk.push(element)
 						})
 
+						console.log("valid chunk?")
+						console.log(validChunk)
 						const ticketChunk = await expo.sendPushNotificationsAsync(validChunk);
 						tickets.push(...ticketChunk);
 					}
