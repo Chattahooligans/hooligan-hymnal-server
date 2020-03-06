@@ -49,7 +49,7 @@ async function sendPush(feedItem, senderToken, channel) {
 			console.log('there was a problem with the push for this chunk');
 			console.log(chunk)
 			const tokenString = chunk
-				.map((token) => token.pushToken)
+				.map((token) => token.to)
 				.join(', ');
 			console.error(
 				`Error notifying with tokens [${tokenString}]: ${error}`,
