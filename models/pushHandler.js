@@ -37,7 +37,8 @@ async function sendPush(feedItem, senderToken, channel) {
 	// different strategies you could use. A simple one is to send one chunk at a
 	// time, which nicely spreads the load out over time:
 	for (const chunk of chunks) {
-		console.log("chunk: " + chunk)
+		console.log("chunk: ")
+		console.log(JSON.stringify(chunk))
 		try {
 			const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
 			tickets.push(...ticketChunk);
@@ -68,6 +69,7 @@ async function sendPush(feedItem, senderToken, channel) {
 					Object.keys(error.details).forEach((key) => {
 						if (acceptedExpoExperience !== key) {
 							console.log(`expoExperience mismatch: ${acceptedExpoExperience} vs ${key}`);
+							/*
 							error.details[key].forEach((token) => {
 								PushTokens.deleteOne({ pushToken: token }).then(
 									(deleteResult) => {
@@ -75,8 +77,11 @@ async function sendPush(feedItem, senderToken, channel) {
 									},
 								);
 							});
+							*/
 						}
 						else {
+							// These are good tokens. Keep track of them.
+							console.log("Save the valid tokens for " + key)
 							error.details[key].forEach((token) => {
 								validTokens.push(token);
 							})
