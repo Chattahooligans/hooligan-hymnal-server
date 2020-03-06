@@ -30,7 +30,7 @@ async function sendPush(feedItem, senderToken, channel) {
 				to: pushToken.pushToken,
 				title: `New notification from ${channel.name}`,
 				body: `${truncatedBody}... (tap to view more)`,
-				data: { post: feedItem.id },
+				data: { post: feedItem._id },
 			});
 		}
 		// else {
