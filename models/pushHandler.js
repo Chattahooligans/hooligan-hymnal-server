@@ -118,6 +118,9 @@ async function sendPush(feedItem, senderToken, channel) {
 		}
 	}
 
+	console.log("WHAT THE HECK ARE TICKETS")
+	console.log(JSON.stringify(tickets))
+
 	console.log("LET'S CHECK THE RECEIPTS FOR ERRORS")
 
 	const receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
