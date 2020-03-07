@@ -11,7 +11,13 @@ async function sendPush(feedItem, senderToken, channel) {
 	const errors = [];
 
 	let truncatedBody = feedItem.text;
-	["\n", ".", "!", "?"].forEach((value) => {
+	// we want the punctuation, so add 1
+	[".", "!", "?"].forEach((value) => {
+		if (truncatedBody.indexOf(value) > 0)
+			truncatedBody = truncatedBody.substring(0, truncatedBody.indexOf(value) + 1);
+	});
+	// we don't want the newline, so no +1
+	["\n"].forEach((value) => {
 		if (truncatedBody.indexOf(value) > 0)
 			truncatedBody = truncatedBody.substring(0, truncatedBody.indexOf(value));
 	});
