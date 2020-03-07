@@ -170,18 +170,31 @@ async function sendNotification(notification) {
 	return { errors, receipts };
 }
 
-async function sendPost(post, channel) {
-	let body = post.text;
-	['\n', '.', '!', '?'].forEach((value) => {
-		if (body.indexOf(value) > 0) { body = body.substring(0, body.indexOf(value)); }
+async function sendPost(feedItem, channel, senderToken) {
+	let truncatedBody = feedItem.text;
+	// we want the punctuation, so add 1
+	[".", "!", "?"].forEach((value) => {
+		if (truncatedBody.indexOf(value) > 0)
+			truncatedBody = truncatedBody.substring(0, truncatedBody.indexOf(value) + 1);
+	});
+	// we don't want the newline, so no +1
+	["\n"].forEach((value) => {
+		if (truncatedBody.indexOf(value) > 0)
+			truncatedBody = truncatedBody.substring(0, truncatedBody.indexOf(value));
 	});
 
-	const push = {
+	// if, after all that, we didn't change anything
+	if (truncatedBody === feedItem.text)
+		truncatedBody += " (tap to view more)"
+	else
+		truncatedBody += "... (tap to view more)"
+
+	const notificationContent = {
 		title: `New notification from ${channel.name}`,
-		body: `${body}... (tap to view more)`,
-		data: { postId: post._id },
+		body: truncatedBody,
+		data: { postId: feedItem._id },
 	};
-	await sendPush(push);
+	await sendPush(notificationContent, senderToken);
 }
 
 module.exports = { sendNotification, sendPost, sendPush };
