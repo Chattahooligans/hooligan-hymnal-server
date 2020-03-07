@@ -4,7 +4,7 @@ const PushTokens = require('./pushTokens');
 const expo = new Expo();
 
 async function sendPush(notificationContent, targetPushTokens, senderToken) {
-	console.log('sending push...');
+	console.log(`Sending push to ${targetPushTokens.length} devices`);
 	const messages = [];
 	const receipts = [];
 	const errors = [];
@@ -141,6 +141,9 @@ async function sendPush(notificationContent, targetPushTokens, senderToken) {
 			console.error("Receipt cleanup error:  " + error)
 		}
 	}
+
+	console.log(`Recorded ${receipts.length} receipts from push`);
+	console.log(`Error count ${errors.length}`);
 
 	return {
 		receipts,
