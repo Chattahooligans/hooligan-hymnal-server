@@ -7,10 +7,12 @@ let expo = new Expo();
 
 exports.last = async (req, res) => {
 	var notification = {
-		title: "Please update!",
-		lyrics: "Stop! If you're seeing this, you're running an old version of the app! To update, please try closing and re-opening.\n\n" + 
-		"If this doesn't work, try checking for an update from the Play/App Store. If all else fails, try uninstalling and reinstalling.\n\n" +
-		"Questions? Reach out to @hooliganhymnal on Twitter."
+		title: "Please Update!",
+		lyrics:"If you can see this, your phone is running an order version of Chattahooligan Hymnal that is no longer supported.\n\n" +
+		"- If you force close and reopen the app, you _should_ get the newest update automatically, just look for a version greater than 1.6.0 in the top right corner of the home screen to verify.\n\n" +
+		"- If that didn't work, look for an outstanding update from Google Play or the App Store\n\n" +
+		"- If _that_ didn't work, uninstall the app and reinstall\n\n" + 
+		"Questions? Reach out to @hooliganhymnal on Twitter"
 	};
 	res.json(notification);
 };
