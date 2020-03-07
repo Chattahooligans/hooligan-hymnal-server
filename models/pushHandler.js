@@ -10,8 +10,6 @@ async function sendPush(notificationContent, senderToken) {
 	const receipts = [];
 	const errors = [];
 
-	console.log("BUILDING TOKENS/NOTIFICATIONS")
-
 	pushTokens.map(async (pushToken) => {
 		if (!Expo.isExpoPushToken(pushToken.pushToken)) {
 			console.error(`Push token ${pushToken.pushToken} is not valid according to Expo.isExpoPushToken()`);
@@ -40,8 +38,6 @@ async function sendPush(notificationContent, senderToken) {
 			// }
 		}
 	});
-
-	console.log("CHUNKING AND SENDING")
 
 	// The Expo push notification service accepts batches of notifications so
 	// that you don't need to send 1000 requests to send 1000 notifications. We
@@ -125,8 +121,6 @@ async function sendPush(notificationContent, senderToken) {
 		}
 	}
 
-	console.log("CHECKING RECEIPTS")
-
 	for (const receipt of receipts) {
 		try {
 			if (receipt.status === 'error') {
@@ -148,10 +142,6 @@ async function sendPush(notificationContent, senderToken) {
 			console.error("Receipt cleanup error:  " + error)
 		}
 	}
-
-	console.log("ABOUT TO RETURN sendPush()")
-	console.log(receipts)
-	console.log(errors)
 
 	return {
 		receipts,
