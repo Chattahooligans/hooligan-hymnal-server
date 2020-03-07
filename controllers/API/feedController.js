@@ -2,9 +2,13 @@ const mongoose = require('mongoose');
 
 const FeedItems = mongoose.model('feedItem');
 const Channels = mongoose.model('channels');
+const { Expo } = require('expo-server-sdk');
+
+const PushTokens = mongoose.model('pushTokens');
+const moment = require('moment');
+const { sendPush } = require('../../models/pushHandler');
 // const FeedItems = require('../../models/feeditems');
 // const Channels = require('../../models/channels');
-const moment = require('moment');
 const config = require('../../config.js');
 const PushHandler = require('../../models/pushHandler');
 const { upload } = require('../../handlers/imageUploader');
@@ -102,23 +106,28 @@ exports.channel = async (req, res) => {
 };
 
 exports.store = async (req, res) => {
-  console.log("CONSPICUOUS LOGGING TO POST TO FEED")
-  console.log("BODY")
-  console.log(req.body)
-  console.log("FILES")
-  console.log(req.files)
-  /*
-      Notes on images:
-      - the server expects .images as file streams and the same number of accompanying .metadata 
-      - .metadata is a either a single object or an array, becaue of oddities with multipart/form-data
-      - using a similar pattern, .remoteImages and .remoteMetadat are objects / arrays of the same length
-  
-      - we want to treat everything as an array to iterate over, so we convert the single-item versions to arrays of length=1
-  
-      - each of .images, .metadata, .remoteImages, .remoteMetadata all have a matching .index property for the final sequence
-      - these are all combined into feedItemImages to store in the db
-  */
-  let feedItemImages = []
+  const feedItemImages = [];
+
+  req.body.active = true;
+  const channel = await Channels.findById(req.body.channel);
+  const sender = JSON.parse(req.body.sender);
+  const senderToken = await PushTokens.findOne({ pushToken: sender.pushToken });
+  const data = {
+    sender: JSON.parse(req.body.sender),
+    publishedAt: req.body.publishedAt,
+    push: req.body.push === 'true',
+    locale: req.body.locale,
+    text: req.body.text,
+    images: feedItemImages,
+    attachments: req.body.attachments ? JSON.parse(req.body.attachments) : [],
+    active: true,
+    channel: channel.id,
+  };
+
+  const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
+  if (!userHasPermission) {
+    return res.status(401).send('You do not have permission to post to this news feed channel');
+  }
 
   req.body.images = [];
   if (req.files && req.files.images) {
@@ -134,113 +143,73 @@ exports.store = async (req, res) => {
     });
 
     // if there's only one item, turn it into an array
-    let uploadMetadata = []
+    let uploadMetadata = [];
     if (Array.isArray(req.body.metadata)) {
-      console.log("req.body.metadata is array, assign it to uploadMetadata")
-      uploadMetadata = req.body.metadata
-      console.log(uploadMetadata)
-    }
-    else {
-      console.log("req.body.metadata is not an array, push it to uploadMetadata")
-      uploadMetadata.push(req.body.metadata)
-      console.log(uploadMetadata)
+      uploadMetadata = req.body.metadata;
+    } else {
+      uploadMetadata.push(req.body.metadata);
     }
 
     images.forEach((image, index) => {
-      console.log("PROCESSING UPLOADED IMAGE")
-      console.log(image)
-      let thisMetadata = JSON.parse(uploadMetadata[index])
-      console.log(JSON.stringify(thisMetadata))
-      let targetIndex = thisMetadata.index
+      const thisMetadata = JSON.parse(uploadMetadata[index]);
+      const targetIndex = thisMetadata.index;
 
-      let thisImage = {
+      const thisImage = {
         uri: image.url,
-        metadata: thisMetadata
-      }
+        metadata: thisMetadata,
+      };
 
-      delete thisImage.metadata.index
+      delete thisImage.metadata.index;
 
-      console.log("PROCESSED AN UPLOADED IMAGE, will place in index " + targetIndex)
-      console.log(JSON.stringify(thisImage))
-
-      feedItemImages[targetIndex] = thisImage
-    })
+      feedItemImages[targetIndex] = thisImage;
+    });
   }
 
   if (req.body.remoteImages) {
     // if there's only one item, turn it into an array
-    let remoteImages = []
-    let remoteMetadata = []
+    let remoteImages = [];
+    let remoteMetadata = [];
     if (Array.isArray(req.body.remoteImages)) {
-      console.log("req.body.remoteImages is array, assign it")
-      remoteImages = req.body.remoteImages
-      remoteMetadata = req.body.remoteMetadata
-      console.log(remoteImages)
-      console.log(remoteMetadata)
-    }
-    else {
-      console.log("req.body.remoteImages is not an array, push it")
-      remoteImages.push(req.body.remoteImages)
-      remoteMetadata.push(req.body.remoteMetadata)
-      console.log(remoteImages)
-      console.log(remoteMetadata)
+      remoteImages = req.body.remoteImages;
+      remoteMetadata = req.body.remoteMetadata;
+    } else {
+      remoteImages.push(req.body.remoteImages);
+      remoteMetadata.push(req.body.remoteMetadata);
     }
 
     remoteImages.forEach((image, index) => {
-      console.log("PROCESSING REMOTE IMAGE")
-      let parsedImage = JSON.parse(image)
-      console.log(parsedImage)
-      let thisMetadata = JSON.parse(remoteMetadata[index])
-      console.log(JSON.stringify(thisMetadata))
-      let targetIndex = thisMetadata.index
+      const parsedImage = JSON.parse(image);
+      const thisMetadata = JSON.parse(remoteMetadata[index]);
+      const targetIndex = thisMetadata.index;
 
-      let thisImage = {
+      const thisImage = {
         uri: parsedImage.uri,
         thumbnailUri: parsedImage.thumbnailUri,
-        metadata: thisMetadata
-      }
+        metadata: thisMetadata,
+      };
 
-      delete thisImage.metadata.index
-
-      console.log("PROCESSED A REMOTE IMAGE, will place into index " + targetIndex)
-      console.log(JSON.stringify(thisImage))
-
-      feedItemImages[targetIndex] = thisImage
-    })
+      delete thisImage.metadata.index;
+      feedItemImages[targetIndex] = thisImage;
+    });
   }
 
-  console.log("DONE PROCESSING IMAGES, feedItemImages is")
-  console.log(JSON.stringify(feedItemImages))
-  
-  req.body.active = true;
-  const channel = await Channels.findById(req.body.channel);
-  const data = {
-    sender: JSON.parse(req.body.sender),
-    publishedAt: req.body.publishedAt,
-    push: req.body.push === 'true',
-    locale: req.body.locale,
-    text: req.body.text,
-    images: feedItemImages,
-    attachments: req.body.attachments ? JSON.parse(req.body.attachments) : [],
-    active: true,
-    channel: channel.id,
-  };
   const feedItem = await (new FeedItems(data)).save();
-  const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
-  if (!userHasPermission) {
-    return res.status(401).send('You do not have permission to post to this news feed channel');
-  }
   if (feedItem.push) {
-    PushHandler.sendPost(feedItem, channel)
-      .then((res) => {
-        feeditems_cache.force_reload();
-      }).catch((err) => {
-        console.log(`Error: ${err}`);
-      });
-  } else {
+    const { receipts, errors } = await PushHandler.sendPost(feedItem, channel, senderToken);
+
     feeditems_cache.force_reload();
+
+    return res.json({
+      feedItem,
+      receipts,
+      errors,
+    });
   }
-  return res.json(feedItem);
+  else {
+    feeditems_cache.force_reload();
+
+    return res.json(feedItem);
+  }
 };
 
 exports.activate = async (req, res) => {
@@ -265,8 +234,9 @@ exports.deactivate = async (req, res) => {
 
 exports.delete = (req, res) => {
   FeedItems.findById(req.params.id, (error, feedItem) => {
-    if (error) res.status(501).send({ error });
-
+    if (error) {
+      res.status(501).send({ error });
+    }
     Channels.findById(feedItem.channel.Id), (error, channel) => {
       if (error) {
         res.send(error);
