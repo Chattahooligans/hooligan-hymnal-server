@@ -10,11 +10,6 @@ async function sendPush(feedItem, senderToken, channel) {
 	const receipts = [];
 	const errors = [];
 
-	console.log("NO UNDESCORE ID")
-	console.log(feedItem.id)
-	console.log("UNDESCORE ID")
-	console.log(feedItem._id)
-
 	let truncatedBody = feedItem.text;
 	// we want the punctuation, so add 1
 	[".", "!", "?"].forEach((value) => {
