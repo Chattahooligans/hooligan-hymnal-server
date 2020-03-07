@@ -10,7 +10,7 @@ const { sendPush } = require('../../models/pushHandler');
 // const FeedItems = require('../../models/feeditems');
 // const Channels = require('../../models/channels');
 const config = require('../../config.js');
-// const PushHandler = require('../../models/pushHandler');
+const PushHandler = require('../../models/pushHandler');
 const { upload } = require('../../handlers/imageUploader');
 
 const feeditems_cache = {
@@ -195,7 +195,7 @@ exports.store = async (req, res) => {
 
   const feedItem = await (new FeedItems(data)).save();
   if (feedItem.push) {
-    const { receipts, errors } = await sendPush(feedItem, senderToken, channel);
+    const { receipts, errors } = await PushHandler.sendPost(feedItem, channel, senderToken);
 
     feeditems_cache.force_reload();
 
