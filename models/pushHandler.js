@@ -28,15 +28,14 @@ async function sendPush(feedItem, senderToken, channel) {
 	else
 		truncatedBody += "... (tap to view more)"
 
-	const notificationContent = {
-		to: pushToken.pushToken,
+	let baseNotificationContent = {
 		title: `New notification from ${channel.name}`,
 		body: truncatedBody,
 		data: { post: feedItem._id },
 	};
 
-	console.log("notificationContent")
-	console.log(notificationContent)
+	console.log("baseNotificationContent")
+	console.log(baseNotificationContent)
 
 	pushTokens.map(async (pushToken) => {
 		if (!Expo.isExpoPushToken(pushToken.pushToken)) {
@@ -47,8 +46,12 @@ async function sendPush(feedItem, senderToken, channel) {
 		if (process.env.EXPO_EXPERIENCE && process.env.EXPO_EXPERIENCE != "")
 			acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
 
-		if (pushToken.expoExperience === acceptedExpoExperience)
+		if (pushToken.expoExperience === acceptedExpoExperience) {
+			let notificationContent = {};
+			Object.assign(notificationContent, baseNotificationContent);
+			notificationContent.to = pushToken;
 			messages.push(notificationContent);
+		}
 	});
 	// The Expo push notification service accepts batches of notifications so
 	// that you don't need to send 1000 requests to send 1000 notifications. We
