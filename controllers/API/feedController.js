@@ -193,10 +193,6 @@ exports.store = async (req, res) => {
     });
   }
 
-  const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
-  if (!userHasPermission)
-    return res.status(401).send('You do not have permission to post to this news feed channel');
-
   const feedItem = await (new FeedItems(data)).save();
   if (feedItem.push) {
     const { receipts, errors } = await sendPush(feedItem, senderToken, channel);
@@ -211,7 +207,7 @@ exports.store = async (req, res) => {
   }
   else {
     feeditems_cache.force_reload();
-    
+
     return res.json(feedItem);
   }
 };

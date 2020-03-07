@@ -3,52 +3,40 @@ const PushTokens = require('./pushTokens');
 
 const expo = new Expo();
 
-async function sendPush(feedItem, senderToken, channel) {
+async function sendPush(notificationContent, senderToken) {
 	console.log('sending push...');
 	const pushTokens = await PushTokens.find();
 	const messages = [];
 	const receipts = [];
 	const errors = [];
 
-	let truncatedBody = feedItem.text;
-	// we want the punctuation, so add 1
-	[".", "!", "?"].forEach((value) => {
-		if (truncatedBody.indexOf(value) > 0)
-			truncatedBody = truncatedBody.substring(0, truncatedBody.indexOf(value) + 1);
-	});
-	// we don't want the newline, so no +1
-	["\n"].forEach((value) => {
-		if (truncatedBody.indexOf(value) > 0)
-			truncatedBody = truncatedBody.substring(0, truncatedBody.indexOf(value));
-	});
-
-	// if, after all that, we didn't change anything
-	if (truncatedBody === feedItem.text)
-		truncatedBody += " (tap to view more)"
-	else
-		truncatedBody += "... (tap to view more)"
-
 	pushTokens.map(async (pushToken) => {
 		if (!Expo.isExpoPushToken(pushToken.pushToken)) {
-			console.error(`Push token ${pushToken.pushToken} is not valid`);
+			console.error(`Push token ${pushToken.pushToken} is not valid according to Expo.isExpoPushToken()`);
+			// we should DO something here? delete it?
+			// await PushTokens.findOneAndRemove({ pushToken: pushToken.pushToken });
 		}
+		else {
+			// acceptedExpoExperience is part of a proactive filter to only send to tokens we think belong to us
+			let acceptedExpoExperience = "";
+			// we can try to match the sender
+			if (senderToken)
+				acceptedExpoExperience = senderToken.expoExperience;
+			// or try to match an environment variable
+			if (process.env.EXPO_EXPERIENCE && process.env.EXPO_EXPERIENCE != "")
+				acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
 
-		let acceptedExpoExperience = senderToken.expoExperience
-		if (process.env.EXPO_EXPERIENCE && process.env.EXPO_EXPERIENCE != "")
-			acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
-
-		if (pushToken.expoExperience === acceptedExpoExperience) {
-			messages.push({
-				to: pushToken.pushToken,
-				title: `New notification from ${channel.name}`,
-				body: truncatedBody,
-				data: { postId: feedItem._id },
-			});
+			if (pushToken.expoExperience === acceptedExpoExperience) {
+				let thisNotification = {};
+				Object.assign(thisNotification, notificationContent);
+				thisNotification.to = pushToken.pushToken;
+				messages.push(thisNotification);
+			}
+			// else {
+			//   const token = await PushTokens.findOneAndRemove({ pushToken: pushToken.pushToken });
+			//   console.log(`token ${token.pushToken} was deleted`);
+			// }
 		}
-		// else {
-		//   const token = await PushTokens.findOneAndRemove({ pushToken: pushToken.pushToken });
-		//   console.log(`token ${token.pushToken} was deleted`);
-		// }
 	});
 	// The Expo push notification service accepts batches of notifications so
 	// that you don't need to send 1000 requests to send 1000 notifications. We
