@@ -36,21 +36,23 @@ exports.flashValidationErrors = (err, req, res, next) => {
   Development Error Handler
   In development we show good error messages so if we hit a syntax error or any other previously un-handled error, we can show good info on what happened
 */
+/*
+  Development Error Handler
+  In development we show good error messages so if we hit a syntax error or any other previously un-handled error, we can show good info on what happened
+*/
 exports.developmentErrors = (err, req, res, next) => {
   err.stack = err.stack || '';
   const errorDetails = {
-    title: err.status,
     message: err.message,
     status: err.status,
-    stackHighlighted: err.stack.replace(
-      /[a-z_-\d]+.js:\d+:\d+/gi,
-      '<mark>$&</mark>',
-    ),
+    stackHighlighted: err.stack.replace(/[a-z_-\d]+.js:\d+:\d+/gi, '<mark>$&</mark>'),
   };
   res.status(err.status || 500);
   res.format({
     // Based on the `Accept` http header
-    'text/html': () => res.json({ error: errorDetails }), // Form Submit, Reload the page
+    'text/html': () => {
+      res.render('error', errorDetails);
+    }, // Form Submit, Reload the page
     'application/json': () => res.json(errorDetails), // Ajax call, send JSON back
   });
 };
@@ -60,7 +62,6 @@ exports.developmentErrors = (err, req, res, next) => {
   No stacktraces are leaked to user
 */
 exports.productionErrors = (err, req, res, next) => {
-  // res.json(err.message);
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,

@@ -2,12 +2,12 @@ extends ../layout
 
 block content
   .mx-auto.container
-    h2 #{title}
-
-    each song in songs
-      div #{song.title} - &nbsp;
-        a(href=`/songbooks/${songbook._id}/chapters/${chapter._id}/add-song/${song._id}`) Add to #{chapter.chapter_title}
-    else
-      h3 No Songs in Database
-      h4 Please add a song
-        a(href="/songs/create") Add Song
+    div(class="show--card")
+      h2 #{title}
+      h3 Current Songs:
+      if (chapter.songs)
+        ul
+          each song in chapter.songs
+            li #{song.hint}
+      div(class="show--card__footer")
+        h2 Hello

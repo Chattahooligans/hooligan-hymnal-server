@@ -18,12 +18,11 @@ block content
         h3(class="text-xl font-semibold") Chapters
         a(href=`/songbooks/${songbook.id}/add-chapter` class="btn bg-green-700 text-white") Add Chapter
       each chapter in songbook.chapters
-        h4 #{chapter.chapter_title}
-        p Chapter Songs: #{chapter.songs.length}
-        if (chapter.songs.length)
-          p Songs
-          each song in chapter.songs
-            span #{song}
+        div(class="list--card flex-col")
+          header(class="flex justify-between")
+            h4 #{chapter.chapter_title}
+            a(href=`/songbooks/${songbook.id}/chapters/${chapter.id}` class="btn bg-blue-700 text-white") View Chapter and Songs
+          p Chapter Songs: #{chapter.songs.length}
       div(class="show--card__footer")
         a(href=`/songbooks/${songbook.id}/edit` class="btn btn--edit") Edit
         br
