@@ -28,15 +28,6 @@ async function sendPush(feedItem, senderToken, channel) {
 	else
 		truncatedBody += "... (tap to view more)"
 
-	let baseNotificationContent = {
-		title: `New notification from ${channel.name}`,
-		body: truncatedBody,
-		data: { post: feedItem._id },
-	};
-
-	console.log("baseNotificationContent")
-	console.log(baseNotificationContent)
-
 	pushTokens.map(async (pushToken) => {
 		if (!Expo.isExpoPushToken(pushToken.pushToken)) {
 			console.error(`Push token ${pushToken.pushToken} is not valid`);
@@ -47,11 +38,17 @@ async function sendPush(feedItem, senderToken, channel) {
 			acceptedExpoExperience = process.env.EXPO_EXPERIENCE;
 
 		if (pushToken.expoExperience === acceptedExpoExperience) {
-			let notificationContent = {};
-			Object.assign(notificationContent, baseNotificationContent);
-			notificationContent.to = pushToken;
-			messages.push(notificationContent);
+			messages.push({
+				to: pushToken.pushToken,
+				title: `New notification from ${channel.name}`,
+				body: truncatedBody,
+				data: { post: feedItem._id },
+			});
 		}
+		// else {
+		//   const token = await PushTokens.findOneAndRemove({ pushToken: pushToken.pushToken });
+		//   console.log(`token ${token.pushToken} was deleted`);
+		// }
 	});
 	// The Expo push notification service accepts batches of notifications so
 	// that you don't need to send 1000 requests to send 1000 notifications. We
