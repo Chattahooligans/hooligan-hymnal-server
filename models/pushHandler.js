@@ -22,10 +22,16 @@ async function sendPush(feedItem, senderToken, channel) {
 			truncatedBody = truncatedBody.substring(0, truncatedBody.indexOf(value));
 	});
 
+	// if, after all that, we didn't change anything
+	if (truncatedBody === feedItem.text)
+		truncatedBody += " (tap to view more)"
+	else
+		truncatedBody += "... (tap to view more)"
+
 	const notificationContent = {
 		to: pushToken.pushToken,
 		title: `New notification from ${channel.name}`,
-		body: `${truncatedBody}... (tap to view more)`,
+		body: truncatedBody,
 		data: { post: feedItem._id },
 	};
 
