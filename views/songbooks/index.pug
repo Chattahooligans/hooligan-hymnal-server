@@ -1,10 +1,13 @@
 extends ../layout
 
+include ../mixins/_songbooksList
+
 block content
-  h2 #{title}
-  a(href="/songbooks/create") Add Songbook
-  each songbook in songbooks
+  .mx-auto.container
+    div(class="mb-3")
+      h3(class="font-extrabold text-3xl mb-3") #{title}
     div
-      a(href=`/songbooks/${songbook._id}`) #{songbook.songbook_title}
-  else
-    h3 No Songbooks
+      div(class="flex justify-between mb-3 flex-col md:flex-row")
+        a(href="/songbooks/create" class="btn bg-blue-700 text-white mb:auto mb-3") Add Songbook
+      div#songbookList(class="-mx-3")
+        +songbooksList(songbooks)

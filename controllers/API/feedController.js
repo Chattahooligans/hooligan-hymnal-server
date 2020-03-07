@@ -192,38 +192,48 @@ exports.store = async (req, res) => {
       feedItemImages[targetIndex] = thisImage;
     });
   }
+
+  const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
+  if (!userHasPermission)
+    return res.status(401).send('You do not have permission to post to this news feed channel');
+
   const feedItem = await (new FeedItems(data)).save();
   if (feedItem.push) {
     const { receipts, errors } = await sendPush(feedItem, senderToken, channel);
+
     feeditems_cache.force_reload();
+
     return res.json({
       feedItem,
       receipts,
       errors,
     });
   }
-  feeditems_cache.force_reload();
-  return res.json(feedItem);
+  else {
+    feeditems_cache.force_reload();
+    
+    return res.json(feedItem);
+  }
 };
 
 exports.activate = async (req, res) => {
   FeedItems.update({ _id: req.params.id }, {
     active: true,
   },
-  (err, affected, resp) => {
-    res.send(resp);
-    feeditems_cache.force_reload();
-  });
+    (err, affected, resp) => {
+      res.send(resp);
+      feeditems_cache.force_reload();
+    });
 };
 
 exports.deactivate = async (req, res) => {
   FeedItems.update({ _id: req.params.id }, {
     active: false,
   },
-  (err, affected, resp) => {
-    res.send(resp);
-    feeditems_cache.force_reload();
-  });
+    (err, affected, resp) => {
+      res.send(resp);
+      feeditems_cache.force_reload();
+    });
 };
 
 exports.delete = (req, res) => {

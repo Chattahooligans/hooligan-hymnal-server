@@ -1,0 +1,5 @@
+mixin songbooksList(songbooks = {})
+  each songbook in songbooks
+    a(href=`/songbooks/${songbook.id}` class='list--card flex-col')
+      h3(class="font-semibold text-xl mb-3") #{songbook.songbook_title}
+      p(class="text-gray-700") #{songbook.description}
