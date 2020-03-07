@@ -3,14 +3,13 @@ const PushTokens = require('./pushTokens');
 
 const expo = new Expo();
 
-async function sendPush(notificationContent, senderToken) {
+async function sendPush(notificationContent, targetPushTokens, senderToken) {
 	console.log('sending push...');
-	const pushTokens = await PushTokens.find();
 	const messages = [];
 	const receipts = [];
 	const errors = [];
 
-	pushTokens.map(async (pushToken) => {
+	targetPushTokens.map(async (pushToken) => {
 		if (!Expo.isExpoPushToken(pushToken.pushToken)) {
 			console.error(`Push token ${pushToken.pushToken} is not valid according to Expo.isExpoPushToken()`);
 			// we should DO something here? delete it?
@@ -160,6 +159,7 @@ async function sendNotification(notification) {
 }
 
 async function sendPost(feedItem, channel, senderToken) {
+	// form the notification content
 	let truncatedBody = feedItem.text;
 	// we want the punctuation, so add 1
 	[".", "!", "?"].forEach((value) => {
@@ -184,7 +184,11 @@ async function sendPost(feedItem, channel, senderToken) {
 		data: { postId: feedItem._id },
 	};
 
-	const { receipts, errors } = await sendPush(notificationContent, senderToken);
+	// figure out which devices should get this push
+	// (it's all of them, but later it'll be based on channel)
+	const targetPushTokens = await PushTokens.find();
+
+	const { receipts, errors } = await sendPush(notificationContent, targetPushTokens, senderToken);
 	return { receipts, errors };
 }
 
