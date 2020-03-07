@@ -10,6 +10,11 @@ async function sendPush(feedItem, senderToken, channel) {
 	const receipts = [];
 	const errors = [];
 
+	console.log("NO UNDESCORE ID")
+	console.log(feedItem.id)
+	console.log("UNDESCORE ID")
+	console.log(feedItem._id)
+
 	let truncatedBody = feedItem.text;
 	// we want the punctuation, so add 1
 	[".", "!", "?"].forEach((value) => {
@@ -60,7 +65,6 @@ async function sendPush(feedItem, senderToken, channel) {
 	// different strategies you could use. A simple one is to send one chunk at a
 	// time, which nicely spreads the load out over time:
 	for (const chunk of chunks) {
-		console.log("(before push attempt) chunkPushNotifications chunk count: " + chunk.length)
 		try {
 			const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
 			receipts.push(...ticketChunk);
