@@ -129,7 +129,7 @@ async function sendPush(notificationContent, targetPushTokens, senderToken) {
 
 				const tokenMatcher = new RegExp('ExponentPushToken');
 				const matches = tokenMatcher.exec(receipt.message);
-				if (matches.length > 0) {
+				if (matches != null && matches.length > 0) {
 					const i = matches.index;
 					const token = receipt.message.substring(i, i + 41);
 					console.error(`Deleting bad token: ${token}`);
