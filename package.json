@@ -11,7 +11,8 @@
     "watch": "npm run development -- --watch",
     "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
     "prod": "npm run production",
-    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "test": "mocha test/**/*.js --exit"
   },
   "main": "index.js",
   "dependencies": {
@@ -71,6 +72,7 @@
     "babel-eslint": "^10.0.1",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
+    "chai-webdriver": "^1.2.0",
     "concurrently": "^5.0.1",
     "cross-env": "^6.0.3",
     "eslint": "^6.8.0",
@@ -82,6 +84,7 @@
     "prettier": "^1.18.2",
     "sass": "^1.19.0",
     "sass-loader": "^8.0.0",
+    "selenium-webdriver": "^4.0.0-alpha.7",
     "supertest": "^4.0.2",
     "tailwindcss": "^1.1.2",
     "vue-template-compiler": "^2.6.10"

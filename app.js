@@ -26,7 +26,9 @@ const PORT = process.env.PORT || 3000;
 const { MONGO_URI } = process.env;
 
 app.use(express.static(`${__dirname}/public`));
-app.use(morgan('dev'));
+if (process.env.NODE_ENV !== 'test') {
+  app.use(morgan('combined'));
+}
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
@@ -210,3 +212,5 @@ app.listen(PORT, () => {
     console.log('Express app is running');
   }
 });
+
+module.exports = app;
