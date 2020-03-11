@@ -143,7 +143,9 @@ async function sendPush(notificationContent, targetPushTokens, senderToken) {
 	}
 
 	console.log(`Recorded ${receipts.length} receipts from push`);
+	console.log(receipts)
 	console.log(`Error count ${errors.length}`);
+	conesole.log(errors)
 
 	return {
 		receipts,
