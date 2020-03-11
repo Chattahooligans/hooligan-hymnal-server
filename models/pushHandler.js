@@ -129,7 +129,7 @@ async function sendPush(notificationContent, targetPushTokens, senderToken) {
 
 				const tokenMatcher = new RegExp('ExponentPushToken');
 				const matches = tokenMatcher.exec(receipt.message);
-				if (matches.length > 0) {
+				if (matches != null && matches.length > 0) {
 					const i = matches.index;
 					const token = receipt.message.substring(i, i + 41);
 					console.error(`Deleting bad token: ${token}`);
@@ -143,7 +143,9 @@ async function sendPush(notificationContent, targetPushTokens, senderToken) {
 	}
 
 	console.log(`Recorded ${receipts.length} receipts from push`);
+	console.log(receipts)
 	console.log(`Error count ${errors.length}`);
+	conesole.log(errors)
 
 	return {
 		receipts,
