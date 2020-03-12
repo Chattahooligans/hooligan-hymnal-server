@@ -8,18 +8,20 @@ exports.songbookChapter = async (req, res) => {
   const chapter = await songbook.chapters.id(req.params.chapterId);
   res.render('songbookSongs/index', {
     title: `${songbook.songbook_title} | Chapter: ${chapter.chapter_title}`,
+    songbook,
     chapter,
   });
 };
 
 exports.addSongToChapterForm = async (req, res) => {
-  const songPromise = Song.findById(req.params.songId);
+  const songsPromise = Song.find({});
   const songbookPromise = Songbook.findById(req.params.songbookId);
-  const [song, songbook] = await Promise.all([songPromise, songbookPromise]);
+  const [songs, songbook] = await Promise.all([songsPromise, songbookPromise]);
   const chapter = await songbook.chapters.id(req.params.chapterId);
+
   res.render('songbookSongs/create', {
-    title: `Add ${song.title} to ${chapter.chapter_title}`,
-    song,
+    title: `Add songs to ${chapter.chapter_title}`,
+    songs,
     songbook,
     chapter,
   });

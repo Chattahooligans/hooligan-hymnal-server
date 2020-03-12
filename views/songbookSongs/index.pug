@@ -10,4 +10,4 @@ block content
           each song in chapter.songs
             li #{song.hint}
       div(class="show--card__footer")
-        h2 Hello
+        a(href=`/songbooks/${songbook.id}/chapters/${chapter.id}/songs` class="btn btn--edit") Add / Remove Songs
