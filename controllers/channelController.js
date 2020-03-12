@@ -107,8 +107,8 @@ exports.avatar = async (req, res) => {
     format: 'png',
   });
   return res.json({
-    url: avatar.url,
-    id: avatar.public_id,
+    url: avatar[0].url,
+    id: avatar[0].public_id,
   });
 };
 
