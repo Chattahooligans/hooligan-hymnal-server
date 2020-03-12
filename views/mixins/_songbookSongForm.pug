@@ -1,8 +1,8 @@
 include ./_baseInput
 
-mixin songbookSongForm(songs = [])
+mixin songbookSongForm(songs = [], chapterSongs = [])
   form(method="POST")
-    div(x-data="{ songs: " + JSON.stringify(songs) + ", selectedSong: {} }")
+    div(x-data="{ songs: " + JSON.stringify(songs) + ", selectedSong: {}, chapterSongs: " + JSON.stringify(chapterSongs) + " }")
       template(x-for="song in songs")
         button(class="block" :click="selectedSong = song;")
           span(x-text="song.title")
