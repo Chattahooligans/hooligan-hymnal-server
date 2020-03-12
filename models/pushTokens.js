@@ -1,5 +1,6 @@
-var mongoose = require("mongoose");
-mongoose.Promise = global.Promise;
-var pushTokenSchema = require("./schemas/pushTokenSchema");
+const mongoose = require('mongoose');
 
-module.exports = mongoose.model("pushTokens", pushTokenSchema);
+mongoose.Promise = global.Promise;
+const pushTokenSchema = require('./schemas/pushTokenSchema');
+
+module.exports = mongoose.model('pushTokens', pushTokenSchema);

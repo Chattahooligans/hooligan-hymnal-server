@@ -13,7 +13,7 @@ exports.login = (req, res, next) => {
     if (!user) {
       return res.json({ message: 'Incorrect email or password' });
     }
-    return req.logIn(user, (err) => {
+    req.logIn(user, (err) => {
       if (err) return next(err);
       const payload = {
         id: user._id,
@@ -55,7 +55,7 @@ exports.me = (req, res) => {
     pushNotificationsAllowed,
     usersAllowed,
   } = req.user;
-  return res.json({
+  res.json({
     user: {
       email,
       name,
