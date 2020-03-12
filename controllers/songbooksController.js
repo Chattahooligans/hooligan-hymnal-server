@@ -41,13 +41,14 @@ exports.edit = async (req, res) => {
   });
 };
 exports.update = async (req, res) => {
-  const updates = {};
+  const chapters = req.body.chapters.map((chapter) => JSON.parse(chapter));
+  req.body.chapters = chapters;
   const songbook = await Songbook.findOneAndUpdate(
     {
       _id: req.params.id,
     },
     {
-      $set: updates,
+      $set: req.body,
     },
     {
       new: true,
@@ -56,8 +57,9 @@ exports.update = async (req, res) => {
     },
   );
   req.flash('success', `${songbook.songbook_title} was updated!`);
-  res.redirect('back');
+  res.redirect(`/songbooks/${songbook.id}`);
 };
+
 exports.deleteConfirm = async (req, res) => {
   const songbook = await Songbook.findById(req.params.id);
   res.render('songbooks/delete', {
@@ -65,6 +67,7 @@ exports.deleteConfirm = async (req, res) => {
     songbook,
   });
 };
+
 exports.delete = async (req, res) => {
   const songbook = await Songbook.findByIdAndDelete(req.params.id);
   req.flash('success', `${songbook.songbook_title} was deleted!`);

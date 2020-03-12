@@ -4,7 +4,7 @@ mixin songbookSongForm(songs = [])
   form(method="POST")
     div(x-data="{ songs: " + JSON.stringify(songs) + ", selectedSong: {} }")
       template(x-for="song in songs")
-        div()
+        button(class="block" :click="selectedSong = song;")
           span(x-text="song.title")
     //- .flex.flex-col.mb-3
     //-   +baseInput("text", "Song Hint", "hint", song.hint, "Song Hint", true)
