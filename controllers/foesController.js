@@ -114,8 +114,8 @@ exports.logo = async (req, res) => {
     format: 'png',
   });
   res.json({
-    url: image.url,
-    id: image.public_id,
+    url: image[0].url,
+    id: image[0].public_id,
   });
 };
 
