@@ -3,13 +3,27 @@ include ./_baseInput
 mixin songbookSongForm(songs = [], chapterSongs = [])
   form(method="POST")
     div(x-data="{ songs: " + JSON.stringify(songs) + ", selectedSong: {}, chapterSongs: " + JSON.stringify(chapterSongs) + " }")
-      template(x-for="song in songs")
-        button(class="block" :click="selectedSong = song;")
-          span(x-text="song.title")
-    //- .flex.flex-col.mb-3
-    //-   +baseInput("text", "Song Hint", "hint", song.hint, "Song Hint", true)
-    //- .flex.flex-col.mb-3
-    //-   label(for="featured" class="font-semibold flex-1") Featured
-    //-   input(type="checkbox" name="featured" id="featured" checked=song.featured)
-    //- .mb-3
-    //-   button(type="submit" class="px-3 py-2 rounded bg-blue-700 text-white") Save Song
+      .container.flex.mx-auto
+        div(class="w-1/3")
+          template(x-for="song in songs")
+            button(class="block" type="button" x-on:click="selectedSong = {...song, hint: ''};")
+              span(x-text="song.title")
+        div(class="w-1/3")
+        div(class="w-1/3")
+          input(type="hidden" name="songs[]" :value="JSON.stringify(chapterSongs)")
+          template(x-for="song in chapterSongs")
+            div
+              span(x-text="song.hint")
+              button(class="block" type="button" x-on:click="chapterSongs = chapterSongs.filter(ch => ch.id !== song.id)") &times;
+
+      template(x-if="selectedSong.title")
+        div(class="list--card flex-col")
+          h4(x-text="selectedSong.title")
+          div
+            label(for="hint" class="flex flex-col mb-3") Hint
+              input(type="text" name="hint" x-model="selectedSong.hint" class="block border flex-auto rounded p-2 shadow")
+            label(for="featured") Featured
+              input(type="checkbox" name="featured" x-model="selectedSong.featured" class="ml-3")
+            button(type="button" class="btn btn--edit" x-on:click="if (selectedSong.hint.length > 0 ) {chapterSongs.push(selectedSong); selectedSong = {} } else { alert('Please add a hint') }") &plus;
+    .show--card__footer.rounded-b-lg(style="margin-bottom:-3rem")
+      button(type="submit" class="btn btn--edit") Update Songs
