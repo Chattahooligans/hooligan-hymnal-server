@@ -27,6 +27,24 @@ exports.addSongsToChapterForm = async (req, res) => {
   });
 };
 
+
+/**
+ * @param {Request} req
+ * @param {Response} res
+ */
+exports.addSongsToChapter = async (req, res) => {
+  const songbook = await Songbook.findById(req.params.songbookId);
+  const chapter = await songbook.chapters.id(req.params.chapterId);
+
+  if (req.body.songs) {
+    req.body.songs = req.body.songs.map((song) =>  JSON.parse(song))
+    chapter.songs = req.body.songs
+    await songbook.save();
+  }
+  req.flash('success', `Songs added to ${chapter.chapter_title}`);
+  return res.redirect(`/songbooks/${songbook.id}/chapters/${chapter.id}`);
+};
+
 exports.saveSongToChapter = async (req, res) => {
   const songbook = await Songbook.findById(req.params.songbookId);
   const chapter = await songbook.chapters.id(req.params.chapterId);
