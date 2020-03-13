@@ -15,7 +15,7 @@ mixin songbookSongForm(songs = [], chapterSongs = [])
               div(class="list--card draggable")
                 input(type="hidden" name="songs[]" :value="JSON.stringify(song)")
                 span(x-text="song.hint")
-                button(class="block" type="button" x-on:click="chapterSongs = chapterSongs.filter(sg => sg.id !== song.id)") &times;
+                button(class="block" type="button" x-on:click="chapterSongs = chapterSongs.filter(sg => sg._id !== song._id)") &times;
 
       template(x-if="selectedSong.title")
         div(class="list--card flex-col")
