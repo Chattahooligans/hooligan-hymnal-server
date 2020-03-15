@@ -13123,7 +13123,7 @@ function SortList() {
   }
 
   var sortable = new _shopify_draggable__WEBPACK_IMPORTED_MODULE_0__["Sortable"](containers, {
-    draggable: '.list--card.draggable',
+    draggable: '.draggable',
     mirror: {
       appendTo: containerSelector,
       constrainDimensions: true

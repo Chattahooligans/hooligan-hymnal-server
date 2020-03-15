@@ -5,8 +5,7 @@ block content
     div(class="show--card")
       h2(class="font-semibold text-2xl mb-3") #{title}
       div
-      h3(class="text-xl mb-3") Organization: #{songbook.organization}
-      h3(class="text-lg mb-3") Description
+      h3(class="text-lg mb-3") Organization: #{songbook.organization}
       p #{songbook.description}
       if (songbook.front_cover)
         h4 Front Cover
@@ -20,10 +19,16 @@ block content
       each chapter in songbook.chapters
         div(class="list--card flex-col")
           header(class="flex justify-between")
-            h4 #{chapter.chapter_title}
+            h4(class="font-semibold") #{chapter.chapter_title}
             a(href=`/songbooks/${songbook.id}/chapters/${chapter.id}` class="btn bg-blue-700 text-white") View Chapter and Songs
           p Chapter Songs: #{chapter.songs.length}
+          if chapter.songs.length
+            details(class="border p-3 rounded")
+              summary Songs
+              ul
+                each song in chapter.songs
+                  li(class="border-t p-3") #{song.hint}
       div(class="show--card__footer")
-        a(href=`/songbooks/${songbook.id}/edit` class="btn btn--edit") Edit
+        a(href=`/songbooks/${songbook.id}/edit` class="btn btn--edit mr-3") Edit
         br
         a(href=`/songbooks/${songbook.id}/delete` class="btn btn--delete") Delete

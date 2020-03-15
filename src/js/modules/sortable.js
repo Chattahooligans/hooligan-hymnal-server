@@ -8,7 +8,7 @@ export default function SortList() {
   }
 
   const sortable = new Sortable(containers, {
-    draggable: '.list--card.draggable',
+    draggable: '.draggable',
     mirror: {
       appendTo: containerSelector,
       constrainDimensions: true,

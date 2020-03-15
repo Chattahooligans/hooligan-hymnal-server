@@ -2,12 +2,15 @@ extends ../layout
 
 block content
   .mx-auto.container
+    a(href=`/songbooks/${songbook.id}` class="block underline mb-3 p-3") &larr; Back to #{songbook.songbook_title}
     div(class="show--card")
-      h2 #{title}
-      h3 Current Songs:
-      if (chapter.songs)
+      h2(class="mb-3 font-semibold text-2xl") #{title}
+      h3(class="mb-3 font-medium text-xl") Current Songs:
+      if (chapter.songs.length)
         ul
           each song in chapter.songs
             li #{song.hint}
+      else
+        p No Songs in chapter
       div(class="show--card__footer")
         a(href=`/songbooks/${songbook.id}/chapters/${chapter.id}/songs` class="btn btn--edit") Add / Remove Songs
