@@ -48,3 +48,25 @@ dropzone(
   1,
   'avatarUrl',
 );
+
+dropzone(
+  '/songbooks/front-cover',
+  'front-cover-template',
+  document.getElementById('front-cover-upload-section'),
+  '#front-cover-previews',
+  '#front-cover-target',
+  'front-cover',
+  1,
+  'front-coverUrl',
+);
+
+dropzone(
+  '/songbooks/back-cover',
+  'back-cover-template',
+  document.getElementById('back-cover-upload-section'),
+  '#back-cover-previews',
+  '#back-cover-target',
+  'back-cover',
+  1,
+  'back-coverUrl',
+);

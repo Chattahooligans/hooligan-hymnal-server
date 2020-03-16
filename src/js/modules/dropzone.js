@@ -24,6 +24,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   let playerId;
   let foeId;
   let channelId;
+  let songbookId;
   const myDropzone = new Dropzone(uploadSection, {
     url,
     maxFiles,
@@ -37,6 +38,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       playerId = document.getElementById('player-id');
       foeId = document.getElementById('foe-id');
       channelId = document.getElementById('channel-id');
+      songbookId = document.getElementById('songbook-id');
       if (playerId) {
         axios.get(`/players/images?playerId=${playerId.innerText}&type=${inputName.toLowerCase()}`, {
           withCredentials: true,
@@ -118,6 +120,30 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
               tEl.appendChild(input);
             }
           }).catch((err) => {
+            console.error(err);
+          });
+      } else if (songbookId) {
+        axios.get(`/songbooks/covers?songbookId=${songbookId.innerText}&type=${inputName}`, {
+          withCredentials: true
+        })
+          .then(({ data }) => {
+            if (data.frontCover.length) {
+              const mockFile = {
+                name: `${data.name} logo`,
+              };
+              thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
+              thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.logo);
+              // debugger;
+              const tEl = document.querySelector(target);
+              const input = document.createElement('input');
+              input.value = data.logo;
+              input.setAttribute('data-id', `${slugify(data.name).toLowerCase()}-avatar`);
+              input.classList.add = 'hidden';
+              input.setAttribute('name', inputName);
+              tEl.appendChild(input);
+            }
+          })
+          .catch((err) => {
             console.error(err);
           });
       }
@@ -207,6 +233,19 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         }).catch((err) => {
           console.error(err);
         });
+    } else if (songbookId) {
+      axios.post(`/songbooks/remove-cover?songbookId=${songbookId.innerText}&type=${slugify(inputName.toLowerCase())}`, {
+        withCredentials: true,
+        img: img.src
+      })
+        .then(() => {
+          const inputs = document.querySelectorAll(`input[name="${inputName.toLowerCase()}"]`);
+          inputs.forEach((input) => {
+            input.remove();
+          });
+        }).catch((err) => {
+          console.err(err)
+        })
     }
     const form = document.querySelector('main form');
     submitButton = form.querySelector("button[type='submit']");

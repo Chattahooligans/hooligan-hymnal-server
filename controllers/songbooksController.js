@@ -126,3 +126,64 @@ exports.removeChapterConfirm = async (req, res) => {
 exports.removeChapter = async (req, res) => {
   res.send('Implement delete/remove chapter');
 };
+
+// Covers functions
+
+exports.frontCoverUpload = async (req, res) => {
+  const frontCover = await upload(req, {
+    folder: 'songbooks/front-covers',
+    format: 'jpg'
+  });
+  return res.json({
+    url: frontCover[0].url,
+    id: frontCover[0].public_id
+  });
+};
+
+exports.backCoverUpload = async (req, res) => {
+  const backCover = await upload(req, {
+    folder: 'songbooks/back-covers',
+    format: 'jpg'
+  });
+  return res.json({
+    url: backCover[0].url,
+    id: backCover[0].public_id
+  });
+};
+
+exports.getCovers = async (req, res) => {
+  const {
+    songbookId,
+    type
+  } = req.query;
+  console.log(songbookId)
+  if (!songbookId.length) {
+    return res.send('Please provide an id');
+  }
+  if (!type) {
+    return res.send('Please provide the image field you are looking for');
+  }
+  const songbook = await Songbook.findById(songbookId);
+  res.json({
+    name: songbook.songbook_title,
+    [type]: songbook[type]
+  });
+};
+
+exports.removeCover = async (req, res) => {
+  const {
+    songbookId,
+    type
+  } = req.query;
+  if (!songbookId) {
+    return res.send('Please provide an id');
+  }
+  if (!type) {
+    return res.send('Please provide the image field you are looking for');
+  }
+  const songbook = await Songbook.findById(songbookId);
+  let img;
+  img = songbook[type];
+  const response = await removeFromCloudinary(`songbooks/${type.toLowerCase()}`, img);
+  res.send(response);
+};

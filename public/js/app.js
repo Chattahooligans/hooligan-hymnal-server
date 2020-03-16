@@ -12808,6 +12808,8 @@ Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/thum
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/images', 'images-template', document.getElementById('images-upload-section'), '#images-previews', '#images-target', 'Player Images', 10, 'images');
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/foes/logo', 'logo-template', document.getElementById('logo-upload-section'), '#logo-previews', '#logo-target', 'Logo', 1, 'logo');
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/channels/avatar', 'avatar-template', document.getElementById('avatar-upload-section'), '#avatar-previews', '#avatar-target', 'Avatar', 1, 'avatarUrl');
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/songbooks/front-cover', 'front-cover-template', document.getElementById('front-cover-upload-section'), '#front-cover-previews', '#front-cover-target', 'front-cover', 1, 'front-coverUrl');
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/songbooks/back-cover', 'back-cover-template', document.getElementById('back-cover-upload-section'), '#back-cover-previews', '#back-cover-target', 'back-cover', 1, 'back-coverUrl');
 
 /***/ }),
 
@@ -12856,6 +12858,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   var playerId;
   var foeId;
   var channelId;
+  var songbookId;
   var myDropzone = new dropzone__WEBPACK_IMPORTED_MODULE_0___default.a(uploadSection, {
     url: url,
     maxFiles: maxFiles,
@@ -12869,6 +12872,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       playerId = document.getElementById('player-id');
       foeId = document.getElementById('foe-id');
       channelId = document.getElementById('channel-id');
+      songbookId = document.getElementById('songbook-id');
 
       if (playerId) {
         axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/players/images?playerId=".concat(playerId.innerText, "&type=").concat(inputName.toLowerCase()), {
@@ -12976,6 +12980,30 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         })["catch"](function (err) {
           console.error(err);
         });
+      } else if (songbookId) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/songbooks/covers?songbookId=".concat(songbookId.innerText, "&type=").concat(inputName), {
+          withCredentials: true
+        }).then(function (_ref4) {
+          var data = _ref4.data;
+
+          if (data.frontCover.length) {
+            var mockFile = {
+              name: "".concat(data.name, " logo")
+            };
+            thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
+            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.logo); // debugger;
+
+            var tEl = document.querySelector(target);
+            var input = document.createElement('input');
+            input.value = data.logo;
+            input.setAttribute('data-id', "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-avatar"));
+            input.classList.add = 'hidden';
+            input.setAttribute('name', inputName);
+            tEl.appendChild(input);
+          }
+        })["catch"](function (err) {
+          console.error(err);
+        });
       }
     }
   });
@@ -13014,8 +13042,8 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       document.querySelector("#small-".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(text).toLowerCase())).remove();
     }
   });
-  myDropzone.on('removedfile', function (_ref4) {
-    var previewElement = _ref4.previewElement;
+  myDropzone.on('removedfile', function (_ref5) {
+    var previewElement = _ref5.previewElement;
     var img = previewElement.querySelector('img');
 
     if (playerId) {
@@ -13059,6 +13087,18 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         });
       })["catch"](function (err) {
         console.error(err);
+      });
+    } else if (songbookId) {
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/songbooks/remove-cover?songbookId=".concat(songbookId.innerText, "&type=").concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase())), {
+        withCredentials: true,
+        img: img.src
+      }).then(function () {
+        var inputs = document.querySelectorAll("input[name=\"".concat(inputName.toLowerCase(), "\"]"));
+        inputs.forEach(function (input) {
+          input.remove();
+        });
+      })["catch"](function (err) {
+        console.err(err);
       });
     }
 

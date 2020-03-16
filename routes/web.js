@@ -101,6 +101,11 @@ router.get('/songbooks/:songbookId/chapters/:chapterId', isLoggedIn, checkPermis
 router.get('/songbooks/:songbookId/chapters/:chapterId/songs', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbookSongsController.addSongsToChapterForm));
 router.post('/songbooks/:songbookId/chapters/:chapterId/songs', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbookSongsController.addSongsToChapter));
 
+router.post('/songbooks/front-cover', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.frontCoverUpload));
+router.post('/songbooks/back-cover', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.backCoverUpload));
+router.get('/songbooks/covers', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.getCovers));
+router.post('/songbooks/remove-cover', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.removeCover));
+
 // Songs
 router.get('/songs', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.index));
 router.get('/songs-partial', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.search));
