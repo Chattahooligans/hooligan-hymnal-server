@@ -19,7 +19,6 @@ block content
       each chapter in songbook.chapters
         div(class="list--card flex-col")
           header(class="flex justify-between")
-            pre=h.dump(chapter)
             h4(class="font-semibold") #{chapter.chapter_title}
             a(href=`/songbooks/${songbook.id}/chapters/${chapter.id}` class="btn bg-blue-700 text-white") View Chapter and Songs
           p Chapter Songs: #{chapter.songs.length}
