@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const Songbook = mongoose.model('songbook');
 const Song = mongoose.model('song');
+const { upload } = require('../handlers/imageUploader');
 
 exports.index = async (req, res) => {
   const songbooks = await Songbook.find({});
@@ -42,7 +43,10 @@ exports.edit = async (req, res) => {
   });
 };
 exports.update = async (req, res) => {
-  const chapters = req.body.chapters.map((chapter) => JSON.parse(chapter));
+	const chapters = [];
+	if (req.body.chapter) {
+		chapters = req.body.chapters.map((chapter) => JSON.parse(chapter));
+	}
   req.body.chapters = chapters;
   const songbook = await Songbook.findOneAndUpdate(
     {
@@ -156,7 +160,6 @@ exports.getCovers = async (req, res) => {
     songbookId,
     type
   } = req.query;
-  console.log(songbookId)
   if (!songbookId.length) {
     return res.send('Please provide an id');
   }

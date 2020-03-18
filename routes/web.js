@@ -86,7 +86,9 @@ router.post('/rosters/:rosterId/players/:playerId/delete', isLoggedIn, checkPerm
 router.get('/songbooks', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.index));
 router.get('/songbooks/create', isLoggedIn, checkPermission('songbookAllowed'), songbooksController.create);
 router.post('/songbooks/create', isLoggedIn, checkPermission('songbookAllowed'), songbooksController.store);
-router.get('/songbooks/:id', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.show));
+router.get('/songbooks/covers', checkPermission('songbookAllowed'), catchErrors(songbooksController.getCovers));
+router.post('/songbooks/remove-cover', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.removeCover));
+router.get('/songbooks/:id/', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.show));
 router.get('/songbooks/:id/edit', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.edit));
 router.post('/songbooks/:id/edit', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.update));
 router.get('/songbooks/:id/delete', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.deleteConfirm));
@@ -103,8 +105,8 @@ router.post('/songbooks/:songbookId/chapters/:chapterId/songs', isLoggedIn, chec
 
 router.post('/songbooks/front-cover', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.frontCoverUpload));
 router.post('/songbooks/back-cover', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.backCoverUpload));
-router.get('/songbooks/covers', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.getCovers));
-router.post('/songbooks/remove-cover', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.removeCover));
+
+
 
 // Songs
 router.get('/songs', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.index));

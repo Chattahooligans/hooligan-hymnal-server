@@ -12808,8 +12808,8 @@ Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/thum
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/images', 'images-template', document.getElementById('images-upload-section'), '#images-previews', '#images-target', 'Player Images', 10, 'images');
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/foes/logo', 'logo-template', document.getElementById('logo-upload-section'), '#logo-previews', '#logo-target', 'Logo', 1, 'logo');
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/channels/avatar', 'avatar-template', document.getElementById('avatar-upload-section'), '#avatar-previews', '#avatar-target', 'Avatar', 1, 'avatarUrl');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/songbooks/front-cover', 'front-cover-template', document.getElementById('front-cover-upload-section'), '#front-cover-previews', '#front-cover-target', 'front-cover', 1, 'front-coverUrl');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/songbooks/back-cover', 'back-cover-template', document.getElementById('back-cover-upload-section'), '#back-cover-previews', '#back-cover-target', 'back-cover', 1, 'back-coverUrl');
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/songbooks/front-cover', 'front_cover-template', document.getElementById('front_cover-upload-section'), '#front_cover-previews', '#front_cover-target', 'front_cover', 1, 'front_cover');
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/songbooks/back-cover', 'back_cover-template', document.getElementById('back_cover-upload-section'), '#back_cover-previews', '#back_cover-target', 'back_cover', 1, 'back_cover');
 
 /***/ }),
 
@@ -12986,20 +12986,39 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         }).then(function (_ref4) {
           var data = _ref4.data;
 
-          if (data.frontCover.length) {
+          if (data.front_cover && data.front_cover.length) {
             var mockFile = {
-              name: "".concat(data.name, " logo")
+              name: "".concat(data.name)
             };
             thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
-            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.logo); // debugger;
-
+            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.front_cover);
             var tEl = document.querySelector(target);
             var input = document.createElement('input');
-            input.value = data.logo;
+            input.value = data.front_cover;
             input.setAttribute('data-id', "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-avatar"));
             input.classList.add = 'hidden';
             input.setAttribute('name', inputName);
             tEl.appendChild(input);
+          } else if (data.back_cover && data.back_cover.length) {
+            var _mockFile = {
+              name: "".concat(data.name)
+            };
+            thisDropzone.defaultOptions.addedfile.call(thisDropzone, _mockFile);
+            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, _mockFile, data.back_cover);
+
+            var _tEl = document.querySelector(target);
+
+            var _input = document.createElement('input');
+
+            _input.value = data.back_cover;
+
+            _input.setAttribute('data-id', "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-avatar"));
+
+            _input.classList.add = 'hidden';
+
+            _input.setAttribute('name', inputName);
+
+            _tEl.appendChild(_input);
           }
         })["catch"](function (err) {
           console.error(err);

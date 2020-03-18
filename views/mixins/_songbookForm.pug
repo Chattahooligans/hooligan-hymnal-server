@@ -11,8 +11,8 @@ mixin songbookForm(songbook = {}, edit = false)
     .flex.flex-col.mb-3
       label(for="description" class="flex-1 font-semibold") Description
       textarea(name="description" id="description" class="border flex-auto rounded p-2 shadow" placeholder="Description") #{songbook.description}
-    .flex.flex-col.mb-3#front-cover
-      #front-cover-template
+    .flex.flex-col.mb-3#front_cover
+      #front_cover-template
         div(class="relative inline-block")
           img(data-dz-thumbnail class="mx-auto" style="height: 250px;width:150px;")
           p(class="" data-dz-name)
@@ -20,18 +20,18 @@ mixin songbookForm(songbook = {}, edit = false)
             span &times;
         div(class="dz-error-message")
           span(data-dz-errormessage)
-      #front-cover-upload-section(class="border rounded-lg bg-gray-200 h-32 w-full flex justify-center items-center cursor-pointer relative z-10")
+      #front_cover-upload-section(class="border rounded-lg bg-gray-200 h-32 w-full flex justify-center items-center cursor-pointer relative z-10")
         h2 Upload Front Cover here
-      #front-cover-previews
+      #front_cover-previews
       div(class="progress active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0")
         div(class="h-2 bg-gray-700 progress-bar" style="width:0%;" data-dz-uploadprogress)
       .actions
         button(class="rounded bg-green-700 text-white px-3 py-2 upload" type="button") Upload
         if !edit
           button(class="rounded bg-red-700 text-white px-3 py-2 cancel" type="button") Clear
-      #front-cover-target.hidden
-    .flex.flex-col.mb-3#back-cover
-      #back-cover-template
+      #front_cover-target.hidden
+    .flex.flex-col.mb-3#back_cover
+      #back_cover-template
         div(class="relative inline-block")
           img(data-dz-thumbnail class="mx-auto" style="height: 250px;width:150px;")
           p(class="" data-dz-name)
@@ -39,17 +39,18 @@ mixin songbookForm(songbook = {}, edit = false)
             span &times;
         div(class="dz-error-message")
           span(data-dz-errormessage)
-      #back-cover-upload-section(class="border rounded-lg bg-gray-200 h-32 w-full flex justify-center items-center cursor-pointer relative z-10")
+      #back_cover-upload-section(class="border rounded-lg bg-gray-200 h-32 w-full flex justify-center items-center cursor-pointer relative z-10")
         h2 Upload Back Cover here
-      #back-cover-previews
+      #back_cover-previews
       div(class="progress active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0")
         div(class="h-2 bg-gray-700 progress-bar" style="width:0%;" data-dz-uploadprogress)
       .actions
         button(class="rounded bg-green-700 text-white px-3 py-2 upload" type="button") Upload
         if !edit
           button(class="rounded bg-red-700 text-white px-3 py-2 cancel" type="button") Clear
-      #back-cover-target.hidden
+      #back_cover-target.hidden
     .flex.flex-col.mb-3
+    if songbook.chapters.length
       h3 Chapters
     if edit
       div(class="StackedList" x-data="{ chapters: " + JSON.stringify(songbook.chapters) + " }")

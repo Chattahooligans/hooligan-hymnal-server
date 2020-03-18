@@ -51,22 +51,22 @@ dropzone(
 
 dropzone(
   '/songbooks/front-cover',
-  'front-cover-template',
-  document.getElementById('front-cover-upload-section'),
-  '#front-cover-previews',
-  '#front-cover-target',
-  'front-cover',
+  'front_cover-template',
+  document.getElementById('front_cover-upload-section'),
+  '#front_cover-previews',
+  '#front_cover-target',
+  'front_cover',
   1,
-  'front-coverUrl',
+  'front_cover',
 );
 
 dropzone(
   '/songbooks/back-cover',
-  'back-cover-template',
-  document.getElementById('back-cover-upload-section'),
-  '#back-cover-previews',
-  '#back-cover-target',
-  'back-cover',
+  'back_cover-template',
+  document.getElementById('back_cover-upload-section'),
+  '#back_cover-previews',
+  '#back_cover-target',
+  'back_cover',
   1,
-  'back-coverUrl',
+  'back_cover',
 );

@@ -127,21 +127,33 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
           withCredentials: true
         })
           .then(({ data }) => {
-            if (data.frontCover.length) {
+            if (data.front_cover && data.front_cover.length) {
               const mockFile = {
-                name: `${data.name} logo`,
+                name: `${data.name}`,
               };
               thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
-              thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.logo);
-              // debugger;
+              thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.front_cover);
               const tEl = document.querySelector(target);
               const input = document.createElement('input');
-              input.value = data.logo;
+              input.value = data.front_cover;
               input.setAttribute('data-id', `${slugify(data.name).toLowerCase()}-avatar`);
               input.classList.add = 'hidden';
               input.setAttribute('name', inputName);
               tEl.appendChild(input);
-            }
+            } else if (data.back_cover && data.back_cover.length) {
+              const mockFile = {
+                name: `${data.name}`,
+              };
+              thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
+              thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.back_cover);
+              const tEl = document.querySelector(target);
+              const input = document.createElement('input');
+              input.value = data.back_cover;
+              input.setAttribute('data-id', `${slugify(data.name).toLowerCase()}-avatar`);
+              input.classList.add = 'hidden';
+              input.setAttribute('name', inputName);
+              tEl.appendChild(input);
+						}
           })
           .catch((err) => {
             console.error(err);
