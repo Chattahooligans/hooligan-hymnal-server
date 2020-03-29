@@ -6,8 +6,6 @@ module.exports = {
   },
   extends: [
     'airbnb-base',
-    // 'airbnb',
-    // 'airbnb/hooks'
   ],
   globals: {
     Atomics: 'readonly',
