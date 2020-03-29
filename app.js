@@ -19,6 +19,7 @@ const Scheduler = require('./models/scheduledTasks');
 const errorHandlers = require('./handlers/errorHandlers');
 const helpers = require('./helpers');
 const { getBreadcrumbs } = require('./handlers/breadcrumbs');
+const compression = require('compression');
 
 env.config();
 
@@ -34,6 +35,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet());
 app.disable('x-powered-by');
+app.use(compression());
 app.use(
   fileUpload({
     useTempFiles: true,
