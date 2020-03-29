@@ -1,25 +1,34 @@
 const mongoose = require("mongoose");
 const Roster = mongoose.model("roster");
+const Players = mongoose.model("players");
 
 exports.index = async (req, res) => {
-  const rosters = await Roster.find({}).sort({ active: "desc" });
+  const rosters = await Roster.find()
+    .sort({ active: "desc" });
   res.render("rosters/index", {
     title: "All Rosters",
     rosters
   });
 };
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
+  const players = await Players.find({})
+    .select('id name position')
+    .sort('name');
   res.render("rosters/create", {
-    title: "Create Roster"
+    title: "Create Roster",
+    players
   });
 };
 
 exports.store = async (req, res) => {
-  let values = {
-    rosterTitle: req.body.rosterTitle,
-    season: req.body.season
-  };
+  let values = {}
+  Object.keys(req.body).forEach(key => {
+    values[key] = req.body[key];
+  })
+  if (req.body.players) {
+    values['players'] = req.body['players'].map(p => JSON.parse(p));
+  }
   if (req.body.active == "on") {
     values.active = true;
   }
@@ -40,10 +49,17 @@ exports.show = async (req, res) => {
 };
 
 exports.edit = async (req, res) => {
-  const roster = await Roster.findById(req.params.id);
+  const rosterPromise = Roster.findById(req.params.id);
+  const playersPromise = Players.find({})
+    .select('_id name position')
+    .sort('name');
+
+  const [roster, players] = await Promise.all([rosterPromise, playersPromise]);
+
   res.render("rosters/edit", {
     title: `Edit ${roster.rosterTitle}`,
-    roster
+    roster,
+    players
   });
 };
 
@@ -52,14 +68,13 @@ exports.update = async (req, res) => {
     rosterTitle: req.body.rosterTitle,
     season: req.body.season,
     active: false,
-    default: false
+    default: false,
+    players: req.body.players
+      ? req.body.players.map((pl) => JSON.parse(pl))
+      : [],
+    active: req.body.active ? true : false,
+    default: req.body.default ? true : false
   };
-  if (req.body.active) {
-    updates.active = true;
-  }
-  if (req.body.default) {
-    updates.default = true;
-  }
   const roster = await Roster.findOneAndUpdate(
     {
       _id: req.params.id
@@ -80,7 +95,8 @@ exports.update = async (req, res) => {
 exports.deleteConfirm = async (req, res) => {
   const roster = await Roster.findById(req.params.id);
   res.render("rosters/delete", {
-    title: `${roster.rosterTitle} Delete`
+    title: `${roster.rosterTitle} Delete`,
+    roster
   });
 };
 

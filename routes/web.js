@@ -9,7 +9,6 @@ const userController = require('../controllers/userController');
 const usersController = require('../controllers/usersController');
 const rostersController = require('../controllers/rostersController');
 const playersController = require('../controllers/playersController');
-const rostersPlayersController = require('../controllers/rostersPlayersController');
 const songbooksController = require('../controllers/songbooksController');
 const songsController = require('../controllers/songsController');
 const songbookSongsController = require('../controllers/songbookSongsController');
@@ -47,7 +46,7 @@ router.get('/users/:id/delete', isLoggedIn, checkPermission('usersAllowed'), cat
 router.post('/users/:id/delete', isLoggedIn, checkPermission('usersAllowed'), catchErrors(usersController.delete));
 // Rosters
 router.get('/rosters', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.index));
-router.get('/rosters/create', isLoggedIn, checkPermission('rosterAllowed'), rostersController.create);
+router.get('/rosters/create', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.create));
 router.post('/rosters/create', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.store));
 router.get('/rosters/:id', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.show));
 router.get('/rosters/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.edit));
@@ -72,15 +71,6 @@ router.get('/players/:id/thumbnail', isLoggedIn, checkPermission('rosterAllowed'
 router.post('/players/:id/thumbnail/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.playersRemoveThumbnail));
 router.get('/players/:id/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.deleteConfirm));
 router.post('/players/:id/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.delete));
-
-// Roster and Players
-router.get('/rosters/:id/view-players', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.index));
-router.get('/rosters/:rosterId/add-player/:playerId', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.create));
-router.post('/rosters/:rosterId/add-player/:playerId', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.store));
-router.get('/rosters/:rosterId/players/:playerId/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.edit));
-router.post('/rosters/:rosterId/players/:playerId/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.update));
-router.get('/rosters/:rosterId/players/:playerId/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.deleteConfirm));
-router.post('/rosters/:rosterId/players/:playerId/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.delete));
 
 // Songbooks
 router.get('/songbooks', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.index));

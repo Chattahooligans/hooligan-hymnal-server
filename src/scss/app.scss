@@ -44,8 +44,12 @@
   @apply .px-3 .py-2 .rounded;
 }
 
+.btn--success {
+  @apply .bg-blue-700 .text-white;
+}
+
 .btn--edit {
-  @apply.bg-green-600 .text-white;
+  @apply .bg-green-600 .text-white;
 
   @media (min-width: 768px) {
     @apply .mr-3;
@@ -58,4 +62,8 @@
   @media (min-width: 768px) {
     //
   }
+}
+
+.base--input {
+  @apply .border .flex-auto .rounded .p-2 .shadow;
 }

@@ -1,0 +1,7 @@
+mixin rosterCard(roster = {})
+  a(href=`/rosters/${roster.id}` class="list--card")
+    div
+      h2(class="text-gray-600 font-semibold") #{roster.rosterTitle}
+      p(class="text-gray-500") Season: #{roster.season}
+      p(class="text-gray-500") Total Players: #{roster.players.length}
+      p(class="text-gray-500") Active: #{roster.active}

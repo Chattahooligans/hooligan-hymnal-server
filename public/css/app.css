@@ -11595,6 +11595,11 @@ video {
   border-radius: 0.25rem;
 }
 
+.btn--success {
+  background-color: #2b6cb0;
+  color: #fff;
+}
+
 .btn--edit {
   background-color: #38a169;
   color: #fff;
@@ -11609,6 +11614,17 @@ video {
 .btn--delete {
   background-color: #e53e3e;
   color: #fff;
+}
+
+.base--input {
+  border-width: 1px;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
 @media (min-width: 640px) {
