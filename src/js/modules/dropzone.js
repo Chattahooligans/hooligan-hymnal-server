@@ -100,16 +100,18 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
             console.error(err);
           });
       } else if (channelId) {
+        console.log(channelId);
         axios.get(`/channels/avatars?channelId=${channelId.innerText}&type=${inputName}`, {
           withCredentials: true,
         })
           .then(({ data }) => {
-            if (data.logo.length) {
+            console.log(data)
+            if (data.avatarUrl.length) {
               const mockFile = {
                 name: `${data.name} logo`,
               };
               thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
-              thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.logo);
+              thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.avatarUrl);
               // debugger;
               const tEl = document.querySelector(target);
               const input = document.createElement('input');

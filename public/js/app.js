@@ -12957,17 +12957,19 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
           console.error(err);
         });
       } else if (channelId) {
+        console.log(channelId);
         axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/channels/avatars?channelId=".concat(channelId.innerText, "&type=").concat(inputName), {
           withCredentials: true
         }).then(function (_ref3) {
           var data = _ref3.data;
+          console.log(data);
 
-          if (data.logo.length) {
+          if (data.avatarUrl.length) {
             var mockFile = {
               name: "".concat(data.name, " logo")
             };
             thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
-            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.logo); // debugger;
+            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.avatarUrl); // debugger;
 
             var tEl = document.querySelector(target);
             var input = document.createElement('input');

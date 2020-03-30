@@ -1,19 +1,19 @@
 extends ../layout
 
+include ../mixins/_baseInput
+include ../mixins/_csrfInput
+
 block content
   .container.mx-auto.pt-3
     form(method="POST")
+      +csrfInput(csrfToken)
       .flex.flex-col.mb-3
-        label(for="name" class="flex-1 font-semibold") First Name
-        input(type="text" name="name" id="name" value=currentUser.name class="border flex-auto rounded p-2 shadow")
+        +baseInput('text', 'First Name', 'name', currentUser.name, 'Your name', true)
       .flex.flex-col.mb-3
-        label(for="familyName" class="flex-1 font-semibold") Last Name
-        input(type="text" name="familyName" id="familyName" value=currentUser.familyName class="border flex-auto rounded p-2 shadow")
+        +baseInput('text', 'Last Name', 'familyName', currentUser.familyName, 'Your last name')
       .flex.flex-col.mb-3
-        label(for="displayName" class="flex-1 font-semibold") Display Name
-        input(type="text" name="displayName" id="displayName" value=currentUser.displayName class="border flex-auto rounded p-2 shadow")
+        +baseInput('text', 'Display Name', 'displayName', currentUser.displayName, 'Display Name', true)
       .flex.flex-col.mb-3
-        label(for="email" class="flex-1 font-semibold") Email
-        input(type="email" name="email" id="email" value=currentUser.email class="border flex-auto rounded p-2 shadow")
+        +baseInput('email', 'Email', 'email', currentUser.email, true)
       .mb-3
         button(type="submit" class="px-3 py-2 rounded bg-blue-700 text-white") Update

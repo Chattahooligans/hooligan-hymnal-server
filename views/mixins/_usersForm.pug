@@ -1,6 +1,9 @@
 include ./_baseInput
+include ./_csrfInput
+
 mixin usersForm(user = {}, edit = false)
   form(method="POST")
+    +csrfInput()
     .flex.flex-col.mb-3
       +baseInput("text", "First Name", "name", user.name, "First Name", true)
     .flex.flex-col.mb-3

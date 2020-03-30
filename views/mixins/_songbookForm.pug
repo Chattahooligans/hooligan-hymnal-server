@@ -1,7 +1,9 @@
 include ./_baseInput
+include ./_csrfInput
 
 mixin songbookForm(songbook = {}, edit = false)
   form(method="POST")
+    +csrfInput()
     if songbook.id
       #songbook-id(class="hidden") #{songbook.id}
     .flex.flex-col.mb-3

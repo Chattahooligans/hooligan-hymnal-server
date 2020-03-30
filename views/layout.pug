@@ -4,6 +4,7 @@ html(lang="en")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     meta(http-equiv="X-UA-Compatible", content="ie=edge")
     link(rel="stylesheet" href=`/css/app.css?${randomId}`)
+    meta(name="csrf-token" content=csrfToken)
     //- script(src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.9.7/dist/alpine.js" defer)
     title #{title} | #{h.siteName}
   body.flex.flex-col.min-h-screen(x-data="skipToContent()")
@@ -24,6 +25,7 @@ html(lang="en")
                   li
                     a(href="#" x-on:click.prevent="{ $refs.logout.submit() }" class="block px-2 py-2 border-b hover:bg-gray-300") Logout
                   form(method="POST" action="/logout" class="m-0 flex align-middle hidden" x-ref="logout")
+                    input(type="hidden" name="_csrf" value=csrfToken)
             else
               a.mr-3(href="/login") Login
               a(href="/register") Register

@@ -1,7 +1,9 @@
 include ./_baseInput
+include ./_csrfInput
 
 mixin songbookSongForm(songs = [], chapterSongs = [])
   form(method="POST")
+    +csrfInput()
     div(x-data="{ songs: " + JSON.stringify(songs) + ", selectedSong: {}, chapterSongs: " + JSON.stringify(chapterSongs) + " }")
       .container.flex.mx-auto
         div(class="w-1/2 mr-3")

@@ -8,6 +8,6 @@ block content
       div(class="bg-gray-300 p-3 border-b border-gray-500")
         h1(class="text-2xl font-bold mb-3") #{title}
       .p-3
-        +loginForm()
+        +loginForm(csrfToken)
         div(class="border-t")
           a(href="/forgot" class="block mt-3") Forgot your password?

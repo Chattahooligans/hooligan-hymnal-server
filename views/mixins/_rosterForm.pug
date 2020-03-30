@@ -1,7 +1,9 @@
 include ./_baseInput
+include ./_csrfInput
 
 mixin rosterForm(roster = {}, players = {})
   form(method="POST")
+    +csrfInput()
     .flex.flex-col.mb-3
       +baseInput("text", "Roster Title", "rosterTitle", roster.rosterTitle, "Title", true)
     .flex.flex-col.mb-3

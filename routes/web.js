@@ -20,6 +20,7 @@ const channelController = require('../controllers/channelController');
 const { isLoggedIn } = require('../middleware/authMiddleware');
 const { catchErrors } = require('../handlers/errorHandlers');
 const { checkPermission } = require('../middleware/PermissionsMiddleware');
+const { csrfProtection } = require('../middleware/csrfProtection');
 
 router.get('/', homeController.homePage);
 router.get('/login', authController.loginForm);

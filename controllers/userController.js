@@ -20,7 +20,7 @@ exports.reset = async (req, res) => {
 		return res.redirect("/login");
 	}
 	res.render("auth/reset", {
-		title: "Reset your Password"
+		title: "Reset your Password",
 	});
 };
 
@@ -65,7 +65,7 @@ exports.account = (req, res) => {
 
 exports.updateAccountForm = (req, res) => {
 	res.render("auth/updateAccount", {
-		title: "Update your account"
+		title: "Update your account",
 	});
 };
 
@@ -76,7 +76,7 @@ exports.updateAccount = async (req, res) => {
 		email: req.body.email,
 		displayName: req.body.displayName
 	};
-	const user = await User.findOneAndUpdate(
+	await User.findOneAndUpdate(
 		{ _id: req.user._id },
 		{ $set: updates },
 		{ new: true, runValidators: true, context: "query" }

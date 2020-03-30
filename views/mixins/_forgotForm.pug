@@ -1,5 +1,8 @@
+include ./_csrfInput
+
 mixin forgotForm()
   form(method="POST" action="/forgot")
+    +csrfInput()
     .flex.flex-col.mb-3
       label(for="email") Email Address
       input(type="email" name="email" id="email" class="border flex-auto rounded p-2 shadow" required="true" placeholder="Your email address")

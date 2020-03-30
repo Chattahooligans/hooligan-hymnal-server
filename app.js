@@ -20,6 +20,9 @@ const errorHandlers = require('./handlers/errorHandlers');
 const helpers = require('./helpers');
 const { getBreadcrumbs } = require('./handlers/breadcrumbs');
 const compression = require('compression');
+const csurf = require('csurf');
+
+const { csrfProtection } = require('./middleware/csrfProtection');
 
 env.config();
 
@@ -167,7 +170,6 @@ const randomId = Math
   .random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
 app.use((req, res, next) => {
-  req.breadcrumbs = getBreadcrumbs(req.originalUrl);
   res.locals.h = helpers;
   res.locals.currentUser = req.user || null;
   res.locals.flashes = req.flash();
@@ -180,12 +182,17 @@ app.use((req, res, next) => {
   req.login = promisify(req.login, req);
   next();
 });
-const web = require('./routes/web');
-
-app.use('/', web);
 const api = require('./routes/api');
 
 app.use('/api', api);
+
+const web = require('./routes/web');
+app.use('/', csrfProtection, (req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
+app.use('/', web);
 
 app.use(errorHandlers.notFound);
 
