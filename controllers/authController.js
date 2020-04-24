@@ -32,7 +32,7 @@ exports.login = (req, res, next) => {
 
 exports.registerForm = (req, res) => {
 	res.render("auth/register", {
-		title: "Register"
+		title: "Register",
 	});
 };
 

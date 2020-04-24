@@ -1,7 +1,9 @@
 include _baseInput
+include _csrfInput
 
-mixin loginForm()
+mixin loginForm(csrfToken)
   form.form(method="POST" action="/login")
+    +csrfInput(csrfToken)
     .flex.flex-col.mb-3
       +baseInput("email", "Email", "email", "", "email@email.com", true)
     .flex.flex-col.mb-3

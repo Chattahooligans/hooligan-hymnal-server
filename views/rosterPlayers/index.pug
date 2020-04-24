@@ -1,8 +1,0 @@
-extends ../layout
-
-block content
-  h2 #{title}
-  h3 Players
-    each player in players
-      div #{player.name} - &nbsp;
-        a(href=`/rosters/${roster._id}/add-player/${player._id}`) Add to #{roster.rosterTitle}

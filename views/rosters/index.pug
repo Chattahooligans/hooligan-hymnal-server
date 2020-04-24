@@ -1,12 +1,12 @@
 extends ../layout
 
+include ../mixins/_rostersList
+
 block content
-  h2 #{title}
-  a(href="/rosters/create") Add Roster
-  if rosters.length
-    ul
-    each roster in rosters
-      li
-        a(href=`/rosters/${roster._id}`) #{roster.rosterTitle} - #{roster.active}
-  else
-    h3 No Rosters
+  div(class="mb-3")
+    h2(class="font-extrabold text-3xl mb-3") #{title}
+  div
+    div(class="flex justify-between mb-3 flex-col md:flex-row")
+      a(href="/rosters/create" class="btn btn--success") Add Roster
+    div#rostersList(class="-mx-3")
+      +rostersList(rosters)

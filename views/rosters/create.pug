@@ -4,4 +4,10 @@ include ../mixins/_rosterForm
 
 block content
   h2 #{title}
-  +rosterForm()
+  +rosterForm({
+    rosterTitle: '',
+    season: '',
+    players: [],
+    active: false,
+    default: false
+  }, players)

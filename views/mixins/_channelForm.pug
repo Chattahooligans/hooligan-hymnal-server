@@ -1,10 +1,12 @@
-include ../mixins/_baseInput
-include ../mixins/_baseCheckbox
+include ./_baseInput
+include ./_baseCheckbox
+include ./_csrfInput
 
 mixin channelForm(channel = {}, ...props)
   if channel.id
     #channel-id(class="hidden") #{channel.id}
   form(method="POST")
+    +csrfInput()
     .flex.flex-col.mb-3
       +baseInput("text", "Name", "name", channel.name, "Name", true)
     .flex.flex-col.mb-3

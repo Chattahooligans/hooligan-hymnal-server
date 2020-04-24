@@ -4,28 +4,31 @@ html(lang="en")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     meta(http-equiv="X-UA-Compatible", content="ie=edge")
     link(rel="stylesheet" href=`/css/app.css?${randomId}`)
+    meta(name="csrf-token" content=csrfToken)
     //- script(src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.9.7/dist/alpine.js" defer)
     title #{title} | #{h.siteName}
   body.flex.flex-col.min-h-screen(x-data="skipToContent()")
     header.bg-gray-800.text-white.py-3.relative
-      button#skip(type="button" class="btn absolute p-3 bg-black text-white" @click="focus()") Skip To Content
-      .px-3.flex.flex-row.justify-between
-        nav.flex.items-center
-          a(href="/" class="block") #{h.siteName}
-        nav(class="flex md:flex-row flex-col")
-          if currentUser
-            div(x-data="{ isShown: false }" class="relative")
-              a(href="#" class="block" x-on:click.prevent="isShown = ! isShown")
-                img(src=`${currentUser.gravatar}` class="h-12 w-12 rounded-full")
-              ul(role="menu" class="absolute right-0 left-auto bg-white text-black rounded border z-50 mt-1 w-32" x-show="isShown" x-on:click.away="isShown = false" x-on:keydown.escape="isShown = false")
-                li
-                  a(href="/account" class="block px-2 py-2 border-b hover:bg-gray-300") Your Account
-                li
-                  a(href="#" x-on:click.prevent="{ $refs.logout.submit() }" class="block px-2 py-2 border-b hover:bg-gray-300") Logout
-                form(method="POST" action="/logout" class="m-0 flex align-middle hidden" x-ref="logout")
-          else
-            a.mr-3(href="/login") Login
-            a(href="/register") Register
+      div
+        button#skip(type="button" class="btn absolute p-3 bg-black text-white" @click="focus()") Skip To Content
+        .px-3.flex.flex-row.justify-between
+          nav.flex.items-center
+            a(href="/" class="block") #{h.siteName}
+          nav(class="flex md:flex-row flex-col")
+            if currentUser
+              div(x-data="{ isShown: false }" class="relative")
+                a(href="#" class="block" x-on:click.prevent="isShown = ! isShown")
+                  img(src=`${currentUser.gravatar}` class="h-12 w-12 rounded-full")
+                ul(role="menu" class="absolute right-0 left-auto bg-white text-black rounded border z-50 mt-1 w-32" x-show="isShown" x-on:click.away="isShown = false" x-on:keydown.escape="isShown = false")
+                  li
+                    a(href="/account" class="block px-2 py-2 border-b hover:bg-gray-300") Your Account
+                  li
+                    a(href="#" x-on:click.prevent="{ $refs.logout.submit() }" class="block px-2 py-2 border-b hover:bg-gray-300") Logout
+                  form(method="POST" action="/logout" class="m-0 flex align-middle hidden" x-ref="logout")
+                    input(type="hidden" name="_csrf" value=csrfToken)
+            else
+              a.mr-3(href="/login") Login
+              a(href="/register") Register
     section(class="flex flex-col md:flex-row flex-1 relative z-auto")
       if locals.flashes
         div(class="absolute inset-0")

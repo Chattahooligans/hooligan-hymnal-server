@@ -9,7 +9,6 @@ const userController = require('../controllers/userController');
 const usersController = require('../controllers/usersController');
 const rostersController = require('../controllers/rostersController');
 const playersController = require('../controllers/playersController');
-const rostersPlayersController = require('../controllers/rostersPlayersController');
 const songbooksController = require('../controllers/songbooksController');
 const songsController = require('../controllers/songsController');
 const songbookSongsController = require('../controllers/songbookSongsController');
@@ -21,6 +20,7 @@ const channelController = require('../controllers/channelController');
 const { isLoggedIn } = require('../middleware/authMiddleware');
 const { catchErrors } = require('../handlers/errorHandlers');
 const { checkPermission } = require('../middleware/PermissionsMiddleware');
+const { csrfProtection } = require('../middleware/csrfProtection');
 
 router.get('/', homeController.homePage);
 router.get('/login', authController.loginForm);
@@ -47,7 +47,7 @@ router.get('/users/:id/delete', isLoggedIn, checkPermission('usersAllowed'), cat
 router.post('/users/:id/delete', isLoggedIn, checkPermission('usersAllowed'), catchErrors(usersController.delete));
 // Rosters
 router.get('/rosters', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.index));
-router.get('/rosters/create', isLoggedIn, checkPermission('rosterAllowed'), rostersController.create);
+router.get('/rosters/create', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.create));
 router.post('/rosters/create', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.store));
 router.get('/rosters/:id', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.show));
 router.get('/rosters/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.edit));
@@ -73,20 +73,13 @@ router.post('/players/:id/thumbnail/delete', isLoggedIn, checkPermission('roster
 router.get('/players/:id/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.deleteConfirm));
 router.post('/players/:id/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.delete));
 
-// Roster and Players
-router.get('/rosters/:id/view-players', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.index));
-router.get('/rosters/:rosterId/add-player/:playerId', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.create));
-router.post('/rosters/:rosterId/add-player/:playerId', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.store));
-router.get('/rosters/:rosterId/players/:playerId/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.edit));
-router.post('/rosters/:rosterId/players/:playerId/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.update));
-router.get('/rosters/:rosterId/players/:playerId/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.deleteConfirm));
-router.post('/rosters/:rosterId/players/:playerId/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersPlayersController.delete));
-
 // Songbooks
 router.get('/songbooks', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.index));
 router.get('/songbooks/create', isLoggedIn, checkPermission('songbookAllowed'), songbooksController.create);
 router.post('/songbooks/create', isLoggedIn, checkPermission('songbookAllowed'), songbooksController.store);
-router.get('/songbooks/:id', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.show));
+router.get('/songbooks/covers', checkPermission('songbookAllowed'), catchErrors(songbooksController.getCovers));
+router.post('/songbooks/remove-cover', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.removeCover));
+router.get('/songbooks/:id/', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.show));
 router.get('/songbooks/:id/edit', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.edit));
 router.post('/songbooks/:id/edit', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.update));
 router.get('/songbooks/:id/delete', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.deleteConfirm));
@@ -98,13 +91,13 @@ router.post('/songbooks/:id/add-chapter', isLoggedIn, checkPermission('songbookA
 router.get('/songbooks/:songbookId/chapters/:chapterId/delete', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.removeChapterConfirm));
 router.post('/songbooks/:songbookId/chapters/:chapterId/delete', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.removeChapter));
 router.get('/songbooks/:songbookId/chapters/:chapterId', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbookSongsController.songbookChapter));
-router.get('/songbooks/:songbookId/chapters/:chapterId/add-song/:songId', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbookSongsController.addSongToChapterForm));
-router.post('/songbooks/:songbookId/chapters/:chapterId/add-song/:songId', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbookSongsController.saveSongToChapter));
-router.get('/songbooks/:songbookId/chapters/:chapterId/songs', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbookSongsController.showSongbookChapter));
-router.get('/songbooks/:songbookId/chapters/:chapterId/edit-song/:songId', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbookSongsController.editSongInChapter));
-router.post('/songbooks/:songbookId/chapters/:chapterId/edit-song/:songId', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbookSongsController.updateSongInChapter));
-router.get('/songbooks/:songbookId/chapters/:chapterId/remove-song/:songId', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbookSongsController.removeSongFromChapterConfirm));
-router.post('/songbooks/:songbookId/chapters/:chapterId/remove-song/:songId', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbookSongsController.removeSongFromChapter));
+router.get('/songbooks/:songbookId/chapters/:chapterId/songs', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbookSongsController.addSongsToChapterForm));
+router.post('/songbooks/:songbookId/chapters/:chapterId/songs', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbookSongsController.addSongsToChapter));
+
+router.post('/songbooks/front-cover', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.frontCoverUpload));
+router.post('/songbooks/back-cover', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.backCoverUpload));
+
+
 
 // Songs
 router.get('/songs', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.index));

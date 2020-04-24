@@ -1,11 +1,14 @@
 extends ../layout
 
+include ../mixins/_csrfInput
+
 block content
   .mx-auto.container
     h2 #{title}
     strong(class="block") Are you sure you want to delete #{player.name}
     strong(class="block") Please enter players name to delete.
     form(method="POST")
+      +csrfInput()
       .flex.flex-col.mb-3
         label(for="name") Name
         input(type="text" name="name" id="name" class="rounded border shadow px-3 py-2 mb-2" placeholder="Player name" required)

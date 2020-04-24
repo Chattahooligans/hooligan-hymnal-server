@@ -12808,6 +12808,8 @@ Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/thum
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/images', 'images-template', document.getElementById('images-upload-section'), '#images-previews', '#images-target', 'Player Images', 10, 'images');
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/foes/logo', 'logo-template', document.getElementById('logo-upload-section'), '#logo-previews', '#logo-target', 'Logo', 1, 'logo');
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/channels/avatar', 'avatar-template', document.getElementById('avatar-upload-section'), '#avatar-previews', '#avatar-target', 'Avatar', 1, 'avatarUrl');
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/songbooks/front-cover', 'front_cover-template', document.getElementById('front_cover-upload-section'), '#front_cover-previews', '#front_cover-target', 'front_cover', 1, 'front_cover');
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/songbooks/back-cover', 'back_cover-template', document.getElementById('back_cover-upload-section'), '#back_cover-previews', '#back_cover-target', 'back_cover', 1, 'back_cover');
 
 /***/ }),
 
@@ -12856,6 +12858,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   var playerId;
   var foeId;
   var channelId;
+  var songbookId;
   var myDropzone = new dropzone__WEBPACK_IMPORTED_MODULE_0___default.a(uploadSection, {
     url: url,
     maxFiles: maxFiles,
@@ -12869,6 +12872,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       playerId = document.getElementById('player-id');
       foeId = document.getElementById('foe-id');
       channelId = document.getElementById('channel-id');
+      songbookId = document.getElementById('songbook-id');
 
       if (playerId) {
         axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/players/images?playerId=".concat(playerId.innerText, "&type=").concat(inputName.toLowerCase()), {
@@ -12953,17 +12957,19 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
           console.error(err);
         });
       } else if (channelId) {
+        console.log(channelId);
         axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/channels/avatars?channelId=".concat(channelId.innerText, "&type=").concat(inputName), {
           withCredentials: true
         }).then(function (_ref3) {
           var data = _ref3.data;
+          console.log(data);
 
-          if (data.logo.length) {
+          if (data.avatarUrl.length) {
             var mockFile = {
               name: "".concat(data.name, " logo")
             };
             thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
-            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.logo); // debugger;
+            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.avatarUrl); // debugger;
 
             var tEl = document.querySelector(target);
             var input = document.createElement('input');
@@ -12972,6 +12978,49 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
             input.classList.add = 'hidden';
             input.setAttribute('name', inputName);
             tEl.appendChild(input);
+          }
+        })["catch"](function (err) {
+          console.error(err);
+        });
+      } else if (songbookId) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/songbooks/covers?songbookId=".concat(songbookId.innerText, "&type=").concat(inputName), {
+          withCredentials: true
+        }).then(function (_ref4) {
+          var data = _ref4.data;
+
+          if (data.front_cover && data.front_cover.length) {
+            var mockFile = {
+              name: "".concat(data.name)
+            };
+            thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
+            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.front_cover);
+            var tEl = document.querySelector(target);
+            var input = document.createElement('input');
+            input.value = data.front_cover;
+            input.setAttribute('data-id', "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-avatar"));
+            input.classList.add = 'hidden';
+            input.setAttribute('name', inputName);
+            tEl.appendChild(input);
+          } else if (data.back_cover && data.back_cover.length) {
+            var _mockFile = {
+              name: "".concat(data.name)
+            };
+            thisDropzone.defaultOptions.addedfile.call(thisDropzone, _mockFile);
+            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, _mockFile, data.back_cover);
+
+            var _tEl = document.querySelector(target);
+
+            var _input = document.createElement('input');
+
+            _input.value = data.back_cover;
+
+            _input.setAttribute('data-id', "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-avatar"));
+
+            _input.classList.add = 'hidden';
+
+            _input.setAttribute('name', inputName);
+
+            _tEl.appendChild(_input);
           }
         })["catch"](function (err) {
           console.error(err);
@@ -13014,8 +13063,8 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
       document.querySelector("#small-".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(text).toLowerCase())).remove();
     }
   });
-  myDropzone.on('removedfile', function (_ref4) {
-    var previewElement = _ref4.previewElement;
+  myDropzone.on('removedfile', function (_ref5) {
+    var previewElement = _ref5.previewElement;
     var img = previewElement.querySelector('img');
 
     if (playerId) {
@@ -13059,6 +13108,18 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         });
       })["catch"](function (err) {
         console.error(err);
+      });
+    } else if (songbookId) {
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/songbooks/remove-cover?songbookId=".concat(songbookId.innerText, "&type=").concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase())), {
+        withCredentials: true,
+        img: img.src
+      }).then(function () {
+        var inputs = document.querySelectorAll("input[name=\"".concat(inputName.toLowerCase(), "\"]"));
+        inputs.forEach(function (input) {
+          input.remove();
+        });
+      })["catch"](function (err) {
+        console.err(err);
       });
     }
 
@@ -13123,7 +13184,7 @@ function SortList() {
   }
 
   var sortable = new _shopify_draggable__WEBPACK_IMPORTED_MODULE_0__["Sortable"](containers, {
-    draggable: '.list--card.draggable',
+    draggable: '.draggable',
     mirror: {
       appendTo: containerSelector,
       constrainDimensions: true

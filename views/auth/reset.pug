@@ -1,14 +1,16 @@
 extends ../layout
 
+include ../mixins/_baseInput
+include ../mixins/_csrfInput
+
 block content
   .container.mx-auto
     h2 Reset Your Password
     form(method="POST")
+      +csrfInput(csrfToken)
       .flex.flex-col.mb-3
-        label(for="password") Password
-        input(type="password" name="password" id="password" class="border flex-auto rounded p-2 shadow" required)
+        +baseInput('password', 'Password', 'password', '', '******', true)
       .flex.flex-col.mb-3
-        label(for="passwordConfirm") Password Confirm
-        input(type="password" name="passwordConfirm" id="passwordConfirm" class="border flex-auto rounded p-2 shadow" required)
+        +baseInput('password', 'Password Confirm', 'passwordConfirm', '', 'Confirm ******', true)
       .mb-3
         button(type="submit" class="py-3 px-2 bg-blue-800 text-white") Reset Password

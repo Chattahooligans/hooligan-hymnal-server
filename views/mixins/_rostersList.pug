@@ -1,0 +1,7 @@
+include ./_rosterCard
+
+mixin rostersList(rosters = {})
+  each roster in rosters
+    +rosterCard(roster)
+  else
+    h3 No Rosters

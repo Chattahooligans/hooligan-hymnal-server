@@ -1,11 +1,30 @@
 include ./_baseInput
+include ./_csrfInput
 
-mixin songbookSongForm(song = {})
+mixin songbookSongForm(songs = [], chapterSongs = [])
   form(method="POST")
-    .flex.flex-col.mb-3
-      +baseInput("text", "Song Hint", "hint", song.hint, "Song Hint", true)
-    .flex.flex-col.mb-3
-      label(for="featured" class="font-semibold flex-1") Featured
-      input(type="checkbox" name="featured" id="featured" checked=song.featured)
-    .mb-3
-      button(type="submit" class="px-3 py-2 rounded bg-blue-700 text-white") Save Song
+    +csrfInput()
+    div(x-data="{ songs: " + JSON.stringify(songs) + ", selectedSong: {}, chapterSongs: " + JSON.stringify(chapterSongs) + " }")
+      .container.flex.mx-auto
+        div(class="w-1/2 mr-3")
+          div(class="h-64 overflow-x-hidden overflow-y-scroll border rounded")
+            template(x-for="song in songs")
+              button(class="block w-full text-left p-3 border-b" type="button" x-on:click="selectedSong = {...song, hint: song.title};")
+                span(x-text="song.title")
+        div(class="w-1/2")
+          div(class="StackedList h-64 overflow-x-hidden overflow-y-scroll border rounded")
+            template(x-for="song in chapterSongs")
+              div(class="w-full text-left p-3 border-b flex justify-between bg-white draggable")
+                input(type="hidden" name="songs[]" :value="JSON.stringify(song)")
+                span(x-text="song.hint")
+                button(class="block" type="button" x-on:click="chapterSongs = chapterSongs.filter(sg => sg._id !== song._id)") &times;
+
+      template(x-if="selectedSong.title")
+        div#selectedSong(class="list--card flex-col")
+          h4(x-text="selectedSong.title")
+          div(class="flex-1 flex justify-between items-center")
+            label(for="featured") Featured
+              input(type="checkbox" name="featured" x-model="selectedSong.featured" class="ml-3")
+            button(type="button" class="btn--edit rounded-full h-10 w-10" x-on:click="chapterSongs.push({ _id: selectedSong._id, hint: selectedSong.hint, featured: selectedSong.featured ? true : false }); selectedSong = {}") &plus;
+    .show--card__footer.rounded-b-lg(style="margin-bottom:-3rem")
+      button(type="submit" class="btn btn--edit") Update Songs

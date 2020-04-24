@@ -1,12 +1,14 @@
 include ./_baseInput
 include ./_baseCheckbox
 include ./_baseColorInput
+include ./_csrfInput
 
 
 mixin foeForm(foe = {}, edit = false)
   if foe.id
     #foe-id(class="hidden") #{foe.id}
   form(method="POST")
+    +csrfInput()
     .flex.flex-col.mb-3
       +baseInput("text", "Opponent", "opponent", foe.opponent, "Opponent", true)
     .flex.flex-col.mb-3

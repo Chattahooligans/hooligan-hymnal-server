@@ -1,25 +1,20 @@
 module.exports = {
   env: {
-    // commonjs: true,
-    // es6: true,
-    // node: true,
+    commonjs: true,
+    es6: true,
+    node: true,
   },
   extends: [
-    // 'airbnb-base',
-    'airbnb',
-    'airbnb/hooks'
+    'airbnb-base',
   ],
   globals: {
-    // Atomics: 'readonly',
-    // SharedArrayBuffer: 'readonly',
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly',
   },
   parserOptions: {
-    // ecmaVersion: 2018,
+    ecmaVersion: 2018,
   },
   rules: {
-    // "quotes": ['error', 'single']
-    "react/jsx-filename-extension": [1, {
-      "extensions": [".js", ".jsx"]}
-      ]
+    "quotes": ['error', 'single']
   },
 };
