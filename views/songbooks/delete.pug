@@ -6,6 +6,7 @@ block content
   .container.mx-auto
     h2 #{title}
     strong Are you sure you want to delete #{songbook.songbook_title} from the database? If you only want to remove it from a songbook, use the back button and edit using the Songbooks menu.
+
     form(method="POST")
       +csrfInput()
       button(type="submit" class="px-3 py-3 rounded bg-red-700 text-white") Delete #{songbook.songbook_title}
