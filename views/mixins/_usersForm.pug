@@ -1,4 +1,5 @@
 include ./_baseInput
+include ./_baseCheckbox
 include ./_csrfInput
 
 mixin usersForm(user = {}, edit = false)
@@ -18,11 +19,21 @@ mixin usersForm(user = {}, edit = false)
       .flex.flex-col.mb-3
         +baseInput("password", "Confirm Password", "passwordConfirm", "", "Confirm ******")
     .flex.flex-col.mb-3
-      - var options = ['pushNotificationsAllowed', 'songbookAllowed', 'rosterAllowed', 'feedAllowed', 'usersAllowed']
-      //- TODO: Create a better select.. to[] from[]
-      label(for="permissions") Permissions
-      select(name="permissions[]" id="permissions[]" multiple)
-        each option in options
-          option(value=option) #{option}
+      +baseCheckbox('checkbox', 'Songbook Allowed', 'songbookAllowed', user.songbookAllowed)
+    .flex.flex-col.mb-3
+      +baseCheckbox('checkbox', 'Roster Allowed', 'rosterAllowed', user.rosterAllowed)
+    .flex.flex-col.mb-3
+      +baseCheckbox('checkbox', 'Feed Allowed', 'feedAllowed', user.feedAllowed)
+    .flex.flex-col.mb-3
+      +baseCheckbox('checkbox', 'Users Allowed', 'usersAllowed', user.usersAllowed)
+    //- .flex.flex-col.mb-3
+    //-   - var options = ['pushNotificationsAllowed', 'songbookAllowed', 'rosterAllowed', 'feedAllowed', 'usersAllowed']
+    //-   //- TODO: Create a better select.. to[] from[]
+    //-   label(for="permissions") Permissions
+    //-   select(name="permissions[]" id="permissions[]" multiple)
+    //-     each option in options
+    //-       option(value=option) #{option}
+    //- .flex.flex-col.mb-3
+    //-   div(x-data="{ permissions: " + JSON.stringify(options) + " usersPermissions: "+ JSON.stringify(user) +" }")
     .mb-3
       button(type="submit" class="px-3 py-2 bg-blue-700 text-white") Save User
