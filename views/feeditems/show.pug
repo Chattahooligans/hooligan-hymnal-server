@@ -4,7 +4,7 @@ block content
   .mx-auto.container
     .show--card
       h2(class="font-semibold text-2xl mb-3") #{title}
-      h3(class="font-bold text-xl mb-3") Sender: #{sender.displayName ? sender.displayName : feedItem.sender.user}
+      h3(class="font-bold text-xl mb-3") Sender: #{sender ? sender.displayName : feedItem.sender.user}
       h3(class="font-bold text-xl mb-3") Channel: #{channel.name}
       p(class="mb-3") Push: #{!!feedItem.push}
       p(class="mb-3") Active: #{!!feedItem.active}
