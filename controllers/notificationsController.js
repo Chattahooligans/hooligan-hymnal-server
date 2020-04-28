@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const Notification = mongoose.model("notification");
 
 exports.index = async (req, res) => {
-  const notifications = await Notification.find({});
+  const feedItems = await Notification.find({});
+  return res.json(notifications)
   res.render("notifications/index", {
     title: "All Notifications",
     notifications

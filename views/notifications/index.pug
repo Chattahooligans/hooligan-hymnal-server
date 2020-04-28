@@ -1,9 +1,0 @@
-extends ../layout
-
-block content
-  h2 #{title}
-  each notification in notifications
-    a(href=`/notifications/${notification.id}/`).list--card
-      h2(class="text-gray-600 font-semibold mb-3") #{notification.song.title}
-  else
-    h3 No notifications
