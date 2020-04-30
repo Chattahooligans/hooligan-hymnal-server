@@ -1,3 +1,4 @@
+
 extends ../layout
 
 include ../mixins/_csrfInput
@@ -5,7 +6,7 @@ include ../mixins/_csrfInput
 block content
   .mx-auto.container
     h2 #{title}
-    strong(class="block") Are you sure you want to delete #{player.name}
+    strong(class="block") Are you sure you want to delete #{player.name} from the database? If you only want to remove this player from a roster, use the back button and edit using the Rosters menu.
     strong(class="block") Please enter players name to delete.
     form(method="POST")
       +csrfInput()
