@@ -14,7 +14,7 @@ exports.songbookChapter = async (req, res) => {
 };
 
 exports.addSongsToChapterForm = async (req, res) => {
-  const songsPromise = Song.find({});
+  const songsPromise = Song.find({}).sort('title');
   const songbookPromise = Songbook.findById(req.params.songbookId);
   const [songs, songbook] = await Promise.all([songsPromise, songbookPromise]);
   const chapter = await songbook.chapters.id(req.params.chapterId);

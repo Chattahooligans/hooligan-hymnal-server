@@ -5,6 +5,7 @@ mixin playerForm(player = {}, edit = false)
   if player.id
     #player-id(class="hidden") #{player.id}
   form(method="POST")
+    +csrfInput()
     .flex.flex-col.mb-3
       +baseInput("text", "Name", "name", player.name, "Name", true)
     .flex.flex-col.mb-3
