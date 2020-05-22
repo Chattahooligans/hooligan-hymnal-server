@@ -1,0 +1,14 @@
+extends ../layout
+
+include ../mixins/_feedItemsList
+
+block content
+  .mx-auto.container
+    .mb-3
+      h2(class="font-extrabold text-3xl mb-3") #{title}
+    div(x-data="{ input: '" + text + "' }")
+      div(class="flex justify-between mb-3 flex-col md:flex-row")
+        input(type="text" name="feedItemsSearch" id="feedItemsSearch" class="border rounded bg-gray-200 p-2 mb-3 md:mb-auto" placeholder="Filter Feed Items" x-model="input" x-on:input="setTimeout(() => {fetch('/feed-items-partial?text='+input).then(res => res.text()).then(html => $refs.feedItemsList.innerHTML = html)}, 200)")
+        //- a(href=)
+      div#feedItemsList(class="-mx-3" x-ref="feedItemsList")
+        +feedItemsList(feedItems, totalCount, searchCount, page, pages, text)

@@ -7,10 +7,10 @@ mixin playersList(players = {}, totalCount = null, searchCount = null, page = nu
     h3 No Players
   div(class="md:ml-3")
     if pages > 1 && name !== ""
-        a(href=`/players?name=${name}&page=${page - 1}`) Prev
-        p Page #{page} of #{pages} - #{searchCount} total results
+        a(href=`/players?name=${name}&page=${page - 1}` class="bg-gray-700 text-white rounded border p-2 mr-2") Prev
+        p(class="inline-block") Page #{page} of #{pages} - #{searchCount} total results
         if page < pages
-          a(href=`/players?name=${name}&page=${parseFloat(page) + 1}`) Next
+          a(href=`/players?name=${name}&page=${parseFloat(page) + 1}` class="bg-gray-700 text-white border rounded border p-2 ml-2") Next
     else
       if page > 1
         a(href=`/players?page=${page - 1}` class="bg-gray-700 text-white rounded border p-2 mr-2") Prev

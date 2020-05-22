@@ -1,20 +1,27 @@
 extends ../layout
 
 block content
-  h2 #{title}
-  p First Name: #{user.name}
-  p Last Name: #{user.familyName}
-  p Email: #{user.email}
-  p Display Name: #{user.displayName}
-  if user.lastLogin
-    p Last Login #{user.lastLogin}
-  else
-    p Hasn't Logged in yet
-  p pushNotificationsAllowed: #{user.pushNotificationsAllowed}
-  p rosterAllowed: #{user.rosterAllowed}
-  p songbookAllowed: #{user.songbookAllowed}
-  p feedAllowed: #{user.feedAllowed}
-  p usersAllowed: #{user.usersAllowed}
-  a(href=`/users/${user._id}/edit`) Edit #{user.fullname}
-  br
-  a(href=`/users/${user._id}/delete`) Delete #{user.fullname}
+  .mx-auto.container
+    .show--card
+      h2(class="font-semibold text-2xl mb-3")
+        img(src=user.gravatar alt=`${user.name} ${user.familyName}` class="rounded-full")
+        span #{title}
+      p First name: #{user.name}
+      p Last name: #{user.familyName}
+      p Email: #{user.email}
+      p Display Name: #{user.displayName}
+      if user.lastLogin
+        p Last Login: #{h.moment(user.lastLogin).fromNow()} - #{h.moment(user.lastLogin).calendar()}
+      else
+        p Hasn't Logged in yet
+      .border.rounded.p-3.mt-3.flex.flex-wrap
+        p(class="sm:w-1/2 w-full") pushNotificationsAllowed: #{user.pushNotificationsAllowed}
+        p(class="sm:w-1/2 w-full") rosterAllowed: #{user.rosterAllowed}
+        p(class="sm:w-1/2 w-full") songbookAllowed: #{user.songbookAllowed}
+        p(class="sm:w-1/2 w-full") foesAllowed: #{user.foesAllowed}
+        p(class="sm:w-1/2 w-full") feedAllowed: #{user.feedAllowed}
+        p(class="sm:w-1/2 w-full") usersAllowed: #{user.usersAllowed}
+      .show--card__footer
+        a(class="btn btn--edit" href=`/users/${user._id}/edit`) Edit #{user.fullname}
+        br
+        a(class="btn btn--delete" href=`/users/${user._id}/delete`) Delete #{user.fullname}

@@ -1,4 +1,5 @@
 include ./_baseInput
+include ./_baseCheckbox
 include ./_csrfInput
 
 mixin usersForm(user = {}, edit = false)
@@ -17,12 +18,12 @@ mixin usersForm(user = {}, edit = false)
         +baseInput("password", "Password", "password", "", "******")
       .flex.flex-col.mb-3
         +baseInput("password", "Confirm Password", "passwordConfirm", "", "Confirm ******")
-    .flex.flex-col.mb-3
-      - var options = ['pushNotificationsAllowed', 'songbookAllowed', 'rosterAllowed', 'feedAllowed', 'usersAllowed']
-      //- TODO: Create a better select.. to[] from[]
-      label(for="permissions") Permissions
-      select(name="permissions[]" id="permissions[]" multiple)
-        each option in options
-          option(value=option) #{option}
+    .flex.flex-wrap.mb-3
+      +baseCheckbox('checkbox', 'Push Notifications Allowed', 'pushNotificationsAllowed', user.pushNotificationsAllowed)
+      +baseCheckbox('checkbox', 'Roster Allowed', 'rosterAllowed', user.rosterAllowed)
+      +baseCheckbox('checkbox', 'Foes Allowed', 'foesAllowed', user.foesAllowed)
+      +baseCheckbox('checkbox', 'Songbook Allowed', 'songbookAllowed', user.songbookAllowed)
+      +baseCheckbox('checkbox', 'Feed Allowed', 'feedAllowed', user.feedAllowed)
+      +baseCheckbox('checkbox', 'Users Allowed', 'usersAllowed', user.usersAllowed)
     .mb-3
-      button(type="submit" class="px-3 py-2 bg-blue-700 text-white") Save User
+      button(type="submit" class="px-3 py-2 bg-blue-700 text-white rounded") Save User

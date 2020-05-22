@@ -33,7 +33,7 @@ exports.index = async (req, res) => {
   }).count();
   const [players, totalCount, searchCount] = await Promise.all([playersPromise, countPromise, searchCountPromise]);
   const pages = Math.ceil((searchCount || totalCount) / limit);
-  if (!players.length && skip) {
+  if (!players.length + 1 && skip) {
     req.flash('error', `Hey! You asked for page ${page}. But that doesn't exist. So I put you on page ${pages}`);
     res.redirect(`/players?page=${pages}`);
   }

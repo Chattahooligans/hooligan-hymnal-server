@@ -2,21 +2,23 @@ extends ../layout
 
 block content
   .mx-auto.container
-    h2 #{title}
-    a(href="/users/create") Add User
+    div(class="mb-3")
+      h2(class="font-extrabold text-3xl mb-3") #{title}
+    div(class="flex mb-3 flex-col md:flex-row")
+      a(href="/users/create" class="btn btn--success") Add User
     if users.length
-      table
+      table(class="border-2 w-full rounded")
         thead
-          tr
-            th Full Name
-            th Email
-            th Last Login
+          tr(class="border-b-2")
+            th(class="p-3") Full Name
+            th(class="p-3 hidden md:block") Email
+            th(class="p-3") Last Login
         tbody
           each user in users
-            tr
-              td
+            tr(class="border-b-2 even:bg-gray-300")
+              td(class="p-3 text-center")
                 a(href=`/users/${user._id}`) #{user.fullname}
-              td #{user.email}
-              td #{user.lastLogin ? h.moment(user.lastLogin).fromNow() : "Hasn't Logged in yet!"}
+              td(class="hidden md:block p-3 text-center") #{user.email}
+              td(class="p-3 text-center") #{user.lastLogin ? h.moment(user.lastLogin).fromNow() : "Hasn't Logged in yet!"}
     else
       h3 No Other Users

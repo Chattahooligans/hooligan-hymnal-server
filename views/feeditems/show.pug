@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+  .mx-auto.container
+    .show--card
+      h2(class="font-semibold text-2xl mb-3") #{title}
+      h3(class="font-bold text-xl mb-3") Sender: #{sender ? sender.displayName : feedItem.sender.user}
+      h3(class="font-bold text-xl mb-3") Channel: #{channel.name}
+      p(class="mb-3") Push: #{!!feedItem.push}
+      p(class="mb-3") Active: #{!!feedItem.active}
+      h4(class="mb-3 font-bold text-xl") Full Text
+      p(class="mb-3") #{feedItem.text}
+      h4(class="mb-3 font-bold") Images
+      .flex.flex-wrap.justify-between
+        if feedItem.images
+          each image in feedItem.images
+            img(src=image.uri class="w-1/2")
+        else
+          h5 No Images
+      h4(class="mb-3 font-bold") Attachements:
+      .flex.flex-col
+        if feedItem.attachements
+          each attachement in feedItem.attachements
+            .list--card
+              pre=attachement
+        else
+          h5 No Attachements
+      .show--card__footer
+        a(href=`/feed-items/${feedItem.id}/delete` class="btn btn--delete") Delete Feed Item

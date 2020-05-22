@@ -46,8 +46,7 @@ html(lang="en")
             span(x-show="!open") Open Menu
           nav(class="flex flex-col -mx-3 md:block" x-bind:class="{ 'hidden': open !== true }")
             if currentUser.pushNotificationsAllowed
-              a(href="/push-tokens" class="block p-3 hover:bg-gray-600 hover:text-white") Push Tokens
-              a(href="/notifications" class="block p-3 hover:bg-gray-600 hover:text-white") Notifications
+              a(href="/feed-items" class="block p-3 hover:bg-gray-600 hover:text-white") Feed Items
             if currentUser.songbookAllowed
               a(href="/songs" class="block p-3 hover:bg-gray-600 hover:text-white") Songs
               a(href="/songbooks" class="block p-3 hover:bg-gray-600 hover:text-white") Songbooks

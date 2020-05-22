@@ -12,7 +12,7 @@ const playersController = require('../controllers/playersController');
 const songbooksController = require('../controllers/songbooksController');
 const songsController = require('../controllers/songsController');
 const songbookSongsController = require('../controllers/songbookSongsController');
-const notificationsController = require('../controllers/notificationsController');
+const feedItemsController = require('../controllers/feedItemsController');
 const pushTokensController = require('../controllers/pushTokensController');
 const foesController = require('../controllers/foesController');
 const channelController = require('../controllers/channelController');
@@ -111,14 +111,15 @@ router.get('/songs/:id/delete', isLoggedIn, checkPermission('songbookAllowed'), 
 router.post('/songs/:id/delete', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.delete));
 
 // Notifications??
-router.get('/notifications', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(notificationsController.index));
-router.get('/notifications/create', isLoggedIn, checkPermission('pushNotificationsAllowed'), notificationsController.create);
-router.post('/notifications/create', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(notificationsController.store));
-router.get('/notifications/:id', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(notificationsController.show));
-router.get('/notifications/:id/edit', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(notificationsController.edit));
-router.post('/notifications/:id/edit', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(notificationsController.update));
-router.get('/notifications/:id/delete', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(notificationsController.deleteConfirm));
-router.post('/notifications/:id/delete', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(notificationsController.delete));
+router.get('/feed-items', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.index));
+router.get('/feed-items-partial', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.search));
+router.get('/feed-items/create', isLoggedIn, checkPermission('pushNotificationsAllowed'), feedItemsController.create);
+router.post('/feed-items/create', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.store));
+router.get('/feed-items/:id', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.show));
+router.get('/feed-items/:id/edit', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.edit));
+router.post('/feed-items/:id/edit', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.update));
+router.get('/feed-items/:id/delete', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.deleteConfirm));
+router.post('/feed-items/:id/delete', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.delete));
 
 // Push tokens
 router.get('/push-tokens', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.index));

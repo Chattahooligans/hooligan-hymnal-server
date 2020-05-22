@@ -4,7 +4,7 @@ include ./_csrfInput
 mixin songbookSongForm(songs = [], chapterSongs = [])
   form(method="POST")
     +csrfInput()
-    div(x-data="{ songs: " + JSON.stringify(songs) + ", selectedSong: {}, chapterSongs: " + JSON.stringify(chapterSongs) + " }")
+    div(x-data="{ songs: " + JSON.stringify(songs) + ", selectedSong: {}, chapterSongs: " + JSON.stringify(chapterSongs) + ", editingSong: false }")
       .container.flex.mx-auto
         div(class="w-1/2 mr-3")
           div(class="h-64 overflow-x-hidden overflow-y-scroll border rounded")
@@ -17,14 +17,18 @@ mixin songbookSongForm(songs = [], chapterSongs = [])
               div(class="w-full text-left p-3 border-b flex justify-between bg-white draggable")
                 input(type="hidden" name="songs[]" :value="JSON.stringify(song)")
                 span(x-text="song.hint")
-                button(class="block" type="button" x-on:click="chapterSongs = chapterSongs.filter(sg => sg._id !== song._id)") &times;
+                div
+                  //- button(type="button" class="btn--edit rounded-full h-8 w-8" x-on:click="selectedSong = { ...song, title: song.hint }; editingSong = true;") &#9998;
+                  button(type="button" class="rounded-full bg-red-700 text-white h-8 w-8" x-on:click="chapterSongs = chapterSongs.filter(sg => sg._id !== song._id)") 	&times;
 
       template(x-if="selectedSong.title")
         div#selectedSong(class="list--card flex-col")
           h4(x-text="selectedSong.title")
           div(class="flex-1 flex justify-between items-center")
             label(for="featured") Featured
-              input(type="checkbox" name="featured" x-model="selectedSong.featured" class="ml-3")
-            button(type="button" class="btn--edit rounded-full h-10 w-10" x-on:click="chapterSongs.push({ _id: selectedSong._id, hint: selectedSong.hint, featured: selectedSong.featured ? true : false }); selectedSong = {}") &plus;
+              input(type="checkbox" name="featured" id="featured" x-model="selectedSong.featured" class="ml-3")
+            div
+              button(type="button" class="btn--edit rounded-full h-10 w-10" x-on:click="if (!editingSong) {if (!chapterSongs.filter(sg => sg._id === selectedSong._id).length) {chapterSongs.push({ _id: selectedSong._id, hint: selectedSong.hint, featured: selectedSong.featured });selectedSong = {};} else {alert('Song already in songbook');}selectedSong = {};} else {editingSong = false;selectedSong = {};}") &plus;
+              button(type="button" class="btn--delete rounded-full h-10 w-10" x-on:click="selectedSong = {}") &times;
     .show--card__footer.rounded-b-lg(style="margin-bottom:-3rem")
       button(type="submit" class="btn btn--edit") Update Songs

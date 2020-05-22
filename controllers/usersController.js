@@ -78,17 +78,17 @@ exports.register = async (req, res) => {
 		name: req.body.name,
 		familyName: req.body.familyName,
 		displayName: req.body.displayName,
-		password: req.body.password,
+    password: req.body.password,
+    pushNotificationsAllowed: !!req.body.pushNotificationsAllowed,
+    rosterAllowed: !!req.body.rosterAllowed,
+    songbookAllowed: !!req.body.songbookAllowed,
+    foesAllowed: !!req.body.foesAllowed,
+    feedAllowed: !!req.body.feedAllowed,
+    usersAllowed: !!req.body.usersAllowed,
 	});
-	if (req.body.permissions) {
-		req.body.permissions.map((permission) => {
-			user[permission] = true;
-		});
-	}
 	await user.save();
 	req.flash("success", `${user.fullname} was created!`);
 	res.redirect("/users");
-	// Might implement a checkbox that allows a password reset email to be sent??
 };
 
 exports.singleUser = async (req, res) => {
@@ -112,14 +112,14 @@ exports.updateUser = async (req, res) => {
 		name: req.body.name,
 		familyName: req.body.familyName,
 		email: req.body.email,
-		displayName: req.body.displayName,
+    displayName: req.body.displayName,
+    pushNotificationsAllowed: !!req.body.pushNotificationsAllowed,
+    rosterAllowed: !!req.body.rosterAllowed,
+    songbookAllowed: !!req.body.songbookAllowed,
+    foesAllowed: !!req.body.foesAllowed,
+    feedAllowed: !!req.body.feedAllowed,
+    usersAllowed: !!req.body.usersAllowed,
 	};
-	const tempUser = await User.findById(req.params.id);
-	if (req.body.permissions) {
-		req.body.permissions.map((permission) => {
-			updates[permission] = !tempUser[permission];
-		});
-	}
 	const user = await User.findOneAndUpdate(
 		{ _id: req.params.id },
 		{ $set: updates },
