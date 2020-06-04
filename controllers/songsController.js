@@ -44,16 +44,16 @@ exports.index = async (req, res) => {
     .limit(limit)
     .sort({ title: 'asc' });
 
-  const countPromise = Song.count();
-  const searchCountPromise = Song.find(SEARCH_QUERY).count();
+  const countPromise = Song.countDocuments();
+  const searchCountPromise = Song.find(SEARCH_QUERY).countDocuments();
   const [songs, totalCount, searchCount] = await Promise.all([songsPromise, countPromise, searchCountPromise]);
   const pages = Math.ceil((searchCount || totalCount) / limit);
   if (!songs.length && skip) {
     req.flash('error', `Hey! You asked for page ${page}. But that doesn't exist. So I put you on page ${pages}`);
-    res.redirect(`/songs?page=${pages}`);
+    return res.redirect(`/songs?page=${pages}`);
   }
 
-  res.render('songs/index', {
+  return res.render('songs/index', {
     title: 'All Songs',
     songs,
     totalCount,
@@ -113,7 +113,7 @@ exports.search = async (req, res) => {
   const [songs, totalCount, searchCount] = await Promise.all([songsPromise, totalCountPromise, searchCountPromise]);
   const pages = Math.ceil(searchCount / limit);
 
-  res.render('songs/_songsList', {
+  return res.render('songs/_songsList', {
     songs,
     filter,
     skip,
