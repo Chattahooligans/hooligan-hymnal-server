@@ -8,10 +8,10 @@ exports.inMemoryCacheMiddleware = (duration, key) => {
         let cacheContent = memCache.get(memKey);
         if (cacheContent) {
             console.log(`Cache for ${memKey} hit!`)
-            return res.send( cacheContent );
+            return res.json( cacheContent );
         } else {
-            res.sendResponse = res.send;
-            res.send = (body) => {
+            res.sendResponse = res.json;
+            res.json = (body) => {
                 memCache.put(memKey, body, duration)
                 console.log(`Setting cache for ${memKey}`);
                 res.sendResponse(body)
