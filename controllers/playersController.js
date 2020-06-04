@@ -24,7 +24,7 @@ exports.index = async (req, res) => {
     .limit(limit)
     .sort({ name: 'asc' });
 
-  const countPromise = Player.count();
+  const countPromise = Player.countDocuments();
   const searchCountPromise = Player.find({
     name: {
       $regex: `.*${name}.*`,
@@ -66,7 +66,7 @@ exports.search = async (req, res) => {
     .skip(skip)
     .limit(limit)
     .sort({ name: 'asc' });
-  const totalCountPromise = Player.count();
+  const totalCountPromise = Player.countDocuments();
   const searchCountPromise = Player.find({
     name: {
       $regex: `.*${name}.*`,
