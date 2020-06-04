@@ -83,6 +83,7 @@
     "laravel-mix": "^5.0.4",
     "prettier": "^2.0.5",
     "sass": "^1.26.7",
+    "sass-loader": "^8.0.2",
     "tailwindcss": "^1.4.6",
     "vue-template-compiler": "^2.6.11"
   },

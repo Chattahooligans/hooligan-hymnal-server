@@ -30,10 +30,10 @@ exports.index = async (req, res) => {
       $regex: `.*${name}.*`,
       $options: 'i',
     },
-  }).count();
+  }).countDocuments();
   const [players, totalCount, searchCount] = await Promise.all([playersPromise, countPromise, searchCountPromise]);
   const pages = Math.ceil((searchCount || totalCount) / limit);
-  if (!players.length + 1 && skip) {
+  if (!players.length && skip) {
     req.flash('error', `Hey! You asked for page ${page}. But that doesn't exist. So I put you on page ${pages}`);
     return res.redirect(`/players?page=${pages}`);
   }
@@ -72,7 +72,7 @@ exports.search = async (req, res) => {
       $regex: `.*${name}.*`,
       $options: 'i',
     },
-  }).count();
+  }).countDocuments();
   const [players, totalCount, searchCount] = await Promise.all([playersPromise, totalCountPromise, searchCountPromise]);
   const pages = Math.ceil(searchCount / limit);
 
