@@ -21,6 +21,7 @@ const helpers = require('./helpers');
 const { getBreadcrumbs } = require('./handlers/breadcrumbs');
 const compression = require('compression');
 const csurf = require('csurf');
+const Sentry = require('@sentry/node');
 
 const { csrfProtection } = require('./middleware/csrfProtection');
 
@@ -28,6 +29,13 @@ env.config();
 
 const PORT = process.env.PORT || 3000;
 const { MONGO_URI } = process.env;
+const SENTRY_DNS = process.env.SENTRY_DNS;
+
+if (SENTRY_DNS) {
+  Sentry.init({ dsn: SENTRY_DNS });
+
+  app.use(Sentry.Handlers.requestHandler());
+}
 
 app.use(express.static(`${__dirname}/public`));
 if (process.env.NODE_ENV !== 'test') {
@@ -197,6 +205,11 @@ app.use('/', web);
 app.use(errorHandlers.notFound);
 
 app.use(errorHandlers.flashValidationErrors);
+
+// This needs to be above the rest of the error handlers
+if (SENTRY_DNS) {
+  app.use(Sentry.Handlers.errorHandler());
+}
 
 if (app.get('env') === 'development') {
   app.use(errorHandlers.developmentErrors);
