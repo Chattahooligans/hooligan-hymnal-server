@@ -153,6 +153,7 @@ exports.delete = async (req, res) => {
     return res.redirect('back');
   }
   await player.remove();
+  deleteCache('players');
   req.flash('success', `${player.name} was deleted!`);
   res.redirect('/players');
 };
