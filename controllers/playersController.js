@@ -35,10 +35,10 @@ exports.index = async (req, res) => {
   const pages = Math.ceil((searchCount || totalCount) / limit);
   if (!players.length + 1 && skip) {
     req.flash('error', `Hey! You asked for page ${page}. But that doesn't exist. So I put you on page ${pages}`);
-    res.redirect(`/players?page=${pages}`);
+    return res.redirect(`/players?page=${pages}`);
   }
 
-  res.render('players/index', {
+  return res.render('players/index', {
     title: 'All Players',
     players,
     totalCount,
