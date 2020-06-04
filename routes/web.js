@@ -39,19 +39,19 @@ router.get('/account/update', isLoggedIn, userController.updateAccountForm);
 router.post('/account/update', isLoggedIn, catchErrors(userController.updateAccount));
 
 // Users routes
-router.get('/users', isLoggedIn, checkPermission('usersAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(usersController.allUsers));
+router.get('/users', isLoggedIn, checkPermission('usersAllowed'), catchErrors(usersController.allUsers));
 router.get('/users/create', isLoggedIn, checkPermission('usersAllowed'), usersController.newUserForm);
 router.post('/users/create', isLoggedIn, checkPermission('usersAllowed'), usersController.validateRegister, catchErrors(usersController.register));
-router.get('/users/:id', isLoggedIn, checkPermission('usersAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(usersController.singleUser));
+router.get('/users/:id', isLoggedIn, checkPermission('usersAllowed'), catchErrors(usersController.singleUser));
 router.get('/users/:id/edit', isLoggedIn, checkPermission('usersAllowed'), catchErrors(usersController.editForm));
 router.post('/users/:id/edit', isLoggedIn, checkPermission('usersAllowed'), catchErrors(usersController.updateUser));
 router.get('/users/:id/delete', isLoggedIn, checkPermission('usersAllowed'), catchErrors(usersController.deleteConfirm));
 router.post('/users/:id/delete', isLoggedIn, checkPermission('usersAllowed'), catchErrors(usersController.delete));
 // Rosters
-router.get('/rosters', isLoggedIn, checkPermission('rosterAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(rostersController.index));
-router.get('/rosters/create', isLoggedIn, checkPermission('rosterAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(rostersController.create));
+router.get('/rosters', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.index));
+router.get('/rosters/create', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.create));
 router.post('/rosters/create', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.store));
-router.get('/rosters/:id', isLoggedIn, checkPermission('rosterAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(rostersController.show));
+router.get('/rosters/:id', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.show));
 router.get('/rosters/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.edit));
 router.post('/rosters/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.update));
 router.get('/rosters/:id/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.deleteConfirm));
@@ -60,14 +60,14 @@ router.post('/rosters/:id/delete', isLoggedIn, checkPermission('rosterAllowed'),
 // Players
 router.post('/players/thumbnail', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.uploadThumbnail));
 router.post('/players/images', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.uploadImages));
-router.get('/players', isLoggedIn, checkPermission('rosterAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(playersController.index));
+router.get('/players', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.index));
 router.get('/players-partial', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.search));
-router.get('/players/create', isLoggedIn, checkPermission('rosterAllowed'), inMemoryCacheMiddleware(config.cache_timeout), playersController.create);
+router.get('/players/create', isLoggedIn, checkPermission('rosterAllowed'), playersController.create);
 router.post('/players/create', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.store));
 router.get('/players/images', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.getImages));
 
 router.post('/players/remove-images', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.removeImage));
-router.get('/players/:id', isLoggedIn, checkPermission('rosterAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(playersController.show));
+router.get('/players/:id', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.show));
 router.get('/players/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.edit));
 router.post('/players/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.update));
 router.get('/players/:id/thumbnail', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.playersThumbnail));
@@ -76,19 +76,19 @@ router.get('/players/:id/delete', isLoggedIn, checkPermission('rosterAllowed'), 
 router.post('/players/:id/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.delete));
 
 // Songbooks
-router.get('/songbooks', isLoggedIn, checkPermission('songbookAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(songbooksController.index));
-router.get('/songbooks/create', isLoggedIn, checkPermission('songbookAllowed'), inMemoryCacheMiddleware(config.cache_timeout), songbooksController.create);
+router.get('/songbooks', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.index));
+router.get('/songbooks/create', isLoggedIn, checkPermission('songbookAllowed'), songbooksController.create);
 router.post('/songbooks/create', isLoggedIn, checkPermission('songbookAllowed'), songbooksController.store);
 router.get('/songbooks/covers', checkPermission('songbookAllowed'), catchErrors(songbooksController.getCovers));
 router.post('/songbooks/remove-cover', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.removeCover));
-router.get('/songbooks/:id/', isLoggedIn, checkPermission('songbookAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(songbooksController.show));
+router.get('/songbooks/:id/', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.show));
 router.get('/songbooks/:id/edit', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.edit));
 router.post('/songbooks/:id/edit', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.update));
 router.get('/songbooks/:id/delete', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.deleteConfirm));
 router.post('/songbooks/:id/delete', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.delete));
 
 // Songbook Chapters
-router.get('/songbooks/:id/add-chapter', isLoggedIn, checkPermission('songbookAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(songbooksController.addChapter));
+router.get('/songbooks/:id/add-chapter', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.addChapter));
 router.post('/songbooks/:id/add-chapter', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.saveChapter));
 router.get('/songbooks/:songbookId/chapters/:chapterId/delete', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.removeChapterConfirm));
 router.post('/songbooks/:songbookId/chapters/:chapterId/delete', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songbooksController.removeChapter));
@@ -102,57 +102,57 @@ router.post('/songbooks/back-cover', isLoggedIn, checkPermission('songbookAllowe
 
 
 // Songs
-router.get('/songs', isLoggedIn, checkPermission('songbookAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(songsController.index));
+router.get('/songs', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.index));
 router.get('/songs-partial', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.search));
-router.get('/songs/create', isLoggedIn, checkPermission('songbookAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(songsController.create));
+router.get('/songs/create', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.create));
 router.post('/songs/create', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.store));
-router.get('/songs/:id', isLoggedIn, checkPermission('songbookAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(songsController.show));
+router.get('/songs/:id', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.show));
 router.get('/songs/:id/edit', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.edit));
 router.post('/songs/:id/edit', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.update));
 router.get('/songs/:id/delete', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.deleteConfirm));
 router.post('/songs/:id/delete', isLoggedIn, checkPermission('songbookAllowed'), catchErrors(songsController.delete));
 
 // Notifications??
-router.get('/feed-items', isLoggedIn, checkPermission('pushNotificationsAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(feedItemsController.index));
+router.get('/feed-items', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.index));
 router.get('/feed-items-partial', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.search));
-router.get('/feed-items/create', isLoggedIn, checkPermission('pushNotificationsAllowed'), inMemoryCacheMiddleware(config.cache_timeout), feedItemsController.create);
+router.get('/feed-items/create', isLoggedIn, checkPermission('pushNotificationsAllowed'), feedItemsController.create);
 router.post('/feed-items/create', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.store));
-router.get('/feed-items/:id', isLoggedIn, checkPermission('pushNotificationsAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(feedItemsController.show));
+router.get('/feed-items/:id', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.show));
 router.get('/feed-items/:id/edit', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.edit));
 router.post('/feed-items/:id/edit', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.update));
 router.get('/feed-items/:id/delete', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.deleteConfirm));
 router.post('/feed-items/:id/delete', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(feedItemsController.delete));
 
 // Push tokens
-router.get('/push-tokens', isLoggedIn, checkPermission('pushNotificationsAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(pushTokensController.index));
-router.get('/push-tokens/create', isLoggedIn, checkPermission('pushNotificationsAllowed'),inMemoryCacheMiddleware(config.cache_timeout),  pushTokensController.create);
+router.get('/push-tokens', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.index));
+router.get('/push-tokens/create', isLoggedIn, checkPermission('pushNotificationsAllowed'),  pushTokensController.create);
 router.post('/push-tokens/create', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.store));
-router.get('/push-tokens/:id', isLoggedIn, checkPermission('pushNotificationsAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(pushTokensController.show));
+router.get('/push-tokens/:id', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.show));
 router.get('/push-tokens/:id/edit', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.edit));
 router.post('/push-tokens/:id/edit', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.update));
 router.get('/push-tokens/:id/delete', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.deleteConfirm));
 router.post('/push-tokens/:id/delete', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.delete));
 
 // Foes
-router.get('/foes', isLoggedIn, checkPermission('foesAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(foesController.index));
+router.get('/foes', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.index));
 router.post('/foes/logo', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.logo));
-router.get('/foes/create', isLoggedIn, checkPermission('foesAllowed'), inMemoryCacheMiddleware(config.cache_timeout), foesController.create);
+router.get('/foes/create', isLoggedIn, checkPermission('foesAllowed'), foesController.create);
 router.post('/foes/create', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.store));
 router.get('/foes/logos', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.getLogo));
 router.post('/foes/remove-logo', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.removeLogo));
-router.get('/foes/:id', isLoggedIn, checkPermission('foesAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(foesController.show));
+router.get('/foes/:id', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.show));
 router.get('/foes/:id/edit', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.edit));
 router.post('/foes/:id/edit', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.update));
 router.get('/foes/:id/delete', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.deleteConfirm));
 router.post('/foes/:id/delete', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.delete));
 
-router.get('/channels', isLoggedIn, checkPermission('feedAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(channelController.index));
-router.get('/channels/create', isLoggedIn, checkPermission('feedAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(channelController.create));
+router.get('/channels', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.index));
+router.get('/channels/create', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.create));
 router.post('/channels/create', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.store));
 router.post('/channels/avatar', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.avatar));
 router.get('/channels/avatars', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.getAvatars));
 router.post('/channels/remove-avatar', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.removeAvatar));
-router.get('/channels/:id', isLoggedIn, checkPermission('feedAllowed'), inMemoryCacheMiddleware(config.cache_timeout), catchErrors(channelController.show));
+router.get('/channels/:id', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.show));
 router.get('/channels/:id/edit', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.edit));
 router.post('/channels/:id/edit', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.update));
 router.get('/channels/:id/delete', isLoggedIn, checkPermission('feedAllowed'), catchErrors(channelController.deleteConfirm));
