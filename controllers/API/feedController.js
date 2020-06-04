@@ -9,100 +9,68 @@ const moment = require('moment');
 const { sendPush } = require('../../models/pushHandler');
 // const FeedItems = require('../../models/feeditems');
 // const Channels = require('../../models/channels');
-const config = require('../../config.js');
 const PushHandler = require('../../models/pushHandler');
 const { upload } = require('../../handlers/imageUploader');
 
-const feeditems_cache = {
-  data: null,
-  last_refresh: 0,
-  force_reload(res, sendCallback) {
-    const that = this;
-    FeedItems.find((error, feed) => {
-      if (error) {
-        that.data = null;
-        that.last_refresh = 0;
-        if (res != null) res.send(error);
-      }
-      // sort cache on publishedAt, descending
-      that.data = feed.sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
-      that.last_refresh = Date.now();
-      if (res != null) {
-        sendCallback(that.data);
-      }
-    });
-  },
-  send_data(res, publishedBefore, limit) {
-    if (this.last_refresh + config.cache_timeout < Date.now()) {
-      this.force_reload(res, (data) => res.send(
-        this.filter_data(data, publishedBefore, limit),
-      ));
-    } else {
-      res.send(this.filter_data(this.data, publishedBefore, limit));
-    }
-  },
-  send_active(res, publishedBefore, limit) {
-    if (this.last_refresh + config.cache_timeout < Date.now()) {
-      this.force_reload(res, (data) => res.send(
-        this.filter_data(
-          this.get_active_items(data), publishedBefore, limit,
-        ),
-      ));
-    } else {
-      res.send(this.filter_data(this.get_active_items(this.data), publishedBefore, limit));
-    }
-  },
-  send_channel(res, channelId, publishedBefore, limit) {
-    if (this.last_refresh + config.cache_timeout < Date.now()) {
-      this.force_reload(res, (data) => res.send(
-        this.filter_data(
-          this.get_channel_items(data, channelId), publishedBefore, limit,
-        ),
-      ));
-    } else {
-      res.send(this.filter_data(this.get_channel_items(this.data, channelId), publishedBefore, limit));
-    }
-  },
-  get_active_items(data) {
-    const active = [];
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].active) active.push(data[i]);
-    }
-    return active;
-  },
-  get_channel_items(data, channelId) {
-    const items = [];
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].channel == channelId && data[i].channel) items.push(data[i]);
-    }
-    return items;
-  },
-  filter_data(data, publishedBefore, limit) {
-    limit = parseInt(limit);
-    publishedBefore = Date.parse(publishedBefore); console.log(publishedBefore);
-    if (!publishedBefore) publishedBefore = new Date();
-    if (!limit) limit = 20;
-    const filtered = data.filter((i) => i.publishedAt < publishedBefore);
-    return filtered.slice(0, limit);
-  },
-};
-
 exports.active = async (req, res) => {
-  feeditems_cache.send_active(res, req.query.publishedBefore, req.query.limit);
+  let { limit, publishedBefore } = req.query;
+  if (!publishedBefore) {
+    publishedBefore = new Date();
+  }
+  if (!limit) {
+    limit = 20;
+  }
+  publishedBefore = Date.parse(publishedBefore);
+  console.log(publishedBefore);
+  const feed = await FeedItems.find({
+    publishedAt: {
+      $lt: publishedBefore
+    },
+    active: true
+  }).limit(limit)
+  return res.json(feed);
 };
 
 exports.all = async (req, res) => {
-  feeditems_cache.send_data(res, req.query.publishedBefore, req.query.limit);
+  let { limit, publishedBefore } = req.query;
+  if (!publishedBefore) {
+    publishedBefore = new Date();
+  }
+  if (!limit) {
+    limit = 20;
+  }
+  publishedBefore = Date.parse(publishedBefore);
+  console.log(publishedBefore);
+  const feed = await FeedItems.find({
+    publishedAt: {
+      $lt: publishedBefore
+    },
+    active: true
+  }).limit(limit)
+  return res.json(feed);
 };
 
 exports.show = async (req, res) => {
-  FeedItems.findById(req.params.id, (error, feedItem) => {
-    res.send(feedItem);
-  });
+  const feedItem = await FeedItems.findById(req.params.id);
+  return res.json(feedItem);
 };
 
 exports.channel = async (req, res) => {
-  feeditems_cache.send_channel(res, req.params.id, req.query.publishedBefore, req.query.limit);
+  let { limit, publishedBefore } = req.query;
+  if (!publishedBefore) {
+    publishedBefore = new Date();
+  }
+  publishedBefore = Date.parse(publishedBefore);
+  if (!limit) {
+    limit = 20;
+  }
+  const feedChannelItems = await FeedItems.find({
+    publishedAt: {
+      $lt: publishedBefore
+    },
+    channel: req.params.id
+  }).limit(limit);
+  return res.json(feedChannelItems);
 };
 
 exports.store = async (req, res) => {
