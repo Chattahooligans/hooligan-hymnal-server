@@ -21,8 +21,6 @@ const { isLoggedIn } = require('../middleware/authMiddleware');
 const { catchErrors } = require('../handlers/errorHandlers');
 const { checkPermission } = require('../middleware/PermissionsMiddleware');
 const { csrfProtection } = require('../middleware/csrfProtection');
-const { inMemoryCacheMiddleware } = require('../middleware/cacheMiddleware');
-const config = require('../config');
 
 router.get('/', homeController.homePage);
 router.get('/login', authController.loginForm);
