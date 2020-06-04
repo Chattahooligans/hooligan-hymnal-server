@@ -20,3 +20,7 @@ exports.inMemoryCacheMiddleware = (duration, key) => {
         }
     }
 }
+
+exports.deleteCache = (key) => {
+    memCache.del(key)
+}

@@ -6,6 +6,7 @@ const {
   removeFromCloudinary,
 } = require('../handlers/cloudinaryDelete');
 const { upload } = require('../handlers/imageUploader');
+const { deleteCache } = require('../middleware/cacheMiddleware');
 
 exports.index = async (req, res) => {
   const page = req.query.page || 1;
@@ -96,6 +97,7 @@ exports.create = (req, res) => {
 exports.store = async (req, res) => {
   const player = new Player(req.body);
   await player.save();
+  deleteCache('players');
   req.flash('success', `${player.name} was successfully created!`);
   res.redirect('/players');
 };
