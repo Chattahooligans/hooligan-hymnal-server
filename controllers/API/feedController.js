@@ -11,6 +11,9 @@ const { sendPush } = require('../../models/pushHandler');
 // const Channels = require('../../models/channels');
 const PushHandler = require('../../models/pushHandler');
 const { upload } = require('../../handlers/imageUploader');
+const { deleteCache } = require('../../middleware/cacheMiddleware');
+
+const DELETE_FEED_CACHE = () => deleteCache('feed');
 
 exports.active = async (req, res) => {
   let { limit, publishedBefore } = req.query;
@@ -165,7 +168,7 @@ exports.store = async (req, res) => {
   if (feedItem.push) {
     const { receipts, errors } = await PushHandler.sendPost(feedItem, channel, senderToken);
 
-    feeditems_cache.force_reload();
+    DELETE_FEED_CACHE();
 
     return res.json({
       feedItem,
@@ -174,7 +177,7 @@ exports.store = async (req, res) => {
     });
   }
   else {
-    feeditems_cache.force_reload();
+    DELETE_FEED_CACHE();
 
     return res.json(feedItem);
   }
@@ -186,7 +189,7 @@ exports.activate = async (req, res) => {
   },
     (err, affected, resp) => {
       res.send(resp);
-      feeditems_cache.force_reload();
+      DELETE_FEED_CACHE();
     });
 };
 
@@ -196,7 +199,7 @@ exports.deactivate = async (req, res) => {
   },
     (err, affected, resp) => {
       res.send(resp);
-      feeditems_cache.force_reload();
+      DELETE_FEED_CACHE();
     });
 };
 

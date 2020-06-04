@@ -8,6 +8,8 @@ const {
 const { upload } = require('../handlers/imageUploader');
 const { deleteCache } = require('../middleware/cacheMiddleware');
 
+const DELETE_PLAYERS_CACHE = () => deleteCache('players');
+
 exports.index = async (req, res) => {
   const page = req.query.page || 1;
   const limit = 10;
@@ -97,7 +99,7 @@ exports.create = (req, res) => {
 exports.store = async (req, res) => {
   const player = new Player(req.body);
   await player.save();
-  deleteCache('players');
+  DELETE_PLAYERS_CACHE();
   req.flash('success', `${player.name} was successfully created!`);
   res.redirect('/players');
 };
@@ -129,6 +131,7 @@ exports.update = async (req, res) => {
     new: true,
     runValidators: true,
   });
+  DELETE_PLAYERS_CACHE();
   req.flash('success', `${player.name} was updated`);
   res.redirect(`/players/${player._id}`);
 };
@@ -153,7 +156,7 @@ exports.delete = async (req, res) => {
     return res.redirect('back');
   }
   await player.remove();
-  deleteCache('players');
+  DELETE_PLAYERS_CACHE();
   req.flash('success', `${player.name} was deleted!`);
   res.redirect('/players');
 };

@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const Song = mongoose.model('song');
 const Player = mongoose.model('players');
 
+const { deleteCache } = require('../middleware/cacheMiddleware');
+
+const DELETE_SONGS_CACHE = () => deleteCache('songs');
+
 exports.index = async (req, res) => {
   const page = req.query.page || 1;
   const limit = 10;
@@ -134,6 +138,7 @@ exports.create = async (req, res) => {
 
 exports.store = async (req, res) => {
   const song = await new Song(req.body).save();
+  DELETE_SONGS_CACHE();
   req.flash('success', `${song.title} was created!`);
   res.redirect('/songs');
 };
@@ -178,6 +183,7 @@ exports.update = async (req, res) => {
       context: 'query',
     },
   );
+  DELETE_SONGS_CACHE();
   req.flash('success', `${song.title} was updated!`);
   res.redirect(`/songs/${song.id}`);
 };
@@ -192,6 +198,7 @@ exports.deleteConfirm = async (req, res) => {
 
 exports.delete = async (req, res) => {
   const song = await Song.findByIdAndDelete(req.params.id);
+  DELETE_SONGS_CACHE();
   req.flash('success', `${song.title} was deleted`);
   res.redirect('/songs');
 };

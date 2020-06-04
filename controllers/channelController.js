@@ -5,6 +5,10 @@ const User = mongoose.model('User');
 const { removeFromCloudinary } = require('../handlers/cloudinaryDelete');
 const { upload } = require('../handlers/imageUploader');
 
+const { deleteCache } = require('../middleware/cacheMiddleware');
+
+const DELETE_CHANNELS_CACHE = () => deleteCache('channels_active');
+
 exports.index = async (req, res) => {
   const channels = await Channel.find();
   return res.render('channels/index', {
@@ -36,6 +40,7 @@ exports.store = async (req, res) => {
   }
   const channel = new Channel(req.body);
   await channel.save();
+  DELETE_CHANNELS_CACHE();
   req.flash('success', `${channel.name} aws created!`);
   return res.redirect('/channels');
 };
@@ -75,6 +80,7 @@ exports.update = async (req, res) => {
   }
   const channel = await Channel.findById(req.params.id);
   await channel.update(req.body);
+  DELETE_CHANNELS_CACHE();
   return res.redirect(`/channels/${channel._id}`);
 };
 
@@ -97,6 +103,7 @@ exports.delete = async (req, res) => {
     return res.redirect('back');
   }
   await channel.remove();
+  DELETE_CHANNELS_CACHE();
   req.flash('success', `${channel.name} was deleted`);
   return res.redirect('/channels');
 };

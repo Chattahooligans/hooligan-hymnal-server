@@ -22,5 +22,6 @@ exports.inMemoryCacheMiddleware = (duration, key) => {
 }
 
 exports.deleteCache = (key) => {
+    console.log(`Deleteing cache ${key}`);
     memCache.del(key)
 }
