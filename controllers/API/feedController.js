@@ -124,9 +124,13 @@ exports.store = async (req, res) => {
     channel: channel.id,
   };
 
-  const userHasPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
-  if (!userHasPermission) {
+  const userHasPostPermission = channel.users.some((user) => user.canCreate && String(user._id) === String(req.user._id));
+  const userHasPushPermission = channel.users.some((user) => user.canPush && String(user._id) === String(req.user._id));
+  if (!userHasPostPermission) {
     return res.status(401).send('You do not have permission to post to this news feed channel');
+  }
+  if(data.push && !userHasPushPermission) {
+    return res.status(401).send('You do not have permission to push to this news feed channel');
   }
 
   req.body.images = [];
@@ -213,23 +217,51 @@ exports.store = async (req, res) => {
 };
 
 exports.activate = async (req, res) => {
-  FeedItems.update({ _id: req.params.id }, {
-    active: true,
-  },
-    (err, affected, resp) => {
-      res.send(resp);
-      feeditems_cache.force_reload();
-    });
+  FeedItems.findById(req.params.id, (error, feedItem) => {
+    if (error) {
+      res.status(501).send({ error });
+    }
+    Channels.findById(feedItem.channel.Id), (error, channel) => {
+      if (error) {
+        res.send(error);
+      }
+      const userHasPermission = channel.users.some((user) => user.canEdit && user._id === req.user._id);
+      if (!userHasPermission) {
+        res.status(401).send('You do not have permission to activate from this news feed channel!');
+      }
+      FeedItems.update({ _id: req.params.id }, {
+        active: true,
+      }, 
+      (err, affected, resp) => {
+          res.send(resp);
+          feeditems_cache.force_reload();
+      });
+    };
+  }); 
 };
 
 exports.deactivate = async (req, res) => {
-  FeedItems.update({ _id: req.params.id }, {
-    active: false,
-  },
-    (err, affected, resp) => {
-      res.send(resp);
-      feeditems_cache.force_reload();
-    });
+  FeedItems.findById(req.params.id, (error, feedItem) => {
+    if (error) {
+      res.status(501).send({ error });
+    }
+    Channels.findById(feedItem.channel.Id), (error, channel) => {
+      if (error) {
+        res.send(error);
+      }
+      const userHasPermission = channel.users.some((user) => user.canEdit && user._id === req.user._id);
+      if (!userHasPermission) {
+        res.status(401).send('You do not have permission to deactivate from this news feed channel!');
+      }
+      FeedItems.update({ _id: req.params.id }, {
+        active: false,
+      }, 
+      (err, affected, resp) => {
+          res.send(resp);
+          feeditems_cache.force_reload();
+      });
+    };
+  }); 
 };
 
 exports.delete = (req, res) => {
