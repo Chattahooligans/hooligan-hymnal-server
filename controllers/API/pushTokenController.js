@@ -11,13 +11,8 @@ exports.get = async (req, res) => {
 };
 
 exports.store = async (req, res) => {
-  const now = new Date()
-    .toISOString()
-    .replace(/T/, ' ') // replace T with a space
-    .replace(/\..+/, '');
   const tokenData = {
     ...req.body,
-    lastUsed: now,
     $inc: { checkinCount: 1 },
   };
 

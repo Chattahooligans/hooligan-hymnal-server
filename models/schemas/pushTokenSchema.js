@@ -4,7 +4,6 @@ module.exports = new mongoose.Schema({
 	pushToken: String,
 	expoExperience: String,
 	appVersion: String,
-	lastUsed: String,
 	platform: String,
 	platformVersion: String,
 	checkinCount: Number
