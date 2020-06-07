@@ -3,7 +3,7 @@ var mongoose = require("mongoose");
 module.exports = new mongoose.Schema(
 	{
 		category: String,
-		delete_local: String,
+		deleteLocal: String,
 		title: {
 			type: String,
 			required: "Title is required"
@@ -22,8 +22,8 @@ module.exports = new mongoose.Schema(
 	},
 	{
 		timestamps: {
-			createdAt: "create_time",
-			updatedAt: "update_time"
+			createdAt: "createTime",
+			updatedAt: "updateTime"
 		}
 	}
 );
