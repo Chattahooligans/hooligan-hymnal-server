@@ -57,7 +57,7 @@ dropzone(
   '#front_cover-target',
   'front_cover',
   1,
-  'front_cover',
+  'frontCover',
 );
 
 dropzone(
@@ -68,5 +68,5 @@ dropzone(
   '#back_cover-target',
   'back_cover',
   1,
-  'back_cover',
+  'backCover',
 );

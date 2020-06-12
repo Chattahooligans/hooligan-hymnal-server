@@ -48,11 +48,11 @@ exports.update = async (req, res) => {
 	if (req.body.chapter) {
 		chapters = req.body.chapters.map((chapter) => JSON.parse(chapter));
 	}
-	if (!req.body.front_cover) {
-		req.body.front_cover = '';
+	if (!req.body.frontCover) {
+		req.body.frontCover = '';
 	}
-	if (!req.body.back_cover) {
-		req.body.back_cover = '';
+	if (!req.body.backCover) {
+		req.body.backCover = '';
 	}
   req.body.chapters = chapters;
   const songbook = await Songbook.findOneAndUpdate(
