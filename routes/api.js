@@ -45,8 +45,8 @@ router.get('/players/:id', catchErrors(playersController.show));
 router.get('/pushToken', catchErrors(pushTokenController.get));
 router.post('/pushToken', catchErrors(pushTokenController.store));
 // Roster
-router.get('/rosters', catchErrors(rostersController.index));
-router.get('/rosters/active', catchErrors(rostersController.active));
+router.get('/rosters', catchErrors(rostersController.active));
+router.get('/rosters/all', catchErrors(rostersController.index));
 router.get('/rosters/:id', catchErrors(rostersController.show));
 // Songbooks
 router.get('/songbooks', catchErrors(songbooksController.index));
