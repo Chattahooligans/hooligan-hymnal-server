@@ -30,7 +30,7 @@ exports.active = async (req, res) => {
       $lt: publishedBefore
     },
     active: true
-  }).limit(limit)
+  }).limit(Number(limit))
   return res.json(feed);
 };
 
@@ -49,7 +49,7 @@ exports.all = async (req, res) => {
       $lt: publishedBefore
     },
     active: true
-  }).limit(limit)
+  }).limit(Number(limit));
   return res.json(feed);
 };
 
@@ -72,7 +72,7 @@ exports.channel = async (req, res) => {
       $lt: publishedBefore
     },
     channel: req.params.id
-  }).limit(limit);
+  }).limit(Number(limit));
   return res.json(feedChannelItems);
 };
 
