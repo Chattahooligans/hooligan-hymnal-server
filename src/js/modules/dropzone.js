@@ -25,6 +25,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   let foeId;
   let channelId;
   let songbookId;
+  var token = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
   const myDropzone = new Dropzone(uploadSection, {
     url,
     maxFiles,
@@ -32,6 +33,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     autoQueue: false,
     previewsContainer,
     withCredentials: true,
+    headers: {
+        'CSRF-Token': token
+    },
     init() {
       previewNode.remove();
       const thisDropzone = this;
@@ -206,6 +210,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     if (playerId) {
       axios.post(`/players/remove-images?playerId=${playerId.innerText}&type=${slugify(inputName.toLowerCase())}`, {
         withCredentials: true,
+        headers: {
+            'CSRF-Token': token
+        },
         img: img.src,
       })
         .then(() => {
@@ -221,6 +228,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     } else if (foeId) {
       axios.post(`/foes/remove-logo?foeId=${foeId.innerText}&type=${slugify(inputName.toLowerCase())}`, {
         withCredentials: true,
+        headers: {
+            'CSRF-Token': token
+        },
         img: img.src,
       })
         .then(() => {
@@ -237,6 +247,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     } else if (channelId) {
       axios.post(`/channels/remove-avatar?channelId=${channelId.innerText}&type=${slugify(inputName.toLowerCase())}`, {
         withCredentials: true,
+        headers: {
+            'CSRF-Token': token
+        },
         img: img.src,
       })
         .then(() => {
@@ -250,6 +263,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     } else if (songbookId) {
       axios.post(`/songbooks/remove-cover?songbookId=${songbookId.innerText}&type=${slugify(inputName.toLowerCase())}`, {
         withCredentials: true,
+        headers: {
+            'CSRF-Token': token
+        },
         img: img.src
       })
         .then(() => {

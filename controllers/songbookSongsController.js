@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const Songbook = mongoose.model('songbook');
 const Song = mongoose.model('song');
 
+const { deleteCache } = require('../middleware/cacheMiddleware');
+
 exports.songbookChapter = async (req, res) => {
   const songbook = await Songbook.findById(req.params.songbookId);
   const chapter = await songbook.chapters.id(req.params.chapterId);
@@ -40,6 +42,7 @@ exports.addSongsToChapter = async (req, res) => {
     req.body.songs = req.body.songs.map((song) =>  JSON.parse(song))
     chapter.songs = req.body.songs
     await songbook.save();
+    deleteCache('songbooks');
   }
   req.flash('success', `Songs added to ${chapter.chapterTitle}`);
   return res.redirect(`/songbooks/${songbook.id}/chapters/${chapter.id}`);

@@ -5,6 +5,10 @@ const Song = mongoose.model('song');
 const { upload } = require('../handlers/imageUploader');
 const { removeFromCloudinary } = require('../handlers/cloudinaryDelete');
 
+const { deleteCache } = require('../middleware/cacheMiddleware');
+
+const DELETE_SONGBOOKS_CACHE = () => deleteCache('songbooks');
+
 exports.index = async (req, res) => {
   const songbooks = await Songbook.find({});
   return res.render('songbooks/index', {
@@ -102,6 +106,7 @@ exports.saveChapter = async (req, res) => {
   const songbook = await Songbook.findById(req.params.id);
   songbook.chapters.push(newChapter);
   await songbook.save();
+  DELETE_SONGBOOKS_CACHE();
   req.flash(
     'success',
     `${newChapter.chapterTitle} was added to ${songbook.songbookTitle}`,
@@ -124,6 +129,7 @@ exports.deleteChapter = async (req, res) => {
   const chapter = await songbook.chapters.id(req.params.id);
   songbook.chapters.remove(chapter.chapterTitle);
   await songbook.save();
+  DELETE_SONGBOOKS_CACHE();
   req.flash(
     'success',
     `${chapter.chapterTitle} was removed from ${songbook.songbookTitle}`,

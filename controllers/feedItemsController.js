@@ -23,16 +23,16 @@ exports.index = async (req, res) => {
                             .sort({
                               createdAt: "desc"
                             });
-  const countPromise = FeedItem.count();
-  const searchCountPromise = FeedItem.find(query).count();
+  const countPromise = FeedItem.countDocuments();
+  const searchCountPromise = FeedItem.find(query).countDocuments();
   const [feedItems, totalCount, searchCount] = await Promise.all([feedItemsPromise, countPromise]);
   const pages = Math.ceil(totalCount / limit);
   if (!feedItems.length && skip) {
     req.flash("error", `Hey! You asked for page ${page}. But that doesn't exist. So I put you on page ${pages}`);
-    res.redirect(`/feed-items?page=${pages}`);
+    return res.redirect(`/feed-items?page=${pages}`);
   }
 
-  res.render("feeditems/index", {
+  return res.render("feeditems/index", {
     title: "All Feed Items",
     feedItems,
     totalCount,
@@ -58,8 +58,8 @@ exports.search = async (req, res) => {
   }
 
   const feedItemsPromise = FeedItem.find(query).skip(skip).limit(limit).sort({createdAt: "desc"});
-  const totalCountPromise = FeedItem.count();
-  const searchCountPromise = FeedItem.find(query).count();
+  const totalCountPromise = FeedItem.countDocuments();
+  const searchCountPromise = FeedItem.find(query).countDocuments();
   const [feedItems, totalCount, searchCount] = await Promise.all([feedItemsPromise, totalCountPromise, searchCountPromise])
   const pages = Math.ceil(searchCount / limit);
 
