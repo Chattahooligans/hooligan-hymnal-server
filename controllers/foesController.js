@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const Foe = mongoose.model('foes');
 const { removeFromCloudinary } = require('../handlers/cloudinaryDelete');
 const { upload } = require('../handlers/imageUploader');
+const { deleteCache } = require('../middleware/cacheMiddleware');
+
+const DELETE_FOES_CACHE = () => deleteCache('foes');
 
 exports.index = async (req, res) => {
   const { all } = req.query;
@@ -40,6 +43,7 @@ exports.store = async (req, res) => {
     req.body.active = true;
   }
   const foe = await (new Foe(req.body)).save();
+  DELETE_FOES_CACHE();
   req.flash('success', `Foe ${foe.opponent} was created`);
   res.redirect('/foes');
 };
@@ -89,6 +93,7 @@ exports.update = async (req, res) => {
       context: 'query',
     },
   );
+  DELETE_FOES_CACHE();
   req.flash('success', `${foe.opponent} was updated!`);
   res.redirect(`/foes/${foe.id}`);
 };
@@ -104,6 +109,7 @@ exports.deleteConfirm = async (req, res) => {
 exports.delete = async (req, res) => {
   const foe = await Foe.findById(req.params.id);
   await foe.remove();
+  DELETE_FOES_CACHE();
   req.flash('success', `${foe.opponent} was deleted!`);
   res.redirect('/foes');
 };

@@ -29,6 +29,7 @@ env.config();
 const PORT = process.env.PORT || 3000;
 const { MONGO_URI } = process.env;
 
+
 app.use(express.static(`${__dirname}/public`));
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('combined'));
@@ -197,6 +198,7 @@ app.use('/', web);
 app.use(errorHandlers.notFound);
 
 app.use(errorHandlers.flashValidationErrors);
+
 
 if (app.get('env') === 'development') {
   app.use(errorHandlers.developmentErrors);

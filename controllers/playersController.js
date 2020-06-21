@@ -6,6 +6,9 @@ const {
   removeFromCloudinary,
 } = require('../handlers/cloudinaryDelete');
 const { upload } = require('../handlers/imageUploader');
+const { deleteCache } = require('../middleware/cacheMiddleware');
+
+const DELETE_PLAYERS_CACHE = () => deleteCache('players');
 
 exports.index = async (req, res) => {
   const page = req.query.page || 1;
@@ -24,21 +27,21 @@ exports.index = async (req, res) => {
     .limit(limit)
     .sort({ name: 'asc' });
 
-  const countPromise = Player.count();
+  const countPromise = Player.countDocuments();
   const searchCountPromise = Player.find({
     name: {
       $regex: `.*${name}.*`,
       $options: 'i',
     },
-  }).count();
+  }).countDocuments();
   const [players, totalCount, searchCount] = await Promise.all([playersPromise, countPromise, searchCountPromise]);
   const pages = Math.ceil((searchCount || totalCount) / limit);
-  if (!players.length + 1 && skip) {
+  if (!players.length && skip) {
     req.flash('error', `Hey! You asked for page ${page}. But that doesn't exist. So I put you on page ${pages}`);
-    res.redirect(`/players?page=${pages}`);
+    return res.redirect(`/players?page=${pages}`);
   }
 
-  res.render('players/index', {
+  return res.render('players/index', {
     title: 'All Players',
     players,
     totalCount,
@@ -66,13 +69,13 @@ exports.search = async (req, res) => {
     .skip(skip)
     .limit(limit)
     .sort({ name: 'asc' });
-  const totalCountPromise = Player.count();
+  const totalCountPromise = Player.countDocuments();
   const searchCountPromise = Player.find({
     name: {
       $regex: `.*${name}.*`,
       $options: 'i',
     },
-  }).count();
+  }).countDocuments();
   const [players, totalCount, searchCount] = await Promise.all([playersPromise, totalCountPromise, searchCountPromise]);
   const pages = Math.ceil(searchCount / limit);
 
@@ -96,6 +99,7 @@ exports.create = (req, res) => {
 exports.store = async (req, res) => {
   const player = new Player(req.body);
   await player.save();
+  DELETE_PLAYERS_CACHE();
   req.flash('success', `${player.name} was successfully created!`);
   res.redirect('/players');
 };
@@ -127,6 +131,7 @@ exports.update = async (req, res) => {
     new: true,
     runValidators: true,
   });
+  DELETE_PLAYERS_CACHE();
   req.flash('success', `${player.name} was updated`);
   res.redirect(`/players/${player._id}`);
 };
@@ -151,6 +156,7 @@ exports.delete = async (req, res) => {
     return res.redirect('back');
   }
   await player.remove();
+  DELETE_PLAYERS_CACHE();
   req.flash('success', `${player.name} was deleted!`);
   res.redirect('/players');
 };
