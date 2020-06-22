@@ -37,6 +37,7 @@ if (SENTRY_DNS) {
   app.use(Sentry.Handlers.requestHandler());
 }
 
+
 app.use(express.static(`${__dirname}/public`));
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('combined'));
@@ -206,10 +207,6 @@ app.use(errorHandlers.notFound);
 
 app.use(errorHandlers.flashValidationErrors);
 
-// This needs to be above the rest of the error handlers
-if (SENTRY_DNS) {
-  app.use(Sentry.Handlers.errorHandler());
-}
 
 if (app.get('env') === 'development') {
   app.use(errorHandlers.developmentErrors);

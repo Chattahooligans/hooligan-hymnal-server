@@ -14864,6 +14864,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   var foeId;
   var channelId;
   var songbookId;
+  var token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   var myDropzone = new dropzone__WEBPACK_IMPORTED_MODULE_0___default.a(uploadSection, {
     url: url,
     maxFiles: maxFiles,
@@ -14871,6 +14872,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     autoQueue: false,
     previewsContainer: previewsContainer,
     withCredentials: true,
+    headers: {
+      'CSRF-Token': token
+    },
     init: function init() {
       previewNode.remove();
       var thisDropzone = this;
@@ -15065,6 +15069,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     if (playerId) {
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/players/remove-images?playerId=".concat(playerId.innerText, "&type=").concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase())), {
         withCredentials: true,
+        headers: {
+          'CSRF-Token': token
+        },
         img: img.src
       }).then(function () {
         var inputs = document.querySelectorAll("input[name=\"".concat(inputName.toLowerCase(), "\"]"));
@@ -15079,6 +15086,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     } else if (foeId) {
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/foes/remove-logo?foeId=".concat(foeId.innerText, "&type=").concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase())), {
         withCredentials: true,
+        headers: {
+          'CSRF-Token': token
+        },
         img: img.src
       }).then(function () {
         var _inputName = inputName.toLowerCase();
@@ -15095,6 +15105,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     } else if (channelId) {
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/channels/remove-avatar?channelId=".concat(channelId.innerText, "&type=").concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase())), {
         withCredentials: true,
+        headers: {
+          'CSRF-Token': token
+        },
         img: img.src
       }).then(function () {
         var inputs = document.querySelectorAll("input[name=\"".concat(inputName.toLowerCase(), "]"));
@@ -15107,6 +15120,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     } else if (songbookId) {
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/songbooks/remove-cover?songbookId=".concat(songbookId.innerText, "&type=").concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase())), {
         withCredentials: true,
+        headers: {
+          'CSRF-Token': token
+        },
         img: img.src
       }).then(function () {
         var inputs = document.querySelectorAll("input[name=\"".concat(inputName.toLowerCase(), "\"]"));
