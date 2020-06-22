@@ -1,10 +1,4 @@
 exports.lang = (req, res) => {
-  const langs = JSON.parse(process.env.INPUT_LANGUAGES);
-  if (langs) {
-    res.send({
-      langs
-    });
-    return;
-  }
-  res.send("INPUT_LANGUAGES not set");
+  const langs = process.env.INPUT_LANGUAGES ? JSON.parse(process.env.INPUT_LANGUAGES) : ["en"]
+  return res.json({langs: langs})
 };
