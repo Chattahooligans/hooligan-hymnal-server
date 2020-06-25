@@ -46,7 +46,7 @@ exports.store = async (req, res) => {
 };
 
 exports.show = async (req, res) => {
-  const channel = await Channel.findById(req.params.id);
+  const channel = Channel.findById(req.params.id);
   return res.render('channels/show', {
     title: `${channel.name}`,
     channel,
