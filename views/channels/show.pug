@@ -3,8 +3,19 @@ extends ../layout
 block content
   .container.mx-auto
     .show--card
-      h2 #{title}
-      pre=h.dump(channel)
+      h2(class="font-semibold text-2xl mb-3") #{title}
+      h3(class="font-bold text-xl mb-3") Description: #{channel.description}
+      h3(class="font-bold text-xl mb-3") Active: #{channel.active}
+      h3(class="font-bold text-xl mb-3") Users
+      details(class="border p-3 rounded")
+        summary Total Users: #{channel.users.length}
+        ul
+          each user in channel.users
+            li(class="border-t p-3") #{user.name}:
+              p(class="ml-2") Can Create: #{user.canCreate}
+              p(class="ml-2") Can Edit: #{user.canEdit}
+              p(class="ml-2") Can Delete: #{user.canDelete}
+              p(class="ml-2") Can Push: #{user.canPush}
       .show--card__footer
         a(href=`/channels/${channel.id}/edit` class="btn bg-green-700 text-white mr-3") Edit
         a(href=`/channels/${channel.id}/delete` class="btn bg-red-700 text-white") Delete

@@ -21,7 +21,6 @@ const helpers = require('./helpers');
 const { getBreadcrumbs } = require('./handlers/breadcrumbs');
 const compression = require('compression');
 const csurf = require('csurf');
-const Sentry = require('@sentry/node');
 
 const { csrfProtection } = require('./middleware/csrfProtection');
 
@@ -29,19 +28,13 @@ env.config();
 
 const PORT = process.env.PORT || 3000;
 const { MONGO_URI } = process.env;
-const SENTRY_DNS = process.env.SENTRY_DNS;
-
-if (SENTRY_DNS) {
-  Sentry.init({ dsn: SENTRY_DNS });
-
-  app.use(Sentry.Handlers.requestHandler());
-}
 
 
 app.use(express.static(`${__dirname}/public`));
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('combined'));
 }
+app.set('env', (process.env.NODE_ENV || process.env.ENV) || 'production');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
@@ -58,25 +51,7 @@ app.use(
 app.set('view engine', 'pug');
 app.set('views', 'views');
 
-mongoose
-  .connect(
-    MONGO_URI,
-    {
-      useCreateIndex: true,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    },
-    () => {
-      // eslint-disable-next-line no-console
-      console.log('Connection has been made');
-    },
-  )
-  .catch((err) => {
-    // eslint-disable-next-line no-console
-    console.log('App starting error:', err.stack);
-    process.exit(1);
-  });
-mongoose.set('useFindAndModify', false);
+require('./db');
 
 app.use(cookieParser());
 
@@ -100,6 +75,7 @@ fs.readdirSync('models').forEach((file) => {
 const Players = mongoose.model('players');
 const Songs = mongoose.model('song');
 const FeedItems = mongoose.model('feedItem');
+const Songbooks = mongoose.model('songbook');
 
 async function changePlayerImages() {
   const players = await Players.find();
@@ -162,6 +138,7 @@ async function modelMigrations() {
 }
 
 modelMigrations();
+
 
 app.use(passport.initialize());
 app.use(passport.session());
