@@ -11,9 +11,9 @@ const { sendPush } = require('../../models/pushHandler');
 // const Channels = require('../../models/channels');
 const PushHandler = require('../../models/pushHandler');
 const { upload } = require('../../handlers/imageUploader');
-const { deleteCache } = require('../../middleware/cacheMiddleware');
+const { deleteAllCache } = require('../../middleware/cacheMiddleware');
 
-const DELETE_FEED_CACHE = () => deleteCache('feed');
+const DELETE_FEED_CACHE = () => deleteAllCache();
 
 exports.active = async (req, res) => {
   let { limit, publishedBefore } = req.query;
@@ -23,8 +23,6 @@ exports.active = async (req, res) => {
   if (!limit) {
     limit = 20;
   }
-  publishedBefore = Date.parse(publishedBefore);
-  console.log(publishedBefore);
   const feed = await FeedItems.find({
     publishedAt: {
       $lt: publishedBefore
@@ -43,8 +41,6 @@ exports.all = async (req, res) => {
   if (!limit) {
     limit = 20;
   }
-  publishedBefore = Date.parse(publishedBefore);
-  console.log(publishedBefore);
   const feed = await FeedItems.find({
     publishedAt: {
       $lt: publishedBefore
@@ -65,7 +61,6 @@ exports.channel = async (req, res) => {
   if (!publishedBefore) {
     publishedBefore = new Date();
   }
-  publishedBefore = Date.parse(publishedBefore);
   if (!limit) {
     limit = 20;
   }
