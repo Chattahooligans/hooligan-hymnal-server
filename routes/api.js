@@ -48,8 +48,8 @@ router.get('/players/:id', inMemoryCacheMiddleware(config.cache_timeout), catchE
 router.get('/pushToken', catchErrors(pushTokenController.get));
 router.post('/pushToken', catchErrors(pushTokenController.store));
 // Roster
-router.get('/rosters', inMemoryCacheMiddleware(config.cache_timeout, 'rosters'), catchErrors(rostersController.index));
-router.get('/rosters/active', inMemoryCacheMiddleware(config.cache_timeout, 'active_rosters'), catchErrors(rostersController.active));
+router.get('/rosters', inMemoryCacheMiddleware(config.cache_timeout, 'active_rosters'), catchErrors(rostersController.active));
+router.get('/rosters/all', inMemoryCacheMiddleware(config.cache_timeout, 'rosters'), catchErrors(rostersController.index));
 router.get('/rosters/:id', inMemoryCacheMiddleware(config.cache_timeout), catchErrors(rostersController.show));
 // Songbooks
 router.get('/songbooks', inMemoryCacheMiddleware(config.cache_timeout, 'songbooks'), catchErrors(songbooksController.index));

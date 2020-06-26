@@ -133,15 +133,15 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
           withCredentials: true
         })
           .then(({ data }) => {
-            if (data.front_cover && data.front_cover.length) {
+            if (data.frontCover && data.frontCover.length) {
               const mockFile = {
                 name: `${data.name}`,
               };
               thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
-              thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.front_cover);
+              thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.frontCover);
               const tEl = document.querySelector(target);
               const input = document.createElement('input');
-              input.value = data.front_cover;
+              input.value = data.frontCover;
               input.setAttribute('data-id', `${slugify(data.name).toLowerCase()}-avatar`);
               input.classList.add = 'hidden';
               input.setAttribute('name', inputName);

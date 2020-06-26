@@ -93,8 +93,8 @@ async function changeSongs() {
   const songs = await Songs.find();
   songs.forEach(async (song) => {
     const s = await Songs.findById(song.id);
-    if (s.delete_local || s.delete_local === '') {
-      s.delete_local = undefined;
+    if (s.deleteLocal || s.deleteLocal === '') {
+      s.deleteLocal = undefined;
       await s.save();
     }
     if (s.reference_title || s.reference_title === '') {

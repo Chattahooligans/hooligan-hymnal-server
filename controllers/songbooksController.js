@@ -29,22 +29,21 @@ exports.create = async (req, res) => {
 exports.store = async (req, res) => {
   const songbook = new Songbook(req.body);
   await songbook.save();
-  DELETE_SONGBOOKS_CACHE();
-  req.flash('success', `${songbook.songbook_title} was created`);
+  req.flash('success', `${songbook.songbookTitle} was created`);
   res.redirect(`/songbooks/${songbook.id}`);
 };
 
 exports.show = async (req, res) => {
   const songbook = await Songbook.findById(req.params.id);
   res.render('songbooks/show', {
-    title: `${songbook.songbook_title}`,
+    title: `${songbook.songbookTitle}`,
     songbook,
   });
 };
 exports.edit = async (req, res) => {
   const songbook = await Songbook.findById(req.params.id);
   res.render('songbooks/edit', {
-    title: `Edit ${songbook.songbook_title}`,
+    title: `Edit ${songbook.songbookTitle}`,
     songbook,
   });
 };
@@ -53,11 +52,11 @@ exports.update = async (req, res) => {
 	if (req.body.chapter) {
 		chapters = req.body.chapters.map((chapter) => JSON.parse(chapter));
 	}
-	if (!req.body.front_cover) {
-		req.body.front_cover = '';
+	if (!req.body.frontCover) {
+		req.body.frontCover = '';
 	}
-	if (!req.body.back_cover) {
-		req.body.back_cover = '';
+	if (!req.body.backCover) {
+		req.body.backCover = '';
 	}
   req.body.chapters = chapters;
   const songbook = await Songbook.findOneAndUpdate(
@@ -73,36 +72,35 @@ exports.update = async (req, res) => {
       context: 'query',
     },
   );
-  req.flash('success', `${songbook.songbook_title} was updated!`);
+  req.flash('success', `${songbook.songbookTitle} was updated!`);
   res.redirect(`/songbooks/${songbook.id}`);
 };
 
 exports.deleteConfirm = async (req, res) => {
   const songbook = await Songbook.findById(req.params.id);
   res.render('songbooks/delete', {
-    title: `Delete ${songbook.songbook_title}`,
+    title: `Delete ${songbook.songbookTitle}`,
     songbook,
   });
 };
 
 exports.delete = async (req, res) => {
   const songbook = await Songbook.findByIdAndDelete(req.params.id);
-  DELETE_SONGBOOKS_CACHE();
-  req.flash('success', `${songbook.songbook_title} was deleted!`);
+  req.flash('success', `${songbook.songbookTitle} was deleted!`);
   res.redirect('/songbooks');
 };
 
 exports.addChapter = async (req, res) => {
   const songbook = await Songbook.findById(req.params.id);
   res.render('songbooks/addChapter', {
-    title: `Add Chapter to ${songbook.songbook_title}`,
+    title: `Add Chapter to ${songbook.songbookTitle}`,
     songbook,
   });
 };
 
 exports.saveChapter = async (req, res) => {
   const newChapter = {
-    chapter_title: req.body.chapter_title,
+    chapterTitle: req.body.chapterTitle,
     songs: [],
   };
   const songbook = await Songbook.findById(req.params.id);
@@ -111,7 +109,7 @@ exports.saveChapter = async (req, res) => {
   DELETE_SONGBOOKS_CACHE();
   req.flash(
     'success',
-    `${newChapter.chapter_title} was added to ${songbook.songbook_title}`,
+    `${newChapter.chapterTitle} was added to ${songbook.songbookTitle}`,
   );
   res.redirect(`/songbooks/${songbook.id}`);
 };
@@ -120,7 +118,7 @@ exports.deleteChapterConfirm = async (req, res) => {
   const songbook = await Songbook.findById(req.params.songbookId);
   const chapter = await songbook.chapters.id(req.params.chapterId);
   res.render('songbooks/deleteChapter', {
-    title: `Delete ${chapter.chapter_title} Confirm`,
+    title: `Delete ${chapter.chapterTitle} Confirm`,
     songbook,
     chapter,
   });
@@ -129,12 +127,12 @@ exports.deleteChapterConfirm = async (req, res) => {
 exports.deleteChapter = async (req, res) => {
   const songbook = await Songbook.findById(req.params.songbookId);
   const chapter = await songbook.chapters.id(req.params.id);
-  songbook.chapters.remove(chapter.chapter_title);
+  songbook.chapters.remove(chapter.chapterTitle);
   await songbook.save();
   DELETE_SONGBOOKS_CACHE();
   req.flash(
     'success',
-    `${chapter.chapter_title} was removed from ${songbook.songbook_title}`,
+    `${chapter.chapterTitle} was removed from ${songbook.songbookTitle}`,
   );
   res.redirect(`/songbooks/${songbook._id}`);
 };
@@ -183,7 +181,7 @@ exports.getCovers = async (req, res) => {
   }
   const songbook = await Songbook.findById(songbookId);
   res.json({
-    name: songbook.songbook_title,
+    name: songbook.songbookTitle,
     [type]: songbook[type]
   });
 };

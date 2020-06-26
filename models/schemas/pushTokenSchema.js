@@ -9,7 +9,7 @@ module.exports = new mongoose.Schema({
 	checkinCount: Number
 }, {
 	timestamps: {
-		createdAt: "create_time",
-		updatedAt: "update_time"
+		createdAt: "createTime",
+		updatedAt: "updateTime"
 	}
 });

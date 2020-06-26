@@ -9,7 +9,7 @@ exports.songbookChapter = async (req, res) => {
   const songbook = await Songbook.findById(req.params.songbookId);
   const chapter = await songbook.chapters.id(req.params.chapterId);
   res.render('songbookSongs/index', {
-    title: `${songbook.songbook_title} | Chapter: ${chapter.chapter_title}`,
+    title: `${songbook.songbookTitle} | Chapter: ${chapter.chapterTitle}`,
     songbook,
     chapter,
   });
@@ -22,7 +22,7 @@ exports.addSongsToChapterForm = async (req, res) => {
   const chapter = await songbook.chapters.id(req.params.chapterId);
 
   res.render('songbookSongs/create', {
-    title: `Add songs to ${chapter.chapter_title}`,
+    title: `Add songs to ${chapter.chapterTitle}`,
     songs,
     songbook,
     chapter,
@@ -44,6 +44,6 @@ exports.addSongsToChapter = async (req, res) => {
     await songbook.save();
     deleteCache('songbooks');
   }
-  req.flash('success', `Songs added to ${chapter.chapter_title}`);
+  req.flash('success', `Songs added to ${chapter.chapterTitle}`);
   return res.redirect(`/songbooks/${songbook.id}/chapters/${chapter.id}`);
 };

@@ -15000,18 +15000,18 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
             input.classList.add = 'hidden';
             input.setAttribute('name', inputName);
             tEl.appendChild(input);
-          } else if (data.back_cover && data.back_cover.length) {
+          } else if (data.backCover && data.backCover.length) {
             var _mockFile = {
               name: "".concat(data.name)
             };
             thisDropzone.defaultOptions.addedfile.call(thisDropzone, _mockFile);
-            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, _mockFile, data.back_cover);
+            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, _mockFile, data.backCover);
 
             var _tEl = document.querySelector(target);
 
             var _input = document.createElement('input');
 
-            _input.value = data.back_cover;
+            _input.value = data.backCover;
 
             _input.setAttribute('data-id', "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-avatar"));
 
