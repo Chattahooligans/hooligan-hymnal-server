@@ -28,7 +28,7 @@ exports.active = async (req, res) => {
       $lt: publishedBefore
     },
     active: true
-  }).limit(Number(limit))
+  }).sort("-publishedAt").limit(Number(limit))
   return res.json(feed);
 };
 
@@ -45,7 +45,7 @@ exports.all = async (req, res) => {
       $lt: publishedBefore
     },
     active: true
-  }).limit(Number(limit));
+  }).sort("-publishedAt").limit(Number(limit));
   return res.json(feed);
 };
 
