@@ -1,55 +1,52 @@
 {
-    "name": "Hooligan Hymnal Server",
-    "description": "A Node.js app built to manage CRUD ops for your supporter section app",
-    "repository": "https://github.com/chattahooligans/hooligan-hymnal-server/",
-    "keywords": [
-        "node",
-        "express"
-    ],
-    "success_url": "/register",
-    "env": {
-        "SECRET_KEY": {
-            "description": "A secret key for verifying the integrity of signed cookies and JWT's",
-            "generator": "secret"
-        },
-        "MONGO_URI": {
-            "description": "Paste in your MongoDB URL that was created from Atlas following the steps in the docs"
-        },
-        "CLOUDINARY_URL": {
-            "description": "Copy the CLOUDINARY_URL from there dashboard(ex: cloudinary://<random_text>:<random_text>"
-        },
-        "SITE_NAME": {
-            "description": "Name of your site displayed in the tab, default Hooligan Hymnal Server",
-            "required": false
-        },
-        "MAIL_HOST": {
-            "description": "This is the host from your SMTP service, default is gmail if using gmail to send emails",
-            "value": "smtp.gmail.com"
-        },
-        "MAIL_PORT": {
-            "description": "This is the port from your SMTP service, default is gemail if using gmail to send emails",
-            "value": "587"
-        },
-        "MAIL_USER": {
-            "description": "Provide your email to login via SMTP to send email (ex: email@gmail.com)"
-        },
-        "MAIL_PASS": {
-            "description": "Provide your password to login via SMTP to send email (ex: Above emails password)"
-        },
-        "INPUT_LANGUAGES": {
-            "description": "List of input images you plan on using, defaults to [\"en\"] if empty",
-            "required": false
-        },
-        "TOKEN_EXPIRES": {
-            "description": "Amount of time base App login will be valid for. Default: 1h",
-            "required": false
-        },
-        "REFRESH_TOKEN_EXPIRES": {
-            "description": "Amount of time extended App login will be valid for. Default: 1d",
-            "required": false
-        }
+  "name": "Hooligan Hymnal Server",
+  "description": "Manages CRUD operations for Hooligan Hymnal and serves data to the mobile app.\nRead more about configuration at https://github.com/Chattahooligans/hooligan-hymnal-app/blob/main/docs/server.md",
+  "repository": "https://github.com/Chattahooligans/hooligan-hymnal-server/",
+  "keywords": ["node", "express"],
+  "success_url": "/register",
+  "env": {
+    "SECRET_KEY": {
+      "description": "A secret key for verifying the integrity of signed cookies and JWT's",
+      "generator": "secret"
     },
-    "scripts": {
-        "postbuild": "npm run prod"
+    "MONGO_URI": {
+      "description": "Paste in your MongoDB URL that was created from Atlas following the steps in the docs"
+    },
+    "CLOUDINARY_URL": {
+      "description": "Copy the CLOUDINARY_URL from there dashboard(ex: cloudinary://<random_text>:<random_text>"
+    },
+    "SITE_NAME": {
+      "description": "Name of your site displayed in the tab, default Hooligan Hymnal Server",
+      "required": false
+    },
+    "MAIL_HOST": {
+      "description": "This is the host from your SMTP service, default is gmail if using gmail to send emails",
+      "value": "smtp.gmail.com"
+    },
+    "MAIL_PORT": {
+      "description": "This is the port from your SMTP service, default is gemail if using gmail to send emails",
+      "value": "587"
+    },
+    "MAIL_USER": {
+      "description": "Provide your email to login via SMTP to send email (ex: email@gmail.com)"
+    },
+    "MAIL_PASS": {
+      "description": "Provide your password to login via SMTP to send email (ex: Above emails password)"
+    },
+    "INPUT_LANGUAGES": {
+      "description": "List of input images you plan on using, defaults to [\"en\"] if empty",
+      "required": false
+    },
+    "TOKEN_EXPIRES": {
+      "description": "Amount of time base App login will be valid for. Default: 1h",
+      "required": false
+    },
+    "REFRESH_TOKEN_EXPIRES": {
+      "description": "Amount of time extended App login will be valid for. Default: 1d",
+      "required": false
     }
+  },
+  "scripts": {
+    "postbuild": "npm run prod"
+  }
 }
