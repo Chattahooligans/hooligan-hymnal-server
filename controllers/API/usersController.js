@@ -19,7 +19,7 @@ exports.login = (req, res, next) => {
         id: user._id,
       };
       const secretOrKey = process.env.SECRET_KEY;
-      const tokenExpires = process.env.TOKEN_EXPIRES ? `${process.env.TOKEN_EXPIRES}` : '1h';
+      const tokenExpires = process.env.TOKEN_EXPIRES ? `${process.env.TOKEN_EXPIRES}` : '1d';
       const refreshExpires = process.env.REFRESH_TOKEN_EXPIRES ? `${process.env.REFRESH_TOKEN_EXPIRES}` : '1d';
       let token = generateToken(payload, secretOrKey, tokenExpires);
       user = {

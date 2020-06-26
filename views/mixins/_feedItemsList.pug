@@ -1,5 +1,5 @@
 
-mixin feedItemsList(feedItems = {}, totalCount = null, searchCount = null, page = null, text = "")
+mixin feedItemsList(feedItems = {}, totalCount = null, searchCount = null, page = null, pages = null,text = "")
   each feedItem in feedItems
     a(href=`/feed-items/${feedItem.id}/`).list--card.flex-col
       - var shortText = feedItem.text.slice(0, 50) + "..."

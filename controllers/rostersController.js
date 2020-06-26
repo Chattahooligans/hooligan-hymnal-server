@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const Roster = mongoose.model("roster");
 const Players = mongoose.model("players");
 
+const { deleteCache } = require('../middleware/cacheMiddleware');
+
+const DELETE_ROSTERS_CACHE = () => deleteCache('rosters');
+
 exports.index = async (req, res) => {
   const rosters = await Roster.find()
     .sort({ active: "desc" });
@@ -36,6 +40,7 @@ exports.store = async (req, res) => {
     values.default = true;
   }
   const roster = await new Roster(values).save();
+  DELETE_ROSTERS_CACHE();
   req.flash("success", `${roster.rosterTitle} created!`);
   res.redirect("/rosters");
 };
@@ -88,6 +93,7 @@ exports.update = async (req, res) => {
       context: "query"
     }
   );
+  DELETE_ROSTERS_CACHE();
   req.flash("success", `${roster.rosterTitle} has been updated!`);
   res.redirect(`/rosters/${roster._id}`);
 };
@@ -102,6 +108,7 @@ exports.deleteConfirm = async (req, res) => {
 
 exports.delete = async (req, res) => {
   const roster = await Roster.findByIdAndDelete(req.params.id);
+  DELETE_ROSTERS_CACHE();
   req.flash("success", `${roster.rosterTitle} has been deleted!`);
   res.redirect("/rosters");
 };

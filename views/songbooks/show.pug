@@ -7,12 +7,12 @@ block content
       div
       h3(class="text-lg mb-3") Organization: #{songbook.organization}
       p #{songbook.description}
-      if (songbook.front_cover)
+      if (songbook.frontCover)
         h4 Front Cover
         img(src=songbook.front_cover alt=`${title} front cover`)
-      if (songbook.back_cover)
-        h4 Back Cover
-        img(src=songbook.back_cover alt=`${title} back cover`)
+      //- if (songbook.back_cover)
+      //-   h4 Back Cover
+      //-   img(src=songbook.back_cover alt=`${title} back cover`)
       div(class="flex justify-between")
         h3(class="text-xl font-semibold") Chapters
         a(href=`/songbooks/${songbook.id}/add-chapter` class="btn bg-green-700 text-white") Add Chapter
