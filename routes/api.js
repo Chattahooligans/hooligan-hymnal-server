@@ -59,7 +59,7 @@ router.get('/songs', inMemoryCacheMiddleware(config.cache_timeout, 'songs'), cat
 router.get('/song/:id', inMemoryCacheMiddleware(config.cache_timeout), catchErrors(songsController.show));
 
 // feed
-router.get('/feed', inMemoryCacheMiddleware(config.cache_timeout, 'feed'), catchErrors(feedController.active));
+router.get('/feed', inMemoryCacheMiddleware(config.cache_timeout), catchErrors(feedController.active));
 router.post('/feed', apiLoggedIn, checkPermission('feedAllowed'), catchErrors(feedController.store));
 // router.delete('/feed', apiLoggedIn, checkPermission('feedAllowed'), catchErrors(feedController.delete));
 router.get('/feed/all', inMemoryCacheMiddleware(config.cache_timeout, 'feed_all'), catchErrors(feedController.all));
