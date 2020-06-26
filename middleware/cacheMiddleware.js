@@ -25,3 +25,8 @@ exports.deleteCache = (key) => {
     console.log(`Deleteing cache ${key}`);
     memCache.del(key)
 }
+
+exports.deleteAllCache = async () => {
+    console.log(`Deleteing cache for all`);
+    memCache.clear();
+}
