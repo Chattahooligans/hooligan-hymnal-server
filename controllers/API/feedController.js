@@ -23,8 +23,6 @@ exports.active = async (req, res) => {
   if (!limit) {
     limit = 20;
   }
-  publishedBefore = Date.parse(publishedBefore);
-  console.log(publishedBefore);
   const feed = await FeedItems.find({
     publishedAt: {
       $lt: publishedBefore
@@ -42,8 +40,6 @@ exports.all = async (req, res) => {
   if (!limit) {
     limit = 20;
   }
-  publishedBefore = Date.parse(publishedBefore);
-  console.log(publishedBefore);
   const feed = await FeedItems.find({
     publishedAt: {
       $lt: publishedBefore
@@ -63,7 +59,6 @@ exports.channel = async (req, res) => {
   if (!publishedBefore) {
     publishedBefore = new Date();
   }
-  publishedBefore = Date.parse(publishedBefore);
   if (!limit) {
     limit = 20;
   }
