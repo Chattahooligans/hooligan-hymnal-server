@@ -11,9 +11,9 @@ const { sendPush } = require('../../models/pushHandler');
 // const Channels = require('../../models/channels');
 const PushHandler = require('../../models/pushHandler');
 const { upload } = require('../../handlers/imageUploader');
-const { deleteCache } = require('../../middleware/cacheMiddleware');
+const { deleteAllCache } = require('../../middleware/cacheMiddleware');
 
-const DELETE_FEED_CACHE = () => deleteCache('feed');
+const DELETE_FEED_CACHE = () => deleteAllCache();
 
 exports.active = async (req, res) => {
   let { limit, publishedBefore } = req.query;
