@@ -60,13 +60,13 @@ dropzone(
   'frontCover',
 );
 
-dropzone(
-  '/songbooks/back-cover',
-  'back_cover-template',
-  document.getElementById('back_cover-upload-section'),
-  '#back_cover-previews',
-  '#back_cover-target',
-  'back_cover',
-  1,
-  'backCover',
-);
+// dropzone(
+//   '/songbooks/back-cover',
+//   'back_cover-template',
+//   document.getElementById('back_cover-upload-section'),
+//   '#back_cover-previews',
+//   '#back_cover-target',
+//   'back_cover',
+//   1,
+//   'back_cover',
+// );

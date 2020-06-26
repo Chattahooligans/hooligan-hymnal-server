@@ -9,10 +9,10 @@ block content
       p #{songbook.description}
       if (songbook.frontCover)
         h4 Front Cover
-        img(src=songbook.frontCover alt=`${title} front cover`)
-      if (songbook.backCover)
-        h4 Back Cover
-        img(src=songbook.backCover alt=`${title} back cover`)
+        img(src=songbook.front_cover alt=`${title} front cover`)
+      //- if (songbook.back_cover)
+      //-   h4 Back Cover
+      //-   img(src=songbook.back_cover alt=`${title} back cover`)
       div(class="flex justify-between")
         h3(class="text-xl font-semibold") Chapters
         a(href=`/songbooks/${songbook.id}/add-chapter` class="btn bg-green-700 text-white") Add Chapter
