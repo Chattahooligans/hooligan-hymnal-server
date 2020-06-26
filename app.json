@@ -30,8 +30,7 @@
         }
     },
     "addons": [{
-            "plan": "mongolab:sandbox",
-            "as": "MONGO_URI"
+            "plan": "mongolab:sandbox"
         },
         "cloudinary:starter"
     ],
