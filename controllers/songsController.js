@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const Song = mongoose.model('song');
 const Player = mongoose.model('players');
 
+const { deleteCache } = require('../middleware/cacheMiddleware');
+
+const DELETE_SONGS_CACHE = () => deleteCache('songs');
+
 exports.index = async (req, res) => {
   const page = req.query.page || 1;
   const limit = 10;
@@ -44,16 +48,16 @@ exports.index = async (req, res) => {
     .limit(limit)
     .sort({ title: 'asc' });
 
-  const countPromise = Song.count();
-  const searchCountPromise = Song.find(SEARCH_QUERY).count();
+  const countPromise = Song.countDocuments();
+  const searchCountPromise = Song.find(SEARCH_QUERY).countDocuments();
   const [songs, totalCount, searchCount] = await Promise.all([songsPromise, countPromise, searchCountPromise]);
   const pages = Math.ceil((searchCount || totalCount) / limit);
   if (!songs.length && skip) {
     req.flash('error', `Hey! You asked for page ${page}. But that doesn't exist. So I put you on page ${pages}`);
-    res.redirect(`/songs?page=${pages}`);
+    return res.redirect(`/songs?page=${pages}`);
   }
 
-  res.render('songs/index', {
+  return res.render('songs/index', {
     title: 'All Songs',
     songs,
     totalCount,
@@ -113,7 +117,7 @@ exports.search = async (req, res) => {
   const [songs, totalCount, searchCount] = await Promise.all([songsPromise, totalCountPromise, searchCountPromise]);
   const pages = Math.ceil(searchCount / limit);
 
-  res.render('songs/_songsList', {
+  return res.render('songs/_songsList', {
     songs,
     filter,
     skip,
@@ -134,6 +138,7 @@ exports.create = async (req, res) => {
 
 exports.store = async (req, res) => {
   const song = await new Song(req.body).save();
+  DELETE_SONGS_CACHE();
   req.flash('success', `${song.title} was created!`);
   res.redirect('/songs');
 };
@@ -178,6 +183,7 @@ exports.update = async (req, res) => {
       context: 'query',
     },
   );
+  DELETE_SONGS_CACHE();
   req.flash('success', `${song.title} was updated!`);
   res.redirect(`/songs/${song.id}`);
 };
@@ -192,6 +198,7 @@ exports.deleteConfirm = async (req, res) => {
 
 exports.delete = async (req, res) => {
   const song = await Song.findByIdAndDelete(req.params.id);
+  DELETE_SONGS_CACHE();
   req.flash('success', `${song.title} was deleted`);
   res.redirect('/songs');
 };

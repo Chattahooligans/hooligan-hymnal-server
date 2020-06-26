@@ -123,7 +123,7 @@ router.post('/feed-items/:id/delete', isLoggedIn, checkPermission('pushNotificat
 
 // Push tokens
 router.get('/push-tokens', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.index));
-router.get('/push-tokens/create', isLoggedIn, checkPermission('pushNotificationsAllowed'), pushTokensController.create);
+router.get('/push-tokens/create', isLoggedIn, checkPermission('pushNotificationsAllowed'),  pushTokensController.create);
 router.post('/push-tokens/create', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.store));
 router.get('/push-tokens/:id', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.show));
 router.get('/push-tokens/:id/edit', isLoggedIn, checkPermission('pushNotificationsAllowed'), catchErrors(pushTokensController.edit));

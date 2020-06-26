@@ -25,6 +25,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   let foeId;
   let channelId;
   let songbookId;
+  var token = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
   const myDropzone = new Dropzone(uploadSection, {
     url,
     maxFiles,
@@ -32,6 +33,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     autoQueue: false,
     previewsContainer,
     withCredentials: true,
+    headers: {
+        'CSRF-Token': token
+    },
     init() {
       previewNode.remove();
       const thisDropzone = this;
@@ -129,33 +133,34 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
           withCredentials: true
         })
           .then(({ data }) => {
-            if (data.front_cover && data.front_cover.length) {
+            if (data.frontCover && data.frontCover.length) {
               const mockFile = {
                 name: `${data.name}`,
               };
               thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
-              thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.front_cover);
+              thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.frontCover);
               const tEl = document.querySelector(target);
               const input = document.createElement('input');
-              input.value = data.front_cover;
+              input.value = data.frontCover;
               input.setAttribute('data-id', `${slugify(data.name).toLowerCase()}-avatar`);
               input.classList.add = 'hidden';
               input.setAttribute('name', inputName);
               tEl.appendChild(input);
-            } else if (data.back_cover && data.back_cover.length) {
-              const mockFile = {
-                name: `${data.name}`,
-              };
-              thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
-              thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.back_cover);
-              const tEl = document.querySelector(target);
-              const input = document.createElement('input');
-              input.value = data.back_cover;
-              input.setAttribute('data-id', `${slugify(data.name).toLowerCase()}-avatar`);
-              input.classList.add = 'hidden';
-              input.setAttribute('name', inputName);
-              tEl.appendChild(input);
-						}
+            }
+            // else if (data.back_cover && data.back_cover.length) {
+            //   const mockFile = {
+            //     name: `${data.name}`,
+            //   };
+            //   thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
+            //   thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.back_cover);
+            //   const tEl = document.querySelector(target);
+            //   const input = document.createElement('input');
+            //   input.value = data.back_cover;
+            //   input.setAttribute('data-id', `${slugify(data.name).toLowerCase()}-avatar`);
+            //   input.classList.add = 'hidden';
+            //   input.setAttribute('name', inputName);
+            //   tEl.appendChild(input);
+						// }
           })
           .catch((err) => {
             console.error(err);
@@ -206,6 +211,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     if (playerId) {
       axios.post(`/players/remove-images?playerId=${playerId.innerText}&type=${slugify(inputName.toLowerCase())}`, {
         withCredentials: true,
+        headers: {
+            'CSRF-Token': token
+        },
         img: img.src,
       })
         .then(() => {
@@ -221,6 +229,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     } else if (foeId) {
       axios.post(`/foes/remove-logo?foeId=${foeId.innerText}&type=${slugify(inputName.toLowerCase())}`, {
         withCredentials: true,
+        headers: {
+            'CSRF-Token': token
+        },
         img: img.src,
       })
         .then(() => {
@@ -237,6 +248,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     } else if (channelId) {
       axios.post(`/channels/remove-avatar?channelId=${channelId.innerText}&type=${slugify(inputName.toLowerCase())}`, {
         withCredentials: true,
+        headers: {
+            'CSRF-Token': token
+        },
         img: img.src,
       })
         .then(() => {
@@ -250,6 +264,9 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     } else if (songbookId) {
       axios.post(`/songbooks/remove-cover?songbookId=${songbookId.innerText}&type=${slugify(inputName.toLowerCase())}`, {
         withCredentials: true,
+        headers: {
+            'CSRF-Token': token
+        },
         img: img.src
       })
         .then(() => {

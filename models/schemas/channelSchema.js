@@ -21,6 +21,7 @@ module.exports = new mongoose.Schema(
     users: [
       {
         _id: ObjectId,
+        name: String,
         canCreate: Boolean,
         canEdit: Boolean,
         canDelete: Boolean,

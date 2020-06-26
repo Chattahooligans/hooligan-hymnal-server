@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const passport = require("passport");
 const { check, validationResult } = require("express-validator");
+const seedDB = require("../mongo-seed/dbSeeder");
 const User = mongoose.model("User");
 
 exports.loginForm = (req, res) => {
@@ -112,6 +113,7 @@ exports.register = async (req, res, next) => {
 		user.usersAllowed = true;
 	}
 	await user.save();
+	await seedDB();
 	next();
 };
 
