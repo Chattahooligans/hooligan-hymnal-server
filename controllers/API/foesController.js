@@ -2,6 +2,13 @@ const mongoose = require('mongoose');
 const Foes = mongoose.model('foes');
 
 exports.index = async (req, res) => {
+  const foes = await Foes.find({
+    active: true
+  });
+  return res.json(foes);
+};
+
+exports.all = async (req, res) => {
   const foes = await Foes.find({});
   return res.json(foes);
 };
