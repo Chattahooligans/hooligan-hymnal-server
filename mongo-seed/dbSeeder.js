@@ -16,6 +16,7 @@ const createChannel = require('./data/channels');
 const createFeedItems = require('./data/feedItems')
 
 async function seedDB() {
+  console.log('seedDatabase function')
   const playersPromise = Players.countDocuments();
   const rosterPromise = Roster.countDocuments();
   const songsPromise = Songs.countDocuments();
@@ -42,32 +43,33 @@ async function seedDB() {
       feedItemsPromise,
   ]);
 
+console.log(players);
 
-  if (players.length === 0) {
+  if (players === 0) {
     await createPlayers();
   }
 
-  if (songs.length === 0) {
+  if (songs === 0) {
     await createSongs();
   }
 
-  if (songbooks.length === 0) {
+  if (songbooks === 0) {
     await createSongbook();
   }
 
-  if (rosters.length === 0) {
+  if (rosters === 0) {
       await createRoster();
   }
 
-  if (foes.length === 0) {
+  if (foes === 0) {
       await createFoes();
   }
 
-  if (channels.length === 0) {
+  if (channels === 0) {
       await createChannel();
   }
 
-  if (feedItems.length === 0) {
+  if (feedItems === 0) {
       await createFeedItems();
   }
 }

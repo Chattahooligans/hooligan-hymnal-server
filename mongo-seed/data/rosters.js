@@ -21,7 +21,7 @@ async function createRoster() {
         active: true,
         default: true
     })
-    console.log('Roster was seeded...')
+    console.log('Roster was seeded...');
 }
 
 module.exports = createRoster

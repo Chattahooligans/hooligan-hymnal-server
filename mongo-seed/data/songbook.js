@@ -13,12 +13,12 @@ async function createSongbook() {
         })
     })
     await Songbook.create({
-        songbook_title: faker.lorem.words(faker.random.number({ min: 1, max: 3 })),
+        songbookTitle: faker.lorem.words(faker.random.number({ min: 1, max: 3 })),
         organization: faker.lorem.word(),
         description: faker.lorem.paragraph(),
         chapters: [
             {
-                chapter_title: faker.lorem.words(faker.random.number({ min: 1, max: 3 })),
+                chapterTitle: faker.lorem.words(faker.random.number({ min: 1, max: 3 })),
                 songs: songsArray
             }
         ]
