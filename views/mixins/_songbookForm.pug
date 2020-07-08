@@ -7,7 +7,7 @@ mixin songbookForm(songbook = {}, edit = false)
     if songbook.id
       #songbook-id(class="hidden") #{songbook.id}
     .flex.flex-col.mb-3
-      +baseInput("text", "Title", "songbook_title", songbook.songbook_title, "Title", true)
+      +baseInput("text", "Title", "songbookTitle", songbook.songbookTitle, "Title", true)
     .flex.flex-col.mb-3
       +baseInput("text", "Organization", "organization", songbook.organization, "Organization", true)
     .flex.flex-col.mb-3
@@ -32,36 +32,5 @@ mixin songbookForm(songbook = {}, edit = false)
         if !edit
           button(class="rounded bg-red-700 text-white px-3 py-2 cancel" type="button") Clear
       #front_cover-target.hidden
-    //- .flex.flex-col.mb-3#back_cover
-    //-   #back_cover-template
-    //-     div(class="relative inline-block")
-    //-       img(data-dz-thumbnail class="mx-auto" style="height: 250px;width:150px;")
-    //-       p(class="" data-dz-name)
-    //-       div(class="dz-error-mark cursor-pointer absolute top-0 right-0" data-dz-remove)
-    //-         span &times;
-    //-     div(class="dz-error-message")
-    //-       span(data-dz-errormessage)
-    //-   #back_cover-upload-section(class="border rounded-lg bg-gray-200 h-32 w-full flex justify-center items-center cursor-pointer relative z-10")
-    //-     h2 Upload Back Cover here
-    //-   #back_cover-previews
-    //-   div(class="progress active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0")
-    //-     div(class="h-2 bg-gray-700 progress-bar" style="width:0%;" data-dz-uploadprogress)
-    //-   .actions
-    //-     button(class="rounded bg-green-700 text-white px-3 py-2 upload" type="button") Upload
-    //-     if !edit
-    //-       button(class="rounded bg-red-700 text-white px-3 py-2 cancel" type="button") Clear
-    //-   #back_cover-target.hidden
-    .flex.flex-col.mb-3
-    if songbook.chapters.length
-      h3 Chapters
-    if edit
-      div(class="StackedList" x-data="{ chapters: " + JSON.stringify(songbook.chapters) + " }")
-        template(x-for="chapter in chapters")
-          div(class="list--card draggable")
-            input(type="hidden" name="chapters[]" :value="JSON.stringify(chapter)")
-            div(class="flex flex-col")
-              h4(x-text="chapter.chapter_title")
-              p Songs:
-                span(x-text="chapter.songs.length")
     .mb-3
       button(type="submit" class="px-3 py-2 rounded bg-blue-700 text-white") Save Songbook
