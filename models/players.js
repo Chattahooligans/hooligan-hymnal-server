@@ -13,4 +13,12 @@ playersSchema.pre('remove', async function (next) {
   next();
 });
 
+playersSchema.post("findOne", function (res) {
+    if (res == null) {
+        const err = new Error("Player not found");
+        err.status = 404;
+        throw err;
+    }
+})
+
 module.exports = mongoose.model('players', playersSchema);
