@@ -33,6 +33,9 @@
     "MAIL_PASS": {
       "description": "Provide your password to login via SMTP to send email (ex: Above emails password)"
     },
+    "EXPO_EXPERIENCE": {
+      "description": "This variable is a filter that protects push notifications in the mobile app. It uses your Expo account and app name (with an @-sign at the start and a forward-slash as a separator), and should match the `owner` and `slug` values in the `.expo` section of `app.json` for your mobile app exactly. `@{owner}/{slug}`"
+    },
     "INPUT_LANGUAGES": {
       "description": "List of input images you plan on using, defaults to [\"en\"] if empty",
       "required": false

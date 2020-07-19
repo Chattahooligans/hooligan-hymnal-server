@@ -14807,8 +14807,16 @@ Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/thum
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/images', 'images-template', document.getElementById('images-upload-section'), '#images-previews', '#images-target', 'Player Images', 10, 'images');
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/foes/logo', 'logo-template', document.getElementById('logo-upload-section'), '#logo-previews', '#logo-target', 'Logo', 1, 'logo');
 Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/channels/avatar', 'avatar-template', document.getElementById('avatar-upload-section'), '#avatar-previews', '#avatar-target', 'Avatar', 1, 'avatarUrl');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/songbooks/front-cover', 'front_cover-template', document.getElementById('front_cover-upload-section'), '#front_cover-previews', '#front_cover-target', 'front_cover', 1, 'front_cover');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/songbooks/back-cover', 'back_cover-template', document.getElementById('back_cover-upload-section'), '#back_cover-previews', '#back_cover-target', 'back_cover', 1, 'back_cover');
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/songbooks/front-cover', 'front_cover-template', document.getElementById('front_cover-upload-section'), '#front_cover-previews', '#front_cover-target', 'front_cover', 1, 'frontCover'); // dropzone(
+//   '/songbooks/back-cover',
+//   'back_cover-template',
+//   document.getElementById('back_cover-upload-section'),
+//   '#back_cover-previews',
+//   '#back_cover-target',
+//   'back_cover',
+//   1,
+//   'back_cover',
+// );
 
 /***/ }),
 
@@ -14987,40 +14995,34 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         }).then(function (_ref4) {
           var data = _ref4.data;
 
-          if (data.front_cover && data.front_cover.length) {
+          if (data.frontCover && data.frontCover.length) {
             var mockFile = {
               name: "".concat(data.name)
             };
             thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
-            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.front_cover);
+            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.frontCover);
             var tEl = document.querySelector(target);
             var input = document.createElement('input');
-            input.value = data.front_cover;
+            input.value = data.frontCover;
             input.setAttribute('data-id', "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-avatar"));
             input.classList.add = 'hidden';
             input.setAttribute('name', inputName);
             tEl.appendChild(input);
-          } else if (data.backCover && data.backCover.length) {
-            var _mockFile = {
-              name: "".concat(data.name)
-            };
-            thisDropzone.defaultOptions.addedfile.call(thisDropzone, _mockFile);
-            thisDropzone.defaultOptions.thumbnail.call(thisDropzone, _mockFile, data.backCover);
+          } // else if (data.back_cover && data.back_cover.length) {
+          //   const mockFile = {
+          //     name: `${data.name}`,
+          //   };
+          //   thisDropzone.defaultOptions.addedfile.call(thisDropzone, mockFile);
+          //   thisDropzone.defaultOptions.thumbnail.call(thisDropzone, mockFile, data.back_cover);
+          //   const tEl = document.querySelector(target);
+          //   const input = document.createElement('input');
+          //   input.value = data.back_cover;
+          //   input.setAttribute('data-id', `${slugify(data.name).toLowerCase()}-avatar`);
+          //   input.classList.add = 'hidden';
+          //   input.setAttribute('name', inputName);
+          //   tEl.appendChild(input);
+          // }
 
-            var _tEl = document.querySelector(target);
-
-            var _input = document.createElement('input');
-
-            _input.value = data.backCover;
-
-            _input.setAttribute('data-id', "".concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(data.name).toLowerCase(), "-avatar"));
-
-            _input.classList.add = 'hidden';
-
-            _input.setAttribute('name', inputName);
-
-            _tEl.appendChild(_input);
-          }
         })["catch"](function (err) {
           console.error(err);
         });
@@ -15224,8 +15226,8 @@ function SortList() {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/collin/code/ngs/hooligan-hymnal-server/src/js/app.js */"./src/js/app.js");
-module.exports = __webpack_require__(/*! /Users/collin/code/ngs/hooligan-hymnal-server/src/scss/app.scss */"./src/scss/app.scss");
+__webpack_require__(/*! /Users/collin/code/ngs/chatta-server/src/js/app.js */"./src/js/app.js");
+module.exports = __webpack_require__(/*! /Users/collin/code/ngs/chatta-server/src/scss/app.scss */"./src/scss/app.scss");
 
 
 /***/ })

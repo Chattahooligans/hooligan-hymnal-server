@@ -96,6 +96,8 @@ exports.register = async (req, res, next) => {
 		res.redirect("back");
 		return;
 	}
+	const users = await User.find({});
+	console.log(users);
 	user = new User({
 		email: req.body.email,
 		name: req.body.name,
@@ -103,7 +105,6 @@ exports.register = async (req, res, next) => {
 		displayName: req.body.displayName,
 		password: req.body.password
 	});
-	const users = await User.find({});
 	if (users.length === 0) {
 		user.pushNotificationsAllowed = true;
 		user.rosterAllowed = true;
@@ -113,7 +114,10 @@ exports.register = async (req, res, next) => {
 		user.usersAllowed = true;
 	}
 	await user.save();
-	await seedDB();
+	if (users.length === 0) {
+		console.log('Seed Dtabase');
+		await seedDB();
+	}
 	next();
 };
 

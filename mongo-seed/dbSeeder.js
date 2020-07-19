@@ -7,14 +7,23 @@ const Roster = mongoose.model('roster');
 const Foes = mongoose.model('foes');
 const Channel = mongoose.model('channels');
 
+const createPlayers = require('./data/players');
+const createSongs = require('./data/songs');
+const createSongbook = require('./data/songbook');
+const createRoster = require('./data/rosters');
+const createFoes = require('./data/foes');
+const createChannel = require('./data/channels');
+const createFeedItems = require('./data/feedItems')
+
 async function seedDB() {
-  const playersPromise = Players.find({});
-  const rosterPromise = Roster.find({})
-  const songsPromise = Songs.find({});
-  const songbooksPromise = Songbooks.find({});
-  const foesPromise = Foes.find({});
-  const channelsPromise = Channel.find({});
-  const feedItemsPromise = FeedItems.find({});
+  console.log('seedDatabase function')
+  const playersPromise = Players.countDocuments();
+  const rosterPromise = Roster.countDocuments();
+  const songsPromise = Songs.countDocuments();
+  const songbooksPromise = Songbooks.countDocuments();
+  const foesPromise = Foes.countDocuments();
+  const channelsPromise = Channel.countDocuments();
+  const feedItemsPromise = FeedItems.countDocuments();
 
   const [
       players,
@@ -23,7 +32,7 @@ async function seedDB() {
       songbooks,
       foes,
       channels,
-      feedItems
+      feedItems,
   ] = await Promise.all([
       playersPromise,
       rosterPromise,
@@ -31,44 +40,38 @@ async function seedDB() {
       songbooksPromise,
       foesPromise,
       channelsPromise,
-      feedItemsPromise
-  ])
+      feedItemsPromise,
+  ]);
 
+console.log(players);
 
-  if (players.length === 0) {
-    const createPlayers = require('./data/players');
+  if (players === 0) {
     await createPlayers();
   }
 
-  if (songs.length === 0) {
-    const createSongs = require('./data/songs')
+  if (songs === 0) {
     await createSongs();
   }
 
-  if (songbooks.length === 0) {
-    const createSongbook = require('./data/songbook')
+  if (songbooks === 0) {
     await createSongbook();
   }
 
-  if (rosters.length === 0) {
-      const createRoster = require('./data/rosters')
+  if (rosters === 0) {
       await createRoster();
   }
 
-  if (foes.length === 0) {
-      const createFoes = require('./data/foes');
+  if (foes === 0) {
       await createFoes();
   }
 
-  if (channels.length === 0) {
-      const createChannel = require('./data/channels');
+  if (channels === 0) {
       await createChannel();
   }
 
-  if (feedItems.length === 0) {
-      const createFeedItems = require('./data/feedItems')
+  if (feedItems === 0) {
       await createFeedItems();
   }
 }
 
-module.exports = seedDB
+module.exports = seedDB;
