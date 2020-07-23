@@ -1,4 +1,4 @@
-db.foes.update( { }, { $rename: { 'create_time': 'createTime', 'update_time': 'updateTime' } } )
+db.foes.updateMany( { }, { $rename: { 'create_time': 'createTime', 'update_time': 'updateTime' } } )
 db.players.updateMany( { }, { $rename: { 'create_time': 'createTime', 'update_time': 'updateTime' } } )
 db.pushtokens.updateMany( { }, { $rename: { 'create_time': 'createTime', 'update_time': 'updateTime' } } )
 db.rosters.updateMany( { }, { $rename: { 'create_time': 'createTime', 'update_time': 'updateTime' } } )

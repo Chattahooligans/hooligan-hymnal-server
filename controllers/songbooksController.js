@@ -126,22 +126,15 @@ exports.deleteChapterConfirm = async (req, res) => {
 
 exports.deleteChapter = async (req, res) => {
   const songbook = await Songbook.findById(req.params.songbookId);
-  const chapter = await songbook.chapters.id(req.params.id);
-  songbook.chapters.remove(chapter.chapterTitle);
+  const chapter = await songbook.chapters.id(req.params.chapterId);
+  songbook.chapters.remove(chapter._id);
   await songbook.save();
   DELETE_SONGBOOKS_CACHE();
   req.flash(
     'success',
     `${chapter.chapterTitle} was removed from ${songbook.songbookTitle}`,
   );
-  res.redirect(`/songbooks/${songbook._id}`);
-};
-
-exports.removeChapterConfirm = async (req, res) => {
-  res.send('Implement DELETE Confirm');
-};
-exports.removeChapter = async (req, res) => {
-  res.send('Implement delete/remove chapter');
+  return res.redirect(`/songbooks/${songbook._id}`);
 };
 
 // Covers functions
