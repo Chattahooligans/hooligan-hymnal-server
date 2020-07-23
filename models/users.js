@@ -37,13 +37,13 @@ UserSchema.pre('save', async function save(next) {
   next();
 });
 
-UserSchema.post("findOne", function(res) {
-    if (res == null) {
-        const err = new Error("User not found");
-        err.status = 404;
-        throw err;
-    }
-})
+// UserSchema.post("findOne", function(res) {
+//     if (res == null) {
+//         const err = new Error("User not found");
+//         err.status = 404;
+//         throw err;
+//     }
+// })
 
 UserSchema.methods.comparePassword = function comparePassword(
   candidatePassword,
