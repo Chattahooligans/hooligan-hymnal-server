@@ -6,7 +6,7 @@ const User = mongoose.model("User");
 
 exports.loginForm = (req, res) => {
 	res.render("auth/login", {
-		title: "Login"
+		title: "Login",
 	});
 };
 
@@ -19,7 +19,7 @@ exports.login = (req, res, next) => {
 			req.flash("error", "Incorrect Email or Password");
 			return res.redirect("/login");
 		}
-		req.logIn(user, err => {
+		req.logIn(user, (err) => {
 			if (err) return next(err);
 			user.lastLogin = Date.now();
 			user.save();
@@ -38,10 +38,7 @@ exports.registerForm = (req, res) => {
 };
 
 exports.validateRegister = (req, res, next) => {
-	check("name")
-		.not()
-		.isEmpty()
-		.withMessage("You must supply a first name!");
+	check("name").not().isEmpty().withMessage("You must supply a first name!");
 	check("familyName")
 		.not()
 		.isEmpty()
@@ -53,16 +50,10 @@ exports.validateRegister = (req, res, next) => {
 		.isEmail()
 		.normalizeEmail({
 			gmail_remove_dots: false,
-			gmail_remove_subaddress: false
+			gmail_remove_subaddress: false,
 		});
-	check("displayName")
-		.not()
-		.isEmpty()
-		.withMessage("Display name is required");
-	check("password")
-		.not()
-		.isEmpty()
-		.withMessage("Password cannot be blank");
+	check("displayName").not().isEmpty().withMessage("Display name is required");
+	check("password").not().isEmpty().withMessage("Password cannot be blank");
 	check("passwordConfirm")
 		.not()
 		.isEmpty()
@@ -75,12 +66,12 @@ exports.validateRegister = (req, res, next) => {
 	if (errors.length) {
 		req.flash(
 			"error",
-			errors.map(err => err.msg)
+			errors.map((err) => err.msg)
 		);
 		res.render("auth/register", {
 			title: "Register",
 			body: req.body,
-			flashes: req.flash()
+			flashes: req.flash(),
 		});
 		return;
 	}
@@ -89,37 +80,36 @@ exports.validateRegister = (req, res, next) => {
 
 exports.register = async (req, res, next) => {
 	let user = await User.findOne({
-		email: req.body.email
+		email: req.body.email,
 	});
 	if (user) {
 		req.flash("error", "Account already exists");
 		res.redirect("back");
 		return;
-	} else {
-		const users = await User.find({});
-		console.log(users);
-		user = new User({
-			email: req.body.email,
-			name: req.body.name,
-			familyName: req.body.familyName,
-			displayName: req.body.displayName,
-			password: req.body.password
-		});
-		if (users.length === 0) {
-			user.pushNotificationsAllowed = true;
-			user.rosterAllowed = true;
-			user.songbookAllowed = true;
-			user.foesAllowed = true;
-			user.feedAllowed = true;
-			user.usersAllowed = true;
-		}
-		await user.save();
-		if (users.length === 0) {
-			console.log('Seed Dtabase');
-			await seedDB();
-		}
-		next();
 	}
+	const users = await User.find({});
+	console.log(users);
+	user = new User({
+		email: req.body.email,
+		name: req.body.name,
+		familyName: req.body.familyName,
+		displayName: req.body.displayName,
+		password: req.body.password,
+	});
+	if (users.length === 0) {
+		user.pushNotificationsAllowed = true;
+		user.rosterAllowed = true;
+		user.songbookAllowed = true;
+		user.foesAllowed = true;
+		user.feedAllowed = true;
+		user.usersAllowed = true;
+	}
+	await user.save();
+	if (users.length === 0) {
+		console.log("Seed Database");
+		await seedDB();
+	}
+	next();
 };
 
 exports.logout = (req, res) => {
