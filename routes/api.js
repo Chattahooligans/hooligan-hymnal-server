@@ -25,8 +25,8 @@ const config = require('../config');
 
 router.get('/i18n-settings', inMemoryCacheMiddleware(config.cache_timeout), langController.lang);
 // Foes
-router.get('/foes', inMemoryCacheMiddleware(config.cache_timeout, 'foes'), catchErrors(foesController.index));
-router.get('/foes/all', inMemoryCacheMiddleware(config.cache_timeout, 'foes_all'), catchErrors(foesController.index));
+router.get('/foes', inMemoryCacheMiddleware(config.cache_timeout), catchErrors(foesController.index));
+router.get('/foes/all', inMemoryCacheMiddleware(config.cache_timeout), catchErrors(foesController.index));
 router.get('/foes/:id', inMemoryCacheMiddleware(config.cache_timeout), catchErrors(foesController.show));
 
 // Goalkeepers Nicknames
