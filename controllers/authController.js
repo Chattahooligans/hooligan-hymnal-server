@@ -95,30 +95,31 @@ exports.register = async (req, res, next) => {
 		req.flash("error", "Account already exists");
 		res.redirect("back");
 		return;
+	} else {
+		const users = await User.find({});
+		console.log(users);
+		user = new User({
+			email: req.body.email,
+			name: req.body.name,
+			familyName: req.body.familyName,
+			displayName: req.body.displayName,
+			password: req.body.password
+		});
+		if (users.length === 0) {
+			user.pushNotificationsAllowed = true;
+			user.rosterAllowed = true;
+			user.songbookAllowed = true;
+			user.foesAllowed = true;
+			user.feedAllowed = true;
+			user.usersAllowed = true;
+		}
+		await user.save();
+		if (users.length === 0) {
+			console.log('Seed Dtabase');
+			await seedDB();
+		}
+		next();
 	}
-	const users = await User.find({});
-	console.log(users);
-	user = new User({
-		email: req.body.email,
-		name: req.body.name,
-		familyName: req.body.familyName,
-		displayName: req.body.displayName,
-		password: req.body.password
-	});
-	if (users.length === 0) {
-		user.pushNotificationsAllowed = true;
-		user.rosterAllowed = true;
-		user.songbookAllowed = true;
-		user.foesAllowed = true;
-		user.feedAllowed = true;
-		user.usersAllowed = true;
-	}
-	await user.save();
-	if (users.length === 0) {
-		console.log('Seed Dtabase');
-		await seedDB();
-	}
-	next();
 };
 
 exports.logout = (req, res) => {
