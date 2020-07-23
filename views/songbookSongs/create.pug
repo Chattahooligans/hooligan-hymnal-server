@@ -7,4 +7,4 @@ block content
     a(href=`/songbooks/${songbook.id}/chapters/${chapter.id}` class="block mb-3 p-3 underline") &larr; Back to #{chapter.chapter_title}
     .show--card
       h2(class="text-xl font-semibold") #{title}
-      +songbookSongForm(songs, chapter.songs)
+      +songbookSongForm(songs, chapter.songs, chapter)

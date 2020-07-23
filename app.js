@@ -180,10 +180,9 @@ app.use('/', csrfProtection, (req, res, next) => {
 
 app.use('/', web);
 
-app.use(errorHandlers.notFound);
-
 app.use(errorHandlers.flashValidationErrors);
 
+app.use(errorHandlers.notFound);
 
 if (app.get('env') === 'development') {
   app.use(errorHandlers.developmentErrors);

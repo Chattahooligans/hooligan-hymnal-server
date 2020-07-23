@@ -1,10 +1,13 @@
 include ./_baseInput
 include ./_csrfInput
 
-mixin songbookSongForm(songs = [], chapterSongs = [])
+mixin songbookSongForm(songs = [], chapterSongs = [], chapter = {})
   form(method="POST")
     +csrfInput()
+    .flex.flex-col.mb-3
+      +baseInput("text", "Chapter Title", "chapterTitle", chapter.chapterTitle, "Chapter Title", true)
     div(x-data="{ songs: " + JSON.stringify(songs) + ", selectedSong: {}, chapterSongs: " + JSON.stringify(chapterSongs) + ", editingSong: false }")
+      h2(class="font-semibold mb-2") Songs
       .container.flex.mx-auto
         div(class="w-1/2 mr-3")
           div(class="h-64 overflow-x-hidden overflow-y-scroll border rounded")
@@ -31,4 +34,4 @@ mixin songbookSongForm(songs = [], chapterSongs = [])
               button(type="button" class="btn--edit rounded-full h-10 w-10" x-on:click="if (!editingSong) {if (!chapterSongs.filter(sg => sg._id === selectedSong._id).length) {chapterSongs.push({ _id: selectedSong._id, hint: selectedSong.hint, featured: selectedSong.featured });selectedSong = {};} else {alert('Song already in songbook');}selectedSong = {};} else {editingSong = false;selectedSong = {};}") &plus;
               button(type="button" class="btn--delete rounded-full h-10 w-10" x-on:click="selectedSong = {}") &times;
     .show--card__footer.rounded-b-lg(style="margin-bottom:-3rem")
-      button(type="submit" class="btn btn--edit") Update Songs
+      button(type="submit" class="btn btn--edit") Update

@@ -40,6 +40,7 @@ exports.addSongsToChapter = async (req, res) => {
 
   if (req.body.songs) {
     req.body.songs = req.body.songs.map((song) =>  JSON.parse(song))
+    chapter.chapterTitle = req.body.chapterTitle;
     chapter.songs = req.body.songs
     await songbook.save();
     deleteCache('songbooks');
