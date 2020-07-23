@@ -16,9 +16,10 @@ exports.catchErrors = (fn) => function (req, res, next) {
 exports.notFound = (err, req, res, next) => {
   // console.log(JSON.stringify(err, null, 4));
   if (err.reason) {
-    console.log(err.reason)
+    // console.log(err.reason)
+    err.errors = "Page not found";
+    err.status = 404;
   }
-  err.status = 404;
   next(err);
 };
 
