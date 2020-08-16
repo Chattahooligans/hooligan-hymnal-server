@@ -93,6 +93,26 @@ exports.update = async (req, res) => {
       context: "query"
     }
   );
+  const activeRostersCount = await Roster.find({
+      active: true
+  }).countDocuments()
+  if (activeRostersCount == 0) {
+      updates.active = true;
+      await Roster.findOneAndUpdate(
+          {
+              _id: req.params.id
+          },
+          {
+              $set: updates
+          },
+          {
+              new: true,
+              runValidators: true,
+              context: "query"
+          }
+      )
+      req.flash("info", `${roster.rosterTitle} was set to active because there were no others set to active`);
+  }
   DELETE_ROSTERS_CACHE();
   req.flash("success", `${roster.rosterTitle} has been updated!`);
   res.redirect(`/rosters/${roster._id}`);
