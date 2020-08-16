@@ -93,11 +93,11 @@ exports.update = async (req, res) => {
       context: "query"
     }
   );
-  const activeRostersCount = await Roster.find({
-      active: true
+  const defaultRostersCount = await Roster.find({
+      default: true
   }).countDocuments()
-  if (activeRostersCount == 0) {
-      updates.active = true;
+  if (defaultRostersCount == 0) {
+      updates.default = true;
       await Roster.findOneAndUpdate(
           {
               _id: req.params.id
@@ -111,7 +111,7 @@ exports.update = async (req, res) => {
               context: "query"
           }
       )
-      req.flash("info", `${roster.rosterTitle} was set to active because there were no others set to active`);
+      req.flash("info", `${roster.rosterTitle} was set to default because there were no others set to default`);
   }
   DELETE_ROSTERS_CACHE();
   req.flash("success", `${roster.rosterTitle} has been updated!`);
