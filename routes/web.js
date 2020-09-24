@@ -64,7 +64,7 @@ router.get('/players/create', isLoggedIn, checkPermission('rosterAllowed'), play
 router.post('/players/create', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.store));
 router.get('/players/images', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.getImages));
 
-router.post('/players/remove-images', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.removeImage));
+router.post('/players/remove-images', checkPermission('rosterAllowed'), catchErrors(playersController.removeImage));
 router.get('/players/:id', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.show));
 router.get('/players/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.edit));
 router.post('/players/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(playersController.update));
