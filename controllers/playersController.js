@@ -183,7 +183,6 @@ exports.uploadThumbnail = async (req, res) => {
     folder: 'players_thumbnails',
     format: 'jpg',
   });
-  console.log(image[0])
   res.json({
     url: image[0].secure_url,
     id: image[0].public_id,
