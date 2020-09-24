@@ -167,7 +167,7 @@ exports.uploadImages = async (req, res) => {
     format: 'jpg',
   });
   res.send({
-    url: images[0].url,
+    url: images[0].secure_url,
     id: images[0].public_id,
   });
 };
@@ -183,8 +183,9 @@ exports.uploadThumbnail = async (req, res) => {
     folder: 'players_thumbnails',
     format: 'jpg',
   });
+  console.log(image[0])
   res.json({
-    url: image[0].url,
+    url: image[0].secure_url,
     id: image[0].public_id,
   });
 };
