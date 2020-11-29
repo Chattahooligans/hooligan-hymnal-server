@@ -52,6 +52,8 @@ router.post('/rosters/create', isLoggedIn, checkPermission('rosterAllowed'), cat
 router.get('/rosters/:id', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.show));
 router.get('/rosters/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.edit));
 router.post('/rosters/:id/edit', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.update));
+router.get('/rosters/:id/duplicate', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.duplicate));
+router.post('/rosters/:id/duplicate', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.duplicateSave));
 router.get('/rosters/:id/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.deleteConfirm));
 router.post('/rosters/:id/delete', isLoggedIn, checkPermission('rosterAllowed'), catchErrors(rostersController.delete));
 

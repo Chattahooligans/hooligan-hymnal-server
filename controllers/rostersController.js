@@ -118,6 +118,36 @@ exports.update = async (req, res) => {
   res.redirect(`/rosters/${roster._id}`);
 };
 
+exports.duplicate = async (req, res) => {
+	const rosterPromise = Roster.findById(req.params.id);
+	const playersPromise = Players.find({})
+		.select('_id name position')
+		.sort('name')
+
+	const [roster, players] = await Promise.all([rosterPromise, playersPromise])
+
+	res.render("rosters/duplicate", {
+		title: `Duplicate ${roster.rosterTitle}`,
+		roster,
+		players,
+	})
+}
+
+exports.duplicateSave = async (req, res) => {
+	let values = {
+		rosterTitle: req.body.rosterTitle,
+		season: req.body.season,
+		players: req.body.players ? req.body.players.map((pl) => JSON.parse(pl)) : [],
+		active: req.body.active ? true : false,
+		default: req.body.default ? true : false
+	}
+
+	const roster = await new Roster(values).save()
+	DELETE_ROSTERS_CACHE()
+	req.flash("success", `${roster.rosterTitle} was created from a duplicate.`)
+	return res.redirect(`/rosters/${roster.id}`)
+}
+
 exports.deleteConfirm = async (req, res) => {
   const roster = await Roster.findById(req.params.id);
   res.render("rosters/delete", {

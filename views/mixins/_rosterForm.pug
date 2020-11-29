@@ -1,7 +1,7 @@
 include ./_baseInput
 include ./_csrfInput
 
-mixin rosterForm(roster = {}, players = {})
+mixin rosterForm(roster = {}, players = {}, duplicate = false)
   form(method="POST")
     +csrfInput()
     .flex.flex-col.mb-3
@@ -43,3 +43,5 @@ mixin rosterForm(roster = {}, players = {})
           input(type="checkbox" name="default" id="default" class="ml-2" checked=roster.default)
     .mb-3
       button(type="submit" class="px-2 py-3 rounded bg-blue-700 text-white") Save Roster
+      if duplicate
+        button(type="button" class="py-3 px-2 rounded bg-red-700 text-white ml-3" onclick="window.history.back()") Cancel
