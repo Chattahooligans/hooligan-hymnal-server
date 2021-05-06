@@ -209,12 +209,14 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
   myDropzone.on('removedfile', ({ previewElement }) => {
     const img = previewElement.querySelector('img');
     if (playerId) {
+      console.log(token)
       axios.post(`/players/remove-images?playerId=${playerId.innerText}&type=${slugify(inputName.toLowerCase())}`, {
         withCredentials: true,
         headers: {
-            'CSRF-Token': token
+          'CSRF-Token': token
         },
         img: img.src,
+        _csrf: token
       })
         .then(() => {
           const inputs = document.querySelectorAll(`input[name="${inputName.toLowerCase()}"]`);
@@ -233,6 +235,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
             'CSRF-Token': token
         },
         img: img.src,
+        _csrf: token
       })
         .then(() => {
           const _inputName = inputName.toLowerCase();
@@ -252,6 +255,7 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
             'CSRF-Token': token
         },
         img: img.src,
+        _csrf: token
       })
         .then(() => {
           const inputs = document.querySelectorAll(`input[name="${inputName.toLowerCase()}]`);
@@ -267,7 +271,8 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         headers: {
             'CSRF-Token': token
         },
-        img: img.src
+        img: img.src,
+        _csrf: token
       })
         .then(() => {
           const inputs = document.querySelectorAll(`input[name="${inputName.toLowerCase()}"]`);

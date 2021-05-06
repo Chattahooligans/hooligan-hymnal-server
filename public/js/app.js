@@ -15069,12 +15069,14 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
     var img = previewElement.querySelector('img');
 
     if (playerId) {
+      console.log(token);
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/players/remove-images?playerId=".concat(playerId.innerText, "&type=").concat(slugify__WEBPACK_IMPORTED_MODULE_2___default()(inputName.toLowerCase())), {
         withCredentials: true,
         headers: {
           'CSRF-Token': token
         },
-        img: img.src
+        img: img.src,
+        _csrf: token
       }).then(function () {
         var inputs = document.querySelectorAll("input[name=\"".concat(inputName.toLowerCase(), "\"]"));
         inputs.forEach(function (input) {
@@ -15091,7 +15093,8 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         headers: {
           'CSRF-Token': token
         },
-        img: img.src
+        img: img.src,
+        _csrf: token
       }).then(function () {
         var _inputName = inputName.toLowerCase();
 
@@ -15110,7 +15113,8 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         headers: {
           'CSRF-Token': token
         },
-        img: img.src
+        img: img.src,
+        _csrf: token
       }).then(function () {
         var inputs = document.querySelectorAll("input[name=\"".concat(inputName.toLowerCase(), "]"));
         inputs.forEach(function (input) {
@@ -15125,7 +15129,8 @@ function dropzone(url, templateId, uploadSection, previewsContainer, target, tex
         headers: {
           'CSRF-Token': token
         },
-        img: img.src
+        img: img.src,
+        _csrf: token
       }).then(function () {
         var inputs = document.querySelectorAll("input[name=\"".concat(inputName.toLowerCase(), "\"]"));
         inputs.forEach(function (input) {
@@ -15226,8 +15231,8 @@ function SortList() {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/collin/code/ngs/hooligan-hymnal-server/src/js/app.js */"./src/js/app.js");
-module.exports = __webpack_require__(/*! /Users/collin/code/ngs/hooligan-hymnal-server/src/scss/app.scss */"./src/scss/app.scss");
+__webpack_require__(/*! /Users/collino/code/express/hooligan-hymnal-server/src/js/app.js */"./src/js/app.js");
+module.exports = __webpack_require__(/*! /Users/collino/code/express/hooligan-hymnal-server/src/scss/app.scss */"./src/scss/app.scss");
 
 
 /***/ })

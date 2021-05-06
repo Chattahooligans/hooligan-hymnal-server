@@ -173,7 +173,9 @@ const api = require('./routes/api');
 app.use('/api', api);
 
 const web = require('./routes/web');
-app.use('/', csrfProtection, (req, res, next) => {
+
+app.use(csrfProtection)
+app.use('/', (req, res, next) => {
   res.locals.csrfToken = req.csrfToken();
   next();
 });
