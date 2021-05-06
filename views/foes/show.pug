@@ -2,13 +2,14 @@ extends ../layout
 
 block content
   .mx-auto.container
-    div(class="shadow border rounded-lg p-6")
+    div(class="p-6 border rounded-lg shadow")
       if foe.logo
-        img(src=`${foe.logo}` class="rounded-full mr-auto md:mx-auto md:mb-3" width="200" height="200")
+        img(src=`${foe.logo}` class="mr-auto rounded-full md:mx-auto md:mb-3" width="200" height="200")
       else
-        div(class="rounded-full mr-auto md:mx-auto md:mb-3" style=`background-color: ${foe.backgroundColor}` width="200" height="200")
-      h2(class="font-semibold text-2xl mb-3") #{foe.opponent}
-      h3(class="text-xl mb-3") Players
+        div(class="mr-auto rounded-full md:mx-auto md:mb-3" style=`background-color: ${foe.backgroundColor}` width="200" height="200")
+      div(class="flex justify-between")
+        h2(class="mb-3 text-2xl font-semibold") #{foe.opponent}
+      h3(class="mb-3 text-xl") Players
       section
         each player in foe.players
           article(class="list--card")
@@ -16,7 +17,7 @@ block content
               h4 #{player.name}
               p #{player.squadNumber}
               p #{player.position}
-      div(class="border-t flex bg-gray-400 mt-3 -ml-6 -mr-6 -mb-6 p-6")
-        a(href=`/foes/${foe._id}/edit` class="px-3 py-2 rounded bg-green-600 text-white md:mr-3") Edit
+      div(class="flex p-6 mt-3 -mb-6 -ml-6 -mr-6 bg-gray-400 border-t")
+        a(href=`/foes/${foe._id}/edit` class="px-3 py-2 text-white bg-green-600 rounded md:mr-3") Edit
         br
-        a(href=`/foes/${foe._id}/delete` class="bg-red-700 text-white rounded px-3 py-2") Delete
+        a(href=`/foes/${foe._id}/delete` class="px-3 py-2 text-white bg-red-700 rounded") Delete

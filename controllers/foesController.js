@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const csv = require('csv-parser')
+const fs = require('fs')
+const xlsx = require('xlsx')
 
 const Foe = mongoose.model('foes');
 const { removeFromCloudinary } = require('../handlers/cloudinaryDelete');
@@ -29,6 +32,20 @@ exports.create = (req, res) => {
   });
 };
 
+/**
+ * TODO: Implement mass upload for xlsx
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+exports.massFoesUpload = async (req, res) => {
+  const file = req.files.foesCSV
+  let data = []
+  const xlsxFile = xlsx.readFile(file.tempFilePath)
+  const sheets = xlsxFile.SheetNames
+
+  console.log(sheets)
+}
+
 exports.store = async (req, res) => {
   const players = [];
   if (req.body.players) {
@@ -47,6 +64,65 @@ exports.store = async (req, res) => {
   req.flash('success', `Foe ${foe.opponent} was created`);
   res.redirect('/foes');
 };
+
+/**
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+exports.massUpload = async (req, res) => {
+  if (!req.files) {
+    req.flash('error', 'Please upload a file')
+    return res.redirect(`/foes/${req.params.id}`)
+  }
+  const file = req.files.foeCSV
+  if (file.mimetype !== 'text/csv') {
+    req.flash('error', 'Please upload a CSV file')
+    return res.redirect(`/foes/${req.params.id}`)
+  }
+  const foesPlayers = []
+  fs.createReadStream(file.tempFilePath)
+    .pipe(csv())
+    .on('data', (data) => {
+      if (data.Name !== '') {
+        foesPlayers.push({
+          name: data.Name,
+          position: data.Position,
+          number: data.Number
+        })
+      }
+    })
+    .on('end', async () => {
+      await Foe.findOneAndUpdate({
+        _id: req.params.id
+      }, {
+        $set: {
+          players: []
+        }
+      }, {
+          new: true,
+          runValidators: true,
+          context: 'query',
+      })
+      const foe = await Foe.findOneAndUpdate({
+        _id: req.params.id
+      }, {
+        $set: {
+          players: foesPlayers
+        }
+      }, {
+          new: true,
+          runValidators: true,
+          context: 'query',
+      })
+      DELETE_FOES_CACHE();
+      req.flash('success', `${foe.opponent} Player's Mass Updated!`)
+      return res.redirect(`/foes/${req.params.id}/edit`)
+    }).on('error', () => {
+      req.flash('error', 'Error uploading players')
+      return res.redirect(`/foes/${req.params.id}/edit`)
+    })
+}
 
 exports.show = async (req, res) => {
   const foe = await Foe.findById(req.params.id);

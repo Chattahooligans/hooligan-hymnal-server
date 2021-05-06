@@ -15231,8 +15231,8 @@ function SortList() {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/collino/code/express/hooligan-hymnal-server/src/js/app.js */"./src/js/app.js");
-module.exports = __webpack_require__(/*! /Users/collino/code/express/hooligan-hymnal-server/src/scss/app.scss */"./src/scss/app.scss");
+__webpack_require__(/*! /Users/collino/code/ngs/hooligan-hymnal-server/src/js/app.js */"./src/js/app.js");
+module.exports = __webpack_require__(/*! /Users/collino/code/ngs/hooligan-hymnal-server/src/scss/app.scss */"./src/scss/app.scss");
 
 
 /***/ })

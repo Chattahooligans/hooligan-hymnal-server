@@ -1,8 +1,19 @@
 extends ../layout
 
 include ../mixins/_foeForm
+include ../mixins/_csrfInput
+
 
 block content
   .mx-auto.container
-    h2 #{title}
+    div(class="flex justify-between")
+      h2(class="mb-3 text-2xl font-semibold") #{title}
+      div(x-data="{ massUpload: false }")
+        button(class="btn--success btn" x-on:click="massUpload = !massUpload") Mass Upload Players
+        template(x-if="massUpload")
+          form(method="POST" action=`/foes/${foe._id}/mass-upload` enctype="multipart/form-data" class="absolute right-0 flex flex-col items-end p-3 mr-5 text-right bg-white border rounded")
+            +csrfInput(csrfToken)
+            label(for="foeCSV" class="flex-1 font-semibold") Upload CSV
+            input(type="file" accept=".csv" name="foeCSV" id="foeCSV")
+            button(type="submit" class="btn btn--success") Upload
     +foeForm(foe, true)
