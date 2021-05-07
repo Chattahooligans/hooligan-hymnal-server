@@ -32,20 +32,6 @@ exports.create = (req, res) => {
 };
 
 /**
- * TODO: Implement mass upload for xlsx
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- */
-exports.massFoesUpload = async (req, res) => {
-  const file = req.files.foesCSV
-  let data = []
-  const xlsxFile = xlsx.readFile(file.tempFilePath)
-  const sheets = xlsxFile.SheetNames
-
-  console.log(sheets)
-}
-
-/**
  *
  * @param {import('express').Request} req
  * @param {import('express').Response} res
