@@ -18,7 +18,6 @@ exports.index = async (req, res) => {
     foes = foes.filter((foe) => (foe.active ? foe : null));
     title = 'All Active Foes';
   }
-  console.log(all);
   res.render('foes/index', {
     title,
     foes,
@@ -46,14 +45,34 @@ exports.massFoesUpload = async (req, res) => {
   console.log(sheets)
 }
 
+/**
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.store = async (req, res) => {
   const players = [];
-  if (req.body.players) {
+  if (req.files && req.files.foeCSV) {
+    const file = req.files.foeCSV
+    if (file.mimetype !== 'text/csv') {
+      req.flash('error', 'Please upload a CSV file')
+      return res.redirect(`/foes/create`)
+    }
+    const parser = fs.createReadStream(file.tempFilePath).pipe(csv())
+    for await (const record of parser) {
+      if (record.Name !== '') {
+        players.push({
+          name: record.Name,
+          position: record.Position,
+          number: record.Number
+        })
+      }
+    }
+    req.body.players = players
+  } else if (req.body.players) {
     req.body.players.map((player) => {
       players.push(JSON.parse(player));
     });
-    req.body.players = players;
-  } else {
     req.body.players = players;
   }
   if (req.body.active) {
