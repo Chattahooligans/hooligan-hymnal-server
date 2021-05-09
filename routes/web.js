@@ -138,7 +138,6 @@ router.get('/foes', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foes
 router.post('/foes/logo', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.logo));
 router.get('/foes/create', isLoggedIn, checkPermission('foesAllowed'), foesController.create);
 router.post('/foes/create', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.store));
-router.post('/foes/:id/mass-upload', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.massUpload));
 router.get('/foes/logos', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.getLogo));
 router.post('/foes/remove-logo', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.removeLogo));
 router.get('/foes/:id', isLoggedIn, checkPermission('foesAllowed'), catchErrors(foesController.show));
