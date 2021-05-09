@@ -41,6 +41,7 @@ exports.store = async (req, res) => {
   if (req.files && req.files.foeCSV) {
     const file = req.files.foeCSV
     if (file.mimetype !== 'text/csv') {
+      console.log(file.mimetype)
       req.flash('error', 'Please upload a CSV file')
       return res.redirect(`/foes/create`)
     }
