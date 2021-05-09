@@ -108,7 +108,6 @@ exports.update = async (req, res) => {
   let players = [];
   let foe = await Foe.findById(req.params.id)
   players = await foesCsvParser(req, res, foe)
-  console.log(req.body)
   if (req.body['players[]']) {
     req.body['players[]'].map((player) => players.push(JSON.parse(player)));
     req.body.players = players;
