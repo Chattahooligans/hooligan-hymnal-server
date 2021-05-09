@@ -49,6 +49,8 @@ mixin foeForm(foe = {}, edit = false)
           label(for="foeCSV" class="flex flex-1 font-semibold") Foes Players CSV
           input(type="file" name="foeCSV" id="foeCSV" accept=".csv" aria-labelledby="csvHint")
           small(id="csvHint") Make sure csv contains "Name", "Position" and "Number" columns
+          if edit
+            small(class="text-red-700") This will delete all current players in roster
       template(x-if="!massUpload")
         if !edit
           div(x-data="{ players: [], newPlayer: { name: '', squadNumber: '', position: '' } }")
