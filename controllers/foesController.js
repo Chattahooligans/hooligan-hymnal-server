@@ -29,7 +29,7 @@ const DELETE_FOES_CACHE = () => deleteCache('foes');
         players.push({
           name: record.Name,
           position: record.Position,
-          number: record.Number
+          squadNumber: record.Number
         })
       }
     }
