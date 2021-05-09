@@ -40,7 +40,7 @@ exports.store = async (req, res) => {
   const players = [];
   if (req.files && req.files.foeCSV) {
     const file = req.files.foeCSV
-    if (file.mimetype !== 'text/csv') {
+    if (file.mimetype !== 'text/csv' || file.mimetype !== 'application/vnd.ms-excel') {
       console.log(file.mimetype)
       req.flash('error', 'Please upload a CSV file')
       return res.redirect(`/foes/create`)
