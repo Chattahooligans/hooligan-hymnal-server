@@ -40,11 +40,11 @@ exports.store = async (req, res) => {
   const players = [];
   if (req.files && req.files.foeCSV) {
     const file = req.files.foeCSV
-    if (file.mimetype !== 'text/csv' || file.mimetype !== 'application/vnd.ms-excel') {
-      console.log(file.mimetype)
-      req.flash('error', 'Please upload a CSV file')
-      return res.redirect(`/foes/create`)
-    }
+    // if (file.mimetype !== 'text/csv' || file.mimetype !== 'application/vnd.ms-excel') {
+    //   console.log(file.mimetype)
+    //   req.flash('error', 'Please upload a CSV file')
+    //   return res.redirect(`/foes/create`)
+    // }
     const parser = fs.createReadStream(file.tempFilePath).pipe(csv())
     for await (const record of parser) {
       if (record.Name !== '') {
@@ -91,10 +91,10 @@ exports.update = async (req, res) => {
   const players = [];
   if (req.files && req.files.foeCSV) {
     const file = req.files.foeCSV
-    if (file.mimetype !== 'text/csv') {
-      req.flash('error', 'Please upload a CSV file')
-      return res.redirect(`/foes/create`)
-    }
+    // if (file.mimetype !== 'text/csv') {
+    //   req.flash('error', 'Please upload a CSV file')
+    //   return res.redirect(`/foes/create`)
+    // }
     const parser = fs.createReadStream(file.tempFilePath).pipe(csv())
     for await (const record of parser) {
       if (record.Name !== '') {
