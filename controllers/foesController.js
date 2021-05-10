@@ -10,6 +10,26 @@ const { deleteCache } = require('../middleware/cacheMiddleware');
 
 const DELETE_FOES_CACHE = () => deleteCache('foes');
 
+
+/**
+ *
+ * @param {"GK" | "M" | "F" | "D"} position
+ * @returns {String}
+ */
+function getPosition(position) {
+  switch (position) {
+    case 'GK':
+      return 'Goalkeeper'
+    case 'M':
+      return 'Midfielder'
+    case 'D':
+      return 'Defender'
+    case 'F':
+      return 'Forward'
+    default:
+      return position
+  }
+}
 /**
  *
  * @param {import('express').Request} req
@@ -28,7 +48,7 @@ const DELETE_FOES_CACHE = () => deleteCache('foes');
       if (record.Name !== '') {
         players.push({
           name: record.Name,
-          position: record.Position,
+          position: getPosition(record.Position),
           squadNumber: record.Number
         })
       }
