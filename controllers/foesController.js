@@ -13,12 +13,13 @@ const DELETE_FOES_CACHE = () => deleteCache('foes');
 
 /**
  *
- * @param {"GK" | "M" | "F" | "D"} position
+ * @param {"GK" | "G" | "M" | "F" | "D"} position
  * @returns {String}
  */
 function getPosition(position) {
-  switch (position) {
+  switch (position.toUpperCase()) {
     case 'GK':
+    case 'G':
       return 'Goalkeeper'
     case 'M':
       return 'Midfielder'
