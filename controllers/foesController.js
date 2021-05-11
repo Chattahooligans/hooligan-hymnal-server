@@ -17,7 +17,7 @@ const DELETE_FOES_CACHE = () => deleteCache('foes');
  * @returns {String}
  */
 function getPosition(position) {
-  switch (position.split(',').toUpperCase()[0]) {
+  switch (position.split(',')[0].toUpperCase()) {
     case 'GK':
     case 'G':
       return 'Goalkeeper'
