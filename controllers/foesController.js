@@ -13,7 +13,7 @@ const DELETE_FOES_CACHE = () => deleteCache('foes');
 
 /**
  *
- * @param {"GK" | "G" | "M" | "F" | "D"} position
+ * @param {"GK" | "G" | "M" | "F" | "D" | "S"} position
  * @returns {String}
  */
 function getPosition(position) {
@@ -26,6 +26,7 @@ function getPosition(position) {
       return 'Midfielder'
     case 'D':
       return 'Defender'
+    case 'S':
     case 'F':
       return 'Forward'
     default:
@@ -41,9 +42,10 @@ function getPosition(position) {
   const players = []
   if (req.files && req.files.foeCSV) {
     const file = req.files.foeCSV
-    if (['application/vnd.ms-excel','text/plain','text/csv','text/tsv'].indexOf(file.mimetype) === -1) {
+    if (['application/vnd.ms-excel','text/plain','text/csv','text/tsv', 'application/octet-stream'].indexOf(file.mimetype) === -1) {
       req.flash('error', 'Please upload a CSV file')
-      return res.redirect((typeof foe !== 'undefined') ? `/foe/${foe.id}` : `/foes/create`)
+      res.redirect((typeof foe !== 'undefined') ? `/foes/${foe.id}` : `/foes/create`)
+      return players
     }
     const parser = fs.createReadStream(file.tempFilePath).pipe(csv())
     for await (const record of parser) {
