@@ -28,7 +28,7 @@ mixin rosterForm(roster = {}, players = {}, duplicate = false)
 
       template(x-if="selectedPlayer._id")
         div#selectedPlayer(class="flex-col list--card")
-          h4(x-text="selectedPlayer.hint")
+          h4(x-text="selectedPlayer.hint || selectedPlayer.name")
           label(for="playerHint" class="flex flex-col font-semibold") Hint
             input(type="text" id="playerHint" x-model="selectedPlayer.hint" value="selectedPlayer.name" class="base--input" placeholder="Player Hint")
           div(class="mt-3")
