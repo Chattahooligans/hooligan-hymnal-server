@@ -22,9 +22,10 @@ mixin rosterForm(roster = {}, players = {}, duplicate = false)
               div(class="flex justify-between w-full p-3 text-left bg-white border-b draggable")
                 input(type="hidden" name="players[]" :value="JSON.stringify(player)")
                 span(x-text="player.hint || player.name")
-                div(x-if="player" class="flex")
-                  button(class="block" type="button" class="w-8 h-8 mr-2 text-white bg-green-700 rounded-full" x-on:click="selectedPlayer = player; editingPlayer = true;") &#9998;
-                  button(class="block" type="button" class="w-8 h-8 text-white bg-red-700 rounded-full" x-on:click="rosterPlayers = rosterPlayers.filter(p => p._id !== player._id)") 	&times;
+                template(x-if="player")
+                  div(class="flex")
+                    button(class="block" type="button" class="w-8 h-8 mr-2 text-white bg-green-700 rounded-full" x-on:click="selectedPlayer = player; editingPlayer = true;") &#9998;
+                    button(class="block" type="button" class="w-8 h-8 text-white bg-red-700 rounded-full" x-on:click="rosterPlayers = rosterPlayers.filter(p => p._id !== player._id)") 	&times;
 
       template(x-if="selectedPlayer._id")
         div#selectedPlayer(class="flex-col list--card")
