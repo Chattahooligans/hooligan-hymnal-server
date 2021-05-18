@@ -9,31 +9,30 @@ mixin rosterForm(roster = {}, players = {}, duplicate = false)
     .flex.flex-col.mb-3
       +baseInput("text", "Season", "season", roster.season, "Season", true)
     h3 Players
-    div(x-data="{ players: " + JSON.stringify(players) + ", selectedPlayer: {}, rosterPlayers: " + JSON.stringify(roster.players) + ", editingPlayer: false }" class="mb-3")
+    div(x-data="{players:" + JSON.stringify(players) + ", selectedPlayer: {}, rosterPlayers: "+ JSON.stringify(roster.players) +", editingPlayer: false}" class="mb-3")
       .container.mx-auto.flex
         div(class="w-1/2 mr-3")
           div(class="h-64 overflow-x-hidden overflow-y-scroll border rounded")
-            template(x-for="player in players")
-              button(class="block w-full p-3 text-left border-b" type="button" x-on:click="selectedPlayer = { ...player, hint: '' }")
+            template(x-for="(player, index) in players" :key="index")
+              button(class="block w-full p-3 text-left border-b" type="button" x-on:click="selectedPlayer = {...player, hint: ''}")
                 span(x-text="player.name")
         div(class="w-1/2")
-          div(class="h-64 overflow-x-hidden overflow-y-scroll border rounded StackedList")
-            template(x-for="player in rosterPlayers" :key="player")
+          div(class="h-64 overflow-x-hidden overflow-y-scroll border rounded h-65")
+            template(x-for="(player, index) in rosterPlayers" :key="index")
               div(class="flex justify-between w-full p-3 text-left bg-white border-b draggable")
-                input(type="hidden" name="players[]" :value="JSON.stringify(player)")
+                input(type="hidden" name="players[]" x-bind:value="JSON.stringify(player)")
                 span(x-text="player.hint || player.name")
                 template(x-if="player")
-                  div(class="flex")
-                    button(class="block" type="button" class="w-8 h-8 mr-2 text-white bg-green-700 rounded-full" x-on:click="selectedPlayer = player; editingPlayer = true;") &#9998;
-                    button(class="block" type="button" class="w-8 h-8 text-white bg-red-700 rounded-full" x-on:click="rosterPlayers = rosterPlayers.filter(p => p._id !== player._id)") 	&times;
-
+                  .flex
+                    button(class="w-8 h-8 mr-2 text-white bg-green-700 rounded-full" type="button" @click="selectedPlayer = player; editingPlayer = true") &#9998;
+                    button(class="w-8 h-8 text-white bg-red-700 rounded-full" @click="rosterPlayers = rosterPlayers.filter((p) => p._id !== player.id)" type="button") &times;
       template(x-if="selectedPlayer._id")
         div#selectedPlayer(class="flex-col list--card")
           h4(x-text="selectedPlayer.hint || selectedPlayer.name")
           label(for="playerHint" class="flex flex-col font-semibold") Hint
             input(type="text" id="playerHint" x-model="selectedPlayer.hint" value="selectedPlayer.name" class="base--input" placeholder="Player Hint")
           div(class="mt-3")
-            button(type="button" class="mr-3 btn btn--edit" x-on:click="if (!editingPlayer) { if(!rosterPlayers.filter(pl => pl._id === selectedPlayer._id).length) { rosterPlayers.push({ _id: selectedPlayer._id, hint: selectedPlayer.hint || selectedPlayer.name, }); } else { alert('Player already in roster') } selectedPlayer = {}} else { editingPlayer = false; selectedPlayer = {} }") Add Player
+            button(type="button" class="mr-3 btn btn--edit" x-on:click="if (!editingPlayer) {if (!rosterPlayers.filter(pl => pl._id === selectedPlayer._id).length) {rosterPlayers.push({ _id: selectedPlayer._id, hint: selectedPlayer.hint || selectedPlayer.name, });selectedPlayer = {};} else {alert('Player already in roster');selectedPlayer = {};}} else { rosterPlayers.splice(index, 1, selectedPlayer); selectedPlayer = {}; editingPlayer = false }") Add Player
             button(type="button" class="btn btn--delete" x-on:click="selectedPlayer = {}") Cancel
     .flex.flex-wrap.mb-3
       div(class="w-full md:w-1/2")

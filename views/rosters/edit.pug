@@ -2,6 +2,12 @@ extends ../layout
 
 include ../mixins/_rosterForm
 
+  script.
+    window.onerror = function(message, url, lineNumber) {
+      // code to execute on an error
+      return true; // prevents browser error messages
+    };
+
 block content
   h2 #{title}
   +rosterForm(roster, players)
