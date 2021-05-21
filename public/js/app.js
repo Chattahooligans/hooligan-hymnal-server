@@ -7188,21 +7188,8 @@ exports.Plugins = Plugins;
   function isTesting() {
     return navigator.userAgent.includes("Node.js") || navigator.userAgent.includes("jsdom");
   }
-  function checkedAttrLooseCompare(valueA, valueB) {
-    return valueA == valueB;
-  }
-  function warnIfMalformedTemplate(el, directive) {
-    if (el.tagName.toLowerCase() !== 'template') {
-      console.warn(`Alpine: [${directive}] directive should only be added to <template> tags. See https://github.com/alpinejs/alpine#${directive}`);
-    } else if (el.content.childElementCount !== 1) {
-      console.warn(`Alpine: <template> tag with [${directive}] encountered with an unexpected number of root elements. Make sure <template> has a single root element. `);
-    }
-  }
   function kebabCase(subject) {
     return subject.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/[_\s]/, '-').toLowerCase();
-  }
-  function camelCase(subject) {
-    return subject.toLowerCase().replace(/-(\w)/g, (match, char) => char.toUpperCase());
   }
   function walk(el, callback) {
     if (callback(el) === false) return;
@@ -7228,119 +7215,44 @@ exports.Plugins = Plugins;
       timeout = setTimeout(later, wait);
     };
   }
+  function saferEval(expression, dataContext, additionalHelperVariables = {}) {
+    return new Function(['$data', ...Object.keys(additionalHelperVariables)], `var result; with($data) { result = ${expression} }; return result`)(dataContext, ...Object.values(additionalHelperVariables));
+  }
+  function saferEvalNoReturn(expression, dataContext, additionalHelperVariables = {}) {
+    // For the cases when users pass only a function reference to the caller: `x-on:click="foo"`
+    // Where "foo" is a function. Also, we'll pass the function the event instance when we call it.
+    if (Object.keys(dataContext).includes(expression)) {
+      let methodReference = new Function(['dataContext', ...Object.keys(additionalHelperVariables)], `with(dataContext) { return ${expression} }`)(dataContext, ...Object.values(additionalHelperVariables));
 
-  const handleError = (el, expression, error) => {
-    console.warn(`Alpine Error: "${error}"\n\nExpression: "${expression}"\nElement:`, el);
-
-    if (!isTesting()) {
-      Object.assign(error, {
-        el,
-        expression
-      });
-      throw error;
+      if (typeof methodReference === 'function') {
+        return methodReference.call(dataContext, additionalHelperVariables['$event']);
+      }
     }
-  };
 
-  function tryCatch(cb, {
-    el,
-    expression
-  }) {
-    try {
-      const value = cb();
-      return value instanceof Promise ? value.catch(e => handleError(el, expression, e)) : value;
-    } catch (e) {
-      handleError(el, expression, e);
-    }
+    return new Function(['dataContext', ...Object.keys(additionalHelperVariables)], `with(dataContext) { ${expression} }`)(dataContext, ...Object.values(additionalHelperVariables));
   }
-
-  function saferEval(el, expression, dataContext, additionalHelperVariables = {}) {
-    return tryCatch(() => {
-      if (typeof expression === 'function') {
-        return expression.call(dataContext);
-      }
-
-      return new Function(['$data', ...Object.keys(additionalHelperVariables)], `var __alpine_result; with($data) { __alpine_result = ${expression} }; return __alpine_result`)(dataContext, ...Object.values(additionalHelperVariables));
-    }, {
-      el,
-      expression
-    });
-  }
-  function saferEvalNoReturn(el, expression, dataContext, additionalHelperVariables = {}) {
-    return tryCatch(() => {
-      if (typeof expression === 'function') {
-        return Promise.resolve(expression.call(dataContext, additionalHelperVariables['$event']));
-      }
-
-      let AsyncFunction = Function;
-      /* MODERN-ONLY:START */
-
-      AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-      /* MODERN-ONLY:END */
-      // For the cases when users pass only a function reference to the caller: `x-on:click="foo"`
-      // Where "foo" is a function. Also, we'll pass the function the event instance when we call it.
-
-      if (Object.keys(dataContext).includes(expression)) {
-        let methodReference = new Function(['dataContext', ...Object.keys(additionalHelperVariables)], `with(dataContext) { return ${expression} }`)(dataContext, ...Object.values(additionalHelperVariables));
-
-        if (typeof methodReference === 'function') {
-          return Promise.resolve(methodReference.call(dataContext, additionalHelperVariables['$event']));
-        } else {
-          return Promise.resolve();
-        }
-      }
-
-      return Promise.resolve(new AsyncFunction(['dataContext', ...Object.keys(additionalHelperVariables)], `with(dataContext) { ${expression} }`)(dataContext, ...Object.values(additionalHelperVariables)));
-    }, {
-      el,
-      expression
-    });
-  }
-  const xAttrRE = /^x-(on|bind|data|text|html|model|if|for|show|cloak|transition|ref|spread)\b/;
+  const xAttrRE = /^x-(on|bind|data|text|html|model|if|for|show|cloak|transition|ref)\b/;
   function isXAttr(attr) {
     const name = replaceAtAndColonWithStandardSyntax(attr.name);
     return xAttrRE.test(name);
   }
-  function getXAttrs(el, component, type) {
-    let directives = Array.from(el.attributes).filter(isXAttr).map(parseHtmlAttribute); // Get an object of directives from x-spread.
-
-    let spreadDirective = directives.filter(directive => directive.type === 'spread')[0];
-
-    if (spreadDirective) {
-      let spreadObject = saferEval(el, spreadDirective.expression, component.$data); // Add x-spread directives to the pile of existing directives.
-
-      directives = directives.concat(Object.entries(spreadObject).map(([name, value]) => parseHtmlAttribute({
-        name,
-        value
-      })));
-    }
-
-    if (type) return directives.filter(i => i.type === type);
-    return sortDirectives(directives);
-  }
-
-  function sortDirectives(directives) {
-    let directiveOrder = ['bind', 'model', 'show', 'catch-all'];
-    return directives.sort((a, b) => {
-      let typeA = directiveOrder.indexOf(a.type) === -1 ? 'catch-all' : a.type;
-      let typeB = directiveOrder.indexOf(b.type) === -1 ? 'catch-all' : b.type;
-      return directiveOrder.indexOf(typeA) - directiveOrder.indexOf(typeB);
+  function getXAttrs(el, type) {
+    return Array.from(el.attributes).filter(isXAttr).map(attr => {
+      const name = replaceAtAndColonWithStandardSyntax(attr.name);
+      const typeMatch = name.match(xAttrRE);
+      const valueMatch = name.match(/:([a-zA-Z\-:]+)/);
+      const modifiers = name.match(/\.[^.\]]+(?=[^\]]*$)/g) || [];
+      return {
+        type: typeMatch ? typeMatch[1] : null,
+        value: valueMatch ? valueMatch[1] : null,
+        modifiers: modifiers.map(i => i.replace('.', '')),
+        expression: attr.value
+      };
+    }).filter(i => {
+      // If no type is passed in for filtering, bypass filter
+      if (!type) return true;
+      return i.type === type;
     });
-  }
-
-  function parseHtmlAttribute({
-    name,
-    value
-  }) {
-    const normalizedName = replaceAtAndColonWithStandardSyntax(name);
-    const typeMatch = normalizedName.match(xAttrRE);
-    const valueMatch = normalizedName.match(/:([a-zA-Z0-9\-:]+)/);
-    const modifiers = normalizedName.match(/\.[^.\]]+(?=[^\]]*$)/g) || [];
-    return {
-      type: typeMatch ? typeMatch[1] : null,
-      value: valueMatch ? valueMatch[1] : null,
-      modifiers: modifiers.map(i => i.replace('.', '')),
-      expression: value
-    };
   }
   function isBooleanAttr(attrName) {
     // As per HTML spec table https://html.spec.whatwg.org/multipage/indices.html#attributes-3:boolean-attribute
@@ -7357,24 +7269,11 @@ exports.Plugins = Plugins;
 
     return name;
   }
-  function convertClassStringToArray(classList, filterFn = Boolean) {
-    return classList.split(' ').filter(filterFn);
-  }
-  const TRANSITION_TYPE_IN = 'in';
-  const TRANSITION_TYPE_OUT = 'out';
-  const TRANSITION_CANCELLED = 'cancelled';
-  function transitionIn(el, show, reject, component, forceSkip = false) {
+  function transitionIn(el, show, forceSkip = false) {
     // We don't want to transition on the initial page load.
     if (forceSkip) return show();
-
-    if (el.__x_transition && el.__x_transition.type === TRANSITION_TYPE_IN) {
-      // there is already a similar transition going on, this was probably triggered by
-      // a change in a different property, let's just leave the previous one doing its job
-      return;
-    }
-
-    const attrs = getXAttrs(el, component, 'transition');
-    const showAttr = getXAttrs(el, component, 'show')[0]; // If this is triggered by a x-show.transition.
+    const attrs = getXAttrs(el, 'transition');
+    const showAttr = getXAttrs(el, 'show')[0]; // If this is triggered by a x-show.transition.
 
     if (showAttr && showAttr.modifiers.includes('transition')) {
       let modifiers = showAttr.modifiers; // If x-show.transition.out, we'll skip the "in" transition.
@@ -7383,40 +7282,32 @@ exports.Plugins = Plugins;
       const settingBothSidesOfTransition = modifiers.includes('in') && modifiers.includes('out'); // If x-show.transition.in...out... only use "in" related modifiers for this transition.
 
       modifiers = settingBothSidesOfTransition ? modifiers.filter((i, index) => index < modifiers.indexOf('out')) : modifiers;
-      transitionHelperIn(el, modifiers, show, reject); // Otherwise, we can assume x-transition:enter.
-    } else if (attrs.some(attr => ['enter', 'enter-start', 'enter-end'].includes(attr.value))) {
-      transitionClassesIn(el, component, attrs, show, reject);
+      transitionHelperIn(el, modifiers, show); // Otherwise, we can assume x-transition:enter.
+    } else if (attrs.filter(attr => ['enter', 'enter-start', 'enter-end'].includes(attr.value)).length > 0) {
+      transitionClassesIn(el, attrs, show);
     } else {
       // If neither, just show that damn thing.
       show();
     }
   }
-  function transitionOut(el, hide, reject, component, forceSkip = false) {
-    // We don't want to transition on the initial page load.
+  function transitionOut(el, hide, forceSkip = false) {
     if (forceSkip) return hide();
-
-    if (el.__x_transition && el.__x_transition.type === TRANSITION_TYPE_OUT) {
-      // there is already a similar transition going on, this was probably triggered by
-      // a change in a different property, let's just leave the previous one doing its job
-      return;
-    }
-
-    const attrs = getXAttrs(el, component, 'transition');
-    const showAttr = getXAttrs(el, component, 'show')[0];
+    const attrs = getXAttrs(el, 'transition');
+    const showAttr = getXAttrs(el, 'show')[0];
 
     if (showAttr && showAttr.modifiers.includes('transition')) {
       let modifiers = showAttr.modifiers;
       if (modifiers.includes('in') && !modifiers.includes('out')) return hide();
       const settingBothSidesOfTransition = modifiers.includes('in') && modifiers.includes('out');
       modifiers = settingBothSidesOfTransition ? modifiers.filter((i, index) => index > modifiers.indexOf('out')) : modifiers;
-      transitionHelperOut(el, modifiers, settingBothSidesOfTransition, hide, reject);
-    } else if (attrs.some(attr => ['leave', 'leave-start', 'leave-end'].includes(attr.value))) {
-      transitionClassesOut(el, component, attrs, hide, reject);
+      transitionHelperOut(el, modifiers, settingBothSidesOfTransition, hide);
+    } else if (attrs.filter(attr => ['leave', 'leave-start', 'leave-end'].includes(attr.value)).length > 0) {
+      transitionClassesOut(el, attrs, hide);
     } else {
       hide();
     }
   }
-  function transitionHelperIn(el, modifiers, showCallback, reject) {
+  function transitionHelperIn(el, modifiers, showCallback) {
     // Default values inspired by: https://material.io/design/motion/speed.html#duration
     const styleValues = {
       duration: modifierValue(modifiers, 'duration', 150),
@@ -7430,9 +7321,9 @@ exports.Plugins = Plugins;
         scale: 100
       }
     };
-    transitionHelper(el, modifiers, showCallback, () => {}, reject, styleValues, TRANSITION_TYPE_IN);
+    transitionHelper(el, modifiers, showCallback, () => {}, styleValues);
   }
-  function transitionHelperOut(el, modifiers, settingBothSidesOfTransition, hideCallback, reject) {
+  function transitionHelperOut(el, modifiers, settingBothSidesOfTransition, hideCallback) {
     // Make the "out" transition .5x slower than the "in". (Visually better)
     // HOWEVER, if they explicitly set a duration for the "out" transition,
     // use that.
@@ -7449,7 +7340,7 @@ exports.Plugins = Plugins;
         scale: modifierValue(modifiers, 'scale', 95)
       }
     };
-    transitionHelper(el, modifiers, () => {}, hideCallback, reject, styleValues, TRANSITION_TYPE_OUT);
+    transitionHelper(el, modifiers, () => {}, hideCallback, styleValues);
   }
 
   function modifierValue(modifiers, key, fallback) {
@@ -7482,13 +7373,8 @@ exports.Plugins = Plugins;
     return rawValue;
   }
 
-  function transitionHelper(el, modifiers, hook1, hook2, reject, styleValues, type) {
-    // clear the previous transition if exists to avoid caching the wrong styles
-    if (el.__x_transition) {
-      el.__x_transition.cancel && el.__x_transition.cancel();
-    } // If the user set these style values, we'll put them back when we're done with them.
-
-
+  function transitionHelper(el, modifiers, hook1, hook2, styleValues) {
+    // If the user set these style values, we'll put them back when we're done with them.
     const opacityCache = el.style.opacity;
     const transformCache = el.style.transform;
     const transformOriginCache = el.style.transformOrigin; // If no modifiers are present: x-show.transition, we'll default to both opacity and scale.
@@ -7535,43 +7421,33 @@ exports.Plugins = Plugins;
       }
 
     };
-    transition(el, stages, type, reject);
+    transition(el, stages);
   }
-
-  const ensureStringExpression = (expression, el, component) => {
-    return typeof expression === 'function' ? component.evaluateReturnExpression(el, expression) : expression;
-  };
-
-  function transitionClassesIn(el, component, directives, showCallback, reject) {
-    const enter = convertClassStringToArray(ensureStringExpression((directives.find(i => i.value === 'enter') || {
+  function transitionClassesIn(el, directives, showCallback) {
+    const enter = (directives.find(i => i.value === 'enter') || {
       expression: ''
-    }).expression, el, component));
-    const enterStart = convertClassStringToArray(ensureStringExpression((directives.find(i => i.value === 'enter-start') || {
+    }).expression.split(' ').filter(i => i !== '');
+    const enterStart = (directives.find(i => i.value === 'enter-start') || {
       expression: ''
-    }).expression, el, component));
-    const enterEnd = convertClassStringToArray(ensureStringExpression((directives.find(i => i.value === 'enter-end') || {
+    }).expression.split(' ').filter(i => i !== '');
+    const enterEnd = (directives.find(i => i.value === 'enter-end') || {
       expression: ''
-    }).expression, el, component));
-    transitionClasses(el, enter, enterStart, enterEnd, showCallback, () => {}, TRANSITION_TYPE_IN, reject);
+    }).expression.split(' ').filter(i => i !== '');
+    transitionClasses(el, enter, enterStart, enterEnd, showCallback, () => {});
   }
-  function transitionClassesOut(el, component, directives, hideCallback, reject) {
-    const leave = convertClassStringToArray(ensureStringExpression((directives.find(i => i.value === 'leave') || {
+  function transitionClassesOut(el, directives, hideCallback) {
+    const leave = (directives.find(i => i.value === 'leave') || {
       expression: ''
-    }).expression, el, component));
-    const leaveStart = convertClassStringToArray(ensureStringExpression((directives.find(i => i.value === 'leave-start') || {
+    }).expression.split(' ').filter(i => i !== '');
+    const leaveStart = (directives.find(i => i.value === 'leave-start') || {
       expression: ''
-    }).expression, el, component));
-    const leaveEnd = convertClassStringToArray(ensureStringExpression((directives.find(i => i.value === 'leave-end') || {
+    }).expression.split(' ').filter(i => i !== '');
+    const leaveEnd = (directives.find(i => i.value === 'leave-end') || {
       expression: ''
-    }).expression, el, component));
-    transitionClasses(el, leave, leaveStart, leaveEnd, () => {}, hideCallback, TRANSITION_TYPE_OUT, reject);
+    }).expression.split(' ').filter(i => i !== '');
+    transitionClasses(el, leave, leaveStart, leaveEnd, () => {}, hideCallback);
   }
-  function transitionClasses(el, classesDuring, classesStart, classesEnd, hook1, hook2, type, reject) {
-    // clear the previous transition if exists to avoid caching the wrong classes
-    if (el.__x_transition) {
-      el.__x_transition.cancel && el.__x_transition.cancel();
-    }
-
+  function transitionClasses(el, classesDuring, classesStart, classesEnd, hook1, hook2) {
     const originalClasses = el.__x_original_classes || [];
     const stages = {
       start() {
@@ -7602,69 +7478,36 @@ exports.Plugins = Plugins;
       }
 
     };
-    transition(el, stages, type, reject);
+    transition(el, stages);
   }
-  function transition(el, stages, type, reject) {
-    const finish = once(() => {
-      stages.hide(); // Adding an "isConnected" check, in case the callback
-      // removed the element from the DOM.
-
-      if (el.isConnected) {
-        stages.cleanup();
-      }
-
-      delete el.__x_transition;
-    });
-    el.__x_transition = {
-      // Set transition type so we can avoid clearing transition if the direction is the same
-      type: type,
-      // create a callback for the last stages of the transition so we can call it
-      // from different point and early terminate it. Once will ensure that function
-      // is only called one time.
-      cancel: once(() => {
-        reject(TRANSITION_CANCELLED);
-        finish();
-      }),
-      finish,
-      // This store the next animation frame so we can cancel it
-      nextFrame: null
-    };
+  function transition(el, stages) {
     stages.start();
     stages.during();
-    el.__x_transition.nextFrame = requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
       // Note: Safari's transitionDuration property will list out comma separated transition durations
       // for every single transition property. Let's grab the first one and call it a day.
       let duration = Number(getComputedStyle(el).transitionDuration.replace(/,.*/, '').replace('s', '')) * 1000;
-
-      if (duration === 0) {
-        duration = Number(getComputedStyle(el).animationDuration.replace('s', '')) * 1000;
-      }
-
       stages.show();
-      el.__x_transition.nextFrame = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
         stages.end();
-        setTimeout(el.__x_transition.finish, duration);
+        setTimeout(() => {
+          stages.hide(); // Adding an "isConnected" check, in case the callback
+          // removed the element from the DOM.
+
+          if (el.isConnected) {
+            stages.cleanup();
+          }
+        }, duration);
       });
     });
   }
   function isNumeric(subject) {
-    return !Array.isArray(subject) && !isNaN(subject);
-  } // Thanks @vuejs
-  // https://github.com/vuejs/vue/blob/4de4649d9637262a9b007720b59f80ac72a5620c/src/shared/util.js
-
-  function once(callback) {
-    let called = false;
-    return function () {
-      if (!called) {
-        called = true;
-        callback.apply(this, arguments);
-      }
-    };
+    return !isNaN(subject);
   }
 
   function handleForDirective(component, templateEl, expression, initialUpdate, extraVars) {
-    warnIfMalformedTemplate(templateEl, 'x-for');
-    let iteratorNames = typeof expression === 'function' ? parseForExpression(component.evaluateReturnExpression(templateEl, expression)) : parseForExpression(expression);
+    warnIfNotTemplateTag(templateEl);
+    let iteratorNames = parseForExpression(expression);
     let items = evaluateItemsAndReturnEmptyIfXIfIsPresentAndFalseOnElement(component, templateEl, iteratorNames, extraVars); // As we walk the array, we'll also walk the DOM (updating/creating as we go).
 
     let currentEl = templateEl;
@@ -7676,7 +7519,7 @@ exports.Plugins = Plugins;
       if (!nextEl) {
         nextEl = addElementInLoopAfterCurrentEl(templateEl, currentEl); // And transition it in if it's not the first page load.
 
-        transitionIn(nextEl, () => {}, () => {}, component, initialUpdate);
+        transitionIn(nextEl, () => {}, initialUpdate);
         nextEl.__x_for = iterationScopeVariables;
         component.initializeElements(nextEl, () => nextEl.__x_for); // Otherwise update the element we found.
       } else {
@@ -7689,14 +7532,14 @@ exports.Plugins = Plugins;
       currentEl = nextEl;
       currentEl.__x_for_key = currentKey;
     });
-    removeAnyLeftOverElementsFromPreviousUpdate(currentEl, component);
+    removeAnyLeftOverElementsFromPreviousUpdate(currentEl);
   } // This was taken from VueJS 2.* core. Thanks Vue!
 
   function parseForExpression(expression) {
     let forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
     let stripParensRE = /^\(|\)$/g;
     let forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
-    let inMatch = String(expression).match(forAliasRE);
+    let inMatch = expression.match(forAliasRE);
     if (!inMatch) return;
     let res = {};
     res.items = inMatch[2].trim();
@@ -7727,38 +7570,35 @@ exports.Plugins = Plugins;
   }
 
   function generateKeyForIteration(component, el, index, iterationScopeVariables) {
-    let bindKeyAttribute = getXAttrs(el, component, 'bind').filter(attr => attr.value === 'key')[0]; // If the dev hasn't specified a key, just return the index of the iteration.
+    let bindKeyAttribute = getXAttrs(el, 'bind').filter(attr => attr.value === 'key')[0]; // If the dev hasn't specified a key, just return the index of the iteration.
 
     if (!bindKeyAttribute) return index;
     return component.evaluateReturnExpression(el, bindKeyAttribute.expression, () => iterationScopeVariables);
   }
 
+  function warnIfNotTemplateTag(el) {
+    if (el.tagName.toLowerCase() !== 'template') console.warn('Alpine: [x-for] directive should only be added to <template> tags.');
+  }
+
   function evaluateItemsAndReturnEmptyIfXIfIsPresentAndFalseOnElement(component, el, iteratorNames, extraVars) {
-    let ifAttribute = getXAttrs(el, component, 'if')[0];
+    let ifAttribute = getXAttrs(el, 'if')[0];
 
     if (ifAttribute && !component.evaluateReturnExpression(el, ifAttribute.expression)) {
       return [];
     }
 
-    let items = component.evaluateReturnExpression(el, iteratorNames.items, extraVars); // This adds support for the `i in n` syntax.
-
-    if (isNumeric(items) && items >= 0) {
-      items = Array.from(Array(items).keys(), i => i + 1);
-    }
-
-    return items;
+    return component.evaluateReturnExpression(el, iteratorNames.items, extraVars);
   }
 
   function addElementInLoopAfterCurrentEl(templateEl, currentEl) {
     let clone = document.importNode(templateEl.content, true);
+    if (clone.childElementCount !== 1) console.warn('Alpine: <template> tag with [x-for] encountered with multiple element roots. Make sure <template> only has a single child node.');
     currentEl.parentElement.insertBefore(clone, currentEl.nextElementSibling);
     return currentEl.nextElementSibling;
   }
 
   function lookAheadForMatchingKeyedElementAndMoveItIfFound(nextEl, currentKey) {
-    if (!nextEl) return; // If we are already past the x-for generated elements, we don't need to look ahead.
-
-    if (nextEl.__x_for_key === undefined) return; // If the the key's DO match, no need to look ahead.
+    if (!nextEl) return; // If the the key's DO match, no need to look ahead.
 
     if (nextEl.__x_for_key === currentKey) return nextEl; // If they don't, we'll look ahead for a match.
     // If we find it, we'll move it to the current position in the loop.
@@ -7774,7 +7614,7 @@ exports.Plugins = Plugins;
     }
   }
 
-  function removeAnyLeftOverElementsFromPreviousUpdate(currentEl, component) {
+  function removeAnyLeftOverElementsFromPreviousUpdate(currentEl) {
     var nextElementFromOldLoop = currentEl.nextElementSibling && currentEl.nextElementSibling.__x_for_key !== undefined ? currentEl.nextElementSibling : false;
 
     while (nextElementFromOldLoop) {
@@ -7782,18 +7622,17 @@ exports.Plugins = Plugins;
       let nextSibling = nextElementFromOldLoop.nextElementSibling;
       transitionOut(nextElementFromOldLoop, () => {
         nextElementFromOldLoopImmutable.remove();
-      }, () => {}, component);
+      });
       nextElementFromOldLoop = nextSibling && nextSibling.__x_for_key !== undefined ? nextSibling : false;
     }
   }
 
-  function handleAttributeBindingDirective(component, el, attrName, expression, extraVars, attrType, modifiers) {
+  function handleAttributeBindingDirective(component, el, attrName, expression, extraVars, attrType) {
     var value = component.evaluateReturnExpression(el, expression, extraVars);
 
     if (attrName === 'value') {
-      if (Alpine.ignoreFocusedForValueBinding && document.activeElement.isSameNode(el)) return; // If nested model key is undefined, set the default value to empty string.
-
-      if (value === undefined && String(expression).match(/\./)) {
+      // If nested model key is undefined, set the default value to empty string.
+      if (value === undefined && expression.match(/\./).length) {
         value = '';
       }
 
@@ -7804,23 +7643,29 @@ exports.Plugins = Plugins;
         if (el.attributes.value === undefined && attrType === 'bind') {
           el.value = value;
         } else if (attrType !== 'bind') {
-          el.checked = checkedAttrLooseCompare(el.value, value);
+          el.checked = el.value == value;
         }
       } else if (el.type === 'checkbox') {
-        // If we are explicitly binding a string to the :value, set the string,
+        if (Array.isArray(value)) {
+          // I'm purposely not using Array.includes here because it's
+          // strict, and because of Numeric/String mis-casting, I
+          // want the "includes" to be "fuzzy".
+          let valueFound = false;
+          value.forEach(val => {
+            if (val == el.value) {
+              valueFound = true;
+            }
+          });
+          el.checked = valueFound;
+        } else {
+          el.checked = !!value;
+        } // If we are explicitly binding a string to the :value, set the string,
         // If the value is a boolean, leave it alone, it will be set to "on"
         // automatically.
-        if (typeof value !== 'boolean' && ![null, undefined].includes(value) && attrType === 'bind') {
-          el.value = String(value);
-        } else if (attrType !== 'bind') {
-          if (Array.isArray(value)) {
-            // I'm purposely not using Array.includes here because it's
-            // strict, and because of Numeric/String mis-casting, I
-            // want the "includes" to be "fuzzy".
-            el.checked = value.some(val => checkedAttrLooseCompare(val, el.value));
-          } else {
-            el.checked = !!value;
-          }
+
+
+        if (typeof value === 'string') {
+          el.value = value;
         }
       } else if (el.tagName === 'SELECT') {
         updateSelect(el, value);
@@ -7838,30 +7683,23 @@ exports.Plugins = Plugins;
         const keysSortedByBooleanValue = Object.keys(value).sort((a, b) => value[a] - value[b]);
         keysSortedByBooleanValue.forEach(classNames => {
           if (value[classNames]) {
-            convertClassStringToArray(classNames).forEach(className => el.classList.add(className));
+            classNames.split(' ').filter(Boolean).forEach(className => el.classList.add(className));
           } else {
-            convertClassStringToArray(classNames).forEach(className => el.classList.remove(className));
+            classNames.split(' ').filter(Boolean).forEach(className => el.classList.remove(className));
           }
         });
       } else {
         const originalClasses = el.__x_original_classes || [];
-        const newClasses = value ? convertClassStringToArray(value) : [];
+        const newClasses = value.split(' ').filter(Boolean);
         el.setAttribute('class', arrayUnique(originalClasses.concat(newClasses)).join(' '));
       }
     } else {
-      attrName = modifiers.includes('camel') ? camelCase(attrName) : attrName; // If an attribute's bound value is null, undefined or false, remove the attribute
-
+      // If an attribute's bound value is null, undefined or false, remove the attribute
       if ([null, undefined, false].includes(value)) {
         el.removeAttribute(attrName);
       } else {
-        isBooleanAttr(attrName) ? setIfChanged(el, attrName, attrName) : setIfChanged(el, attrName, value);
+        isBooleanAttr(attrName) ? el.setAttribute(attrName, attrName) : el.setAttribute(attrName, value);
       }
-    }
-  }
-
-  function setIfChanged(el, attrName, value) {
-    if (el.getAttribute(attrName) != value) {
-      el.setAttribute(attrName, value);
     }
   }
 
@@ -7876,11 +7714,11 @@ exports.Plugins = Plugins;
 
   function handleTextDirective(el, output, expression) {
     // If nested model key is undefined, set the default value to empty string.
-    if (output === undefined && String(expression).match(/\./)) {
+    if (output === undefined && expression.match(/\./).length) {
       output = '';
     }
 
-    el.textContent = output;
+    el.innerText = output;
   }
 
   function handleHtmlDirective(component, el, expression, extraVars) {
@@ -7890,7 +7728,6 @@ exports.Plugins = Plugins;
   function handleShowDirective(component, el, value, modifiers, initialUpdate = false) {
     const hide = () => {
       el.style.display = 'none';
-      el.__x_is_shown = false;
     };
 
     const show = () => {
@@ -7899,8 +7736,6 @@ exports.Plugins = Plugins;
       } else {
         el.style.removeProperty('display');
       }
-
-      el.__x_is_shown = true;
     };
 
     if (initialUpdate === true) {
@@ -7913,25 +7748,26 @@ exports.Plugins = Plugins;
       return;
     }
 
-    const handle = (resolve, reject) => {
-      if (value) {
-        if (el.style.display === 'none' || el.__x_transition) {
-          transitionIn(el, () => {
-            show();
-          }, reject, component);
-        }
-
-        resolve(() => {});
-      } else {
+    const handle = resolve => {
+      if (!value) {
         if (el.style.display !== 'none') {
           transitionOut(el, () => {
             resolve(() => {
               hide();
             });
-          }, reject, component);
+          });
         } else {
           resolve(() => {});
         }
+      } else {
+        if (el.style.display !== '') {
+          transitionIn(el, () => {
+            show();
+          });
+        } // Resolve immediately, only hold up parent `x-show`s for hidin.
+
+
+        resolve(() => {});
       }
     }; // The working of x-show is a bit complex because we need to
     // wait for any child transitions to finish before hiding
@@ -7940,7 +7776,7 @@ exports.Plugins = Plugins;
 
 
     if (modifiers.includes('immediate')) {
-      handle(finish => finish(), () => {});
+      handle(finish => finish());
       return;
     } // x-show is encountered during a DOM tree walk. If an element
     // we encounter is NOT a child of another x-show element we
@@ -7949,45 +7785,34 @@ exports.Plugins = Plugins;
 
     if (component.showDirectiveLastElement && !component.showDirectiveLastElement.contains(el)) {
       component.executeAndClearRemainingShowDirectiveStack();
-    }
+    } // We'll push the handler onto a stack to be handled later.
+
 
     component.showDirectiveStack.push(handle);
     component.showDirectiveLastElement = el;
   }
 
   function handleIfDirective(component, el, expressionResult, initialUpdate, extraVars) {
-    warnIfMalformedTemplate(el, 'x-if');
+    if (el.nodeName.toLowerCase() !== 'template') console.warn(`Alpine: [x-if] directive should only be added to <template> tags. See https://github.com/alpinejs/alpine#x-if`);
     const elementHasAlreadyBeenAdded = el.nextElementSibling && el.nextElementSibling.__x_inserted_me === true;
 
-    if (expressionResult && (!elementHasAlreadyBeenAdded || el.__x_transition)) {
+    if (expressionResult && !elementHasAlreadyBeenAdded) {
       const clone = document.importNode(el.content, true);
       el.parentElement.insertBefore(clone, el.nextElementSibling);
-      transitionIn(el.nextElementSibling, () => {}, () => {}, component, initialUpdate);
+      transitionIn(el.nextElementSibling, () => {}, initialUpdate);
       component.initializeElements(el.nextElementSibling, extraVars);
       el.nextElementSibling.__x_inserted_me = true;
     } else if (!expressionResult && elementHasAlreadyBeenAdded) {
       transitionOut(el.nextElementSibling, () => {
         el.nextElementSibling.remove();
-      }, () => {}, component, initialUpdate);
+      }, initialUpdate);
     }
   }
 
   function registerListener(component, el, event, modifiers, expression, extraVars = {}) {
-    const options = {
-      passive: modifiers.includes('passive')
-    };
-
-    if (modifiers.includes('camel')) {
-      event = camelCase(event);
-    }
-
-    let handler, listenerTarget;
-
     if (modifiers.includes('away')) {
-      listenerTarget = document;
-
-      handler = e => {
-        // Don't do anything if the click came from the element or within it.
+      let handler = e => {
+        // Don't do anything if the click came form the element or within it.
         if (el.contains(e.target)) return; // Don't do anything if this element isn't currently visible.
 
         if (el.offsetWidth < 1 && el.offsetHeight < 1) return; // Now that we are sure the element is visible, AND the click
@@ -7996,18 +7821,21 @@ exports.Plugins = Plugins;
         runListenerHandler(component, expression, e, extraVars);
 
         if (modifiers.includes('once')) {
-          document.removeEventListener(event, handler, options);
+          document.removeEventListener(event, handler);
         }
-      };
-    } else {
-      listenerTarget = modifiers.includes('window') ? window : modifiers.includes('document') ? document : el;
+      }; // Listen for this event at the root level.
 
-      handler = e => {
+
+      document.addEventListener(event, handler);
+    } else {
+      let listenerTarget = modifiers.includes('window') ? window : modifiers.includes('document') ? document : el;
+
+      let handler = e => {
         // Remove this global event handler if the element that declared it
         // has been removed. It's now stale.
         if (listenerTarget === window || listenerTarget === document) {
           if (!document.body.contains(el)) {
-            listenerTarget.removeEventListener(event, handler, options);
+            listenerTarget.removeEventListener(event, handler);
             return;
           }
         }
@@ -8025,31 +7853,30 @@ exports.Plugins = Plugins;
 
         if (!modifiers.includes('self') || e.target === el) {
           const returnValue = runListenerHandler(component, expression, e, extraVars);
-          returnValue.then(value => {
-            if (value === false) {
-              e.preventDefault();
-            } else {
-              if (modifiers.includes('once')) {
-                listenerTarget.removeEventListener(event, handler, options);
-              }
+
+          if (returnValue === false) {
+            e.preventDefault();
+          } else {
+            if (modifiers.includes('once')) {
+              listenerTarget.removeEventListener(event, handler);
             }
-          });
+          }
         }
       };
-    }
 
-    if (modifiers.includes('debounce')) {
-      let nextModifier = modifiers[modifiers.indexOf('debounce') + 1] || 'invalid-wait';
-      let wait = isNumeric(nextModifier.split('ms')[0]) ? Number(nextModifier.split('ms')[0]) : 250;
-      handler = debounce(handler, wait);
-    }
+      if (modifiers.includes('debounce')) {
+        let nextModifier = modifiers[modifiers.indexOf('debounce') + 1] || 'invalid-wait';
+        let wait = isNumeric(nextModifier.split('ms')[0]) ? Number(nextModifier.split('ms')[0]) : 250;
+        handler = debounce(handler, wait);
+      }
 
-    listenerTarget.addEventListener(event, handler, options);
+      listenerTarget.addEventListener(event, handler);
+    }
   }
 
   function runListenerHandler(component, expression, e, extraVars) {
     return component.evaluateCommandExpression(e.target, expression, () => {
-      return _objectSpread2(_objectSpread2({}, extraVars()), {}, {
+      return _objectSpread2({}, extraVars(), {
         '$event': e
       });
     });
@@ -8115,7 +7942,7 @@ exports.Plugins = Plugins;
     var event = el.tagName.toLowerCase() === 'select' || ['checkbox', 'radio'].includes(el.type) || modifiers.includes('lazy') ? 'change' : 'input';
     const listenerExpression = `${expression} = rightSideOfExpression($event, ${expression})`;
     registerListener(component, el, event, modifiers, listenerExpression, () => {
-      return _objectSpread2(_objectSpread2({}, extraVars()), {}, {
+      return _objectSpread2({}, extraVars(), {
         rightSideOfExpression: generateModelAssignmentFunction(el, modifiers, expression)
       });
     });
@@ -8134,30 +7961,26 @@ exports.Plugins = Plugins;
       if (event instanceof CustomEvent && event.detail) {
         return event.detail;
       } else if (el.type === 'checkbox') {
-        // If the data we are binding to is an array, toggle its value inside the array.
+        // If the data we are binding to is an array, toggle it's value inside the array.
         if (Array.isArray(currentValue)) {
-          const newValue = modifiers.includes('number') ? safeParseNumber(event.target.value) : event.target.value;
-          return event.target.checked ? currentValue.concat([newValue]) : currentValue.filter(el => !checkedAttrLooseCompare(el, newValue));
+          return event.target.checked ? currentValue.concat([event.target.value]) : currentValue.filter(i => i !== event.target.value);
         } else {
           return event.target.checked;
         }
       } else if (el.tagName.toLowerCase() === 'select' && el.multiple) {
         return modifiers.includes('number') ? Array.from(event.target.selectedOptions).map(option => {
           const rawValue = option.value || option.text;
-          return safeParseNumber(rawValue);
+          const number = rawValue ? parseFloat(rawValue) : null;
+          return isNaN(number) ? rawValue : number;
         }) : Array.from(event.target.selectedOptions).map(option => {
           return option.value || option.text;
         });
       } else {
         const rawValue = event.target.value;
-        return modifiers.includes('number') ? safeParseNumber(rawValue) : modifiers.includes('trim') ? rawValue.trim() : rawValue;
+        const number = rawValue ? parseFloat(rawValue) : null;
+        return modifiers.includes('number') ? isNaN(number) ? rawValue : number : modifiers.includes('trim') ? rawValue.trim() : rawValue;
       }
     };
-  }
-
-  function safeParseNumber(rawValue) {
-    const number = rawValue ? parseFloat(rawValue) : null;
-    return isNumeric(number) ? number : rawValue;
   }
 
   /**
@@ -8560,23 +8383,12 @@ exports.Plugins = Plugins;
   }
 
   class Component {
-    constructor(el, componentForClone = null) {
+    constructor(el, seedDataForCloning = null) {
       this.$el = el;
       const dataAttr = this.$el.getAttribute('x-data');
       const dataExpression = dataAttr === '' ? '{}' : dataAttr;
       const initExpression = this.$el.getAttribute('x-init');
-      let dataExtras = {
-        $el: this.$el
-      };
-      let canonicalComponentElementReference = componentForClone ? componentForClone.$el : this.$el;
-      Object.entries(Alpine.magicProperties).forEach(([name, callback]) => {
-        Object.defineProperty(dataExtras, `$${name}`, {
-          get: function get() {
-            return callback(canonicalComponentElementReference);
-          }
-        });
-      });
-      this.unobservedData = componentForClone ? componentForClone.getUnobservedData() : saferEval(el, dataExpression, dataExtras);
+      this.unobservedData = seedDataForCloning ? seedDataForCloning : saferEval(dataExpression, {});
       // Construct a Proxy-based observable. This will be used to handle reactivity.
 
       let {
@@ -8601,38 +8413,21 @@ exports.Plugins = Plugins;
         if (!this.watchers[property]) this.watchers[property] = [];
         this.watchers[property].push(callback);
       };
-      /* MODERN-ONLY:START */
-      // We remove this piece of code from the legacy build.
-      // In IE11, we have already defined our helpers at this point.
-      // Register custom magic properties.
-
-
-      Object.entries(Alpine.magicProperties).forEach(([name, callback]) => {
-        Object.defineProperty(this.unobservedData, `$${name}`, {
-          get: function get() {
-            return callback(canonicalComponentElementReference, this.$el);
-          }
-        });
-      });
-      /* MODERN-ONLY:END */
 
       this.showDirectiveStack = [];
       this.showDirectiveLastElement;
-      componentForClone || Alpine.onBeforeComponentInitializeds.forEach(callback => callback(this));
       var initReturnedCallback; // If x-init is present AND we aren't cloning (skip x-init on clone)
 
-      if (initExpression && !componentForClone) {
+      if (initExpression && !seedDataForCloning) {
         // We want to allow data manipulation, but not trigger DOM updates just yet.
         // We haven't even initialized the elements with their Alpine bindings. I mean c'mon.
         this.pauseReactivity = true;
         initReturnedCallback = this.evaluateReturnExpression(this.$el, initExpression);
         this.pauseReactivity = false;
       } // Register all our listeners and set all our attribute bindings.
-      // If we're cloning a component, the third parameter ensures no duplicate
-      // event listeners are registered (the mutation observer will take care of them)
 
 
-      this.initializeElements(this.$el, () => {}, componentForClone); // Use mutation observer to detect new elements being added within this component at run-time.
+      this.initializeElements(this.$el); // Use mutation observer to detect new elements being added within this component at run-time.
       // Alpine's just so darn flexible amirite?
 
       this.listenForNewElementsToInitialize();
@@ -8642,10 +8437,6 @@ exports.Plugins = Plugins;
         // Alpine's got it's grubby little paws all over everything.
         initReturnedCallback.call(this.$data);
       }
-
-      componentForClone || setTimeout(() => {
-        Alpine.onComponentInitializeds.forEach(callback => callback(this));
-      }, 0);
     }
 
     getUnobservedData() {
@@ -8661,22 +8452,6 @@ exports.Plugins = Plugins;
         if (self.watchers[key]) {
           // If there's a watcher for this specific key, run it.
           self.watchers[key].forEach(callback => callback(target[key]));
-        } else if (Array.isArray(target)) {
-          // Arrays are special cases, if any of the items change, we consider the array as mutated.
-          Object.keys(self.watchers).forEach(fullDotNotationKey => {
-            let dotNotationParts = fullDotNotationKey.split('.'); // Ignore length mutations since they would result in duplicate calls.
-            // For example, when calling push, we would get a mutation for the item's key
-            // and a second mutation for the length property.
-
-            if (key === 'length') return;
-            dotNotationParts.reduce((comparisonData, part) => {
-              if (Object.is(target, comparisonData[part])) {
-                self.watchers[fullDotNotationKey].forEach(callback => callback(target));
-              }
-
-              return comparisonData[part];
-            }, self.unobservedData);
-          });
         } else {
           // Let's walk through the watchers with "dot-notation" (foo.bar) and see
           // if this mutation fits any of them.
@@ -8694,7 +8469,7 @@ exports.Plugins = Plugins;
               }
 
               return comparisonData[part];
-            }, self.unobservedData);
+            }, self.getUnobservedData());
           });
         } // Don't react to data changes for cases like the `x-created` hook.
 
@@ -8721,28 +8496,28 @@ exports.Plugins = Plugins;
       });
     }
 
-    initializeElements(rootEl, extraVars = () => {}, componentForClone = false) {
+    initializeElements(rootEl, extraVars = () => {}) {
       this.walkAndSkipNestedComponents(rootEl, el => {
         // Don't touch spawns from for loop
         if (el.__x_for_key !== undefined) return false; // Don't touch spawns from if directives
 
         if (el.__x_inserted_me !== undefined) return false;
-        this.initializeElement(el, extraVars, componentForClone ? false : true);
+        this.initializeElement(el, extraVars);
       }, el => {
-        if (!componentForClone) el.__x = new Component(el);
+        el.__x = new Component(el);
       });
       this.executeAndClearRemainingShowDirectiveStack();
       this.executeAndClearNextTickStack(rootEl);
     }
 
-    initializeElement(el, extraVars, shouldRegisterListeners = true) {
+    initializeElement(el, extraVars) {
       // To support class attribute merging, we have to know what the element's
       // original class attribute looked like for reference.
-      if (el.hasAttribute('class') && getXAttrs(el, this).length > 0) {
-        el.__x_original_classes = convertClassStringToArray(el.getAttribute('class'));
+      if (el.hasAttribute('class') && getXAttrs(el).length > 0) {
+        el.__x_original_classes = el.getAttribute('class').split(' ');
       }
 
-      shouldRegisterListeners && this.registerListeners(el, extraVars);
+      this.registerListeners(el, extraVars);
       this.resolveBoundAttributes(el, true, extraVars);
     }
 
@@ -8760,14 +8535,11 @@ exports.Plugins = Plugins;
 
     executeAndClearNextTickStack(el) {
       // Skip spawns from alpine directives
-      if (el === this.$el && this.nextTickStack.length > 0) {
-        // We run the tick stack after the next frame to allow any
-        // running transitions to pass the initial show stage.
-        requestAnimationFrame(() => {
-          while (this.nextTickStack.length > 0) {
-            this.nextTickStack.shift()();
-          }
-        });
+      if (el === this.$el) {
+        // Walk through the $nextTick stack and clear it as we go.
+        while (this.nextTickStack.length > 0) {
+          this.nextTickStack.shift()();
+        }
       }
     }
 
@@ -8775,19 +8547,17 @@ exports.Plugins = Plugins;
       // The goal here is to start all the x-show transitions
       // and build a nested promise chain so that elements
       // only hide when the children are finished hiding.
-      this.showDirectiveStack.reverse().map(handler => {
-        return new Promise((resolve, reject) => {
-          handler(resolve, reject);
-        });
-      }).reduce((promiseChain, promise) => {
-        return promiseChain.then(() => {
-          return promise.then(finishElement => {
-            finishElement();
+      this.showDirectiveStack.reverse().map(thing => {
+        return new Promise(resolve => {
+          thing(finish => {
+            resolve(finish);
           });
         });
-      }, Promise.resolve(() => {})).catch(e => {
-        if (e !== TRANSITION_CANCELLED) throw e;
-      }); // We've processed the handler stack. let's clear it.
+      }).reduce((nestedPromise, promise) => {
+        return nestedPromise.then(() => {
+          return promise.then(finish => finish());
+        });
+      }, Promise.resolve(() => {})); // We've processed the handler stack. let's clear it.
 
       this.showDirectiveStack = [];
       this.showDirectiveLastElement = undefined;
@@ -8798,7 +8568,7 @@ exports.Plugins = Plugins;
     }
 
     registerListeners(el, extraVars) {
-      getXAttrs(el, this).forEach(({
+      getXAttrs(el).forEach(({
         type,
         value,
         modifiers,
@@ -8817,7 +8587,18 @@ exports.Plugins = Plugins;
     }
 
     resolveBoundAttributes(el, initialUpdate = false, extraVars) {
-      let attrs = getXAttrs(el, this);
+      let attrs = getXAttrs(el);
+
+      if (el.type !== undefined && el.type === 'radio') {
+        // If there's an x-model on a radio input, move it to end of attribute list
+        // to ensure that x-bind:value (if present) is processed first.
+        const modelIdx = attrs.findIndex(attr => attr.type === 'model');
+
+        if (modelIdx > -1) {
+          attrs.push(attrs.splice(modelIdx, 1)[0]);
+        }
+      }
+
       attrs.forEach(({
         type,
         value,
@@ -8826,13 +8607,13 @@ exports.Plugins = Plugins;
       }) => {
         switch (type) {
           case 'model':
-            handleAttributeBindingDirective(this, el, 'value', expression, extraVars, type, modifiers);
+            handleAttributeBindingDirective(this, el, 'value', expression, extraVars, type);
             break;
 
           case 'bind':
             // The :key binding on an x-for is special, ignore it.
             if (el.tagName.toLowerCase() === 'template' && value === 'key') return;
-            handleAttributeBindingDirective(this, el, value, expression, extraVars, type, modifiers);
+            handleAttributeBindingDirective(this, el, value, expression, extraVars, type);
             break;
 
           case 'text':
@@ -8852,7 +8633,7 @@ exports.Plugins = Plugins;
           case 'if':
             // If this element also has x-for on it, don't process x-if.
             // We will let the "x-for" directive handle the "if"ing.
-            if (attrs.some(i => i.type === 'for')) return;
+            if (attrs.filter(i => i.type === 'for').length > 0) return;
             var output = this.evaluateReturnExpression(el, expression, extraVars);
             handleIfDirective(this, el, output, initialUpdate, extraVars);
             break;
@@ -8869,13 +8650,13 @@ exports.Plugins = Plugins;
     }
 
     evaluateReturnExpression(el, expression, extraVars = () => {}) {
-      return saferEval(el, expression, this.$data, _objectSpread2(_objectSpread2({}, extraVars()), {}, {
+      return saferEval(expression, this.$data, _objectSpread2({}, extraVars(), {
         $dispatch: this.getDispatchFunction(el)
       }));
     }
 
     evaluateCommandExpression(el, expression, extraVars = () => {}) {
-      return saferEvalNoReturn(el, expression, this.$data, _objectSpread2(_objectSpread2({}, extraVars()), {}, {
+      return saferEvalNoReturn(expression, this.$data, _objectSpread2({}, extraVars(), {
         $dispatch: this.getDispatchFunction(el)
       }));
     }
@@ -8903,10 +8684,7 @@ exports.Plugins = Plugins;
           if (!(closestParentComponent && closestParentComponent.isSameNode(this.$el))) continue;
 
           if (mutations[i].type === 'attributes' && mutations[i].attributeName === 'x-data') {
-            const xAttr = mutations[i].target.getAttribute('x-data') || '{}';
-            const rawData = saferEval(this.$el, xAttr, {
-              $el: this.$el
-            });
+            const rawData = saferEval(mutations[i].target.getAttribute('x-data'), {});
             Object.keys(rawData).forEach(key => {
               if (this.$data[key] !== rawData[key]) {
                 this.$data[key] = rawData[key];
@@ -8918,7 +8696,7 @@ exports.Plugins = Plugins;
             mutations[i].addedNodes.forEach(node => {
               if (node.nodeType !== 1 || node.__x_inserted_me) return;
 
-              if (node.matches('[x-data]') && !node.__x) {
+              if (node.matches('[x-data]')) {
                 node.__x = new Component(node);
                 return;
               }
@@ -8959,12 +8737,7 @@ exports.Plugins = Plugins;
   }
 
   const Alpine = {
-    version: "2.8.2",
-    pauseMutationObserver: false,
-    magicProperties: {},
-    onComponentInitializeds: [],
-    onBeforeComponentInitializeds: [],
-    ignoreFocusedForValueBinding: false,
+    version: "2.3.5",
     start: async function start() {
       if (!isTesting()) {
         await domReady();
@@ -8980,7 +8753,9 @@ exports.Plugins = Plugins;
           this.initializeComponent(el);
         });
       });
-      this.listenForNewUninitializedComponentsAtRunTime();
+      this.listenForNewUninitializedComponentsAtRunTime(el => {
+        this.initializeComponent(el);
+      });
     },
     discoverComponents: function discoverComponents(callback) {
       const rootEls = document.querySelectorAll('[x-data]');
@@ -8994,7 +8769,7 @@ exports.Plugins = Plugins;
         callback(rootEl);
       });
     },
-    listenForNewUninitializedComponentsAtRunTime: function listenForNewUninitializedComponentsAtRunTime() {
+    listenForNewUninitializedComponentsAtRunTime: function listenForNewUninitializedComponentsAtRunTime(callback) {
       const targetNode = document.querySelector('body');
       const observerOptions = {
         childList: true,
@@ -9002,8 +8777,6 @@ exports.Plugins = Plugins;
         subtree: true
       };
       const observer = new MutationObserver(mutations => {
-        if (this.pauseMutationObserver) return;
-
         for (let i = 0; i < mutations.length; i++) {
           if (mutations[i].addedNodes.length > 0) {
             mutations[i].addedNodes.forEach(node => {
@@ -9023,30 +8796,13 @@ exports.Plugins = Plugins;
     },
     initializeComponent: function initializeComponent(el) {
       if (!el.__x) {
-        // Wrap in a try/catch so that we don't prevent other components
-        // from initializing when one component contains an error.
-        try {
-          el.__x = new Component(el);
-        } catch (error) {
-          setTimeout(() => {
-            throw error;
-          }, 0);
-        }
+        el.__x = new Component(el);
       }
     },
     clone: function clone(component, newEl) {
       if (!newEl.__x) {
-        newEl.__x = new Component(newEl, component);
+        newEl.__x = new Component(newEl, component.getUnobservedData());
       }
-    },
-    addMagicProperty: function addMagicProperty(name, callback) {
-      this.magicProperties[name] = callback;
-    },
-    onComponentInitialized: function onComponentInitialized(callback) {
-      this.onComponentInitializeds.push(callback);
-    },
-    onBeforeComponentInitialized: function onBeforeComponentInitialized(callback) {
-      this.onBeforeComponentInitializeds.push(callback);
     }
   };
 
@@ -15043,114 +14799,129 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_sortable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/sortable */ "./src/js/modules/sortable.js");
 /* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/alpine.js");
 /* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(alpinejs__WEBPACK_IMPORTED_MODULE_2__);
-function _readOnlyError(name) { throw new Error("\"" + name + "\" is read-only"); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 
 
 
 Object(_modules_sortable__WEBPACK_IMPORTED_MODULE_1__["default"])();
 
-window.dragAndSortHandler = function dragAndSortHandler(items) {
+function dragAndSortHandler(items) {
   return {
-    items: items,
+    // Keeps track of when we leave the dropzone
+    // Otherwise child events will trigger @dragloave
+    dropcheck: 0,
     usedKeyboard: false,
-    placeholder: document.createElement('li'),
-    theElementBeingDragged: null,
-    theElementBeingDraggedOver: null,
+    originalIndexBeingDragged: null,
+    indexBeingDragged: null,
+    indexBeingDraggedOver: null,
     openedContextMenu: null,
-    setupPlaceholder: function setupPlaceholder() {
-      this.placeholder.style.setProperty('padding', '0.5rem 0');
-      this.placeholder.style.setProperty('pointer-events', 'none');
-    },
+    items: items,
+    preDragOrder: items,
     dragstart: function dragstart(event) {
       if (this.openedContextMenu) {
+        // Without this the drag will show the context menu
         return this.closeContextMenu();
-      }
+      } // Store a copy for when we drag out of range
 
-      this.theElementBeingDragged = event.target;
-      event.dataTransfer.dropEffect = "move";
-      var rect = event.target.getBoundingClientRect();
-      this.placeholder.style.setProperty('width', rect.width + 'px');
-      this.placeholder.style.setProperty('height', rect.height + 'px');
-      this.$nextTick(function () {
-        event.target.style.setProperty('display', 'none');
-      });
-    },
-    insertPlaceHolderBelow: function insertPlaceHolderBelow(event) {
-      if (!this.theElementBeingDragged) return;
-      this.theElementBeingDraggedOver = event.target;
 
-      if (event.target.previousElementSibling != this.placeholder) {
-        this.$el.insertBefore(this.placeholder, event.target);
+      this.preDragOrder = _toConsumableArray(this.items); // The index is continuously updated to reorder live and also keep a placeholder
+
+      this.indexBeingDragged = event.target.getAttribute("x-ref"); // The original is needed for then the drag leaves the container
+
+      this.originalIndexBeingDragged = event.target.getAttribute("x-ref"); // Not entirely sure this is needed but moz recommended it (?)
+
+      event.dataTransfer.dropEffect = "copy";
+    },
+    updateListOrder: function updateListOrder(event) {
+      // This fires every time you drag over another list item
+      // It reorders the items array but maintains the placeholder
+      if (this.indexBeingDragged) {
+        this.indexBeingDraggedOver = event.target.getAttribute("x-ref");
+        var from = this.indexBeingDragged;
+        var to = this.indexBeingDraggedOver;
+        if (this.indexBeingDragged == to) return;
+        if (from == to) return;
+        this.move(from, to);
+        this.indexBeingDragged = to;
       }
     },
+    // These are needed for the handle effect
     setParentDraggable: function setParentDraggable(event) {
-      event.target.closest('li').setAttribute('draggable', true);
+      event.target.closest("li").setAttribute("draggable", true);
     },
     setParentNotDraggable: function setParentNotDraggable(event) {
-      event.target.closest('li').setAttribute('draggable', false);
+      event.target.closest("li").setAttribute("draggable", false);
     },
     resetState: function resetState() {
-      if (this.theElementBeingDragged) {
-        this.theElementBeingDragged.style.setProperty('display', 'list-item');
-      }
-
-      this.theElementBeingDragged = null;
-      this.theElementBeingDraggedOver = null;
-      this.placeholder.remove();
+      this.dropcheck = 0;
+      this.indexBeingDragged = null;
+      this.preDragOrder = _toConsumableArray(this.items);
+      this.indexBeingDraggedOver = null;
+      this.originalIndexBeingDragged = null;
     },
-    insertListItem: function insertListItem(event) {
-      if (!this.theElementBeingDragged || !this.theElementBeingDraggedOver) {
-        return this.resetState();
-      }
-
-      var from = this.theElementBeingDragged.__x_for_key;
-      var to = this.theElementBeingDraggedOver.__x_for_key;
-
-      if (from < to) {
-        to = to - 1;
-      }
-
-      this.move(from, to);
+    // This acts as a cancelled event, when the item is dropped outside the container
+    revertState: function revertState() {
+      this.items = this.preDragOrder.length ? this.preDragOrder : this.items;
       this.resetState();
+    },
+    // Just repositions the placeholder when we move out of range of the container
+    rePositionPlaceholder: function rePositionPlaceholder() {
+      this.items = _toConsumableArray(this.preDragOrder);
+      this.indexBeingDragged = this.originalIndexBeingDragged;
     },
     move: function move(from, to) {
       var items = this.items;
+      console.log("start items", JSON.parse(JSON.stringify(items)));
 
       if (to >= items.length) {
         var k = to - items.length + 1;
 
-        while (_readOnlyError("k"), k--) {
+        while (k--) {
           items.push(undefined);
         }
       }
 
       items.splice(to, 0, items.splice(from, 1)[0]);
+      console.log("end items", JSON.parse(JSON.stringify(items)));
       this.items = items;
+      return items;
     },
+    // THe rest are just for adding better UX to the context menu
     openContextMenu: function openContextMenu(event) {
-      this.openedContextMenu = event.target.closest('li').__x_for_key;
+      this.openedContextMenu = event.target.closest("li").__x_for_key;
     },
     closeAllContextMenus: function closeAllContextMenus() {
       this.openedContextMenu = null;
     },
     highlightFirstContextButton: function highlightFirstContextButton($event) {
-      event.target.nextElementSibling.querySelector('button').focus();
+      event.target.nextElementSibling.querySelector("button").focus();
     },
     highlightNextContextMenuItem: function highlightNextContextMenuItem(event) {
-      event.target.closest('li').nextElementSibling.querySelector('button').focus();
+      event.target.closest("li").nextElementSibling.querySelector("button").focus();
     },
     highlightPreviousContextMenuItem: function highlightPreviousContextMenuItem(event) {
-      event.target.closest('li').previousElementSibling.querySelector('button').focus();
+      event.target.closest("li").previousElementSibling.querySelector("button").focus();
     }
   };
-};
+}
 
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/thumbnail', 'thumbnail-template', document.getElementById('thumbnail-upload-section'), '#thumbnail-previews', '#thumbnail-target', 'Thumbnail', 1, 'thumbnail');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/images', 'images-template', document.getElementById('images-upload-section'), '#images-previews', '#images-target', 'Player Images', 10, 'images');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/foes/logo', 'logo-template', document.getElementById('logo-upload-section'), '#logo-previews', '#logo-target', 'Logo', 1, 'logo');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/channels/avatar', 'avatar-template', document.getElementById('avatar-upload-section'), '#avatar-previews', '#avatar-target', 'Avatar', 1, 'avatarUrl');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/songbooks/front-cover', 'front_cover-template', document.getElementById('front_cover-upload-section'), '#front_cover-previews', '#front_cover-target', 'front_cover', 1, 'frontCover'); // dropzone(
+window.dragAndSortHandler = dragAndSortHandler;
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/players/thumbnail", "thumbnail-template", document.getElementById("thumbnail-upload-section"), "#thumbnail-previews", "#thumbnail-target", "Thumbnail", 1, "thumbnail");
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/players/images", "images-template", document.getElementById("images-upload-section"), "#images-previews", "#images-target", "Player Images", 10, "images");
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/foes/logo", "logo-template", document.getElementById("logo-upload-section"), "#logo-previews", "#logo-target", "Logo", 1, "logo");
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/channels/avatar", "avatar-template", document.getElementById("avatar-upload-section"), "#avatar-previews", "#avatar-target", "Avatar", 1, "avatarUrl");
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/songbooks/front-cover", "front_cover-template", document.getElementById("front_cover-upload-section"), "#front_cover-previews", "#front_cover-target", "front_cover", 1, "frontCover"); // dropzone(
 //   '/songbooks/back-cover',
 //   'back_cover-template',
 //   document.getElementById('back_cover-upload-section'),
@@ -15178,7 +14949,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var slugify__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! slugify */ "./node_modules/slugify/slugify.js");
 /* harmony import */ var slugify__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(slugify__WEBPACK_IMPORTED_MODULE_2__);
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 

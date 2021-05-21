@@ -1,7 +1,7 @@
 include ./_baseInput
 include ./_csrfInput
 
-mixin rosterForm(roster = {}, players = {}, duplicate = false)
+mixin rosterForm(roster = {}, duplicate = false)
   form(method="POST")
     +csrfInput()
     .flex.flex-col.mb-3
@@ -9,31 +9,45 @@ mixin rosterForm(roster = {}, players = {}, duplicate = false)
     .flex.flex-col.mb-3
       +baseInput("text", "Season", "season", roster.season, "Season", true)
     h3 Players
-    div(x-data="{players:" + JSON.stringify(players) + ", selectedPlayer: {}, rosterPlayers: "+ JSON.stringify(roster.players) +", editingPlayer: false}" class="mb-3")
-      .container.mx-auto.flex
+    div(x-data="{ players: players, rosterPlayers: window.rosterPlayers, selectedPlayer: {}, editingPlayer: false }")
+      div(class="container flex mx-auto")
         div(class="w-1/2 mr-3")
-          div(class="h-64 overflow-x-hidden overflow-y-scroll border rounded")
+          ul(class="h-64 overflow-x-hidden overflow-y-scroll border rounded")
             template(x-for="(player, index) in players" :key="index")
-              button(class="block w-full p-3 text-left border-b" type="button" x-on:click="selectedPlayer = {...player, hint: ''}")
+              button(class="block w-full p-3 text-left border-b" type="button" @click="selectedPlayer = { ...player, hint: '' }")
                 span(x-text="player.name")
         div(class="w-1/2")
-          div(class="h-64 overflow-x-hidden overflow-y-scroll border rounded h-65")
-            template(x-for="(player, index) in rosterPlayers" :key="index")
-              div(class="flex justify-between w-full p-3 text-left bg-white border-b draggable")
-                input(type="hidden" name="players[]" x-bind:value="JSON.stringify(player)")
-                span(x-text="player.hint || player.name")
-                template(x-if="player")
-                  .flex
-                    button(class="w-8 h-8 mr-2 text-white bg-green-700 rounded-full" type="button" @click="selectedPlayer = player; editingPlayer = true") &#9998;
-                    button(class="w-8 h-8 text-white bg-red-700 rounded-full" @click="rosterPlayers = rosterPlayers.filter((p) => p._id !== player.id)" type="button") &times;
-      template(x-if="selectedPlayer._id")
+          ul(aria-labelledby='agenda-title' class="h-64 overflow-x-hidden overflow-y-scroll border rounded" x-title='Sorting Demo' x-data='dragAndSortHandler(rosterPlayers)' @keydown.window.tab='usedKeyboard = true' @dragenter.stop.prevent='dropcheck++' @dragleave='dropcheck--;dropcheck || rePositionPlaceholder()' @dragover.stop.prevent='' @dragend='revertState()' @drop.stop.prevent='resetState()')
+            template(x-for='(item, index) in items' :key='index')
+              li.border-b.border-transparent(:x-ref='index' @dragstart='dragstart($event)' @dragend="$event.target.setAttribute('draggable', false)" @dragover='updateListOrder($event)' draggable='false' :class="{\
+              'opacity-25': indexBeingDragged == index,\
+              }")
+                input(type="hidden" name="players[]" :value="item")
+                // Pointer events are disabled while dragging, otherwise drag events fire on child elements
+                .bg-indigo-300.p-6.flex.justify-between(:class="{'pointer-events-none': indexBeingDragged}")
+                  p(x-text='item.hint || item.name')
+                  .relative(aria-haspopup='true')
+                    // Lots of events are here as it combines click drag, click, and keyboard events
+                    button(aria-label='Sorting menu' @mousedown='setParentDraggable(event)' @mouseup='openContextMenu($event)' @click='openContextMenu($event)' @click.away.stop.prevent='closeAllContextMenus()' @keydown.space='openContextMenu($event)' @keyup.stop.prevent='' @keydown.arrow-down='highlightFirstContextButton($event)' @keydown.tab='closeAllContextMenus()' @dragover.stop.prevent='' :class="{'focus:outline-none': !usedKeyboard}")
+                      svg.block.w-6.text-indigo-500(@click.stop='' @dragover.stop.prevent='' role='img' viewbox='0 0 20 20' fill='currentColor')
+                        path(fill-rule='evenodd' d='M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z' clip-rule='evenodd')
+                    ul.absolute.w-32.bg-indigo-500.py-2.-mt-3.left-0.transform.-translate-x-12.z-50.shadow-lg.rounded.text-sm(role='menu' :aria-expanded='(openedContextMenu == index).toString()' x-show='openedContextMenu == index' x-transition:enter='transition ease-in duration-100' x-transition:enter-start='transform opacity-75 -translate-y-1' x-transition:leave-end='transform -translate-y-1 opacity-0')
+                      li(role='menuitem')
+                        button.text-left.w-full.pl-4(@keydown.arrow-down='highlightNextContextMenuItem($event)' @keydown.tab='closeAllContextMenus()' tabindex='-1' @click='index && move(index, index - 1)' class='hover:bg-indigo-400' :class="{'focus:outline-none': !usedKeyboard}")
+                          | Move up
+                      // hard coded for two options. If you need more then you need a new method
+                      li(role='menuitem')
+                        button.text-left.w-full.pl-4(@keydown.arrow-up='highlightPreviousContextMenuItem($event)' @keydown.tab='closeAllContextMenus()' tabindex='-1' @click='(index + 1 < items.length) && move(index + 1, index)' class='hover:bg-indigo-400' :class="{'focus:outline-none': !usedKeyboard}")
+                          | Move down
+      template(x-if="selectedPlayer.name || selectedPlayer.hint")
         div#selectedPlayer(class="flex-col list--card")
-          h4(x-text="selectedPlayer.hint || selectedPlayer.name")
+          h4(x-text="selectedPlayer.name || selectedPlayer.hint")
           label(for="playerHint" class="flex flex-col font-semibold") Hint
             input(type="text" id="playerHint" x-model="selectedPlayer.hint" value="selectedPlayer.name" class="base--input" placeholder="Player Hint")
           div(class="mt-3")
-            button(type="button" class="mr-3 btn btn--edit" x-on:click="if (!editingPlayer) {if (!rosterPlayers.filter(pl => pl._id === selectedPlayer._id).length) {rosterPlayers.push({ _id: selectedPlayer._id, hint: selectedPlayer.hint || selectedPlayer.name, });selectedPlayer = {};} else {alert('Player already in roster');selectedPlayer = {};}} else { rosterPlayers.splice(index, 1, selectedPlayer); selectedPlayer = {}; editingPlayer = false }") Add Player
+            button(type="button" class="mr-3 btn btn--edit" x-on:click="if (!editingPlayer) {if (!rosterPlayers.filter((pl) => pl._id === selectedPlayer._id).length) {rosterPlayers = [...rosterPlayers, { _id: selectedPlayer._id, hint: selectedPlayer.name }];selectedPlayer = {};} else {alert(\"Player already in roster\");selectedPlayer = {};}} else {rosterPlayers.splice(index, 1, selectedPlayer);selectedPlayer = {};editingPlayer = false;}") Add Player
             button(type="button" class="btn btn--delete" x-on:click="selectedPlayer = {}") Cancel
+
     .flex.flex-wrap.mb-3
       div(class="w-full md:w-1/2")
         label(for="active" class="flex-1 font-semibold") Active
