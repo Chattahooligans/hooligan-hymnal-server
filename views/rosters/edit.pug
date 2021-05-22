@@ -4,12 +4,10 @@ include ../mixins/_rosterForm
 
 block content
   h2 #{title}
-  +rosterForm(roster)
+  +rosterForm(roster, players)
 
 block scripts
   script.
-    const items = [	{name: 'Learn about the draggable API',},{name: 'Practice guitar',},{name: 'Read a novel for 25 minutes',},{name: 'Practice Thai vocabulary',},{name: 'Sleep'},]
-    window.items = items
     const players = !{JSON.stringify(players)}
     window.players = players;
     const rosterPlayers = !{JSON.stringify(roster.players)};

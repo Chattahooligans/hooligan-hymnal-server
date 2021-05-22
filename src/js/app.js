@@ -16,6 +16,14 @@ function dragAndSortHandler(items) {
 		openedContextMenu: null,
 		items: items,
 		preDragOrder: items,
+    addItem(item) {
+      this.items.push(item)
+    },
+    removeItem(index) {
+      const items = this.items
+      items.splice(index, 1)
+      this.items = items
+    },
 		dragstart(event) {
 			if (this.openedContextMenu) {
 				// Without this the drag will show the context menu
@@ -71,7 +79,7 @@ function dragAndSortHandler(items) {
 		},
 		move(from, to) {
 			let items = this.items;
-			console.log("start items", JSON.parse(JSON.stringify(items)));
+			// console.log("start items", JSON.parse(JSON.stringify(items)));
 			if (to >= items.length) {
 				let k = to - items.length + 1;
 				while (k--) {
@@ -79,9 +87,8 @@ function dragAndSortHandler(items) {
 				}
 			}
 			items.splice(to, 0, items.splice(from, 1)[0]);
-			console.log("end items", JSON.parse(JSON.stringify(items)));
+			// console.log("end items", JSON.parse(JSON.stringify(items)));
 			this.items = items;
-			return items;
 		},
 		// THe rest are just for adding better UX to the context menu
 		openContextMenu(event) {

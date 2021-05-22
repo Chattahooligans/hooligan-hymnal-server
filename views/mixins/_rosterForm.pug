@@ -1,7 +1,7 @@
 include ./_baseInput
 include ./_csrfInput
 
-mixin rosterForm(roster = {}, duplicate = false)
+mixin rosterForm(roster = {}, players = [], duplicate = false)
   form(method="POST")
     +csrfInput()
     .flex.flex-col.mb-3
@@ -9,7 +9,7 @@ mixin rosterForm(roster = {}, duplicate = false)
     .flex.flex-col.mb-3
       +baseInput("text", "Season", "season", roster.season, "Season", true)
     h3 Players
-    div(x-data="{ players: players, rosterPlayers: window.rosterPlayers, selectedPlayer: {}, editingPlayer: false }")
+    div(x-data=`{ players: ${JSON.stringify(players)}, selectedPlayer: {}, editingPlayer: false, selectedIndex: null, ...dragAndSortHandler(${JSON.stringify(roster.players)}) }`)
       div(class="container flex mx-auto")
         div(class="w-1/2 mr-3")
           ul(class="h-64 overflow-x-hidden overflow-y-scroll border rounded")
@@ -17,35 +17,39 @@ mixin rosterForm(roster = {}, duplicate = false)
               button(class="block w-full p-3 text-left border-b" type="button" @click="selectedPlayer = { ...player, hint: '' }")
                 span(x-text="player.name")
         div(class="w-1/2")
-          ul(aria-labelledby='agenda-title' class="h-64 overflow-x-hidden overflow-y-scroll border rounded" x-title='Sorting Demo' x-data='dragAndSortHandler(rosterPlayers)' @keydown.window.tab='usedKeyboard = true' @dragenter.stop.prevent='dropcheck++' @dragleave='dropcheck--;dropcheck || rePositionPlaceholder()' @dragover.stop.prevent='' @dragend='revertState()' @drop.stop.prevent='resetState()')
+          ul(aria-labelledby='agenda-title' class="h-64 overflow-x-hidden overflow-y-scroll border rounded" x-title='Sorting Demo' @keydown.window.tab='usedKeyboard = true' @dragenter.stop.prevent='dropcheck++' @dragleave='dropcheck--;dropcheck || rePositionPlaceholder()' @dragover.stop.prevent='' @dragend='revertState()' @drop.stop.prevent='resetState()')
             template(x-for='(item, index) in items' :key='index')
               li.border-b.border-transparent(:x-ref='index' @dragstart='dragstart($event)' @dragend="$event.target.setAttribute('draggable', false)" @dragover='updateListOrder($event)' draggable='false' :class="{\
               'opacity-25': indexBeingDragged == index,\
               }")
-                input(type="hidden" name="players[]" :value="item")
+                input(type="hidden" name="players[]" :value="JSON.stringify(item)")
                 // Pointer events are disabled while dragging, otherwise drag events fire on child elements
-                .bg-indigo-300.p-6.flex.justify-between(:class="{'pointer-events-none': indexBeingDragged}")
+                div(class="flex items-center justify-between w-full p-3 text-left bg-white border-b" :class="{'pointer-events-none': indexBeingDragged}")
                   p(x-text='item.hint || item.name')
-                  .relative(aria-haspopup='true')
+                  .relative.flex(aria-haspopup='true')
+                    button(type="button" class="flex items-center justify-center w-5 h-5 p-5 mr-1 bg-green-400 rounded" @click="selectedPlayer = { ...item }; editingPlayer = true; selectedIndex = index") ✏️
+                    button(type="button" class="flex items-center justify-center w-5 h-5 p-5 mr-1 bg-red-400 rounded" @click="if (confirm(`Are you sure you want to remove ${item.hint}`)) { removeItem(index); } else { selectedPlayer = {} }") 🗑
                     // Lots of events are here as it combines click drag, click, and keyboard events
-                    button(aria-label='Sorting menu' @mousedown='setParentDraggable(event)' @mouseup='openContextMenu($event)' @click='openContextMenu($event)' @click.away.stop.prevent='closeAllContextMenus()' @keydown.space='openContextMenu($event)' @keyup.stop.prevent='' @keydown.arrow-down='highlightFirstContextButton($event)' @keydown.tab='closeAllContextMenus()' @dragover.stop.prevent='' :class="{'focus:outline-none': !usedKeyboard}")
-                      svg.block.w-6.text-indigo-500(@click.stop='' @dragover.stop.prevent='' role='img' viewbox='0 0 20 20' fill='currentColor')
+                    button(type="button" aria-label='Sorting menu' @mousedown='setParentDraggable(event)' @mouseup='openContextMenu($event)' @click='openContextMenu($event)' @click.away.stop.prevent='closeAllContextMenus()' @keydown.space='openContextMenu($event)' @keyup.stop.prevent='' @keydown.arrow-down='highlightFirstContextButton($event)' @keydown.tab='closeAllContextMenus()' @dragover.stop.prevent='' class="flex items-center justify-center w-10 h-10 border-2 border-gray-600 rounded" :class="{'focus:outline-none': !usedKeyboard}")
+                      svg.block.w-6.text-gray-600(@click.stop='' @dragover.stop.prevent='' role='img' viewbox='0 0 20 20' fill='currentColor')
                         path(fill-rule='evenodd' d='M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z' clip-rule='evenodd')
                     ul.absolute.w-32.bg-indigo-500.py-2.-mt-3.left-0.transform.-translate-x-12.z-50.shadow-lg.rounded.text-sm(role='menu' :aria-expanded='(openedContextMenu == index).toString()' x-show='openedContextMenu == index' x-transition:enter='transition ease-in duration-100' x-transition:enter-start='transform opacity-75 -translate-y-1' x-transition:leave-end='transform -translate-y-1 opacity-0')
                       li(role='menuitem')
-                        button.text-left.w-full.pl-4(@keydown.arrow-down='highlightNextContextMenuItem($event)' @keydown.tab='closeAllContextMenus()' tabindex='-1' @click='index && move(index, index - 1)' class='hover:bg-indigo-400' :class="{'focus:outline-none': !usedKeyboard}")
+                        button.text-left.w-full.pl-4(type="button" @keydown.arrow-down='highlightNextContextMenuItem($event)' @keydown.tab='closeAllContextMenus()' tabindex='-1' @click='index && move(index, index - 1)' class='hover:bg-indigo-400' :class="{'focus:outline-none': !usedKeyboard}")
                           | Move up
                       // hard coded for two options. If you need more then you need a new method
                       li(role='menuitem')
-                        button.text-left.w-full.pl-4(@keydown.arrow-up='highlightPreviousContextMenuItem($event)' @keydown.tab='closeAllContextMenus()' tabindex='-1' @click='(index + 1 < items.length) && move(index + 1, index)' class='hover:bg-indigo-400' :class="{'focus:outline-none': !usedKeyboard}")
+                        button.text-left.w-full.pl-4(type="button" @keydown.arrow-up='highlightPreviousContextMenuItem($event)' @keydown.tab='closeAllContextMenus()' tabindex='-1' @click='(index + 1 < items.length) && move(index + 1, index)' class='hover:bg-indigo-400' :class="{'focus:outline-none': !usedKeyboard}")
                           | Move down
       template(x-if="selectedPlayer.name || selectedPlayer.hint")
         div#selectedPlayer(class="flex-col list--card")
           h4(x-text="selectedPlayer.name || selectedPlayer.hint")
-          label(for="playerHint" class="flex flex-col font-semibold") Hint
-            input(type="text" id="playerHint" x-model="selectedPlayer.hint" value="selectedPlayer.name" class="base--input" placeholder="Player Hint")
+          details.border.p-3.rounded
+            summary Add Custom Hint
+            label(for="playerHint" class="flex flex-col font-semibold") Hint
+              input(type="text" id="playerHint" x-model="selectedPlayer.hint" value="selectedPlayer.name" class="base--input" placeholder="Player Hint")
           div(class="mt-3")
-            button(type="button" class="mr-3 btn btn--edit" x-on:click="if (!editingPlayer) {if (!rosterPlayers.filter((pl) => pl._id === selectedPlayer._id).length) {rosterPlayers = [...rosterPlayers, { _id: selectedPlayer._id, hint: selectedPlayer.name }];selectedPlayer = {};} else {alert(\"Player already in roster\");selectedPlayer = {};}} else {rosterPlayers.splice(index, 1, selectedPlayer);selectedPlayer = {};editingPlayer = false;}") Add Player
+            button(type="button" class="mr-3 btn btn--edit" x-on:click="if (!editingPlayer) {if (!items.filter((pl) => pl._id === selectedPlayer._id).length) {addItem({ _id: selectedPlayer._id, hint: selectedPlayer.hint ?  selectedPlayer.hint : `${selectedPlayer.name} - ${selectedPlayer.position} - ${selectedPlayer.squadNumber}` });selectedPlayer = {};} else {alert(\"Player already in roster\");selectedPlayer = {};}} else {items.splice(selectedIndex, 1, selectedPlayer);selectedPlayer = {};selectedIndex = null;editingPlayer = false;}") Add Player
             button(type="button" class="btn btn--delete" x-on:click="selectedPlayer = {}") Cancel
 
     .flex.flex-wrap.mb-3
