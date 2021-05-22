@@ -49,7 +49,7 @@ mixin rosterForm(roster = {}, players = [], duplicate = false)
             label(for="playerHint" class="flex flex-col font-semibold") Hint
               input(type="text" id="playerHint" x-model="selectedPlayer.hint" value="selectedPlayer.name" class="base--input" placeholder="Player Hint")
           div(class="mt-3")
-            button(type="button" class="mr-3 btn btn--edit" x-on:click="if (!editingPlayer) {if (!items.filter((pl) => pl._id === selectedPlayer._id).length) {addItem({ _id: selectedPlayer._id, hint: selectedPlayer.hint ?  selectedPlayer.hint : `${selectedPlayer.name} - ${selectedPlayer.position} - ${selectedPlayer.squadNumber}` });selectedPlayer = {};} else {alert(\"Player already in roster\");selectedPlayer = {};}} else {items.splice(selectedIndex, 1, selectedPlayer);selectedPlayer = {};selectedIndex = null;editingPlayer = false;}") Add Player
+            button(type="button" class="mr-3 btn btn--edit" x-on:click="if (!editingPlayer) {if (!items.filter((pl) => pl._id === selectedPlayer._id).length) {addItem({ _id: selectedPlayer._id, hint: selectedPlayer.hint ?  selectedPlayer.hint : `${selectedPlayer.squadNumber} - ${selectedPlayer.position} - ${selectedPlayer.name}` });selectedPlayer = {};} else {alert(\"Player already in roster\");selectedPlayer = {};}} else {items.splice(selectedIndex, 1, selectedPlayer);selectedPlayer = {};selectedIndex = null;editingPlayer = false;}") Add Player
             button(type="button" class="btn btn--delete" x-on:click="selectedPlayer = {}") Cancel
 
     .flex.flex-wrap.mb-3
