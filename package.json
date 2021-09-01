@@ -71,7 +71,7 @@
         "uuid": "^8.1.0",
         "validator": "^13.0.0",
         "validatorjs": "^3.18.1",
-        "xlsx": "^0.16.9"
+        "xlsx": "^0.17.0"
     },
     "devDependencies": {
         "@babel/preset-react": "^7.10.1",
