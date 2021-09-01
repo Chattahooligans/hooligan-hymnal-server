@@ -1,7 +1,7 @@
 include ./_baseInput
 include ./_csrfInput
 
-mixin rosterForm(roster = {}, players = {}, duplicate = false)
+mixin rosterForm(roster = {}, players = [], duplicate = false)
   form(method="POST")
     +csrfInput()
     .flex.flex-col.mb-3
@@ -9,39 +9,78 @@ mixin rosterForm(roster = {}, players = {}, duplicate = false)
     .flex.flex-col.mb-3
       +baseInput("text", "Season", "season", roster.season, "Season", true)
     h3 Players
-    div(x-data="{ players: " + JSON.stringify(players) + ", selectedPlayer: {}, rosterPlayers: " + JSON.stringify(roster.players) + ", editingPlayer: false }" class="mb-3")
-      .container.mx-auto.flex
+    div(x-data=`{ players: ${JSON.stringify(players)}, selectedPlayer: {}, editingPlayer: false, selectedIndex: null, ...dragAndSortHandler(${JSON.stringify(roster.players)}) }`)
+      div(class="container flex mx-auto")
         div(class="w-1/2 mr-3")
-          div(class="h-64 overflow-x-hidden overflow-y-scroll border rounded")
-            template(x-for="player in players")
-              button(class="block w-full text-left p-3 border-b" type="button" x-on:click="selectedPlayer = { ...player, hint: '' }")
+          ul(class="h-64 overflow-x-hidden overflow-y-scroll border rounded")
+            template(x-for="(player, index) in players" :key="index")
+              button(class="block w-full p-3 text-left border-b" type="button" @click="selectedPlayer = { ...player, hint: '' }")
                 span(x-text="player.name")
         div(class="w-1/2")
-          div(class="StackedList h-64 overflow-x-hidden overflow-y-scroll border rounded")
-            template(x-for="player in rosterPlayers" :key="player")
-              div(class="w-full text-left p-3 border-b flex justify-between bg-white draggable")
-                input(type="hidden" name="players[]" :value="JSON.stringify(player)")
-                span(x-text="player.hint")
-                div(class="flex")
-                  button(class="block" type="button" class="rounded-full bg-green-700 text-white h-8 w-8 mr-2" x-on:click="selectedPlayer = player; editingPlayer = true;") &#9998;
-                  button(class="block" type="button" class="rounded-full bg-red-700 text-white h-8 w-8" x-on:click="rosterPlayers = rosterPlayers.filter(p => p._id !== player._id)") 	&times;
+          ul(aria-labelledby='agenda-title' class="h-64 overflow-x-hidden overflow-y-scroll border rounded" x-title='Sorting Demo' @keydown.window.tab='usedKeyboard = true' @dragenter.stop.prevent='dropcheck++' @dragleave='dropcheck--;dropcheck || rePositionPlaceholder()' @dragover.stop.prevent='' @dragend='revertState()' @drop.stop.prevent='resetState()')
+            template(x-for='(item, index) in items' :key='index')
+              li.border-b.border-transparent(:x-ref='index' @dragstart='dragstart($event)' @dragend="$event.target.setAttribute('draggable', false)" @dragover='updateListOrder($event)' draggable='false' :class="{\
+              'opacity-25': indexBeingDragged == index,\
+              }")
+                input(type="hidden" name="players[]" :value="JSON.stringify(item)")
+                // Pointer events are disabled while dragging, otherwise drag events fire on child elements
+                div(class="flex items-center justify-between w-full p-3 text-left bg-white border-b" :class="{'pointer-events-none': indexBeingDragged}")
+                  p(x-text='item.hint || item.name')
+                  .relative.flex(aria-haspopup='true')
+                    button(type="button" class="flex items-center justify-center w-8 h-8 mr-1 bg-green-400 rounded" @click="selectedPlayer = { ...item }; editingPlayer = true; selectedIndex = index")
+                      svg#Layer_1(height='15' width='15' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewbox='0 0 469.336 469.336' style='enable-background:new 0 0 469.336 469.336;' xml:space='preserve')
+                        path(d='M456.836,76.168l-64-64.054c-16.125-16.139-44.177-16.17-60.365,0.031L45.763,301.682\
+                        c-1.271,1.282-2.188,2.857-2.688,4.587L0.409,455.73c-1.063,3.722-0.021,7.736,2.719,10.478c2.031,2.033,4.75,3.128,7.542,3.128\
+                        c0.979,0,1.969-0.136,2.927-0.407l149.333-42.703c1.729-0.5,3.302-1.418,4.583-2.69l289.323-286.983\
+                        c8.063-8.069,12.5-18.787,12.5-30.192S464.899,84.237,456.836,76.168z M285.989,89.737l39.264,39.264L120.257,333.998\
+                        l-14.712-29.434c-1.813-3.615-5.5-5.896-9.542-5.896H78.921L285.989,89.737z M26.201,443.137L40.095,394.5l34.742,34.742\
+                        L26.201,443.137z M149.336,407.96l-51.035,14.579l-51.503-51.503l14.579-51.035h28.031l18.385,36.771\
+                        c1.031,2.063,2.708,3.74,4.771,4.771l36.771,18.385V407.96z M170.67,390.417v-17.082c0-4.042-2.281-7.729-5.896-9.542\
+                        l-29.434-14.712l204.996-204.996l39.264,39.264L170.67,390.417z M441.784,121.72l-47.033,46.613l-93.747-93.747l46.582-47.001\
+                        c8.063-8.063,22.104-8.063,30.167,0l64,64c4.031,4.031,6.25,9.385,6.25,15.083S445.784,117.72,441.784,121.72z')
 
-      template(x-if="selectedPlayer._id")
-        div#selectedPlayer(class="list--card flex-col")
+                    button(type="button" class="flex items-center justify-center w-8 h-8 mr-1 bg-red-400 rounded" @click="if (confirm(`Are you sure you want to remove ${item.hint}`)) { removeItem(index); } else { selectedPlayer = {} }")
+                      svg(height='15' viewbox='-40 0 427 427.00131' width='15' xmlns='http://www.w3.org/2000/svg')
+                        path(d='m232.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0')
+                        path(d='m114.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0')
+                        path(d='m28.398438 127.121094v246.378906c0 14.5625 5.339843 28.238281 14.667968 38.050781 9.285156 9.839844 22.207032 15.425781 35.730469 15.449219h189.203125c13.527344-.023438 26.449219-5.609375 35.730469-15.449219 9.328125-9.8125 14.667969-23.488281 14.667969-38.050781v-246.378906c18.542968-4.921875 30.558593-22.835938 28.078124-41.863282-2.484374-19.023437-18.691406-33.253906-37.878906-33.257812h-51.199218v-12.5c.058593-10.511719-4.097657-20.605469-11.539063-28.03125-7.441406-7.421875-17.550781-11.5546875-28.0625-11.46875h-88.796875c-10.511719-.0859375-20.621094 4.046875-28.0625 11.46875-7.441406 7.425781-11.597656 17.519531-11.539062 28.03125v12.5h-51.199219c-19.1875.003906-35.394531 14.234375-37.878907 33.257812-2.480468 19.027344 9.535157 36.941407 28.078126 41.863282zm239.601562 279.878906h-189.203125c-17.097656 0-30.398437-14.6875-30.398437-33.5v-245.5h250v245.5c0 18.8125-13.300782 33.5-30.398438 33.5zm-158.601562-367.5c-.066407-5.207031 1.980468-10.21875 5.675781-13.894531 3.691406-3.675781 8.714843-5.695313 13.925781-5.605469h88.796875c5.210937-.089844 10.234375 1.929688 13.925781 5.605469 3.695313 3.671875 5.742188 8.6875 5.675782 13.894531v12.5h-128zm-71.199219 32.5h270.398437c9.941406 0 18 8.058594 18 18s-8.058594 18-18 18h-270.398437c-9.941407 0-18-8.058594-18-18s8.058593-18 18-18zm0 0')
+                        path(d='m173.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0')
+
+
+                    // Lots of events are here as it combines click drag, click, and keyboard events
+                    button(type="button" aria-label='Sorting menu' @mousedown='setParentDraggable(event)' @mouseup='openContextMenu($event)' @click='openContextMenu($event)' @click.away.stop.prevent='closeAllContextMenus()' @keydown.space='openContextMenu($event)' @keyup.stop.prevent='' @keydown.arrow-down='highlightFirstContextButton($event)' @keydown.tab='closeAllContextMenus()' @dragover.stop.prevent='' class="flex items-center justify-center w-8 h-8 border-2 border-gray-600 rounded" :class="{'focus:outline-none': !usedKeyboard}")
+                      svg(height='15' viewbox='0 -53 384 384' width='15' xmlns='http://www.w3.org/2000/svg')
+                        path(d='m368 154.667969h-352c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h352c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0')
+                        path(d='m368 32h-352c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h352c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0')
+                        path(d='m368 277.332031h-352c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h352c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0')
+
+                    ul.absolute.w-32.bg-indigo-500.py-2.-mt-3.left-0.transform.-translate-x-12.z-50.shadow-lg.rounded.text-sm(role='menu' :aria-expanded='(openedContextMenu == index).toString()' x-show='openedContextMenu == index' x-transition:enter='transition ease-in duration-100' x-transition:enter-start='transform opacity-75 -translate-y-1' x-transition:leave-end='transform -translate-y-1 opacity-0')
+                      li(role='menuitem')
+                        button.text-left.w-full.pl-4(type="button" @keydown.arrow-down='highlightNextContextMenuItem($event)' @keydown.tab='closeAllContextMenus()' tabindex='-1' @click='index && move(index, index - 1)' class='hover:bg-indigo-400' :class="{'focus:outline-none': !usedKeyboard}")
+                          | Move up
+                      // hard coded for two options. If you need more then you need a new method
+                      li(role='menuitem')
+                        button.text-left.w-full.pl-4(type="button" @keydown.arrow-up='highlightPreviousContextMenuItem($event)' @keydown.tab='closeAllContextMenus()' tabindex='-1' @click='(index + 1 < items.length) && move(index + 1, index)' class='hover:bg-indigo-400' :class="{'focus:outline-none': !usedKeyboard}")
+                          | Move down
+      template(x-if="selectedPlayer.name || selectedPlayer.hint")
+        div#selectedPlayer(class="flex-col list--card")
           h4(x-text="selectedPlayer.name || selectedPlayer.hint")
-          label(for="playerHint" class="flex flex-col font-semibold") Hint
-            input(type="text" id="playerHint" x-model="selectedPlayer.hint" class="base--input" placeholder="Player Hint")
+          details.border.p-3.rounded
+            summary Add Custom Hint
+            label(for="playerHint" class="flex flex-col font-semibold") Hint
+              input(type="text" id="playerHint" x-model="selectedPlayer.hint" value="selectedPlayer.name" class="base--input" placeholder="Player Hint")
           div(class="mt-3")
-            button(type="button" class="btn btn--edit mr-3" x-on:click="if (!editingPlayer) { if(!rosterPlayers.filter(pl => pl._id === selectedPlayer._id).length) { rosterPlayers.push({ _id: selectedPlayer._id, hint: selectedPlayer.hint }); } else { alert('Player already in roster') } selectedPlayer = {}} else { editingPlayer = false; selectedPlayer = {} }") Add Player
+            button(type="button" class="mr-3 btn btn--edit" x-on:click="if (!editingPlayer) {if (!items.filter((pl) => pl._id === selectedPlayer._id).length) {addItem({ _id: selectedPlayer._id, hint: selectedPlayer.hint ?  selectedPlayer.hint : `${selectedPlayer.squadNumber} - ${selectedPlayer.position} - ${selectedPlayer.name}` });selectedPlayer = {};} else {alert(\"Player already in roster\");selectedPlayer = {};}} else {items.splice(selectedIndex, 1, selectedPlayer);selectedPlayer = {};selectedIndex = null;editingPlayer = false;}") Add Player
             button(type="button" class="btn btn--delete" x-on:click="selectedPlayer = {}") Cancel
+
     .flex.flex-wrap.mb-3
-      div(class="md:w-1/2 w-full")
+      div(class="w-full md:w-1/2")
         label(for="active" class="flex-1 font-semibold") Active
           input(type="checkbox" name="active" id="active" class="ml-2" checked=roster.active)
-      div(class="md:w-1/2 w-full")
+      div(class="w-full md:w-1/2")
         label(for="default" class="flex-1 font-semibold") Default
           input(type="checkbox" name="default" id="default" class="ml-2" checked=roster.default)
     .mb-3
-      button(type="submit" class="px-2 py-3 rounded bg-blue-700 text-white") Save Roster
+      button(type="submit" class="px-2 py-3 text-white bg-blue-700 rounded") Save Roster
       if duplicate
-        button(type="button" class="py-3 px-2 rounded bg-red-700 text-white ml-3" onclick="window.history.back()") Cancel
+        button(type="button" class="px-2 py-3 ml-3 text-white bg-red-700 rounded" onclick="window.history.back()") Cancel

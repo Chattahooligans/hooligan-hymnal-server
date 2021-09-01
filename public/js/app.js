@@ -14799,15 +14799,135 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_sortable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/sortable */ "./src/js/modules/sortable.js");
 /* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/alpine.js");
 /* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(alpinejs__WEBPACK_IMPORTED_MODULE_2__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 
 
 
 Object(_modules_sortable__WEBPACK_IMPORTED_MODULE_1__["default"])();
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/thumbnail', 'thumbnail-template', document.getElementById('thumbnail-upload-section'), '#thumbnail-previews', '#thumbnail-target', 'Thumbnail', 1, 'thumbnail');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/players/images', 'images-template', document.getElementById('images-upload-section'), '#images-previews', '#images-target', 'Player Images', 10, 'images');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/foes/logo', 'logo-template', document.getElementById('logo-upload-section'), '#logo-previews', '#logo-target', 'Logo', 1, 'logo');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/channels/avatar', 'avatar-template', document.getElementById('avatar-upload-section'), '#avatar-previews', '#avatar-target', 'Avatar', 1, 'avatarUrl');
-Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])('/songbooks/front-cover', 'front_cover-template', document.getElementById('front_cover-upload-section'), '#front_cover-previews', '#front_cover-target', 'front_cover', 1, 'frontCover'); // dropzone(
+
+function dragAndSortHandler(items) {
+  return {
+    // Keeps track of when we leave the dropzone
+    // Otherwise child events will trigger @dragloave
+    dropcheck: 0,
+    usedKeyboard: false,
+    originalIndexBeingDragged: null,
+    indexBeingDragged: null,
+    indexBeingDraggedOver: null,
+    openedContextMenu: null,
+    items: items,
+    preDragOrder: items,
+    addItem: function addItem(item) {
+      this.items.push(item);
+    },
+    removeItem: function removeItem(index) {
+      var items = this.items;
+      items.splice(index, 1);
+      this.items = items;
+    },
+    dragstart: function dragstart(event) {
+      if (this.openedContextMenu) {
+        // Without this the drag will show the context menu
+        return this.closeContextMenu();
+      } // Store a copy for when we drag out of range
+
+
+      this.preDragOrder = _toConsumableArray(this.items); // The index is continuously updated to reorder live and also keep a placeholder
+
+      this.indexBeingDragged = event.target.getAttribute("x-ref"); // The original is needed for then the drag leaves the container
+
+      this.originalIndexBeingDragged = event.target.getAttribute("x-ref"); // Not entirely sure this is needed but moz recommended it (?)
+
+      event.dataTransfer.dropEffect = "copy";
+    },
+    updateListOrder: function updateListOrder(event) {
+      // This fires every time you drag over another list item
+      // It reorders the items array but maintains the placeholder
+      if (this.indexBeingDragged) {
+        this.indexBeingDraggedOver = event.target.getAttribute("x-ref");
+        var from = this.indexBeingDragged;
+        var to = this.indexBeingDraggedOver;
+        if (this.indexBeingDragged == to) return;
+        if (from == to) return;
+        this.move(from, to);
+        this.indexBeingDragged = to;
+      }
+    },
+    // These are needed for the handle effect
+    setParentDraggable: function setParentDraggable(event) {
+      event.target.closest("li").setAttribute("draggable", true);
+    },
+    setParentNotDraggable: function setParentNotDraggable(event) {
+      event.target.closest("li").setAttribute("draggable", false);
+    },
+    resetState: function resetState() {
+      this.dropcheck = 0;
+      this.indexBeingDragged = null;
+      this.preDragOrder = _toConsumableArray(this.items);
+      this.indexBeingDraggedOver = null;
+      this.originalIndexBeingDragged = null;
+    },
+    // This acts as a cancelled event, when the item is dropped outside the container
+    revertState: function revertState() {
+      this.items = this.preDragOrder.length ? this.preDragOrder : this.items;
+      this.resetState();
+    },
+    // Just repositions the placeholder when we move out of range of the container
+    rePositionPlaceholder: function rePositionPlaceholder() {
+      this.items = _toConsumableArray(this.preDragOrder);
+      this.indexBeingDragged = this.originalIndexBeingDragged;
+    },
+    move: function move(from, to) {
+      var items = this.items; // console.log("start items", JSON.parse(JSON.stringify(items)));
+
+      if (to >= items.length) {
+        var k = to - items.length + 1;
+
+        while (k--) {
+          items.push(undefined);
+        }
+      }
+
+      items.splice(to, 0, items.splice(from, 1)[0]); // console.log("end items", JSON.parse(JSON.stringify(items)));
+
+      this.items = items;
+    },
+    // THe rest are just for adding better UX to the context menu
+    openContextMenu: function openContextMenu(event) {
+      this.openedContextMenu = event.target.closest("li").__x_for_key;
+    },
+    closeAllContextMenus: function closeAllContextMenus() {
+      this.openedContextMenu = null;
+    },
+    highlightFirstContextButton: function highlightFirstContextButton($event) {
+      event.target.nextElementSibling.querySelector("button").focus();
+    },
+    highlightNextContextMenuItem: function highlightNextContextMenuItem(event) {
+      event.target.closest("li").nextElementSibling.querySelector("button").focus();
+    },
+    highlightPreviousContextMenuItem: function highlightPreviousContextMenuItem(event) {
+      event.target.closest("li").previousElementSibling.querySelector("button").focus();
+    }
+  };
+}
+
+window.dragAndSortHandler = dragAndSortHandler;
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/players/thumbnail", "thumbnail-template", document.getElementById("thumbnail-upload-section"), "#thumbnail-previews", "#thumbnail-target", "Thumbnail", 1, "thumbnail");
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/players/images", "images-template", document.getElementById("images-upload-section"), "#images-previews", "#images-target", "Player Images", 10, "images");
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/foes/logo", "logo-template", document.getElementById("logo-upload-section"), "#logo-previews", "#logo-target", "Logo", 1, "logo");
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/channels/avatar", "avatar-template", document.getElementById("avatar-upload-section"), "#avatar-previews", "#avatar-target", "Avatar", 1, "avatarUrl");
+Object(_modules_dropzone__WEBPACK_IMPORTED_MODULE_0__["default"])("/songbooks/front-cover", "front_cover-template", document.getElementById("front_cover-upload-section"), "#front_cover-previews", "#front_cover-target", "front_cover", 1, "frontCover"); // dropzone(
 //   '/songbooks/back-cover',
 //   'back_cover-template',
 //   document.getElementById('back_cover-upload-section'),
@@ -14835,7 +14955,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var slugify__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! slugify */ "./node_modules/slugify/slugify.js");
 /* harmony import */ var slugify__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(slugify__WEBPACK_IMPORTED_MODULE_2__);
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
@@ -15231,8 +15351,8 @@ function SortList() {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/collino/code/express/hooligan-hymnal-server/src/js/app.js */"./src/js/app.js");
-module.exports = __webpack_require__(/*! /Users/collino/code/express/hooligan-hymnal-server/src/scss/app.scss */"./src/scss/app.scss");
+__webpack_require__(/*! /Users/collino/code/ngs/hooligan-hymnal-server/src/js/app.js */"./src/js/app.js");
+module.exports = __webpack_require__(/*! /Users/collino/code/ngs/hooligan-hymnal-server/src/scss/app.scss */"./src/scss/app.scss");
 
 
 /***/ })

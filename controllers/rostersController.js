@@ -17,7 +17,7 @@ exports.index = async (req, res) => {
 
 exports.create = async (req, res) => {
   const players = await Players.find({})
-    .select('id name position')
+    .select('_id name position squadNumber')
     .sort('name');
   res.render("rosters/create", {
     title: "Create Roster",
@@ -56,7 +56,7 @@ exports.show = async (req, res) => {
 exports.edit = async (req, res) => {
   const rosterPromise = Roster.findById(req.params.id);
   const playersPromise = Players.find({})
-    .select('_id name position')
+    .select('_id name position squadNumber')
     .sort('name');
 
   const [roster, players] = await Promise.all([rosterPromise, playersPromise]);

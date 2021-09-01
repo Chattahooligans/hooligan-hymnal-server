@@ -5,31 +5,32 @@ html(lang="en")
     meta(http-equiv="X-UA-Compatible", content="ie=edge")
     link(rel="stylesheet" href=`/css/app.css?${randomId}`)
     meta(name="csrf-token" content=csrfToken)
+    script(src=`/js/app.js?${randomId}` async)
     //- script(src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.9.7/dist/alpine.js" defer)
     title #{title} | #{h.siteName}
   body.flex.flex-col.min-h-screen(x-data="skipToContent()")
     header.bg-gray-800.text-white.py-3.relative
       div
-        button#skip(type="button" class="btn absolute p-3 bg-black text-white" @click="focus()") Skip To Content
+        button#skip(type="button" class="absolute p-3 text-white bg-black btn" @click="focus()") Skip To Content
         .px-3.flex.flex-row.justify-between
           nav.flex.items-center
             a(href="/" class="block") #{h.siteName}
-          nav(class="flex md:flex-row flex-col")
+          nav(class="flex flex-col md:flex-row")
             if currentUser
               div(x-data="{ isShown: false }" class="relative")
                 a(href="#" class="block" x-on:click.prevent="isShown = ! isShown")
-                  img(src=`${currentUser.gravatar}` class="h-12 w-12 rounded-full")
-                ul(role="menu" class="absolute right-0 left-auto bg-white text-black rounded border z-50 mt-1 w-32" x-show="isShown" x-on:click.away="isShown = false" x-on:keydown.escape="isShown = false")
+                  img(src=`${currentUser.gravatar}` class="w-12 h-12 rounded-full")
+                ul(role="menu" class="absolute right-0 left-auto z-50 w-32 mt-1 text-black bg-white border rounded" x-show="isShown" x-on:click.away="isShown = false" x-on:keydown.escape="isShown = false")
                   li
                     a(href="/account" class="block px-2 py-2 border-b hover:bg-gray-300") Your Account
                   li
                     a(href="#" x-on:click.prevent="{ $refs.logout.submit() }" class="block px-2 py-2 border-b hover:bg-gray-300") Logout
-                  form(method="POST" action="/logout" class="m-0 flex align-middle hidden" x-ref="logout")
+                  form(method="POST" action="/logout" class="flex hidden m-0 align-middle" x-ref="logout")
                     input(type="hidden" name="_csrf" value=csrfToken)
             else
               a.mr-3(href="/login") Login
               a(href="/register") Register
-    section(class="flex flex-col md:flex-row flex-1 relative z-auto")
+    section(class="relative z-auto flex flex-col flex-1 md:flex-row")
       if locals.flashes
         div(class="absolute inset-0")
           - const categories = Object.keys(locals.flashes)
@@ -40,8 +41,8 @@ html(lang="en")
                 p.flash__text.block!= message
                 button.text-xl(onClick="this.parentElement.remove()" class="self-end") &times;
       if currentUser
-        aside(class="bg-gray-300 px-3 py-4 md:w-64 sm:w-100 md:block z-10" x-data="{ open: false }")
-          button(type="button" class="md:hidden block w-full text-left" x-on:click="open = !open")
+        aside(class="z-10 px-3 py-4 bg-gray-300 md:w-64 sm:w-100 md:block" x-data="{ open: false }")
+          button(type="button" class="block w-full text-left md:hidden" x-on:click="open = !open")
             span(x-show="open") Close Menu
             span(x-show="!open") Open Menu
           nav(class="flex flex-col -mx-3 md:block" x-bind:class="{ 'hidden': open !== true }")
@@ -62,7 +63,7 @@ html(lang="en")
       main#main(class=`w-full flex-1 relative z-10 ${currentUser ? 'md:ml-6 px-3' : ''}` x-ref="main")
         div.mx-auto.container.p-3
           block content
-    footer(class="text-center bg-gray-800 text-white py-3")
+    footer(class="py-3 text-center text-white bg-gray-800")
       p &copy; Hooligan Hymnal
     script.
       function skipToContent() {
@@ -75,5 +76,3 @@ html(lang="en")
         }
       }
     block scripts
-
-  script(src=`/js/app.js?${randomId}`)

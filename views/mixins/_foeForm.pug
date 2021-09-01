@@ -7,7 +7,7 @@ include ./_csrfInput
 mixin foeForm(foe = {}, edit = false)
   if foe.id
     #foe-id(class="hidden") #{foe.id}
-  form(method="POST")
+  form(method="POST" enctype="multipart/form-data")
     +csrfInput()
     .flex.flex-col.mb-3
       +baseInput("text", "Opponent", "opponent", foe.opponent, "Opponent", true)
@@ -18,23 +18,23 @@ mixin foeForm(foe = {}, edit = false)
     .flex.flex-col.mb-3#logo
       #logo-template
         div(class="relative inline-block")
-          img(data-dz-thumbnail class="rounded-full mx-auto" style="height:50px;width:50px")
+          img(data-dz-thumbnail class="mx-auto rounded-full" style="height:50px;width:50px")
           p(class="" data-dz-name)
-          div(class="dz-error-mark cursor-pointer absolute top-0 right-0" data-dz-remove)
+          div(class="absolute top-0 right-0 cursor-pointer dz-error-mark" data-dz-remove)
             span &times;
         div(class="dz-error-message")
           span(data-dz-errormessage)
-      #logo-upload-section(class="border rounded-lg bg-gray-200 h-32 w-full flex justify-center items-center cursor-pointer relative z-10")
+      #logo-upload-section(class="relative z-10 flex items-center justify-center w-full h-32 bg-gray-200 border rounded-lg cursor-pointer")
         h2(class="pointer-events-none -z-1") Upload logo here
       #logo-previews
       div(class="progress active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0")
           div(class="h-2 bg-gray-700 progress-bar" style="width:0%;" data-dz-uploadprogress)
       .actions
-        button(class="rounded bg-green-700 text-white px-3 py-2 upload mr-2" type="button") Upload
+        button(class="px-3 py-2 mr-2 text-white bg-green-700 rounded upload" type="button") Upload
         if !edit
-          button(class="rounded bg-red-700 text-white px-3 py-2 cancel" type="button") Clear
+          button(class="px-3 py-2 text-white bg-red-700 rounded cancel" type="button") Clear
       #logo-target.hidden
-    div(class="flex flex-col md:flex-row mb-3")
+    div(class="flex flex-col mb-3 md:flex-row")
       div(class="flex flex-col flex-1 sm:mr-2")
         +baseColorInput("color", "Background Color", "backgroundColor", foe.backgroundColor ? foe.backgroundColor : "#000000", "Background Color")
       div(class="flex flex-col flex-1 sm:mr-2")
@@ -42,65 +42,75 @@ mixin foeForm(foe = {}, edit = false)
       div(class="flex flex-col flex-1")
         +baseColorInput("color", "Text Color", "textColor", foe.textColor ? foe.textColor : "#000000", "Text Color")
     .flex.flex-col.mb-3
-    if !edit
-      div(x-data="{ players: [], newPlayer: { name: '', squadNumber: '', position: '' } }")
-        div(class="StackedList")
-          template(x-for="player in players")
-            div(class="list--card draggable")
-              input(type="hidden" name="players[]" :value="JSON.stringify(player)")
-              div(class="flex flex-col md:flex-row justify-between w-full")
-                h4(x-text="player.name")
-                p(x-text="player.squadNumber")
-                p(x-text="player.position")
-                div(class="mt-3")
-                  button(type="button" @click="newPlayer = players.filter(i => i.name === player.name)[0]; players = players.filter(i => i.name !== player.name)" class="h-10 w-10 rounded-full text-white bg-green-700 mr-3") &#9998;
-                  button(type="button" @click="players = players.filter(i => i.name !== player.name)" class="rounded-full h-10 w-10 text-white bg-red-700") &times;
+    div(x-data="{ massUpload: false }")
+      button(x-on:click="massUpload = !massUpload" type="button" class="mb-3 btn btn--success") Mass Upload Players
+      template(x-if="massUpload")
+        div(class="flex flex-col flex-1 mb-3")
+          label(for="foeCSV" class="flex flex-1 font-semibold") Foes Players CSV
+          input(type="file" name="foeCSV" id="foeCSV" accept=".csv" aria-labelledby="csvHint")
+          small(id="csvHint") Make sure csv contains "Name", "Position" and "Number" columns
+          if edit
+            small(class="text-red-700") This will delete all current players in roster
+      template(x-if="!massUpload")
+        if !edit
+          div(x-data="{ players: [], newPlayer: { name: '', squadNumber: '', position: '' } }")
+            div(class="StackedList")
+              template(x-for="player in players")
+                div(class="list--card draggable")
+                  input(type="hidden" name="players[]" :value="JSON.stringify(player)")
+                  div(class="flex flex-col justify-between w-full md:flex-row")
+                    h4(x-text="player.name")
+                    p(x-text="player.squadNumber")
+                    p(x-text="player.position")
+                    div(class="mt-3")
+                      button(type="button" @click="newPlayer = players.filter(i => i.name === player.name)[0]; players = players.filter(i => i.name !== player.name)" class="w-10 h-10 mr-3 text-white bg-green-700 rounded-full") &#9998;
+                      button(type="button" @click="players = players.filter(i => i.name !== player.name)" class="w-10 h-10 text-white bg-red-700 rounded-full") &times;
 
-        div(class="list--card flex items-end")
-          div(class="flex-1 flex flex-col mr-4 md:mr-0 md:flex-row")
-            div(class="flex-1 flex flex-col md:mr-4")
-              label(for="foeName" class="flex flex-1 font-semibold") Name
-              input(type="text" name="name" id="foeName" x-model="newPlayer.name" @keyup="newPlayer.name.trim()" placeholder="Name" class="border flex-auto rounded p-2 shadow")
-            div(class="flex-1 flex flex-col md:mr-4")
-              label(for="squadNumber" class="flex flex-1 font-semibold") Squad Number
-              input(type="number" name="squadNumber" id="squadNumber" x-model="newPlayer.squadNumber" @keyup="newPlayer.squadNumber.trim()" placeholder="Squad Number" class="border flex-auto rounded p-2 shadow")
-            div(class="flex-1 flex flex-col md:mr-4")
-              label(for="foePosition" class="flex flex-1 font-semibold") Position
-              - const options = h.positionOptions
-              select(name="position" id="position" x-model="newPlayer.position" @change="newPlayer.position;" class="h-10 rounded-lg shadow border bg-white")
-                option(:value="newPlayer.position" x-text="newPlayer.position")
-                each position in h.positionOptions
-                  option(value=position) #{position}
-    else
-      div(x-data="{ players: "+JSON.stringify(foe.players)+" , newPlayer: { name: '', squadNumber: '', position: ''} }")
-        div(class="StackedList")
-          template(x-for="player in players")
-            div(class="list--card draggable")
-              input(type="hidden" name="players[]" :value="JSON.stringify(player)")
-              div(class="flex flex-col md:flex-row justify-between w-full")
-                h4(x-text="player.name")
-                p(x-text="player.squadNumber")
-                p(x-text="player.position")
-                div(class="mt-3")
-                  button(type="button" @click="newPlayer = players.filter(i => i.name === player.name)[0]; players = players.filter(i => i.name !== player.name)" class="h-10 w-10 rounded-full text-white bg-green-700 mr-3") &#9998;
-                  button(type="button" @click="players = players.filter(i => i.name !== player.name)" class="rounded-full h-10 w-10 text-white bg-red-700") &times;
+            div(class="flex items-end list--card")
+              div(class="flex flex-col flex-1 mr-4 md:mr-0 md:flex-row")
+                div(class="flex flex-col flex-1 md:mr-4")
+                  label(for="foeName" class="flex flex-1 font-semibold") Name
+                  input(type="text" name="name" id="foeName" x-model="newPlayer.name" @keyup="newPlayer.name.trim()" placeholder="Name" class="flex-auto p-2 border rounded shadow")
+                div(class="flex flex-col flex-1 md:mr-4")
+                  label(for="squadNumber" class="flex flex-1 font-semibold") Squad Number
+                  input(type="number" name="squadNumber" id="squadNumber" x-model="newPlayer.squadNumber" @keyup="newPlayer.squadNumber.trim()" placeholder="Squad Number" class="flex-auto p-2 border rounded shadow")
+                div(class="flex flex-col flex-1 md:mr-4")
+                  label(for="foePosition" class="flex flex-1 font-semibold") Position
+                  - const options = h.positionOptions
+                  select(name="position" id="position" x-model="newPlayer.position" @change="newPlayer.position;" class="h-10 bg-white border rounded-lg shadow")
+                    option(:value="newPlayer.position" x-text="newPlayer.position")
+                    each position in h.positionOptions
+                      option(value=position) #{position}
+        else
+          div(x-data="{ players: "+JSON.stringify(foe.players)+" , newPlayer: { name: '', squadNumber: '', position: ''} }")
+            div(class="StackedList")
+              template(x-for="player in players")
+                div(class="list--card draggable")
+                  input(type="hidden" name="players[]" :value="JSON.stringify(player)")
+                  div(class="flex flex-col justify-between w-full md:flex-row")
+                    h4(x-text="player.name")
+                    p(x-text="player.squadNumber")
+                    p(x-text="player.position")
+                    div(class="mt-3")
+                      button(type="button" @click="newPlayer = players.filter(i => i.name === player.name)[0]; players = players.filter(i => i.name !== player.name)" class="w-10 h-10 mr-3 text-white bg-green-700 rounded-full") &#9998;
+                      button(type="button" @click="players = players.filter(i => i.name !== player.name)" class="w-10 h-10 text-white bg-red-700 rounded-full") &times;
 
-        div(class="list--card flex items-center md:items-end")
-          div(class="flex-1 flex flex-col mr-4 md:mr-0 md:flex-row")
-            div(class="flex-1 flex flex-col md:mr-4")
-              label(for="foeName" class="flex flex-1 font-semibold") Name
-              input(type="text" name="name" id="foeName" x-model="newPlayer.name" @keyup="newPlayer.name.trim()" placeholder="Name" class="border flex-auto rounded p-2 shadow")
-            div(class="flex-1 flex flex-col md:mr-4")
-              label(for="squadNumber" class="flex flex-1 font-semibold") Squad Number
-              input(type="number" name="squadNumber" id="squadNumber" x-model="newPlayer.squadNumber" @keyup="newPlayer.squadNumber.trim()" placeholder="Squad Number" class="border flex-auto rounded p-2 shadow")
-            div(class="flex-1 flex flex-col md:mr-4")
-              label(for="foePosition" class="flex flex-1 font-semibold") Position
-              - const options = h.positionOptions
-              select(name="position" id="position" x-model="newPlayer.position" @change="newPlayer.position;" class="h-10 rounded-lg shadow border bg-white")
-                option(:value="newPlayer.position" x-text="newPlayer.position")
-                each position in h.positionOptions
-                  option(value=position) #{position}
-          div
-            button(type="button" @click="if (newPlayer.name.trim() !== '' && newPlayer.position.trim() !== '') { players.push(newPlayer); newPlayer = { name: '', position: '', squadNumber: '' } } else { alert('Check players fields') }" class="bg-green-700 text-white rounded-full h-10 w-10") &plus;
+            div(class="flex items-center list--card md:items-end")
+              div(class="flex flex-col flex-1 mr-4 md:mr-0 md:flex-row")
+                div(class="flex flex-col flex-1 md:mr-4")
+                  label(for="foeName" class="flex flex-1 font-semibold") Name
+                  input(type="text" name="name" id="foeName" x-model="newPlayer.name" @keyup="newPlayer.name.trim()" placeholder="Name" class="flex-auto p-2 border rounded shadow")
+                div(class="flex flex-col flex-1 md:mr-4")
+                  label(for="squadNumber" class="flex flex-1 font-semibold") Squad Number
+                  input(type="number" name="squadNumber" id="squadNumber" x-model="newPlayer.squadNumber" @keyup="newPlayer.squadNumber.trim()" placeholder="Squad Number" class="flex-auto p-2 border rounded shadow")
+                div(class="flex flex-col flex-1 md:mr-4")
+                  label(for="foePosition" class="flex flex-1 font-semibold") Position
+                  - const options = h.positionOptions
+                  select(name="position" id="position" x-model="newPlayer.position" @change="newPlayer.position;" class="h-10 bg-white border rounded-lg shadow")
+                    option(:value="newPlayer.position" x-text="newPlayer.position")
+                    each position in h.positionOptions
+                      option(value=position) #{position}
+              div
+                button(type="button" @click="if (newPlayer.name.trim() !== '' && newPlayer.position.trim() !== '') { players.push(newPlayer); newPlayer = { name: '', position: '', squadNumber: '' } } else { alert('Check players fields') }" class="w-10 h-10 text-white bg-green-700 rounded-full") &plus;
     .mb-3
-      button(type="submit" class="px-3 py-2 bg-blue-700 text-white") Save Foe
+      button(type="submit" class="px-3 py-2 text-white bg-blue-700") Save Foe

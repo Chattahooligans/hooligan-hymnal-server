@@ -1,8 +1,11 @@
 extends ../layout
 
 include ../mixins/_foeForm
+include ../mixins/_csrfInput
+
 
 block content
   .mx-auto.container
-    h2 #{title}
+    div(class="flex justify-between")
+      h2(class="mb-3 text-2xl font-semibold") #{title}
     +foeForm(foe, true)
