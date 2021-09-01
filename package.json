@@ -21,7 +21,7 @@
         "@fortawesome/free-solid-svg-icons": "^5.13.0",
         "@shopify/draggable": "^1.0.0-beta.8",
         "alpinejs": "^2.3.5",
-        "axios": "^0.19.2",
+        "axios": "^0.21.1",
         "bcrypt": "^5.0.0",
         "body-parser": "^1.19.0",
         "cloudinary": "^1.21.0",
