@@ -3,6 +3,10 @@
     "version": "1.0.0",
     "description": "Serving those diss tracks like we're the Paul brothers",
     "author": "",
+    "engines" : { 
+        "npm" : ">=6.0.0",
+        "node" : ">=14.0.0"
+      },
     "scripts": {
         "heroku-postbuild": "npm run prod",
         "start": "node app.js",
