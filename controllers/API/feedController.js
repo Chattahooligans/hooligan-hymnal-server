@@ -110,10 +110,14 @@ exports.store = async (req, res) => {
     const date = moment(req.body.publishedAt).format('YYYY/MM/DD_HHmm');
     const targetFolder = `feed/${date}`;
 
+    console.info(`Uploading ${req.files.length} images to ${targetFolder}`);
+
     // upload() returns an array
     const images = await upload(req, {
       folder: targetFolder,
     });
+
+    console.info(`Images uploaded: ${images.length}`);
 
     // if there's only one item, turn it into an array
     let uploadMetadata = [];
@@ -123,6 +127,7 @@ exports.store = async (req, res) => {
       uploadMetadata.push(req.body.metadata);
     }
 
+    console.info(`Adding meta data to uploaded images`)
     images.forEach((image, index) => {
       const thisMetadata = JSON.parse(uploadMetadata[index]);
       const targetIndex = thisMetadata.index;
@@ -139,6 +144,7 @@ exports.store = async (req, res) => {
   }
 
   if (req.body.remoteImages) {
+    console.info(`Adding remote images to feed item`);
     // if there's only one item, turn it into an array
     let remoteImages = [];
     let remoteMetadata = [];
@@ -150,6 +156,7 @@ exports.store = async (req, res) => {
       remoteMetadata.push(req.body.remoteMetadata);
     }
 
+    console.info(`Adding meta data to remote images`)
     remoteImages.forEach((image, index) => {
       const parsedImage = JSON.parse(image);
       const thisMetadata = JSON.parse(remoteMetadata[index]);
@@ -167,6 +174,8 @@ exports.store = async (req, res) => {
   }
 
   const feedItem = await (new FeedItems(data)).save();
+  console.info(`Created feed item: ${feedItem._id}`);
+
   if (feedItem.push) {
     const { receipts, errors } = await PushHandler.sendPost(feedItem, channel, senderToken);
 
